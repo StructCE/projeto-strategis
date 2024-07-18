@@ -10,3 +10,10 @@ Para a construção desse site, está sendo utilizada a Stack T3 que possui tecn
 
 > [!NOTE]
 > Por favor, quando for realizar alguma issue crie uma branch com um nome identificável e seguindo a norma `feat/nome` para novos elementos e `fix/nome` para correções.
+
+## Rodando o Projeto
+
+```
+pnpm i
+pnpm dev
+```
