@@ -15,5 +15,8 @@ Para a construção desse site, está sendo utilizada a Stack T3 que possui tecn
 
 ```
 pnpm i
+pnpm prisma migrate reset -f
+pnpm db:push
+pnpm db:seed
 pnpm dev
 ```

@@ -9,7 +9,7 @@ export default async function Home() {
       <SignInButton />
       <h1 className="text-4xl font-semibold">
         Olá{" "}
-        <span className="text-struct-2 font-bold">{session?.user?.name}</span>,
+        <span className="text-struct-2 font-bold">{session?.user?.email}</span>,
         o que deseja fazer?
       </h1>
     </div>
