@@ -21,6 +21,7 @@ const config = {
       fontFamily: {
         inter: ["Inter", "sans-serif"],
         montserrat: ["Montserrat", "sans-serif"],
+        aldrich: ["Aldrich-Regular", "sans-serif"],
       },
       fontWeight: {
         "500": "500",
