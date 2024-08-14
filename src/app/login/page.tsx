@@ -2,14 +2,15 @@
 
 //import { getServerAuthSession } from "~/server/auth";
 //import { SignInButton } from "./_components/signInButton";
+import { signIn } from "next-auth/react";
+import { useState, type FormEvent } from "react";
+import { z } from "zod";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import BgLogin from "./_components/bg-login";
 import Ilustracao from "./_components/ilustracao";
 import LogoBranca from "./_components/logo-branca";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Button } from "../../components/ui/button";
-import { useState, type FormEvent } from "react";
-import { z } from "zod";
 
 const SignInSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
@@ -31,8 +32,15 @@ export default function Login() {
 
     const parsed = SignInSchema.safeParse({ email, password });
     if (parsed.success) {
-      console.log("Email:", parsed.data.email);
-      console.log("Senha:", parsed.data.password);
+      const res = await signIn("credentials", {
+        email: parsed.data.email,
+        password: parsed.data.password,
+        redirect: false,
+      });
+      console.log(res);
+      // if (res?.status == 200) {
+      //   window.location.href = "/";
+      // }
     } else {
       setErrors(parsed.error.flatten());
     }

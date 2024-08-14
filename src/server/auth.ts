@@ -5,6 +5,7 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
+import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
 import { env } from "~/env";
@@ -54,6 +55,39 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+    }),
+    CredentialsProvider({
+      type: "credentials",
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "email@email.com",
+        },
+        password: {
+          label: "Password",
+          type: "password",
+        },
+      },
+      async authorize(credentials, req) {
+        const { email, password } = credentials as {
+          email: string;
+          password: string;
+        };
+        if (email !== "leo@gmail.com" || password !== "12345678") {
+          return null;
+        }
+        return { id: "1234", name: "Leo", email: "leo@gmail.com" };
+        // if (user) {
+        //   // Any object returned will be saved in `user` property of the JWT
+        //   return user;
+        // } else {
+        //   // If you return null then an error will be displayed advising the user to check their details.
+        //   return null;
+
+        //   // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+        // }
+      },
     }),
     /**
      * ...add more providers here.
