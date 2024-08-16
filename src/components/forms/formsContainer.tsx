@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { cn } from "../../lib/utils";
+import { cn } from "~/lib/utils";
 
 type FormProps = {
   className?: string;
@@ -71,7 +71,6 @@ FormComponent.Label = function FormComponentLabel(
 type FormComponentInputProps = {
   className?: string;
   placeholder?: string;
-  type?: string;
 };
 
 FormComponent.Input = function FormComponentInput(
@@ -81,19 +80,14 @@ FormComponent.Input = function FormComponentInput(
     "border-[1px] border-[#DEE2E6] bg-white placeholder:text-[#ADB5BD]",
     props.className,
   );
-  return (
-    <Input
-      className={style}
-      placeholder={props.placeholder}
-      type={props.type}
-    ></Input>
-  );
+  return <Input className={style} placeholder={props.placeholder}></Input>;
 };
 
 type FormComponentSelectProps = {
   className?: string;
   placeholder?: string;
   values: string[];
+  onValueChange?: () => void;
 };
 
 FormComponent.Select = function FormComponentSelect(
@@ -140,12 +134,9 @@ type FormComponentButtonProps = {
 FormComponent.Button = function FormComponentButton(
   props: FormComponentButtonProps,
 ) {
-  const style = cn(
-    "bg-red-300 px-[20px] py-[8px] rounded-lg min-w-28",
-    props.className,
-  );
+  const style = cn("px-[20px] py-[8px] rounded-lg min-w-28", props.className);
   return (
-    <button onClick={props.handlePress} className={style}>
+    <button onClick={props.handlePress} className={style} type="submit">
       <p className="text-[12px] font-semibold tracking-wider text-white sm:text-[16px] sm:tracking-normal">
         {props.children}
       </p>
