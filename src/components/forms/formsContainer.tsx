@@ -1,5 +1,4 @@
 import React from "react";
-import { Input } from "~/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -66,21 +65,6 @@ FormComponent.Label = function FormComponentLabel(
 ) {
   const style = cn("font-inter text-[16px] font-regular", props.className);
   return <p className={style}>{props.children}</p>;
-};
-
-type FormComponentInputProps = {
-  className?: string;
-  placeholder?: string;
-};
-
-FormComponent.Input = function FormComponentInput(
-  props: FormComponentInputProps,
-) {
-  const style = cn(
-    "border-[1px] border-[#DEE2E6] bg-white placeholder:text-[#ADB5BD]",
-    props.className,
-  );
-  return <Input className={style} placeholder={props.placeholder}></Input>;
 };
 
 type FormComponentSelectProps = {
