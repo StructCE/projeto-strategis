@@ -1,11 +1,4 @@
 import React from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import { cn } from "~/lib/utils";
 
 type FormProps = {
@@ -65,36 +58,6 @@ FormComponent.Label = function FormComponentLabel(
 ) {
   const style = cn("font-inter text-[16px] font-regular", props.className);
   return <p className={style}>{props.children}</p>;
-};
-
-type FormComponentSelectProps = {
-  className?: string;
-  placeholder?: string;
-  values: string[];
-  onValueChange?: () => void;
-};
-
-FormComponent.Select = function FormComponentSelect(
-  props: FormComponentSelectProps,
-) {
-  const style = cn(
-    "border-[1px] border-[#DEE2E6] bg-white placeholder-[#ADB5BD]",
-    props.className,
-  );
-  return (
-    <Select>
-      <SelectTrigger className={style}>
-        <SelectValue placeholder={props.placeholder} />
-      </SelectTrigger>
-      <SelectContent>
-        {props.values.map((value) => (
-          <SelectItem key={value} value={value}>
-            {value}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  );
 };
 
 type FormComponentButtonLayoutProps = {
