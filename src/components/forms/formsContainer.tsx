@@ -7,7 +7,7 @@ type FormProps = {
 };
 
 export const FormComponent = (props: FormProps) => {
-  const rootStyle = cn("flex flex-col gap-[12px]", props.className);
+  const rootStyle = cn("flex flex-col gap-[8px]", props.className);
   return <div className={rootStyle}>{props.children}</div>;
 };
 
@@ -19,7 +19,10 @@ type FormComponentTitleProps = {
 FormComponent.Title = function FormComponentTitle(
   props: FormComponentTitleProps,
 ) {
-  const style = cn("flex text-[32px] font-inter font-medium", props.className);
+  const style = cn(
+    "text-[24px] sm:text-[32px] font-inter font-medium",
+    props.className,
+  );
   return <p className={style}>{props.children}</p>;
 };
 
