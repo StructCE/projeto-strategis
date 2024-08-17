@@ -1,6 +1,3 @@
-"use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -17,25 +14,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import {
-  createUserFormSchema,
-  type CreateUserFormValues,
-} from "./_components/formSchema";
+import { CreateUserFormValues } from "./formSchema";
+import { UseFormReturn } from "react-hook-form";
 
-export default function CadastroDeUsuarios() {
-  const form = useForm<CreateUserFormValues>({
-    resolver: zodResolver(createUserFormSchema),
-    mode: "onChange",
-  });
+type UserRegisterProps = {
+  form: UseFormReturn<CreateUserFormValues>;
+  onSubmit: (data: CreateUserFormValues) => void;
+};
 
-  function onSubmit(data: CreateUserFormValues) {
-    console.log(JSON.stringify(data, null, 2)); // Criar usuário
-  }
-
+export const UserRegister = (props: UserRegisterProps) => {
   return (
     <div className="m-8">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+      <Form {...props.form}>
+        <form onSubmit={props.form.handleSubmit(props.onSubmit)}>
           <FormComponent>
             <FormComponent.Title>Cadastro de Usuário</FormComponent.Title>
 
@@ -43,7 +34,7 @@ export default function CadastroDeUsuarios() {
               <FormComponent.Frame>
                 <FormComponent.Label>Email</FormComponent.Label>
                 <FormField
-                  control={form.control}
+                  control={props.form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
@@ -63,7 +54,7 @@ export default function CadastroDeUsuarios() {
               <FormComponent.Frame>
                 <FormComponent.Label>Senha</FormComponent.Label>
                 <FormField
-                  control={form.control}
+                  control={props.form.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
@@ -84,7 +75,7 @@ export default function CadastroDeUsuarios() {
               <FormComponent.Frame>
                 <FormComponent.Label>Confirme a senha</FormComponent.Label>
                 <FormField
-                  control={form.control}
+                  control={props.form.control}
                   name="password_confirmation"
                   render={({ field }) => (
                     <FormItem>
@@ -107,7 +98,7 @@ export default function CadastroDeUsuarios() {
               <FormComponent.Frame>
                 <FormComponent.Label>Nome</FormComponent.Label>
                 <FormField
-                  control={form.control}
+                  control={props.form.control}
                   name="username"
                   render={({ field }) => (
                     <FormItem>
@@ -127,7 +118,7 @@ export default function CadastroDeUsuarios() {
               <FormComponent.Frame>
                 <FormComponent.Label>Telefone</FormComponent.Label>
                 <FormField
-                  control={form.control}
+                  control={props.form.control}
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
@@ -147,7 +138,7 @@ export default function CadastroDeUsuarios() {
               <FormComponent.Frame>
                 <FormComponent.Label>Empresa</FormComponent.Label>
                 <FormField
-                  control={form.control}
+                  control={props.form.control}
                   name="empresa"
                   render={({ field }) => (
                     <FormItem>
@@ -177,7 +168,7 @@ export default function CadastroDeUsuarios() {
               <FormComponent.Frame>
                 <FormComponent.Label>Cargo</FormComponent.Label>
                 <FormField
-                  control={form.control}
+                  control={props.form.control}
                   name="cargo"
                   render={({ field }) => (
                     <FormItem>
@@ -221,4 +212,4 @@ export default function CadastroDeUsuarios() {
       </Form>
     </div>
   );
-}
+};
