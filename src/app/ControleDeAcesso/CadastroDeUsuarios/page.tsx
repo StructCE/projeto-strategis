@@ -1,7 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -18,63 +17,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import {
+  createUserFormSchema,
+  type CreateUserFormValues,
+} from "./_components/formSchema";
 
-const createUserFormSchema = z
-  .object({
-    email: z
-      .string({
-        required_error: "Por favor digite um email.",
-      })
-      .email({
-        message: "Email inválido.",
-      }),
-    password: z
-      .string({
-        required_error: "Por favor digite uma senha.",
-      })
-      .min(8, {
-        message: "A senha deve ter pelo menos 8 caracteres.",
-      })
-      .max(128, {
-        message: "A senha deve ter no máximo 128 caracteres.",
-      }),
-    password_confirmation: z.string({
-      required_error: "Por favor confirme a senha.",
-    }),
-    username: z
-      .string()
-      .min(3, {
-        message: "Nome deve ter pelo menos 3 caracteres.",
-      })
-      .max(60, {
-        message: "Nome deve ter no máximo 60 caracteres.",
-      }),
-    phone: z
-      .string()
-      .min(8, {
-        message:
-          "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
-      })
-      .max(16, {
-        message:
-          "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
-      })
-      .optional(),
-    empresa: z.string({
-      required_error: "Por favor selecione uma empresa.",
-    }),
-    cargo: z.string({
-      required_error: "Por favor selecione um cargo.",
-    }),
-  })
-  .refine((data) => data.password === data.password_confirmation, {
-    message: "As senhas não coincidem.",
-    path: ["password_confirmation"],
-  });
-
-type CreateUserFormValues = z.infer<typeof createUserFormSchema>;
-
-export default function Home() {
+export default function CadastroDeUsuarios() {
   const form = useForm<CreateUserFormValues>({
     resolver: zodResolver(createUserFormSchema),
     mode: "onChange",
