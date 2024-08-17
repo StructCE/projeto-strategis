@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { createUserFormSchema, CreateUserFormValues } from "./formSchema";
+import { createUserFormSchema, type CreateUserFormValues } from "./formSchema";
 
 export const useUserForm = () => {
   const form = useForm<CreateUserFormValues>({

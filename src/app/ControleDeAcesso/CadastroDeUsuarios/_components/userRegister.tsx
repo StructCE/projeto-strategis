@@ -14,8 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { CreateUserFormValues } from "./formSchema";
-import { UseFormReturn } from "react-hook-form";
+import { type CreateUserFormValues } from "./formSchema";
+import { type UseFormReturn } from "react-hook-form";
 
 type UserRegisterProps = {
   form: UseFormReturn<CreateUserFormValues>;
