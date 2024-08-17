@@ -55,7 +55,7 @@ export default function CadastroDeProdutos() {
         </TableComponent.Subtitle>
         <TableComponent.Subtitle>FILTROS AQUI</TableComponent.Subtitle>
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[70px_1fr_100px_100px_100px_130px] justify-between gap-10">
+          <TableComponent.LineTitle className="grid-cols-[70px_1fr_100px_100px_100px_130px] justify-between gap-7 sm:gap-14">
             <TableComponent.ValueTitle className="items-center justify-center text-center">
               Código
             </TableComponent.ValueTitle>
@@ -73,7 +73,7 @@ export default function CadastroDeProdutos() {
           </TableComponent.LineTitle>
           {tabela_produtos.map((produto, index) => (
             <TableComponent.Line
-              className={`grid-cols-[70px_1fr_100px_100px_100px_130px] justify-between gap-10 ${
+              className={`grid-cols-[70px_1fr_100px_100px_100px_130px] justify-between gap-7 sm:gap-14 ${
                 index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
               }`}
               key={index}
@@ -82,26 +82,29 @@ export default function CadastroDeProdutos() {
                 {produto.codigo}
               </TableComponent.Value>
               <TableComponent.Value>
-                <Input value={produto.produto} className="bg-cinza_destaque" />
+                <Input
+                  value={produto.produto}
+                  className="h-7 bg-cinza_destaque sm:h-8"
+                />
               </TableComponent.Value>
               <TableComponent.Value className="items-center justify-center text-center">
                 <Input
                   value={produto.estoque_atual}
-                  className="bg-cinza_destaque text-center"
+                  className="h-7 bg-cinza_destaque text-center sm:h-8"
                   type="number"
                 />
               </TableComponent.Value>
               <TableComponent.Value className="items-center justify-center text-center">
                 <Input
                   value={produto.estoque_minimo}
-                  className="bg-cinza_destaque text-center"
+                  className="h-7 bg-cinza_destaque text-center sm:h-8"
                   type="number"
                 />
               </TableComponent.Value>
               <TableComponent.Value className="items-center justify-center text-center">
                 <Input
                   value={produto.estoque_maximo}
-                  className="bg-cinza_destaque text-center"
+                  className="h-7 bg-cinza_destaque text-center sm:h-8"
                   type="number"
                 />
               </TableComponent.Value>
