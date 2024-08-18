@@ -5,8 +5,8 @@ import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {
-  title: "Strategis",
-  description: "Sistema Web Strategis",
+  title: "SGE - Strategis",
+  description: "Sistema de Gerenciamento de Estoque - Strategis",
   icons: [{ rel: "icon", url: "/logo-circ.png" }],
 };
 
