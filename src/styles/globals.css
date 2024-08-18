@@ -74,3 +74,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+@font-face {
+  font-family: "Aldrich-Regular";
+  src: url("../lib/fonts/Aldrich-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../lib/fonts/Montserrat-VariableFont_wght.ttf") format("truetype");
+}
