@@ -1,5 +1,5 @@
 import { db } from "~/server/db";
-import { cargos, modulos, users } from "./seed-data";
+// import { cargos, modulos, users } from "./seed-data";
 
 async function createCargo(nome: string, moduloIds: number[]) {
   try {
@@ -97,12 +97,8 @@ async function main() {
     modulo13.id,
     modulo14.id,
   ]);
-  const cargoOperador = await createCargo("Operador", [
-    modulo3.id,
-    modulo5.id,
-    modulo6.id,
-  ]);
-  const cargoEstoquista = await createCargo("Estoquista", [
+  await createCargo("Operador", [modulo3.id, modulo5.id, modulo6.id]);
+  await createCargo("Estoquista", [
     modulo7.id,
     modulo8.id,
     modulo9.id,
@@ -110,12 +106,9 @@ async function main() {
     modulo11.id,
     modulo12.id,
   ]);
-  const cargoRequisitante = await createCargo("Requisitante", [
-    modulo13.id,
-    modulo14.id,
-  ]);
+  await createCargo("Requisitante", [modulo13.id, modulo14.id]);
 
-  const userAdmStruct = await createUser(
+  await createUser(
     "Struct EJ",
     "projetostrategis@gmail.com",
     "strategis2024*",
@@ -129,6 +122,7 @@ main()
   .catch((error) => {
     console.error("Erro no processo:", error);
   })
+  // eslint-disable-next-line
   .finally(async () => {
     await db.$disconnect();
   });
