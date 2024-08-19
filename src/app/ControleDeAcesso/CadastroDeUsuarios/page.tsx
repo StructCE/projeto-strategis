@@ -1,6 +1,6 @@
 "use client";
 import { UserRegisterContainer } from "./_components/createUsers/userRegisterContainer";
-import { ManageUsersContainer } from "./_components/manageUsers/manageUsersContainer";
+import { ManageUsersContainer } from "./_components/manageUsers/manageUsers";
 
 export default function CadastroDeUsuarios() {
   return (
