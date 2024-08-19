@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { type CreateUserFormValues } from "./formSchema";
+import { type CreateUserFormValues } from "./userRegisterFormSchema";
 
 type UserRegisterProps = {
   form: UseFormReturn<CreateUserFormValues>;
@@ -146,7 +146,7 @@ export const UserRegister = (props: UserRegisterProps) => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-[#ADB5BD]">
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
                           <SelectValue placeholder="Selecione uma empresa" />
                         </SelectTrigger>
                       </FormControl>
@@ -176,7 +176,7 @@ export const UserRegister = (props: UserRegisterProps) => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-[#ADB5BD]">
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
                           <SelectValue placeholder="Selecione um cargo" />
                         </SelectTrigger>
                       </FormControl>

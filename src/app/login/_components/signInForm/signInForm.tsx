@@ -68,7 +68,7 @@ export const SignInForm = (props: SignInFormsProps) => {
         </div>
         <Button
           onClick={props.handleSignIn}
-          className="relative w-full max-w-sm overflow-hidden bg-vermelho_botao_1 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-[#772b39] before:duration-200 before:ease-out hover:bg-[#772b39] hover:shadow-[#ff332852] hover:before:h-96 hover:before:w-96"
+          className="before:bg-hover_vermelho_login hover:bg-hover_vermelho_login relative w-full max-w-sm overflow-hidden bg-vermelho_botao_1 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:duration-200 before:ease-out hover:shadow-[#ff332852] hover:before:h-96 hover:before:w-96"
         >
           <span className="relative z-10">Entrar</span>
         </Button>

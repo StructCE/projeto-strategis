@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useUserForm } from "./useUserForm";
 import { UserRegister } from "./userRegister";
 
