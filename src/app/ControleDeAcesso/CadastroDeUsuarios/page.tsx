@@ -1,5 +1,6 @@
 "use client";
 import { TableComponent } from "~/components/table/tableContainer";
+import { UserRegisterContainer } from "./_components/userRegisterContainer";
 
 const tabela_usuarios = [
   {
@@ -41,6 +42,7 @@ export default function CadastroDeUsuarios() {
 
   return (
     <div className="h-screen w-full bg-[#F2F2F2] p-4 sm:p-8">
+      <UserRegisterContainer />
       <TableComponent>
         <TableComponent.Title>Gerenciar Usuários</TableComponent.Title>
         <TableComponent.Subtitle>
@@ -67,7 +69,7 @@ export default function CadastroDeUsuarios() {
               <TableComponent.Value>{usuario.empresa}</TableComponent.Value>
               <TableComponent.Value>{usuario.cargo}</TableComponent.Value>
               <TableComponent.LineButton
-                className="hover:bg-hover_cinza_destaque bg-cinza_destaque text-black"
+                className="bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
                 handlePress={() => handleDetailsPress(usuario)}
               >
                 Detalhes
