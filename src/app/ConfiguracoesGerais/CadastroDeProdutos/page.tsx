@@ -46,7 +46,7 @@ export default function CadastroDeProdutos() {
   }
 
   return (
-    <div className="h-screen w-full bg-[#F2F2F2] p-4 sm:p-8">
+    <div className="h-screen w-full p-4 sm:p-8">
       <TableComponent>
         <TableComponent.Title>Gerenciar Produtos</TableComponent.Title>
         <TableComponent.Subtitle>
@@ -109,7 +109,7 @@ export default function CadastroDeProdutos() {
                 />
               </TableComponent.Value>
               <TableComponent.LineButton
-                className="hover:bg-hover_cinza_destaque bg-cinza_destaque text-black"
+                className="bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
                 handlePress={() => handleDetailsPress(produto)}
               >
                 Detalhes

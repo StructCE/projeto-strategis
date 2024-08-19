@@ -77,7 +77,7 @@ TableComponent.LineTitle = function TableComponentLineTitle(
   props: TableComponentLineTitleProps,
 ) {
   const style = cn(
-    "grid px-[16px] sm:px-[24px] border-b-[2px] border-b-[#DDDDDD] py-[8px] items-center min-w-[1200px]",
+    "grid px-[16px] sm:px-[24px] border-b-[2px] border-b-borda_tabela py-[8px] items-center min-w-[1200px]",
     props.className,
   );
   return <div className={style}>{props.children}</div>;
