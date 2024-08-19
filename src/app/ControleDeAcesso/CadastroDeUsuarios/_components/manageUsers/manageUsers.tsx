@@ -1,10 +1,11 @@
 import { TableComponent } from "~/components/table/tableContainer";
 import { TabelaUsuarios } from "./manageUsersTableData";
-import { useUserTable } from "./useUserTable";
 
-export const ManageUsersContainer = () => {
-  const { handleDetailsPress } = useUserTable();
+type ManageUsersTableProps = {
+  handleDetailsPress: ({ email }: { email: string }) => void;
+};
 
+export const ManageUsersTable = (props: ManageUsersTableProps) => {
   return (
     <TableComponent>
       <TableComponent.Title>Gerenciar Usuários</TableComponent.Title>
@@ -33,7 +34,7 @@ export const ManageUsersContainer = () => {
             <TableComponent.Value>{usuario.cargo}</TableComponent.Value>
             <TableComponent.LineButton
               className="bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
-              handlePress={() => handleDetailsPress(usuario)}
+              handlePress={() => props.handleDetailsPress(usuario)}
             >
               Detalhes
             </TableComponent.LineButton>
