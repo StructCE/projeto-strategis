@@ -39,7 +39,7 @@ export const UserRegister = (props: UserRegisterProps) => {
                   <FormItem>
                     <FormControl>
                       <Input
-                        className="border-[1px] border-[#DEE2E6] bg-white placeholder:text-[#ADB5BD]"
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
                         placeholder="Endereço de email"
                         {...field}
                       />
@@ -59,7 +59,7 @@ export const UserRegister = (props: UserRegisterProps) => {
                   <FormItem>
                     <FormControl>
                       <Input
-                        className="border-[1px] border-[#DEE2E6] bg-white placeholder:text-[#ADB5BD]"
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
                         placeholder="Crie uma senha para acesso ao sistema"
                         type="password"
                         {...field}
@@ -80,7 +80,7 @@ export const UserRegister = (props: UserRegisterProps) => {
                   <FormItem>
                     <FormControl>
                       <Input
-                        className="border-[1px] border-[#DEE2E6] bg-white placeholder:text-[#ADB5BD]"
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
                         placeholder="Confirme a senha"
                         type="password"
                         {...field}
@@ -103,7 +103,7 @@ export const UserRegister = (props: UserRegisterProps) => {
                   <FormItem>
                     <FormControl>
                       <Input
-                        className="border-[1px] border-[#DEE2E6] bg-white placeholder:text-[#ADB5BD]"
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
                         placeholder="Nome completo"
                         {...field}
                       />
@@ -123,7 +123,7 @@ export const UserRegister = (props: UserRegisterProps) => {
                   <FormItem>
                     <FormControl>
                       <Input
-                        className="border-[1px] border-[#DEE2E6] bg-white placeholder:text-[#ADB5BD]"
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
                         placeholder="(XX)XXXXX-XXXX"
                         {...field}
                       />
@@ -146,7 +146,7 @@ export const UserRegister = (props: UserRegisterProps) => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="border-[1px] border-[#DEE2E6] bg-white placeholder-[#ADB5BD]">
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-[#ADB5BD]">
                           <SelectValue placeholder="Selecione uma empresa" />
                         </SelectTrigger>
                       </FormControl>
@@ -176,7 +176,7 @@ export const UserRegister = (props: UserRegisterProps) => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="border-[1px] border-[#DEE2E6] bg-white placeholder-[#ADB5BD]">
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-[#ADB5BD]">
                           <SelectValue placeholder="Selecione um cargo" />
                         </SelectTrigger>
                       </FormControl>
@@ -202,7 +202,7 @@ export const UserRegister = (props: UserRegisterProps) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-[#28A745] hover:bg-[#309147]">
+            <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
               Criar Usuário
             </FormComponent.Button>
           </FormComponent.ButtonLayout>

@@ -1,8 +1,8 @@
 import { Label } from "@radix-ui/react-label";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import type { FormEvent } from "react";
 import type { z } from "zod";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import type { signInSchema } from "./signInSchema";
 
 type SignInFormsProps = {
@@ -17,10 +17,10 @@ type SignInFormsProps = {
 export const SignInForm = (props: SignInFormsProps) => {
   return (
     <form onSubmit={props.handleSignIn}>
-      <div className="space-y-10 max-[650px]:mx-4 max-[650px]:text-center">
+      <div className="space-y-6 max-[650px]:mx-4 max-[650px]:text-center">
         <div>
-          <div className="mb-6 grid w-full max-w-sm gap-1.5 text-left max-[650px]:mx-auto">
-            <Label className="text-[#D1D5DB]" htmlFor="email">
+          <div className="mb-3 grid w-full max-w-sm gap-1 text-left max-[650px]:mx-auto">
+            <Label className="text-cinza_destaque" htmlFor="email">
               Email
             </Label>
             <div>
@@ -42,8 +42,8 @@ export const SignInForm = (props: SignInFormsProps) => {
               ))}
             </div>
           </div>
-          <div className="grid w-full max-w-sm items-center gap-1.5 text-left max-[650px]:mx-auto">
-            <Label className="text-[#D1D5DB]" htmlFor="password">
+          <div className="grid w-full max-w-sm items-center gap-1 text-left max-[650px]:mx-auto">
+            <Label className="text-cinza_destaque" htmlFor="password">
               Senha
             </Label>
             <div>
@@ -68,7 +68,7 @@ export const SignInForm = (props: SignInFormsProps) => {
         </div>
         <Button
           onClick={props.handleSignIn}
-          className="relative w-full max-w-sm overflow-hidden bg-[#C43D3D] text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-[#622631] before:duration-200 before:ease-out hover:bg-[#622631] hover:shadow-[#ff332852] hover:before:h-96 hover:before:w-96"
+          className="relative w-full max-w-sm overflow-hidden bg-vermelho_botao_1 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-[#772b39] before:duration-200 before:ease-out hover:bg-[#772b39] hover:shadow-[#ff332852] hover:before:h-96 hover:before:w-96"
         >
           <span className="relative z-10">Entrar</span>
         </Button>

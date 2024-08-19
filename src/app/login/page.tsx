@@ -15,8 +15,8 @@ export default function Login() {
         </div>
       </div>
       <div className="row-start-2 self-center">
-        <div className="ml-20 space-y-10 max-[650px]:ml-0">
-          <h1 className="mb-16 font-aldrich text-5xl text-white max-[1400px]:text-4xl max-[650px]:mx-2 max-[650px]:text-center max-[425px]:text-3xl">
+        <div className="ml-20 space-y-6 max-[650px]:ml-0">
+          <h1 className="mb-12 font-aldrich text-5xl text-white max-[1400px]:text-4xl max-[650px]:mx-2 max-[650px]:text-center max-[425px]:text-3xl">
             Sistema de Gestão de Estoque
           </h1>
           <p className="font-montserrat text-4xl font-semibold text-white max-[1400px]:text-3xl max-[650px]:mx-2 max-[650px]:text-center max-[425px]:text-2xl">
