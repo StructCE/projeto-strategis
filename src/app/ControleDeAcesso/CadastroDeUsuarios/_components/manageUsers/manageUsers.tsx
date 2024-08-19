@@ -2,8 +2,6 @@ import { TableComponent } from "~/components/table/tableContainer";
 import { TabelaUsuarios } from "./manageUsersTableData";
 import { useUserTable } from "./useUserTabel";
 
-// type ManageUsersProps = {};
-
 export const ManageUsers = () => {
   const { handleDetailsPress } = useUserTable();
 
