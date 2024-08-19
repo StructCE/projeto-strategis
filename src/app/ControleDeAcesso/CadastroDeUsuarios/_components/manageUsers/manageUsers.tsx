@@ -1,6 +1,6 @@
 import { TableComponent } from "~/components/table/tableContainer";
 import { TabelaUsuarios } from "./manageUsersTableData";
-import { useUserTable } from "./useUserTabel";
+import { useUserTable } from "./useUserTable";
 
 export const ManageUsersContainer = () => {
   const { handleDetailsPress } = useUserTable();
