@@ -1,10 +1,17 @@
 import { TableComponent } from "~/components/table/tableContainer";
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { UserEditContainer } from "../editUsers/userEditContainer";
 import { TabelaUsuarios } from "./manageUsersTableData";
-import { useUserTable } from "./useUserTable";
 
 export const ManageUsersContainer = () => {
-  const { handleDetailsPress } = useUserTable();
-
   return (
     <TableComponent>
       <TableComponent.Title>Gerenciar Usuários</TableComponent.Title>
@@ -31,12 +38,23 @@ export const ManageUsersContainer = () => {
             <TableComponent.Value>{usuario.email}</TableComponent.Value>
             <TableComponent.Value>{usuario.empresa}</TableComponent.Value>
             <TableComponent.Value>{usuario.cargo}</TableComponent.Value>
-            <TableComponent.LineButton
-              className="bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
-              handlePress={() => handleDetailsPress(usuario)}
-            >
-              Detalhes
-            </TableComponent.LineButton>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                  Detalhes
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-7xl">
+                <DialogHeader>
+                  <DialogTitle>
+                    Utilize os campos abaixo para editar os dados do usuário ou
+                    o botão para remover
+                  </DialogTitle>
+                  <UserEditContainer {...usuario} />
+                  <DialogDescription></DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </TableComponent.Line>
         ))}
       </TableComponent.Table>

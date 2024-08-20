@@ -1,7 +1,10 @@
-export const useUserTable = () => {
-  function handleDetailsPress(usuario: { email: string }) {
-    console.log(`Abre Pop Up do Usuário: ${usuario.email}`);
-  }
-
-  return { handleDetailsPress };
+export type User = {
+  nome: string;
+  email: string;
+  senha: string;
+  senhaConfirmacao: string;
+  telefone: string;
+  cargoId: number;
+  cargo: string;
+  empresa: string;
 };
