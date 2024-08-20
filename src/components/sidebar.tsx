@@ -9,6 +9,7 @@ import {
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { ScrollArea } from "./ui/scroll-area";
+import SidebarButton from "./sidebar-button";
 
 const sidebarButtons = {
   "Configurações Gerais": [
@@ -68,15 +69,11 @@ export function Sidebar() {
 
               {items.map((item, itemIndex) => (
                 <AccordionContent className="flex-row p-1" key={itemIndex}>
-                  <Button className="my-0 flex w-full items-center justify-start gap-2 bg-transparent py-0 text-xs hover:!bg-vermelho_strategis">
-                    <SidebarIcon
-                      src={item.src}
-                      width={20}
-                      height={20}
-                      alt={item.src}
-                    />
-                    {item.name}
-                  </Button>
+                  <SidebarButton
+                    src={item.src}
+                    name={item.name}
+                    disabled={false} //TODO: logica para habilitar o botão
+                  />
                 </AccordionContent>
               ))}
             </AccordionItem>
