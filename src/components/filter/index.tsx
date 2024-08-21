@@ -10,8 +10,6 @@ import {
 } from "~/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
-import { Button } from "../ui/button";
-import { format } from "date-fns";
 
 type FilterProps = {
   className?: string;
@@ -45,7 +43,7 @@ type FilterInputProps = {
 
 Filter.Input = function FilterInput(props: FilterInputProps) {
   const style = cn(
-    " border-none bg-transparent font-inter text-[16px] text-[#000000] placeholder-opacity-50 opacity-100 outline-none focus:outline-none",
+    "border-none bg-transparent font-inter text-[16px] text-[#000000] placeholder-opacity-50 opacity-100 outline-none focus:outline-none",
     props.className,
   );
   return (
@@ -106,31 +104,36 @@ Filter.SelectItems = function FilterSelectItems(props: FilterSelectItemsProps) {
 
 type FilterDatePickerProps = {
   className?: string;
-  date: Date;
-  setDate: (value: Date) => void;
+  date: Date | undefined;
+  setDate: (value: Date | undefined) => void;
+  open: boolean;
+  setOpen: (value: boolean) => void;
 };
 
 Filter.DatePicker = function FilterDatePicker(props: FilterDatePickerProps) {
   const style = cn(
-    "w-[280px] justify-start text-left font-normal",
-    !props.date && "text-muted-foreground",
+    "rounded-0 font-regular m-0 mr-[4px] justify-start bg-transparent p-0 font-inter text-[16px] opacity-50 hover:bg-accent",
     props.className,
   );
   return (
     <div>
-      <Popover>
+      <Popover open={props.open} onOpenChange={props.setOpen}>
         <PopoverTrigger asChild>
-          <Button variant={"outline"} className={style}>
-            {props.date ? format(props.date, "PPP") : <span>Pick a date</span>}
-          </Button>
+          <button className={style}>
+            {props.date ? (
+              `${String(props.date.getDate()).padStart(2, "0")}/${String(props.date.getMonth() + 1).padStart(2, "0")}/${props.date.getFullYear()}`
+            ) : (
+              <span>Pick a date</span>
+            )}
+          </button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0">
+        <PopoverContent className="m-0 w-auto">
           <Calendar
             required
             mode="single"
             selected={props.date}
             onSelect={props.setDate}
-          />
+          ></Calendar>
         </PopoverContent>
       </Popover>
     </div>
