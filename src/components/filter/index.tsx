@@ -8,24 +8,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
+import { Button } from "../ui/button";
+import { format } from "date-fns";
 
 type FilterProps = {
   className?: string;
   children: React.ReactNode;
-  icon: ({ className }: { className: string }) => React.ReactNode;
 };
 
 export const Filter = (props: FilterProps) => {
   const style = cn(
-    "flex items-center justify-center rounded-[12px] bg-filtro px-[12px] py-[6px] gap-[10px]",
+    "flex items-center justify-center rounded-[12px] bg-filtro bg-opacity-50 px-[12px] py-[6px] gap-[14px]",
     props.className,
   );
-  return (
-    <div className={style}>
-      <props.icon className={"size-[16px] stroke-[1.5px]"}></props.icon>
-      {props.children}
-    </div>
-  );
+  return <div className={style}>{props.children}</div>;
+};
+
+type FilterIconProps = {
+  className?: string;
+  icon: ({ className }: { className: string }) => React.ReactNode;
+};
+
+Filter.Icon = function FilterIcon(props: FilterIconProps) {
+  const style = cn("size-[16px] stroke-[1.5px]", props.className);
+  return <props.icon className={style}></props.icon>;
 };
 
 type FilterInputProps = {
@@ -37,7 +45,7 @@ type FilterInputProps = {
 
 Filter.Input = function FilterInput(props: FilterInputProps) {
   const style = cn(
-    "bg-trasnparent font-inter  text-[#000000] opacity-100 placeholder-opacity-50",
+    " border-none bg-transparent font-inter text-[16px] text-[#000000] placeholder-opacity-50 opacity-100 outline-none focus:outline-none",
     props.className,
   );
   return (
@@ -61,7 +69,7 @@ type FilterSelectProps = {
 
 Filter.Select = function FilterSelect(props: FilterSelectProps) {
   const style = cn(
-    "w-fit gap-[10px] border-none bg-transparent font-inter text-[20px] font-regular text-[#000000] opacity-100 placeholder:opacity-50",
+    "w-fit h-auto gap-[14px] bg-transparent font-inter text-[16px] font-regular text-[#000000] opacity-100 data-[placeholder]:opacity-50 m-0 p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent",
     props.className,
   );
   return (
@@ -69,10 +77,10 @@ Filter.Select = function FilterSelect(props: FilterSelectProps) {
       value={props.state}
       onValueChange={(value) => props.setState(value)}
     >
-      <SelectTrigger className={style + "placeholder-opacity-10"}>
+      <SelectTrigger className={style}>
         <SelectValue placeholder={props.placeholder} />
       </SelectTrigger>
-      <SelectContent className="bg-transparent">
+      <SelectContent>
         <SelectGroup>{props.children}</SelectGroup>
       </SelectContent>
     </Select>
@@ -93,5 +101,38 @@ Filter.SelectItems = function FilterSelectItems(props: FilterSelectItemsProps) {
     <SelectItem className={style} value={props.value}>
       {props.value}
     </SelectItem>
+  );
+};
+
+type FilterDatePickerProps = {
+  className?: string;
+  date: Date;
+  setDate: (value: Date) => void;
+};
+
+Filter.DatePicker = function FilterDatePicker(props: FilterDatePickerProps) {
+  const style = cn(
+    "w-[280px] justify-start text-left font-normal",
+    !props.date && "text-muted-foreground",
+    props.className,
+  );
+  return (
+    <div>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant={"outline"} className={style}>
+            {props.date ? format(props.date, "PPP") : <span>Pick a date</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            required
+            mode="single"
+            selected={props.date}
+            onSelect={props.setDate}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 };
