@@ -1,5 +1,5 @@
-import SidebarIcon from "./sidebar-icon";
-import { Button } from "./ui/button";
+import SidebarIcon from "./icon";
+import { Button } from "../ui/button";
 
 export default function SidebarButton({
   src,

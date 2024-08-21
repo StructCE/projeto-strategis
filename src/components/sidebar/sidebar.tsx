@@ -1,15 +1,13 @@
-import Link from "next/link";
-import SidebarIcon from "./sidebar-icon";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "./ui/accordion";
-import { Button } from "./ui/button";
-import Image from "next/image";
-import { ScrollArea } from "./ui/scroll-area";
-import SidebarButton from "./sidebar-button";
+} from "../ui/accordion";
+
+import { ScrollArea } from "../ui/scroll-area";
+import SidebarButton from "./button";
+import SidebarLogo from "./logo";
 
 const sidebarButtons = {
   "Configurações Gerais": [
@@ -53,15 +51,13 @@ const sidebarButtons = {
 export function Sidebar() {
   return (
     <aside className="fixed top-0 h-screen w-1/5 bg-fundo_sidebar text-white">
-      <div className="flex h-fit w-full items-center justify-center p-4">
-        <Link href="/">
-          <Image src="/logo-strategis.svg" width={180} height={54} alt="logo" />
-        </Link>
-      </div>
+      <SidebarLogo/>
 
+    
       <ScrollArea className="w-full overflow-y-auto">
         <Accordion type="multiple" className="max-h-screen w-full">
           {Object.entries(sidebarButtons).map(([category, items], index) => (
+
             <AccordionItem className="" key={index} value={`item-${index + 1}`}>
               <AccordionTrigger className="text-base">
                 {category}
@@ -77,7 +73,9 @@ export function Sidebar() {
                 </AccordionContent>
               ))}
             </AccordionItem>
+            
           ))}
+      
         </Accordion>
       </ScrollArea>
     </aside>
