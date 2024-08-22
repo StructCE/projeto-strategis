@@ -1,7 +1,7 @@
 "use client";
-import { Filter } from "~/components/filter";
 import { BookMarked, Calendar as CalendarIcon, Search } from "lucide-react";
 import { useState } from "react";
+import { Filter } from "~/components/filter";
 
 const FilterSelectExample = ({
   state,
@@ -68,7 +68,7 @@ export default function FilterExample() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
   return (
-    <div className="flex h-screen w-screen items-center justify-center gap-[20px]">
+    <div className="flex h-screen w-full flex-col items-center justify-center gap-[12px] sm:flex-row sm:gap-[20px]">
       <FilterSelectExample state={select} setState={setSelect} />
       <FilterInputExample state={input} setState={setInput} />
       <FilterDatePickerExample
