@@ -7,7 +7,6 @@ import {
 
 import { ScrollArea } from "../ui/scroll-area";
 import SidebarButton from "./button";
-import SidebarLogo from "./logo";
 
 const sidebarButtons = {
   "Configurações Gerais": [
@@ -50,28 +49,30 @@ const sidebarButtons = {
 
 export function SidebarContent() {
   return (
-    // <aside className="fixed top-0 h-screen w-1/5 ">
-    //* <SidebarLogo/> */
+    <ScrollArea className="w-fill h-[90vh] bg-fundo_sidebar text-white">
+      <Accordion type="multiple" className="h-fit w-full mb-10">
+        {Object.entries(sidebarButtons).map(([category, items], index) => (
+          <AccordionItem
+            className="pb-2"
+            key={index}
+            value={`item-${index + 1}`}
+          >
+            <AccordionTrigger className="text-base">
+              {category}
+            </AccordionTrigger>
 
-    // <ScrollArea className="w-fill overflow-y-auto bg-fundo_sidebar text-white">
-    <Accordion type="multiple" className="max-h-screen w-full">
-      {Object.entries(sidebarButtons).map(([category, items], index) => (
-        <AccordionItem className="" key={index} value={`item-${index + 1}`}>
-          <AccordionTrigger className="text-base">{category}</AccordionTrigger>
-
-          {items.map((item, itemIndex) => (
-            <AccordionContent className="flex-row p-1" key={itemIndex}>
-              <SidebarButton
-                src={item.src}
-                name={item.name}
-                disabled={false} //TODO: logica para habilitar o botão
-              />
-            </AccordionContent>
-          ))}
-        </AccordionItem>
-      ))}
-    </Accordion>
-    // </ScrollArea>
-    //* </aside> */}
+            {items.map((item, itemIndex) => (
+              <AccordionContent className="flex-row p-1" key={itemIndex}>
+                <SidebarButton
+                  src={item.src}
+                  name={item.name}
+                  disabled={false} //TODO: logica para habilitar o botão
+                />
+              </AccordionContent>
+            ))}
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </ScrollArea>
   );
 }

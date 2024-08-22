@@ -10,19 +10,18 @@ export default function SidebarButton({
   name: string;
   disabled: boolean;
 }) {
-  if (!disabled) {
-    return (
-      <Button className="my-0 flex w-full items-center justify-start gap-2 bg-transparent py-0 text-xs hover:!bg-vermelho_strategis">
+  return (
+    <Button
+      className={`my-0 flex w-full items-center justify-start gap-2 bg-transparent py-0 text-xs ${
+        disabled
+          ? "opacity-40 hover:!bg-transparent"
+          : "hover:!bg-vermelho_strategis"
+      }`}
+    >
+      <span>
         <SidebarIcon src={src} width={20} height={20} alt={src} />
-        {name}
-      </Button>
-    );
-  } else {
-    return (
-      <Button className="my-0 flex w-full items-center justify-start gap-2 bg-transparent py-0 text-xs opacity-40 hover:!bg-transparent">
-        <SidebarIcon src={src} width={20} height={20} alt={src} />
-        {name}
-      </Button>
-    );
-  }
+      </span>
+      <span className="whitespace-normal text-left">{name}</span>
+    </Button>
+  );
 }
