@@ -68,6 +68,21 @@ TableComponent.Line = function TableComponentLine(
   return <div className={style}>{props.children}</div>;
 };
 
+type TableComponentFiltersLineProps = {
+  className?: string;
+  children: React.ReactNode;
+};
+
+TableComponent.FiltersLine = function TableComponentFiltersLine(
+  props: TableComponentFiltersLineProps,
+) {
+  const style = cn(
+    "flex sm:flex-row flex-col mt-1 sm:gap-[16px] gap-[12px]",
+    props.className,
+  );
+  return <div className={style}>{props.children}</div>;
+};
+
 type TableComponentLineTitleProps = {
   className?: string;
   children: React.ReactNode;

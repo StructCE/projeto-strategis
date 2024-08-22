@@ -1,4 +1,5 @@
 import { TableComponent } from "~/components/table/tableContainer";
+import ManageUsersFilters from "./manageUsersFilters/manageUsersFilters";
 import { TabelaUsuarios } from "./manageUsersTableData";
 
 type ManageUsersTableProps = {
@@ -12,7 +13,9 @@ export const ManageUsersTable = (props: ManageUsersTableProps) => {
       <TableComponent.Subtitle>
         Selecione um usuário para editar ou remover
       </TableComponent.Subtitle>
-      <TableComponent.Subtitle>FILTROS AQUI</TableComponent.Subtitle>
+      <TableComponent.FiltersLine>
+        <ManageUsersFilters />
+      </TableComponent.FiltersLine>
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[repeat(4,_1fr)_130px]">
           <TableComponent.ValueTitle>Nome</TableComponent.ValueTitle>
@@ -33,7 +36,7 @@ export const ManageUsersTable = (props: ManageUsersTableProps) => {
             <TableComponent.Value>{usuario.empresa}</TableComponent.Value>
             <TableComponent.Value>{usuario.cargo}</TableComponent.Value>
             <TableComponent.LineButton
-              className="bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
+              className="hover:bg-hover_cinza_destaque bg-cinza_destaque text-black"
               handlePress={() => props.handleDetailsPress(usuario)}
             >
               Detalhes

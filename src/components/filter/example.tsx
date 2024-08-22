@@ -1,7 +1,7 @@
 "use client";
 import { BookMarked, Calendar as CalendarIcon, Search } from "lucide-react";
 import { useState } from "react";
-import { Filter } from "~/components/filter";
+import { Filter } from "~/components/filter/filterContainer";
 
 const FilterSelectExample = ({
   state,

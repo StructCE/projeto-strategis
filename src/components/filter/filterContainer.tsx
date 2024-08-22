@@ -30,7 +30,7 @@ type FilterIconProps = {
 };
 
 Filter.Icon = function FilterIcon(props: FilterIconProps) {
-  const style = cn("size-[16px] stroke-[1.5px]", props.className);
+  const style = cn("size-[20px] stroke-[1.5px]", props.className);
   return <props.icon className={style}></props.icon>;
 };
 
@@ -67,7 +67,7 @@ type FilterSelectProps = {
 
 Filter.Select = function FilterSelect(props: FilterSelectProps) {
   const style = cn(
-    "h-auto gap-[14px] bg-transparent font-inter text-[16px] font-regular text-black opacity-100 data-[placeholder]:opacity-50 m-0 p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent",
+    "h-auto gap-[14px] bg-transparent font-inter text-[16px] font-regular text-black opacity-100 data-[placeholder]:opacity-50 m-0 p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0",
     props.className,
   );
   return (
@@ -92,7 +92,7 @@ type FilterSelectItemsProps = {
 
 Filter.SelectItems = function FilterSelectItems(props: FilterSelectItemsProps) {
   const style = cn(
-    "font-regular font-inter text-[16px] text-black",
+    "font-regular font-inter text-[16px] text-black mr-6 border-none focus:outline-none focus:ring-0 focus:border-transparent ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0",
     props.className,
   );
   return (

@@ -30,3 +30,39 @@ export const TabelaUsuarios = [
     cargo: "Personalizado",
   },
 ];
+
+export const Empresas = [
+  {
+    nome: "Empresa 1",
+  },
+  {
+    nome: "Empresa 2",
+  },
+  {
+    nome: "Empresa 3",
+  },
+  {
+    nome: "Empresa 4",
+  },
+  {
+    nome: "Empresa 5",
+  },
+];
+
+export const Cargos = [
+  {
+    nome: "Administrador",
+  },
+  {
+    nome: "Operador",
+  },
+  {
+    nome: "Estoquista",
+  },
+  {
+    nome: "Requisitante",
+  },
+  {
+    nome: "Personalizado 1",
+  },
+];

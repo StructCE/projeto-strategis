@@ -15,7 +15,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
-      <body className="min-h-screen w-screen overflow-x-hidden">
+      <body className="min-h-screen w-screen overflow-x-hidden bg-fundo_branco">
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
