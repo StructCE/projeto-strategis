@@ -12,7 +12,7 @@ export default function SidebarButton({
 }) {
   return (
     <Button
-      className={`my-0 flex w-full items-center justify-start gap-2 bg-transparent py-0 text-xs ${
+      className={`my-0 flex w-full items-center justify-start gap-2 bg-transparent py-0 text-lg sm:text-sm ${
         disabled
           ? "opacity-40 hover:!bg-transparent"
           : "hover:!bg-vermelho_strategis"

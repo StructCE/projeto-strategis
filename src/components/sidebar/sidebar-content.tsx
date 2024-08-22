@@ -49,15 +49,15 @@ const sidebarButtons = {
 
 export function SidebarContent() {
   return (
-    <ScrollArea className="w-fill h-[90vh] bg-fundo_sidebar text-white">
-      <Accordion type="multiple" className="h-fit w-full mb-10">
+    <ScrollArea className="w-fill h-[90vh]">
+      <Accordion type="multiple" className="mb-10 h-fit w-full">
         {Object.entries(sidebarButtons).map(([category, items], index) => (
           <AccordionItem
             className="pb-2"
             key={index}
             value={`item-${index + 1}`}
           >
-            <AccordionTrigger className="text-base">
+            <AccordionTrigger className="text-xl sm:text-base">
               {category}
             </AccordionTrigger>
 
