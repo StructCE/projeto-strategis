@@ -57,7 +57,7 @@ export function SidebarContent() {
             key={index}
             value={`item-${index + 1}`}
           >
-            <AccordionTrigger className="text-xl sm:text-base">
+            <AccordionTrigger className="text-2xl sm:text-base">
               {category}
             </AccordionTrigger>
 
