@@ -48,36 +48,30 @@ const sidebarButtons = {
   ],
 };
 
-export function Sidebar() {
+export function SidebarContent() {
   return (
-    <aside className="fixed top-0 h-screen w-1/5 bg-fundo_sidebar text-white">
-      <SidebarLogo/>
+    // <aside className="fixed top-0 h-screen w-1/5 ">
+    //* <SidebarLogo/> */
 
-    
-      <ScrollArea className="w-full overflow-y-auto">
-        <Accordion type="multiple" className="max-h-screen w-full">
-          {Object.entries(sidebarButtons).map(([category, items], index) => (
+    // <ScrollArea className="w-fill overflow-y-auto bg-fundo_sidebar text-white">
+    <Accordion type="multiple" className="max-h-screen w-full">
+      {Object.entries(sidebarButtons).map(([category, items], index) => (
+        <AccordionItem className="" key={index} value={`item-${index + 1}`}>
+          <AccordionTrigger className="text-base">{category}</AccordionTrigger>
 
-            <AccordionItem className="" key={index} value={`item-${index + 1}`}>
-              <AccordionTrigger className="text-base">
-                {category}
-              </AccordionTrigger>
-
-              {items.map((item, itemIndex) => (
-                <AccordionContent className="flex-row p-1" key={itemIndex}>
-                  <SidebarButton
-                    src={item.src}
-                    name={item.name}
-                    disabled={false} //TODO: logica para habilitar o botão
-                  />
-                </AccordionContent>
-              ))}
-            </AccordionItem>
-            
+          {items.map((item, itemIndex) => (
+            <AccordionContent className="flex-row p-1" key={itemIndex}>
+              <SidebarButton
+                src={item.src}
+                name={item.name}
+                disabled={false} //TODO: logica para habilitar o botão
+              />
+            </AccordionContent>
           ))}
-      
-        </Accordion>
-      </ScrollArea>
-    </aside>
+        </AccordionItem>
+      ))}
+    </Accordion>
+    // </ScrollArea>
+    //* </aside> */}
   );
 }
