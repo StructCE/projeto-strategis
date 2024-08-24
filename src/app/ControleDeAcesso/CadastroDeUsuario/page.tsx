@@ -3,7 +3,7 @@ import { ManageUsersContainer } from "./_components/manageUsers/manageUsersConta
 
 export default function UsersRegister() {
   return (
-    <div className="flex w-full flex-col gap-4 bg-fundo_branco p-4 pb-32 sm:p-8 sm:pb-8">
+    <div className="flex w-full flex-col gap-4 bg-fundo_branco">
       <UserRegisterContainer />
       <ManageUsersContainer />
     </div>
