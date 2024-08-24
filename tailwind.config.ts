@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        inter: ["Inter", "sans-serif"],
+        sans: ["var(--font-inter)"],
         montserrat: ["Montserrat", "sans-serif"],
       },
       fontWeight: {

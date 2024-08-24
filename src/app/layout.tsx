@@ -1,8 +1,14 @@
 import "~/styles/globals.css";
+import { Inter } from "next/font/google";
 
 import { type Metadata } from "next";
 
 import { TRPCReactProvider } from "~/trpc/react";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: "SGE - Strategis",
@@ -15,7 +21,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
-      <body className="min-h-screen w-screen overflow-x-hidden">
+      <body
+        className={`${inter.variable} min-h-screen w-screen overflow-x-hidden font-sans`}
+      >
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
