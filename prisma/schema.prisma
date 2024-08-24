@@ -46,13 +46,18 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime? @map("email_verified")
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id               String    @id @default(cuid())
+    nome             String?
+    email            String?   @unique
+    emailConfirmacao DateTime? @map("email_verified")
+    senha            String
+    senhaConfirmacao String
+    telefone         String?
+    image            String?
+    accounts         Account[]
+    sessions         Session[]
+    cargo            Cargo     @relation(fields: [cargoId], references: [id])
+    cargoId          Int
 
     @@map("users")
 }
@@ -63,4 +68,26 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Cargo {
+    id      Int           @id @default(autoincrement())
+    nome    String
+    modulos ModuloCargo[]
+    users   User[]
+}
+
+model Modulo {
+    id       Int           @id @default(autoincrement())
+    operacao String
+    cargos   ModuloCargo[]
+}
+
+model ModuloCargo {
+    cargoId  Int
+    moduloId Int
+    cargo    Cargo  @relation(fields: [cargoId], references: [id])
+    modulo   Modulo @relation(fields: [moduloId], references: [id])
+
+    @@id([cargoId, moduloId]) // Chave composta
 }
