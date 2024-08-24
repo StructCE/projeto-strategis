@@ -1,11 +1,10 @@
 "use client";
-
-import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "../ui/sheet";
-import SidebarLogo from "./logo";
-import { SidebarContent } from "./sidebar-content";
+import { Sidebar as SidebarContent } from "./sidebar";
+import SidebarLogo from "./sidebarLogo";
 
 export function Sidebar() {
   const [side, setSide] = useState<"left" | "top" | "bottom" | "right">("left");
@@ -35,7 +34,7 @@ export function Sidebar() {
 
       <SheetContent
         side={side}
-        className="h-screen bg-fundo_sidebar p-0 text-white border-none"
+        className="h-screen w-full border-none bg-fundo_sidebar p-0 text-white sm:w-[330px]"
       >
         <SheetHeader>
           <SidebarLogo />
