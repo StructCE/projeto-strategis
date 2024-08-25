@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type User } from "../manageUsers/useUserTable";
+import { type User } from "../usersData";
 import {
   editUserFormSchema,
   type EditUserFormValues,

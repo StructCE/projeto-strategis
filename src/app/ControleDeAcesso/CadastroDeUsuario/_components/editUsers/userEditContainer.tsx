@@ -1,5 +1,5 @@
 "use client";
-import { type User } from "../manageUsers/useUserTable";
+import { type User } from "../usersData";
 import { useUserForm } from "./useUserForm";
 import { UserEdit } from "./userEdit";
 

@@ -1,4 +1,15 @@
-export const TabelaUsuarios = [
+export type User = {
+  nome: string;
+  email: string;
+  senha: string;
+  senhaConfirmacao: string;
+  telefone: string;
+  cargoId: number;
+  cargo: string;
+  empresa: string;
+};
+
+export const Usuarios = [
   {
     nome: "Nome do Usuário 1",
     email: "usuario1@gmail.com",
@@ -44,35 +55,45 @@ export const TabelaUsuarios = [
 export const Empresas = [
   {
     nome: "Empresa 1",
+    value: "Empresa 1",
   },
   {
     nome: "Empresa 2",
+    value: "Empresa 2",
   },
   {
     nome: "Empresa 3",
+    value: "Empresa 3",
   },
   {
     nome: "Empresa 4",
+    value: "Empresa 4",
   },
   {
     nome: "Empresa 5",
+    value: "Empresa 5",
   },
 ];
 
 export const Cargos = [
   {
     nome: "Administrador",
+    value: "Administrador",
   },
   {
     nome: "Operador",
+    value: "Operador",
   },
   {
     nome: "Estoquista",
+    value: "Estoquista",
   },
   {
     nome: "Requisitante",
+    value: "Requisitante",
   },
   {
     nome: "Personalizado 1",
+    value: "Personalizado 1",
   },
 ];

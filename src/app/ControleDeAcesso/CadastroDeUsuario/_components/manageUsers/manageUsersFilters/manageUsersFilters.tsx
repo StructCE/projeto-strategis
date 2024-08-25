@@ -1,7 +1,7 @@
 import { Building2, Search, UserCog } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter/filterContainer";
-import { Cargos, Empresas } from "../manageUsersTableData";
+import { Cargos, Empresas } from "../../usersData";
 
 export default function ManageUsersFilters() {
   const [inputNome, setInputNome] = useState("");
