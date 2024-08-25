@@ -15,17 +15,16 @@ export function SidebarContent() {
     <ScrollArea className="w-fill">
       <Accordion type="multiple" className="mb-0 w-full">
         {Object.entries(sidebarButtons).map(([category, items], index) => (
-          <AccordionItem
-            className="pb-0"
-            key={index}
-            value={`item-${index + 1}`}
-          >
+          <AccordionItem className="" key={index} value={`item-${index + 1}`}>
             <AccordionTrigger className="pb-0 text-base sm:text-lg">
               {category}
             </AccordionTrigger>
 
             {items.map((item, itemIndex) => (
-              <AccordionContent className="flex-row p-[5px]" key={itemIndex}>
+              <AccordionContent
+                className="flex-row p-[5px] pb-2 pt-[3px]"
+                key={itemIndex}
+              >
                 <SidebarButton
                   iconSource={item.iconSource}
                   refLink={item.linkRef}
