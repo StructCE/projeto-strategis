@@ -2,7 +2,7 @@ import { ProductsRegisterContainer } from "./_components/productsRegisterContain
 
 export default function ProductsRegister() {
   return (
-    <div className="h-screen w-full p-4 sm:p-8">
+    <div className="h-screen w-full">
       <ProductsRegisterContainer />
     </div>
   );

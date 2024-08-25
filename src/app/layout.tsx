@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 
+import SidebarContainer from "~/components/sidebar/sidebarContainer";
 import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="min-h-screen w-screen overflow-x-hidden bg-fundo_branco">
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <SidebarContainer>
+          <TRPCReactProvider>{children}</TRPCReactProvider>
+        </SidebarContainer>
       </body>
     </html>
   );
