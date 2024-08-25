@@ -1,12 +1,9 @@
 import { TableComponent } from "~/components/table/tableContainer";
-import ManageUsersFilters from "./manageUsersFilters/manageUsersFilters";
 import { TabelaUsuarios } from "./manageUsersTableData";
 
-type ManageUsersTableProps = {
-  handleDetailsPress: ({ email }: { email: string }) => void;
-};
+export const ManageUsersContainer = () => {
+  const { handleDetailsPress } = useUserTable();
 
-export const ManageUsersTable = (props: ManageUsersTableProps) => {
   return (
     <TableComponent>
       <TableComponent.Title>Gerenciar Usuários</TableComponent.Title>
@@ -35,12 +32,23 @@ export const ManageUsersTable = (props: ManageUsersTableProps) => {
             <TableComponent.Value>{usuario.email}</TableComponent.Value>
             <TableComponent.Value>{usuario.empresa}</TableComponent.Value>
             <TableComponent.Value>{usuario.cargo}</TableComponent.Value>
-            <TableComponent.LineButton
-              className="hover:bg-hover_cinza_destaque bg-cinza_destaque text-black"
-              handlePress={() => props.handleDetailsPress(usuario)}
-            >
-              Detalhes
-            </TableComponent.LineButton>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                  Detalhes
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-7xl">
+                <DialogHeader>
+                  <DialogTitle className="pb-1.5">
+                    Utilize os campos abaixo para editar os dados do usuário ou
+                    o botão para remover
+                  </DialogTitle>
+                  <UserEditContainer {...usuario} />
+                  <DialogDescription></DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </TableComponent.Line>
         ))}
       </TableComponent.Table>
