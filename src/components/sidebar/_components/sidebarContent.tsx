@@ -4,8 +4,8 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "../ui/accordion";
-import { ScrollArea } from "../ui/scroll-area";
+} from "../../ui/accordion";
+import { ScrollArea } from "../../ui/scroll-area";
 import SidebarButton from "./sidebarButton";
 import { sidebarButtons } from "./sidebarButtonsData";
 

@@ -3,8 +3,8 @@ import { Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "../ui/sheet";
-import { Sidebar as SidebarContent } from "./sidebarContent";
-import SidebarLogo from "./sidebarLogo";
+import { Sidebar as SidebarContent } from "./_components/sidebarContent";
+import SidebarLogo from "./_components/sidebarLogo";
 
 export function Sidebar() {
   const [side, setSide] = useState<"left" | "top" | "bottom" | "right">("left");
