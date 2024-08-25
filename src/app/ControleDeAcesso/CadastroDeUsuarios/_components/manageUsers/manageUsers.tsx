@@ -46,7 +46,7 @@ export const ManageUsersContainer = () => {
               </DialogTrigger>
               <DialogContent className="sm:max-w-7xl">
                 <DialogHeader>
-                  <DialogTitle>
+                  <DialogTitle className="pb-1.5">
                     Utilize os campos abaixo para editar os dados do usuário ou
                     o botão para remover
                   </DialogTitle>
