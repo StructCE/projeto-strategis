@@ -24,7 +24,9 @@ export const AccessProfileRegister = (props: AccessProfileRegisterProps) => {
     <Form {...props.form}>
       <form onSubmit={props.form.handleSubmit(props.onSubmit)}>
         <FormComponent>
-          <FormComponent.Title>Cadastro de Peril de Acesso</FormComponent.Title>
+          <FormComponent.Title>
+            Cadastro de Perfil de Acesso
+          </FormComponent.Title>
 
           <FormComponent.Line>
             <FormComponent.Frame>
@@ -37,7 +39,7 @@ export const AccessProfileRegister = (props: AccessProfileRegisterProps) => {
                     <FormControl>
                       <Input
                         className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Nome do perfil de acesso (cargo)"
+                        placeholder="Nome do 'cargo'"
                         {...field}
                       />
                     </FormControl>
@@ -70,9 +72,6 @@ export const AccessProfileRegister = (props: AccessProfileRegisterProps) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
-              Criar Perfil de Acesso
-            </FormComponent.Button>
             <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
               Criar Perfil de Acesso
             </FormComponent.Button>
