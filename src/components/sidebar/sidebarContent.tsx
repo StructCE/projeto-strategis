@@ -9,7 +9,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import SidebarButton from "./sidebarButton";
 import { sidebarButtons } from "./sidebarButtonsData";
 
-export function Sidebar() {
+export function SidebarContent() {
   const buttonRef = useRef<HTMLAnchorElement>(null);
   return (
     <ScrollArea className="w-fill">

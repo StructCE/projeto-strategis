@@ -1,5 +1,5 @@
 "use client";
-import { Sidebar as SidebarContent } from "./sidebar";
+import { SidebarContent } from "./sidebarContent";
 import SidebarLogo from "./sidebarLogo";
 
 export default function SidebarContainer({

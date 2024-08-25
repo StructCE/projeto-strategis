@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import SidebarIcon from "./sidebarIcon";
 
 export default function SidebarButton({
@@ -15,6 +16,8 @@ export default function SidebarButton({
   refLink: string;
   disabled: boolean;
 }) {
+  const pathname = usePathname();
+
   return (
     <Link
       ref={buttonRef}
@@ -22,7 +25,7 @@ export default function SidebarButton({
         disabled
           ? "opacity-40 hover:!bg-transparent"
           : "hover:!bg-vermelho_strategis"
-      }`}
+      } ${pathname === refLink ? "bg-vermelho_strategis" : ""}`}
       href={refLink}
     >
       <span>

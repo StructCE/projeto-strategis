@@ -3,7 +3,7 @@ import { Menu } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "../ui/sheet";
-import { Sidebar as SidebarContent } from "./sidebar";
+import { Sidebar as SidebarContent } from "./sidebarContent";
 import SidebarLogo from "./sidebarLogo";
 
 export function Sidebar() {
