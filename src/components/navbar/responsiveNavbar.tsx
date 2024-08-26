@@ -1,11 +1,37 @@
+"use client";
+import { Menu } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "~/components/ui/accordion";
+import { SidebarContent } from "../sidebar/_components/sidebarContent";
 import { NavbarDropdown } from "./_components/navbarDropdown";
 import { NavbarSelect } from "./_components/navbarSelect";
 import { Empresas, UserData } from "./_components/userData";
 
-export default function ResponsiveNavbar() {
+export default function Navbar() {
   return (
-    <nav className="z-10 flex h-[64px] w-full items-center justify-end gap-8 bg-black px-8 sm:h-[74px] sm:gap-12 sm:px-16 lg:h-[87px]">
-      <p>aaaaaaaaaa</p>
+    <nav
+      className={`flex w-screen items-center bg-black px-4 py-3 sm:px-6 sm:py-4`}
+    >
+      <Accordion className="flex w-full border-none" type="single" collapsible>
+        <AccordionItem className="w-full border-none" value="menu">
+          <div className="flex w-full items-center justify-between px-0">
+            <AccordionTrigger className="m-0 p-0">
+              <Menu className="size-[36px]" color="white" />
+            </AccordionTrigger>
+            <div className="flex items-center gap-6 sm:gap-8">
+              <NavbarSelect userData={UserData} empresas={Empresas} />
+              <NavbarDropdown userData={UserData} />
+            </div>
+          </div>
+          <AccordionContent className="mt-4 w-full text-white">
+            <SidebarContent />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </nav>
   );
 }
