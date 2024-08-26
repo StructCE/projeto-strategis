@@ -38,6 +38,7 @@ const config = {
         filtro: "#D6DBD8", // Fundo de filtros
         cinza_destaque: "#DEDEDE", // Botão detalhes, inputs em tabelas
         hover_cinza_destaque: "#D0D0D0",
+        hover_cinza_destaque_escuro: "#BBBBBB",
         cinza_escuro_botao: "#2D3648", // Talvez algum botão
 
         fundo_titulo_relatorio: "#ADB5BD",
@@ -118,6 +119,7 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      
     },
   },
   plugins: [require("tailwindcss-animate")],
