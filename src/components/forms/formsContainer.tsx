@@ -87,7 +87,7 @@ FormComponent.Button = function FormComponentButton(
   const style = cn("px-[20px] py-[8px] rounded-lg min-w-28", props.className);
   return (
     <button onClick={props.handlePress} className={style} type="submit">
-      <p className="text-[12px] font-semibold tracking-wider text-white sm:text-[16px] sm:tracking-normal">
+      <p className="text-[14px] font-semibold tracking-wider text-white sm:text-[16px] sm:tracking-normal">
         {props.children}
       </p>
     </button>
