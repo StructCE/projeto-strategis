@@ -33,7 +33,7 @@ type FormComponentLineProps = {
 
 FormComponent.Line = function FormComponentLine(props: FormComponentLineProps) {
   const style = cn(
-    "flex sm:flex-row flex-col gap-[6px] sm:gap-[12px] w-full",
+    "flex lg:flex-row flex-col gap-[6px] lg:gap-[12px] w-full",
     props.className,
   );
   return <div className={style}>{props.children}</div>;

@@ -77,7 +77,7 @@ TableComponent.FiltersLine = function TableComponentFiltersLine(
   props: TableComponentFiltersLineProps,
 ) {
   const style = cn(
-    "flex sm:flex-row flex-col mt-1 sm:gap-[16px] gap-[12px]",
+    "flex lg:flex-row flex-col mt-1 lg:gap-[16px] gap-[10px]",
     props.className,
   );
   return <div className={style}>{props.children}</div>;

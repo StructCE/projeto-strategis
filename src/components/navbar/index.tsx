@@ -4,7 +4,7 @@ import { Empresas, UserData } from "./_components/userData";
 
 export default function Navbar() {
   return (
-    <nav className="fixed left-0 top-0 z-10 flex h-20 w-full items-center justify-end gap-12 bg-black px-20">
+    <nav className="z-10 flex h-[64px] w-full items-center justify-end gap-8 bg-black px-8 sm:h-[74px] sm:gap-12 sm:px-16 lg:h-[87px]">
       <NavbarSelect userData={UserData} empresas={Empresas} />
       <NavbarDropdown userData={UserData} />
     </nav>

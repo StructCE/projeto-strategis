@@ -18,7 +18,7 @@ type FilterProps = {
 
 export const Filter = (props: FilterProps) => {
   const style = cn(
-    "flex items-center rounded-[12px] bg-filtro bg-opacity-50 px-[16px] py-[6px] gap-[14px] w-full sm:w-auto",
+    "flex items-center rounded-[12px] bg-filtro bg-opacity-50 px-[16px] py-[6px] gap-[14px] w-full lg:w-auto",
     props.className,
   );
   return <div className={style}>{props.children}</div>;
