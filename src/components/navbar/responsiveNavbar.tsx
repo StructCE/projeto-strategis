@@ -13,9 +13,7 @@ import { Empresas, UserData } from "./_components/userData";
 
 export default function Navbar() {
   return (
-    <nav
-      className={`flex w-screen items-center bg-black px-4 py-3 sm:px-6 sm:py-4`}
-    >
+    <nav className="flex w-screen items-center bg-black px-4 py-3 sm:px-6 sm:py-4">
       <Accordion className="flex w-full border-none" type="single" collapsible>
         <AccordionItem className="w-full border-none" value="menu">
           <div className="flex w-full items-center justify-between px-0">
