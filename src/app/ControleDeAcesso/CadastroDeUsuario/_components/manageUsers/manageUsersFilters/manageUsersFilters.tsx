@@ -1,13 +1,17 @@
 import { Building2, Search, UserCog } from "lucide-react";
-import { useState } from "react";
 import { Filter } from "~/components/filter/filterContainer";
 import { Cargos, Empresas } from "../../usersData";
 
-export default function ManageUsersFilters() {
-  const [inputNome, setInputNome] = useState("");
-  const [selectEmpresa, setSelectEmpresa] = useState("");
-  const [selectCargo, setSelectCargo] = useState("");
+type ManageUsersFiltersProps = {
+  inputNome: string;
+  setInputNome: (value: string) => void;
+  selectEmpresa: string;
+  setSelectEmpresa: (value: string) => void;
+  selectCargo: string;
+  setSelectCargo: (value: string) => void;
+};
 
+export default function ManageUsersFilters(props: ManageUsersFiltersProps) {
   return (
     <>
       <Filter>
@@ -18,8 +22,8 @@ export default function ManageUsersFilters() {
         />
         <Filter.Input
           placeholder="Nome do Usuário"
-          state={inputNome}
-          setState={setInputNome}
+          state={props.inputNome}
+          setState={props.setInputNome}
         />
       </Filter>
       <Filter>
@@ -30,8 +34,8 @@ export default function ManageUsersFilters() {
         />
         <Filter.Select
           placeholder="Fornecedor"
-          state={selectEmpresa}
-          setState={setSelectEmpresa}
+          state={props.selectEmpresa}
+          setState={props.setSelectEmpresa}
         >
           {Empresas.map((empresa, index) => (
             <Filter.SelectItems
@@ -49,8 +53,8 @@ export default function ManageUsersFilters() {
         />
         <Filter.Select
           placeholder="Cargo"
-          state={selectCargo}
-          setState={setSelectCargo}
+          state={props.selectCargo}
+          setState={props.setSelectCargo}
         >
           {Cargos.map((cargo, index) => (
             <Filter.SelectItems

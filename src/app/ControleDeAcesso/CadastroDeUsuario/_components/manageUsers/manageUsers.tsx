@@ -10,7 +10,7 @@ import {
 } from "~/components/ui/dialog";
 import { UserEditContainer } from "../editUsers/userEditContainer";
 import { Usuarios } from "../usersData";
-import ManageUsersFilters from "./manageUsersFilters/manageUsersFilters";
+import ManageUsersFiltersContainer from "./manageUsersFilters/manageUsersFiltersContainer";
 
 export const ManageUsersTable = () => {
   return (
@@ -20,7 +20,7 @@ export const ManageUsersTable = () => {
         Selecione um usuário para editar ou remover
       </TableComponent.Subtitle>
       <TableComponent.FiltersLine>
-        <ManageUsersFilters />
+        <ManageUsersFiltersContainer />
       </TableComponent.FiltersLine>
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[repeat(4,_1fr)_130px]">
