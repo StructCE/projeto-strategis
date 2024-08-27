@@ -1,5 +1,5 @@
 import { type UseFormReturn } from "react-hook-form";
-import { FormComponent } from "~/components/forms/formsContainer";
+import { FormComponent } from "~/components/forms";
 import {
   Form,
   FormControl,
@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Cargos, Empresas, type User } from "../usersData";
+import { Cargos, Empresas, type User } from "../../usersData";
 import { type EditUserFormValues } from "./userEditFormSchema";
 
 type UserEditProps = {

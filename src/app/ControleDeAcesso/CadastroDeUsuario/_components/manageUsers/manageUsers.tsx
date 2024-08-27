@@ -1,4 +1,4 @@
-import { TableComponent } from "~/components/table/tableContainer";
+import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { UserEditContainer } from "../editUsers/userEditContainer";
+import { UserEditContainer } from "./editUsers/userEditContainer";
 import { Usuarios } from "../usersData";
 import ManageUsersFiltersContainer from "./manageUsersFilters/manageUsersFiltersContainer";
 

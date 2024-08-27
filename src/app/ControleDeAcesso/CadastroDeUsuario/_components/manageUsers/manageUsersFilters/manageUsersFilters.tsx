@@ -1,5 +1,5 @@
 import { Building2, Search, UserCog } from "lucide-react";
-import { Filter } from "~/components/filter/filterContainer";
+import { Filter } from "~/components/filter";
 import { Cargos, Empresas } from "../../usersData";
 
 type ManageUsersFiltersProps = {
