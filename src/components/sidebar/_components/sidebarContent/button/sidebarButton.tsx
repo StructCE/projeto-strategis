@@ -1,38 +1,32 @@
-"use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import SidebarIcon from "./sidebarIcon";
+import type { LucideProps } from "lucide-react";
+import React from "react";
 
-export default function SidebarButton({
-  iconSource,
-  name,
-  buttonRef,
-  refLink,
-  disabled,
-}: {
-  iconSource: string;
+type SidebarButtonProps = {
+  pathname: string;
   name: string;
   buttonRef?: React.Ref<HTMLAnchorElement>;
   refLink: string;
   disabled: boolean;
-}) {
-  const pathname = usePathname();
+  icon: (props: LucideProps) => React.ReactNode;
+};
 
+export default function SidebarButton(props: SidebarButtonProps) {
   return (
     <Link
-      ref={buttonRef}
+      ref={props.buttonRef}
       className={`my-0 flex w-full items-center justify-start gap-[12px] rounded-[10px] bg-transparent px-[12px] py-[6px] sm:gap-[15px] ${
-        disabled
+        props.disabled
           ? "opacity-40 hover:!bg-transparent"
           : "hover:!bg-vermelho_strategis"
-      } ${pathname === refLink ? "bg-vermelho_strategis" : ""}`}
-      href={refLink}
+      } ${props.pathname === props.refLink ? "bg-vermelho_strategis" : ""}`}
+      href={props.refLink}
     >
       <span>
-        <SidebarIcon iconSource={iconSource} />
+        <props.icon size={20}></props.icon>
       </span>
       <span className="text-semibold whitespace-normal text-left font-inter text-sm sm:text-base">
-        {name}
+        {props.name}
       </span>
     </Link>
   );

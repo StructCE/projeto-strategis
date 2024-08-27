@@ -4,10 +4,10 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "../../ui/accordion";
-import { ScrollArea } from "../../ui/scroll-area";
-import SidebarButton from "./sidebarButton";
-import { sidebarButtons } from "./sidebarButtonsData";
+} from "../../../ui/accordion";
+import { ScrollArea } from "../../../ui/scroll-area";
+import SidebarButton from "./button/sidebarButton";
+import { sidebarButtons } from "./button/sidebarButtonsData";
 
 export function SidebarContent() {
   const buttonRef = useRef<HTMLAnchorElement>(null);
