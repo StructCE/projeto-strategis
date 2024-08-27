@@ -1,18 +1,16 @@
-import SidebarButton from "./sidebarButton";
-import { useSidebarButton } from "./useSidebarButton";
-import type { LucideProps } from "lucide-react";
+import {
+  type UseSideBarButtonReturn,
+  useSidebarButtons,
+} from "./useSidebarButton";
+import React from "react";
 
 type SidebarButtonContainerProps = {
-  name: string;
-  buttonRef?: React.Ref<HTMLAnchorElement>;
-  refLink: string;
-  disabled: boolean;
-  icon: (props: LucideProps) => React.ReactNode;
+  children: (props: UseSideBarButtonReturn) => React.ReactNode[];
 };
 
 export default function SidebarButtonContainer(
   props: SidebarButtonContainerProps,
 ) {
-  const sidebarButton = useSidebarButton();
-  return <SidebarButton {...sidebarButton} {...props} />;
+  const sidebarButtons = useSidebarButtons();
+  return <props.children {...sidebarButtons}></props.children>;
 }

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { LucideProps } from "lucide-react";
 import React from "react";
 
-type SidebarButtonProps = {
+export type SidebarButtonProps = {
   pathname: string;
   name: string;
   buttonRef?: React.Ref<HTMLAnchorElement>;

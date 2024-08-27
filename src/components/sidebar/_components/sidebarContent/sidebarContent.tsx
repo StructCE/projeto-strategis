@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -8,9 +7,10 @@ import {
 import { ScrollArea } from "../../../ui/scroll-area";
 import SidebarButton from "./button/sidebarButton";
 import { sidebarButtons } from "./button/sidebarButtonsData";
+import SidebarButtonContainer from "./button/sidebarButtonContainer";
+import type { UseSideBarButtonReturn } from "./button/useSidebarButton";
 
 export function SidebarContent() {
-  const buttonRef = useRef<HTMLAnchorElement>(null);
   return (
     <ScrollArea className="w-fill">
       <Accordion type="multiple" className="mb-0 w-full">
@@ -19,21 +19,24 @@ export function SidebarContent() {
             <AccordionTrigger className="pb-0 text-base sm:text-lg">
               {category}
             </AccordionTrigger>
-
-            {items.map((item, itemIndex) => (
-              <AccordionContent
-                className="flex-row p-[5px] pb-2 pt-[3px]"
-                key={itemIndex}
-              >
-                <SidebarButton
-                  iconSource={item.iconSource}
-                  refLink={item.linkRef}
-                  buttonRef={buttonRef}
-                  name={item.name}
-                  disabled={false} //TODO: logica para habilitar o botão
-                />
-              </AccordionContent>
-            ))}
+            <SidebarButtonContainer>
+              {(props: UseSideBarButtonReturn) =>
+                items.map((item, itemIndex) => (
+                  <AccordionContent
+                    className="flex-row p-[5px] pb-2 pt-[3px]"
+                    key={itemIndex}
+                  >
+                    <SidebarButton
+                      {...props}
+                      icon={item.icon}
+                      refLink={item.refLink}
+                      name={item.name}
+                      disabled={false} //TODO: logica para habilitar o botão
+                    />
+                  </AccordionContent>
+                ))
+              }
+            </SidebarButtonContainer>
           </AccordionItem>
         ))}
       </Accordion>
