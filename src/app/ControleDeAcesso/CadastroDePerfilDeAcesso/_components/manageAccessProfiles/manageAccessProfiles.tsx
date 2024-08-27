@@ -1,5 +1,5 @@
-import { TableComponent } from "~/components/table/tableContainer";
-import ManageAccessProfilesFilters from "./manageAccessProfilesFilters/manageAccessProfilesFilters";
+import { TableComponent } from "~/components/table";
+import ManageAccessProfilesFiltersContainer from "./manageAccessProfilesFilters/manageAccessProfilesFiltersContainer";
 import { TabelaCargos } from "./manageAccessProfilesTableData";
 
 type ManageAccessProfilesTableProps = {
@@ -16,7 +16,7 @@ export const ManageAccessProfilesTable = (
         Selecione um cargo para ver detalhes, editar ou remover
       </TableComponent.Subtitle>
       <TableComponent.FiltersLine>
-        <ManageAccessProfilesFilters />
+        <ManageAccessProfilesFiltersContainer />
       </TableComponent.FiltersLine>
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[1fr_3fr_130px]">

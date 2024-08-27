@@ -1,10 +1,14 @@
 import { Search } from "lucide-react";
-import { useState } from "react";
-import { Filter } from "~/components/filter/filterContainer";
+import { Filter } from "~/components/filter";
 
-export default function ManageAccessProfilesFilters() {
-  const [inputNome, setInputNome] = useState("");
+type ManageAccessProfilesFiltersProps = {
+  inputNome: string;
+  setInputNome: (value: string) => void;
+};
 
+export default function ManageAccessProfilesFilters(
+  props: ManageAccessProfilesFiltersProps,
+) {
   return (
     <>
       <Filter>
@@ -15,8 +19,8 @@ export default function ManageAccessProfilesFilters() {
         />
         <Filter.Input
           placeholder="Nome do Cargo"
-          state={inputNome}
-          setState={setInputNome}
+          state={props.inputNome}
+          setState={props.setInputNome}
         />
       </Filter>
     </>
