@@ -3,7 +3,7 @@ import "~/styles/globals.css";
 import { type Metadata } from "next";
 
 import Navbar from "~/components/navbar";
-import SidebarContainer from "~/components/sidebar/sidebarContainer";
+import SidebarContainer from "~/components/sidebar";
 import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {

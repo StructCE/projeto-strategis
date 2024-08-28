@@ -1,4 +1,4 @@
-import { TableComponent } from "~/components/table/tableContainer";
+import { TableComponent } from "~/components/table";
 import { Input } from "~/components/ui/input";
 
 type Product = {
