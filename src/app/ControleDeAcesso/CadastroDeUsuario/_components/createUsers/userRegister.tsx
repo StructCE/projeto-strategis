@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { Cargos, Empresas } from "../usersData";
 import { type CreateUserFormValues } from "./userRegisterFormSchema";
 
 type UserRegisterProps = {
@@ -151,11 +152,11 @@ export const UserRegister = (props: UserRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Empresa 1">Empresa 1</SelectItem>
-                        <SelectItem value="Empresa 2">Empresa 2</SelectItem>
-                        <SelectItem value="Empresa 3">Empresa 3</SelectItem>
-                        <SelectItem value="Empresa 4">Empresa 4</SelectItem>
-                        <SelectItem value="Empresa 5">Empresa 5</SelectItem>
+                        {Empresas.map((empresa, index) => (
+                          <SelectItem value={empresa.value} key={index}>
+                            {empresa.nome}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -181,17 +182,11 @@ export const UserRegister = (props: UserRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Administrador">
-                          Administrador
-                        </SelectItem>
-                        <SelectItem value="Operador">Operador</SelectItem>
-                        <SelectItem value="Estoquista">Estoquista</SelectItem>
-                        <SelectItem value="Requisitante">
-                          Requisitante
-                        </SelectItem>
-                        <SelectItem value="Personalizado">
-                          Personalizado
-                        </SelectItem>
+                        {Cargos.map((cargo, index) => (
+                          <SelectItem value={cargo.value} key={index}>
+                            {cargo.nome}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

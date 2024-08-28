@@ -33,7 +33,7 @@ type FormComponentLineProps = {
 
 FormComponent.Line = function FormComponentLine(props: FormComponentLineProps) {
   const style = cn(
-    "flex sm:flex-row flex-col gap-[6px] sm:gap-[12px] w-full",
+    "flex lg:flex-row flex-col gap-[6px] lg:gap-[12px] w-full",
     props.className,
   );
   return <div className={style}>{props.children}</div>;
@@ -87,7 +87,7 @@ FormComponent.Button = function FormComponentButton(
   const style = cn("px-[20px] py-[8px] rounded-lg min-w-28", props.className);
   return (
     <button onClick={props.handlePress} className={style} type="submit">
-      <p className="text-[12px] font-semibold tracking-wider text-white sm:text-[16px] sm:tracking-normal">
+      <p className="text-[14px] font-semibold tracking-wider text-white sm:text-[16px] sm:tracking-normal">
         {props.children}
       </p>
     </button>

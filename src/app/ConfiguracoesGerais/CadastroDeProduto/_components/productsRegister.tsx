@@ -52,27 +52,27 @@ export const ProductsRegister = (props: ProductsRegisterProps) => {
             </TableComponent.Value>
             <TableComponent.Value>
               <Input
-                value={product.product}
+                defaultValue={product.product}
                 className="h-7 bg-cinza_destaque sm:h-8"
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
               <Input
-                value={product.currentStock}
+                defaultValue={product.currentStock}
                 className="h-7 bg-cinza_destaque text-center sm:h-8"
                 type="number"
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
               <Input
-                value={product.minStock}
+                defaultValue={product.minStock}
                 className="h-7 bg-cinza_destaque text-center sm:h-8"
                 type="number"
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
               <Input
-                value={product.maxStock}
+                defaultValue={product.maxStock}
                 className="h-7 bg-cinza_destaque text-center sm:h-8"
                 type="number"
               />
