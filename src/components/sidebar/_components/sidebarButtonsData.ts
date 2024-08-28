@@ -2,24 +2,24 @@ export const sidebarButtons = {
   "Configurações Gerais": [
     { name: "Dashboard", iconSource: "dashboard", linkRef: "/" },
     {
-      name: "Cadastro de Empresa",
-      iconSource: "cadastro-empresa",
-      linkRef: "/ConfiguracoesGerais/CadastroDeEmpresa",
+      name: "Cadastro de Empresas",
+      iconSource: "cadastro-empresas",
+      linkRef: "/ConfiguracoesGerais/CadastroDeEmpresas",
     },
     {
-      name: "Cadastro de Fornecedor",
-      iconSource: "cadastro-fornecedor",
-      linkRef: "/ConfiguracoesGerais/CadastroDeFornecedor",
+      name: "Cadastro de Fornecedores",
+      iconSource: "cadastro-fornecedores",
+      linkRef: "/ConfiguracoesGerais/CadastroDeFornecedores",
     },
     {
-      name: "Cadastro de Produto",
-      iconSource: "cadastro-produto",
-      linkRef: "/ConfiguracoesGerais/CadastroDeProduto",
+      name: "Cadastro de Produtos",
+      iconSource: "cadastro-produtos",
+      linkRef: "/ConfiguracoesGerais/CadastroDeProdutos",
     },
     {
-      name: "Cadastro de Estoque",
-      iconSource: "cadastro-estoque",
-      linkRef: "/ConfiguracoesGerais/CadastroDeEstoque",
+      name: "Cadastro de Estoques",
+      iconSource: "cadastro-estoques",
+      linkRef: "/ConfiguracoesGerais/CadastroDeEstoques",
     },
     {
       name: "Cadastro de Parâmetros Gerais",
@@ -29,14 +29,14 @@ export const sidebarButtons = {
   ],
   "Controle de Acesso": [
     {
-      name: "Cadastro de Usuário",
-      iconSource: "cadastro-usuario",
-      linkRef: "/ControleDeAcesso/CadastroDeUsuario",
+      name: "Cadastro de Usuários",
+      iconSource: "cadastro-usuarios",
+      linkRef: "/ControleDeAcesso/CadastroDeUsuarios",
     },
     {
-      name: "Cadastro de Perfil de Acesso",
-      iconSource: "cadastro-perfil-acesso",
-      linkRef: "/ControleDeAcesso/CadastroDePerfilDeAcesso",
+      name: "Cadastro de Perfis de Acesso",
+      iconSource: "cadastro-perfis-acesso",
+      linkRef: "/ControleDeAcesso/CadastroDePerfisDeAcesso",
     },
   ],
   "Gestão de Estoque": [
@@ -45,15 +45,6 @@ export const sidebarButtons = {
       iconSource: "importacao-nfs",
       linkRef: "/GestaoDeEstoque/ImportacaoDeNFs",
     },
-    // {
-    //   name: "Recebimento de Mercadoria",
-    //   iconSource: "recebimento-mercadoria",
-    //   linkRef: "/GestaoDeEstoque/",
-    // },
-    // {
-    //   name: "Separação de Mercadoria Solicitada",
-    //   iconSource: "separacao-mercadoria-solicitada",
-    //, linkRef: "/GestaoDeEstoque/" },
     {
       name: "Entrada de Mercadorias",
       iconSource: "entrada-mercadorias",
@@ -70,23 +61,22 @@ export const sidebarButtons = {
       linkRef: "/GestaoDeEstoque/CompraDeMercadorias",
     },
     {
-      name: "Inventário de Estoque",
-      iconSource: "inventario-estoque",
-      linkRef: "/GestaoDeEstoque/InventarioDeEstoque",
+      name: "Inventários de Estoque",
+      iconSource: "inventarios-estoque",
+      linkRef: "/GestaoDeEstoque/InventariosDeEstoque",
     },
     {
-      name: "Ajuste de Estoque",
-      iconSource: "ajuste-estoque",
-      linkRef: "/GestaoDeEstoque/AjusteDeEstoque",
+      name: "Ajustes de Estoque",
+      iconSource: "ajustes-estoque",
+      linkRef: "/GestaoDeEstoque/AjustesDeEstoque",
     },
   ],
   "Requisição de Mercadoria": [
     {
       name: "Solicitação de Mercadorias",
       iconSource: "solicitacao-mercadorias",
-      linkRef: "/RequisicaoDeMercadoria/SolicitacaDeMercadorias",
+      linkRef: "/RequisicaoDeMercadoria/SolicitacaoDeMercadorias",
     },
-    // { name: "Separação de Mercadorias", iconSource: "separacao-mercadorias", linkRef: "/RequisicaoDeMercadoria/" },
     {
       name: "Status de Solicitações",
       iconSource: "status-solicitacoes",
@@ -99,11 +89,11 @@ export const sidebarButtons = {
       iconSource: "avisos-estoque",
       linkRef: "/Relatorios/AvisosDeEstoque",
     },
-    {
-      name: "Relatórios Personalizados",
-      iconSource: "relatorios-personalizados",
-      linkRef: "/Relatorios/RelatoriosPersonalizados",
-    },
+    // {
+    //   name: "Relatórios Personalizados",
+    //   iconSource: "relatorios-personalizados",
+    //   linkRef: "/Relatorios/RelatoriosPersonalizados",
+    // },
     {
       name: "Histórico de Operações",
       iconSource: "historico-operacoes",
