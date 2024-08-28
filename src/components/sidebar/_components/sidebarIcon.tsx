@@ -58,54 +58,48 @@ export default function SidebarIcon({
     // Configurações Gerais
     case "dashboard":
       return <House width={size} height={size} name={iconSource} />;
-    case "cadastro-empresa":
+    case "cadastro-empresas":
       return <Building2 width={size} height={size} name={iconSource} />;
-    case "cadastro-fornecedor":
+    case "cadastro-fornecedores":
       return <Truck width={size} height={size} name={iconSource} />;
-    case "cadastro-produto":
+    case "cadastro-produtos":
       return <ShoppingBasket width={size} height={size} name={iconSource} />;
-    case "cadastro-estoque":
+    case "cadastro-estoques":
       return <PackageOpen width={size} height={size} name={iconSource} />;
     case "cadastro-parametros-gerais":
       return <Info width={size} height={size} name={iconSource} />;
 
     //Controle de Acesso
-    case "cadastro-usuario":
+    case "cadastro-usuarios":
       return <Users width={size} height={size} name={iconSource} />;
-    case "cadastro-perfil-acesso":
+    case "cadastro-perfis-acesso":
       return <UserCog width={size} height={size} name={iconSource} />;
 
     //Gestão de Estoque
     case "importacao-nfs":
       return <FileInput width={size} height={size} name={iconSource} />;
-    // case "recebimento-mercadorias":
-    //   return <FilePlus2 width={size} height={size} name={iconSource} />;
-    // case "separacao-mercadoria-solicitada":
-    //   return <PackageCheck width={size} height={size} name={iconSource} />;
     case "entrada-mercadorias":
       return <PackagePlus width={size} height={size} name={iconSource} />;
     case "saida-mercadorias":
       return <PackageMinus width={size} height={size} name={iconSource} />;
     case "compra-mercadorias":
       return <CircleDollarSign width={size} height={size} name={iconSource} />;
-    case "inventario-estoque":
+    case "inventarios-estoque":
       return <FolderSearch width={size} height={size} name={iconSource} />;
-    case "ajuste-estoque":
+    case "ajustes-estoque":
       return <FolderCog width={size} height={size} name={iconSource} />;
 
     //Requisição de Mercadoria
     case "solicitacao-mercadorias":
       return <ClipboardPlus width={size} height={size} name={iconSource} />;
-    // case "separacao-mercadorias":
-    //   return <ClipboardList width={size} height={size} name={iconSource} />;
     case "status-solicitacoes":
       return <ClipboardCheck width={size} height={size} name={iconSource} />;
 
     //Relatórios
     case "avisos-estoque":
       return <TriangleAlert width={size} height={size} name={iconSource} />;
-    case "relatorios-personalizados":
-      return <SlidersHorizontal width={size} height={size} name={iconSource} />;
+    // case "relatorios-personalizados":
+    //   return <SlidersHorizontal width={size} height={size} name={iconSource} />;
     case "historico-operacoes":
       return <Settings width={size} height={size} name={iconSource} />;
     case "historico-pagamentos":
