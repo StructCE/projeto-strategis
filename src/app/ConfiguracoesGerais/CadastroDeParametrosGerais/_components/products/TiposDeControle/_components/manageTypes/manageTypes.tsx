@@ -36,8 +36,8 @@ export const ManageTypesTable = () => {
               <DialogContent className="sm:max-w-7xl">
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar a categoria ou o botão
-                    para remover
+                    Utilize o campo abaixo para editar o tipo ou o botão para
+                    remover
                   </DialogTitle>
                   <TypeEditContainer {...tipo} />
                   <DialogDescription></DialogDescription>

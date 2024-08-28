@@ -36,7 +36,7 @@ export const ManageCategoriesTable = () => {
               <DialogContent className="sm:max-w-7xl">
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar a categoria ou o botão
+                    Utilize o campo abaixo para editar a categoria ou o botão
                     para remover
                   </DialogTitle>
                   <CategoryEditContainer {...categoria} />
