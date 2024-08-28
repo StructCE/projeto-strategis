@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { CategoriasDoProduto } from "../../../../GeneralParametersData";
-import { CategoryEditContainer } from "../editCategories/categortEditContainer";
+import { CategoryEditContainer } from "../editCategories/categoryEditContainer";
 
 export const ManageCategoriesTable = () => {
   return (

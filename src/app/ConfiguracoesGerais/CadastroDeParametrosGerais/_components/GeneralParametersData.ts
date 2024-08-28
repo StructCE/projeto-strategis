@@ -1,18 +1,18 @@
 export type TipoDeControle = {
-  tipo: string;
+  descricao: string;
 };
 
 export const TiposDeControle = [
-  { tipo: "Patrimônio" },
-  { tipo: "Produtos de Bar" },
-  { tipo: "Produtos de Finalização" },
-  { tipo: "Produtos de Funcionários" },
-  { tipo: "Produtos de Hortifruti" },
-  { tipo: "Produtos de Limpeza" },
-  { tipo: "Produtos de Produção" },
-  { tipo: "Produtos de Salao" },
-  { tipo: "Produtos Evento" },
-  { tipo: "Produtos Porcionados" },
+  { descricao: "Patrimônio" },
+  { descricao: "Produtos de Bar" },
+  { descricao: "Produtos de Finalização" },
+  { descricao: "Produtos de Funcionários" },
+  { descricao: "Produtos de Hortifruti" },
+  { descricao: "Produtos de Limpeza" },
+  { descricao: "Produtos de Produção" },
+  { descricao: "Produtos de Salao" },
+  { descricao: "Produtos Evento" },
+  { descricao: "Produtos Porcionados" },
 ];
 
 export type CategoriaDoProduto = {
@@ -72,19 +72,19 @@ export const CategoriasDoProduto = [
 ];
 
 export type SetorDeUtilizacao = {
-  setor: string;
+  descricao: string;
 };
 
 export const SetoresDeUtilizacao = [
-  { setor: "Bar" },
-  { setor: "Caixa" },
-  { setor: "Cozinha" },
-  { setor: "Delivery" },
-  { setor: "Evento" },
-  { setor: "Finalização" },
-  { setor: "Geral" },
-  { setor: "Produção" },
-  { setor: "Salão" },
-  { setor: "Serviços Gerais" },
-  { setor: "Sobremesa" },
+  { descricao: "Bar" },
+  { descricao: "Caixa" },
+  { descricao: "Cozinha" },
+  { descricao: "Delivery" },
+  { descricao: "Evento" },
+  { descricao: "Finalização" },
+  { descricao: "Geral" },
+  { descricao: "Produção" },
+  { descricao: "Salão" },
+  { descricao: "Serviços Gerais" },
+  { descricao: "Sobremesa" },
 ];

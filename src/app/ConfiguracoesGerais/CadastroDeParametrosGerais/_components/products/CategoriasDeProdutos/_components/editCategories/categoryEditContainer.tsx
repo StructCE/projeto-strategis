@@ -7,13 +7,11 @@ export const CategoryEditContainer = (categoria: CategoriaDoProduto) => {
   const { form, onSubmitEdit, onSubmitRemove } = useCategoryForm(categoria);
 
   return (
-    <>
-      <CategoryEdit
-        categoria={categoria}
-        form={form}
-        onSubmitEdit={onSubmitEdit}
-        onSubmitRemove={onSubmitRemove}
-      />
-    </>
+    <CategoryEdit
+      categoria={categoria}
+      form={form}
+      onSubmitEdit={onSubmitEdit}
+      onSubmitRemove={onSubmitRemove}
+    />
   );
 };
