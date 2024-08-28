@@ -1,3 +1,5 @@
+// Produtos
+
 export type TipoDeControle = {
   descricao: string;
 };
@@ -87,4 +89,42 @@ export const SetoresDeUtilizacao = [
   { descricao: "Salão" },
   { descricao: "Serviços Gerais" },
   { descricao: "Sobremesa" },
+];
+
+// Estoques
+
+export type Locais = {
+  descricao: string;
+};
+
+export const Locais = [
+  { descricao: "1" },
+  { descricao: "1" },
+  { descricao: "1" },
+  { descricao: "1" },
+  { descricao: "1" },
+];
+
+export type ArmariosZonas = {
+  descricao: string;
+};
+
+export const ArmariosZonas = [
+  { descricao: "2" },
+  { descricao: "2" },
+  { descricao: "2" },
+  { descricao: "2" },
+  { descricao: "2" },
+];
+
+export type Prateleiras = {
+  descricao: string;
+};
+
+export const Prateleiras = [
+  { descricao: "3" },
+  { descricao: "3" },
+  { descricao: "3" },
+  { descricao: "3" },
+  { descricao: "3" },
 ];
