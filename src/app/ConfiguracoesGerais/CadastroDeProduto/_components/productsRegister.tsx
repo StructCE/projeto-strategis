@@ -1,5 +1,7 @@
+"use client";
 import { TableComponent } from "~/components/table";
 import { Input } from "~/components/ui/input";
+import { useProductsRegister } from "./useProductsRegister";
 
 type Product = {
   code: number;
@@ -11,10 +13,10 @@ type Product = {
 
 type ProductsRegisterProps = {
   productsTable: Product[];
-  handleDetailsPress: ({ code }: { code: number }) => void;
 };
 
 export const ProductsRegister = (props: ProductsRegisterProps) => {
+  const products = useProductsRegister();
   return (
     <TableComponent>
       <TableComponent.Title>Gerenciar Produtos</TableComponent.Title>
@@ -80,7 +82,7 @@ export const ProductsRegister = (props: ProductsRegisterProps) => {
             <TableComponent.LineButton
               className="bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
               handlePress={() =>
-                props.handleDetailsPress({ code: product.code })
+                products.handleDetailsPress({ code: product.code })
               }
             >
               Detalhes
