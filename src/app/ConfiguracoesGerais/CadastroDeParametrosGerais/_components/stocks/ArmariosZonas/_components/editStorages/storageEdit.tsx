@@ -8,14 +8,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import { locais, type ArmarioZona } from "../../../../GeneralParametersData";
+import { type ArmarioZona } from "../../../../GeneralParametersData";
 import { type EditStorageFormValues } from "./storageEditFormSchema";
 
 type StorageEditProps = {
@@ -31,35 +24,6 @@ export const StorageEdit = (props: StorageEditProps) => {
       <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
         <FormComponent>
           <FormComponent.Line>
-            <FormComponent.Frame>
-              <FormComponent.Label>Local</FormComponent.Label>
-              <FormField
-                control={props.form.control}
-                name="local"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione um local" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {locais.map((local, index) => (
-                          <SelectItem value={local.descricao} key={index}>
-                            {local.descricao}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
             <FormComponent.Frame>
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField

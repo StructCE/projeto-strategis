@@ -1,13 +1,10 @@
 "use client";
-import { locais, type ArmarioZona } from "../../../../GeneralParametersData";
+import { type ArmarioZona } from "../../../../GeneralParametersData";
 import { StorageEdit } from "./storageEdit";
 import { useStorageForm } from "./useStorageForm";
 
 export const StorageEditContainer = (armarioZona: ArmarioZona) => {
-  const { form, onSubmitEdit, onSubmitRemove } = useStorageForm(
-    armarioZona,
-    locais,
-  );
+  const { form, onSubmitEdit, onSubmitRemove } = useStorageForm(armarioZona);
 
   return (
     <StorageEdit

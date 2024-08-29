@@ -1,9 +1,6 @@
 import { z } from "zod";
 
 export const editStorageFormSchema = z.object({
-  local: z.string({
-    required_error: "Por favor selecione um local.",
-  }),
   descricao: z
     .string()
     .min(3, {
