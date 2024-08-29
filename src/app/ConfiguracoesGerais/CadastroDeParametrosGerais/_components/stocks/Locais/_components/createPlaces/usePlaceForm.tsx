@@ -12,7 +12,7 @@ export const usePlaceForm = () => {
   });
 
   function onSubmit(data: CreatePlaceFormValues) {
-    console.log(JSON.stringify(data, null, 2)); // Criar categoria
+    console.log(JSON.stringify(data, null, 2)); // Criar local
   }
 
   return { form, onSubmit };

@@ -11,20 +11,18 @@ export const usePlaceForm = (local: Local) => {
     resolver: zodResolver(editPlaceFormSchema),
     mode: "onChange",
     defaultValues: {
-      local: local.descricao,
-      // armarioZona: armarioZona.descricao,
-      // prateleira: prateleira.descricao,
+      descricao: local.descricao,
     },
   });
 
   function onSubmitEdit(data: EditPlaceFormValues) {
-    console.log("Editando categoria:");
-    console.log(JSON.stringify(data, null, 2)); // Editar categoria
+    console.log("Editando local:");
+    console.log(JSON.stringify(data, null, 2)); // Editar local
   }
 
   function onSubmitRemove(data: EditPlaceFormValues) {
-    console.log("Removendo categoria:");
-    console.log(JSON.stringify(data, null, 2)); // Remover categoria
+    console.log("Removendo local:");
+    console.log(JSON.stringify(data, null, 2)); // Remover local
   }
 
   return { form, onSubmitEdit, onSubmitRemove };

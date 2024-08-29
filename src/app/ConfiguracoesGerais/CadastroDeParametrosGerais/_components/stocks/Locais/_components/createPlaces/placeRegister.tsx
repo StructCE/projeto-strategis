@@ -25,7 +25,7 @@ export default function PlaceRegister(props: PlaceRegisterProps) {
               <FormComponent.Label>Local</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="local"
+                name="descricao"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -40,49 +40,11 @@ export default function PlaceRegister(props: PlaceRegisterProps) {
                 )}
               />
             </FormComponent.Frame>
-            <FormComponent.Frame>
-              <FormComponent.Label>Armário/Zona</FormComponent.Label>
-              <FormField
-                control={props.form.control}
-                name="armarioZona"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Descrição/nome do armário/zona"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-            <FormComponent.Frame>
-              <FormComponent.Label>Prateleira</FormComponent.Label>
-              <FormField
-                control={props.form.control}
-                name="prateleira"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Descrição/nome da prateleira"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
-              Criar Endereço
+              Criar Local
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

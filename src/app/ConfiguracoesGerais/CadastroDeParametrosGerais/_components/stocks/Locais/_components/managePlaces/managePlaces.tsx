@@ -15,7 +15,7 @@ export const ManagePlacesTable = () => {
   return (
     <TableComponent>
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1fr_2fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[1fr_3fr_130px]">
           <TableComponent.ValueTitle>Local</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>
             Armários/Zonas (Prateleiras)
@@ -25,7 +25,7 @@ export const ManagePlacesTable = () => {
 
         {locais.map((local, index) => (
           <TableComponent.Line
-            className={`grid-cols-[1fr_2fr_130px] ${
+            className={`grid-cols-[1fr_3fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}

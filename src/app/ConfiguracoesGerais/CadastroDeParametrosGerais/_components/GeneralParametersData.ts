@@ -122,6 +122,7 @@ export const locais: Local[] = [
         prateleiras: [
           { descricao: "Prateleira 3" },
           { descricao: "Prateleira 4" },
+          { descricao: "Prateleira 5" },
         ],
       },
     ],
@@ -131,7 +132,7 @@ export const locais: Local[] = [
     armariosZonas: [
       {
         descricao: "Armário/Zona 3",
-        prateleiras: [{ descricao: "Prateleira 5" }],
+        prateleiras: [{ descricao: "Prateleira 6" }],
       },
     ],
   },

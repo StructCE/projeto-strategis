@@ -18,11 +18,13 @@ export default function Locais() {
         className="border-cinza_borda_acordeao px-0"
       >
         <AccordionTrigger className="mx-0 pb-1 text-[24px] font-medium">
-          Locais, Armários/Zonas e Prateleiras
+          Locais
         </AccordionTrigger>
         <AccordionContent>
           <PlaceRegister form={form} onSubmit={onSubmit} />
-          <p className="pb-2 text-[16px]">Endereços já cadastrados:</p>
+          <p className="pb-2 text-[16px]">
+            Locais já cadastrados e seus armários e zonas associados:
+          </p>
           <ManagePlacesTable />
         </AccordionContent>
       </AccordionItem>
