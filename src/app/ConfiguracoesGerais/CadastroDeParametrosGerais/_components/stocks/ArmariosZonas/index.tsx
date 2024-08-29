@@ -4,28 +4,26 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import PlaceRegister from "./_components/createPlaces/placeRegister";
-import { usePlaceForm } from "./_components/createPlaces/usePlaceForm";
-import { ManagePlacesTable } from "./_components/managePlaces/managePlaces";
+import StorageRegister from "./_components/createStorages/storageRegister";
+import { useStorageForm } from "./_components/createStorages/useStoregaForm";
+import { ManageStoragesTable } from "./_components/manageStorages/manageStorages";
 
-export default function Locais() {
-  const { form, onSubmit } = usePlaceForm();
+export default function ArmariosZonas() {
+  const { form, onSubmit } = useStorageForm();
 
   return (
-    <>
-      <AccordionItem
-        value="item-4"
-        className="border-cinza_borda_acordeao px-0"
-      >
-        <AccordionTrigger className="mx-0 pb-1 text-[24px] font-medium">
-          Locais, Armários/Zonas e Prateleiras
-        </AccordionTrigger>
-        <AccordionContent>
-          <PlaceRegister form={form} onSubmit={onSubmit} />
-          <p className="pb-2 text-[16px]">Endereços já cadastrados:</p>
-          <ManagePlacesTable />
-        </AccordionContent>
-      </AccordionItem>
-    </>
+    <AccordionItem value="item-5" className="border-cinza_borda_acordeao px-0">
+      <AccordionTrigger className="mx-0 pb-1 text-[24px] font-medium">
+        Armários/Zonas
+      </AccordionTrigger>
+      <AccordionContent>
+        <StorageRegister form={form} onSubmit={onSubmit} />
+        <p className="pb-2 text-[16px]">
+          Armários/Zonas já cadastrados, seus locais associados e suas
+          prateleiras pertencentes:
+        </p>
+        <ManageStoragesTable />
+      </AccordionContent>
+    </AccordionItem>
   );
 }

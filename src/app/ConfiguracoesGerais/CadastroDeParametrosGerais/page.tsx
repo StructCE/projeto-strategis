@@ -2,6 +2,7 @@ import { Accordion } from "~/components/ui/accordion";
 import CategoriasDeProdutos from "./_components/products/CategoriasDeProdutos";
 import SetoresDeUtilizacao from "./_components/products/SetoresDeUtilizacao";
 import TiposDeControle from "./_components/products/TiposDeControle";
+import ArmariosZonas from "./_components/stocks/ArmariosZonas";
 import Locais from "./_components/stocks/Locais";
 
 export default function UsersRegister() {
@@ -16,8 +17,8 @@ export default function UsersRegister() {
           Parâmetros Gerais - Estoques
         </h1>
         <Locais />
-        {/* <ArmariosZonas />
-        <Prateleiras /> */}
+        <ArmariosZonas />
+        {/* <Prateleiras /> */}
       </Accordion>
     </div>
   );
