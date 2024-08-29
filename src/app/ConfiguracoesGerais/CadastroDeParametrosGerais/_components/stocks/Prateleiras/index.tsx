@@ -1,20 +1,30 @@
+"use client";
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
+import PlaceRegister from "./_components/createPlaces/placeRegister";
+import { usePlaceForm } from "./_components/createPlaces/usePlaceForm";
+import { ManagePlacesTable } from "./_components/managePlaces/managePlaces";
 
-export default function Prateleiras() {
+export default function Locais() {
+  const { form, onSubmit } = usePlaceForm();
+
   return (
     <>
       <AccordionItem
-        value="item-3"
+        value="item-4"
         className="border-cinza_borda_acordeao px-0"
       >
         <AccordionTrigger className="mx-0 pb-1 text-[24px] font-medium">
-          Prateleiras
+          Locais, Armários/Zonas e Prateleiras
         </AccordionTrigger>
-        <AccordionContent>Prateleiras</AccordionContent>
+        <AccordionContent>
+          <PlaceRegister form={form} onSubmit={onSubmit} />
+          <p className="pb-2 text-[16px]">Endereços já cadastrados:</p>
+          <ManagePlacesTable />
+        </AccordionContent>
       </AccordionItem>
     </>
   );

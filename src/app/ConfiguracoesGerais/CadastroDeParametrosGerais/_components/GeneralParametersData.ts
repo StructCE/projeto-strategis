@@ -92,39 +92,47 @@ export const SetoresDeUtilizacao = [
 ];
 
 // Estoques
-
-export type Locais = {
+export type Prateleira = {
   descricao: string;
 };
 
-export const Locais = [
-  { descricao: "1" },
-  { descricao: "1" },
-  { descricao: "1" },
-  { descricao: "1" },
-  { descricao: "1" },
-];
-
-export type ArmariosZonas = {
+export type ArmarioZona = {
   descricao: string;
+  prateleiras: Prateleira[];
 };
 
-export const ArmariosZonas = [
-  { descricao: "2" },
-  { descricao: "2" },
-  { descricao: "2" },
-  { descricao: "2" },
-  { descricao: "2" },
-];
-
-export type Prateleiras = {
+export type Local = {
   descricao: string;
+  armariosZonas: ArmarioZona[];
 };
 
-export const Prateleiras = [
-  { descricao: "3" },
-  { descricao: "3" },
-  { descricao: "3" },
-  { descricao: "3" },
-  { descricao: "3" },
+export const locais: Local[] = [
+  {
+    descricao: "Local 1",
+    armariosZonas: [
+      {
+        descricao: "Armário/Zona 1",
+        prateleiras: [
+          { descricao: "Prateleira 1" },
+          { descricao: "Prateleira 2" },
+        ],
+      },
+      {
+        descricao: "Armário/Zona 2",
+        prateleiras: [
+          { descricao: "Prateleira 3" },
+          { descricao: "Prateleira 4" },
+        ],
+      },
+    ],
+  },
+  {
+    descricao: "Local 2",
+    armariosZonas: [
+      {
+        descricao: "Armário/Zona 3",
+        prateleiras: [{ descricao: "Prateleira 5" }],
+      },
+    ],
+  },
 ];
