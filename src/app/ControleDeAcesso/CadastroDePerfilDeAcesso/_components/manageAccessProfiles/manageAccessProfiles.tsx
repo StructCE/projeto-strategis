@@ -1,14 +1,10 @@
 import { TableComponent } from "~/components/table";
-import ManageAccessProfilesFiltersContainer from "./manageAccessProfilesFilters/manageAccessProfilesFiltersContainer";
+import ManageAccessProfilesFilters from "./manageAccessProfilesFilters/manageAccessProfilesFilters";
 import { TabelaCargos } from "./manageAccessProfilesTableData";
+import { useManageAccessProfileTable } from "./useManageAccessProfileTable";
 
-type ManageAccessProfilesTableProps = {
-  handleDetailsPress: ({ nome }: { nome: string }) => void;
-};
-
-export const ManageAccessProfilesTable = (
-  props: ManageAccessProfilesTableProps,
-) => {
+export const ManageAccessProfilesTable = () => {
+  const manageAcessProfilesTable = useManageAccessProfileTable();
   return (
     <TableComponent>
       <TableComponent.Title>Gerenciar Perfis de Acesso</TableComponent.Title>
@@ -16,7 +12,7 @@ export const ManageAccessProfilesTable = (
         Selecione um cargo para ver detalhes, editar ou remover
       </TableComponent.Subtitle>
       <TableComponent.FiltersLine>
-        <ManageAccessProfilesFiltersContainer />
+        <ManageAccessProfilesFilters />
       </TableComponent.FiltersLine>
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[1fr_3fr_130px]">
@@ -41,7 +37,9 @@ export const ManageAccessProfilesTable = (
             </TableComponent.Value>
             <TableComponent.LineButton
               className="bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
-              handlePress={() => props.handleDetailsPress(cargo)}
+              handlePress={() =>
+                manageAcessProfilesTable.handleDetailsPress(cargo)
+              }
             >
               Detalhes
             </TableComponent.LineButton>
