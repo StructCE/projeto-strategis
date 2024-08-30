@@ -1,14 +1,14 @@
 "use client";
-import { type Prateleira } from "../../../../GeneralParametersData";
+import { type Shelf } from "../../../../GeneralParametersData";
 import { ShelfEdit } from "./shelvesEdit";
 import { useShelfForm } from "./useShelvesForm";
 
-export const ShelfEditContainer = (prateleira: Prateleira) => {
-  const { form, onSubmitEdit, onSubmitRemove } = useShelfForm(prateleira);
+export const ShelfEditContainer = (shelf: Shelf) => {
+  const { form, onSubmitEdit, onSubmitRemove } = useShelfForm(shelf);
 
   return (
     <ShelfEdit
-      prateleira={prateleira}
+      shelf={shelf}
       form={form}
       onSubmitEdit={onSubmitEdit}
       onSubmitRemove={onSubmitRemove}

@@ -18,11 +18,11 @@ export default function Storages() {
       </AccordionTrigger>
       <AccordionContent>
         <p className="pb-2 text-[16px] font-medium">
-          Cadastrar novo Armário ou Zona:
+          Cadastrar novo armário ou zona:
         </p>
         <StorageRegister form={form} onSubmit={onSubmit} />
         <p className="py-2 text-[16px] font-medium">
-          Armários/Zonas já cadastrados, seus locais associados e suas
+          Armários e zonas já cadastrados, seus locais associados e suas
           prateleiras pertencentes:
         </p>
         <ManageStoragesTable />

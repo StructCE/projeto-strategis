@@ -1,18 +1,18 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type Prateleira } from "../../../../GeneralParametersData";
+import { type Shelf } from "../../../../GeneralParametersData";
 import {
   editShelfFormSchema,
   type EditShelfFormValues,
 } from "./shelvesEditFormSchema";
 
-export const useShelfForm = (prateleira: Prateleira) => {
+export const useShelfForm = (shelf: Shelf) => {
   const form = useForm<EditShelfFormValues>({
     resolver: zodResolver(editShelfFormSchema),
     mode: "onChange",
     defaultValues: {
-      descricao: prateleira.descricao,
+      description: shelf.description,
     },
   });
 

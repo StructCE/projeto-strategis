@@ -25,7 +25,7 @@ export default function PlaceRegister(props: PlaceRegisterProps) {
               <FormComponent.Label>Local</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

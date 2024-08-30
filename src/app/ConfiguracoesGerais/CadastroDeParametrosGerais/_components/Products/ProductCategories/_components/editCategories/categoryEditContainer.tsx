@@ -1,14 +1,14 @@
 "use client";
-import { type CategoriaDoProduto } from "../../../../GeneralParametersData";
+import { type ProductCategory } from "../../../../GeneralParametersData";
 import { CategoryEdit } from "./categoryEdit";
 import { useCategoryForm } from "./useCategoryForm";
 
-export const CategoryEditContainer = (categoria: CategoriaDoProduto) => {
-  const { form, onSubmitEdit, onSubmitRemove } = useCategoryForm(categoria);
+export const CategoryEditContainer = (category: ProductCategory) => {
+  const { form, onSubmitEdit, onSubmitRemove } = useCategoryForm(category);
 
   return (
     <CategoryEdit
-      categoria={categoria}
+      category={category}
       form={form}
       onSubmitEdit={onSubmitEdit}
       onSubmitRemove={onSubmitRemove}

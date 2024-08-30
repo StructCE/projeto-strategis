@@ -25,7 +25,7 @@ export default function CategoryRegister(props: CategoryRegisterProps) {
               <FormComponent.Label>Categoria do Produto</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

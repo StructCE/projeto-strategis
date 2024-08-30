@@ -18,11 +18,11 @@ export default function ProductCategories() {
       </AccordionTrigger>
       <AccordionContent>
         <p className="pb-2 text-[16px] font-medium">
-          Cadastrar nova Categoria de Produtos:
+          Cadastrar nova categoria de produtos:
         </p>
         <CategoryRegister form={form} onSubmit={onSubmit} />
         <p className="py-2 text-[16px] font-medium">
-          Categorias de Produtos já cadastradas:
+          Categorias de produtos já cadastradas:
         </p>
         <ManageCategoriesTable />
       </AccordionContent>

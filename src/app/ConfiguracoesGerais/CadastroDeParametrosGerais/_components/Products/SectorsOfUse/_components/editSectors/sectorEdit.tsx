@@ -8,14 +8,14 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type TipoDeControle } from "../../../../GeneralParametersData";
+import { type SectorOfUse } from "../../../../GeneralParametersData";
 import { type EditSectorFormValues } from "./sectorEditFormSchema";
 
 type SectorEditProps = {
   form: UseFormReturn<EditSectorFormValues>;
   onSubmitEdit: (data: EditSectorFormValues) => void;
   onSubmitRemove: (data: EditSectorFormValues) => void;
-  setor: TipoDeControle;
+  sector: SectorOfUse;
 };
 
 export const SectorEdit = (props: SectorEditProps) => {
@@ -28,7 +28,7 @@ export const SectorEdit = (props: SectorEditProps) => {
               <FormComponent.Label>Setor de Utilização</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

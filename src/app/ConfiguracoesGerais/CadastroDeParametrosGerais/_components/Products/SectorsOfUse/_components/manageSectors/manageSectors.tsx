@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { SetoresDeUtilizacao } from "../../../../GeneralParametersData";
+import { SectorsOfUse } from "../../../../GeneralParametersData";
 import { SectorEditContainer } from "../editSectors/sectorEditContainer";
 
 export const ManageSectorsTable = () => {
@@ -21,14 +21,14 @@ export const ManageSectorsTable = () => {
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {SetoresDeUtilizacao.map((setor, index) => (
+        {SectorsOfUse.map((sector, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value>{setor.descricao}</TableComponent.Value>
+            <TableComponent.Value>{sector.description}</TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
@@ -41,7 +41,7 @@ export const ManageSectorsTable = () => {
                     Utilize o campo abaixo para editar o setor ou o botão para
                     remover
                   </DialogTitle>
-                  <SectorEditContainer {...setor} />
+                  <SectorEditContainer {...sector} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { locais } from "../../../../GeneralParametersData";
+import { Places } from "../../../../GeneralParametersData";
 import { PlaceEditContainer } from "../editPlaces/placeEditContainer";
 
 export const ManagePlacesTable = () => {
@@ -23,21 +23,19 @@ export const ManagePlacesTable = () => {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {locais.map((local, index) => (
+        {Places.map((place, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_3fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value>{local.descricao}</TableComponent.Value>
+            <TableComponent.Value>{place.description}</TableComponent.Value>
             <TableComponent.Value>
-              {local.armariosZonas.map((armario_zona, index) => (
+              {place.storages.map((storage, index) => (
                 <p key={index}>
-                  {armario_zona.descricao} (
-                  {armario_zona.prateleiras
-                    .map((prateleira) => prateleira.descricao)
-                    .join(", ")}
+                  {storage.description} (
+                  {storage.shelves.map((shelf) => shelf.description).join(", ")}
                   )
                 </p>
               ))}
@@ -54,7 +52,7 @@ export const ManagePlacesTable = () => {
                     Utilize o campo abaixo para editar o local ou o botão para
                     remover
                   </DialogTitle>
-                  <PlaceEditContainer {...local} />
+                  <PlaceEditContainer {...place} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

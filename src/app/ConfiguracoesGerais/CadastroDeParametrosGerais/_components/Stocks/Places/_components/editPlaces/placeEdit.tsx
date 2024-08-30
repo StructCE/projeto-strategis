@@ -8,14 +8,14 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type Local } from "../../../../GeneralParametersData";
+import { type Place } from "../../../../GeneralParametersData";
 import { type EditPlaceFormValues } from "./placeEditFormSchema";
 
 type PlaceEditProps = {
   form: UseFormReturn<EditPlaceFormValues>;
   onSubmitEdit: (data: EditPlaceFormValues) => void;
   onSubmitRemove: (data: EditPlaceFormValues) => void;
-  local: Local;
+  place: Place;
 };
 
 export const PlaceEdit = (props: PlaceEditProps) => {
@@ -28,7 +28,7 @@ export const PlaceEdit = (props: PlaceEditProps) => {
               <FormComponent.Label>Local</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

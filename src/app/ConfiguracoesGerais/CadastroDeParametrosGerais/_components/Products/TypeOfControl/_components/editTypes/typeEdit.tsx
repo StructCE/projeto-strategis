@@ -8,14 +8,14 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type TipoDeControle } from "../../../../GeneralParametersData";
+import { type TypeOfControl } from "../../../../GeneralParametersData";
 import { type EditTypeFormValues } from "./typeEditFormSchema";
 
 type TypeEditProps = {
   form: UseFormReturn<EditTypeFormValues>;
   onSubmitEdit: (data: EditTypeFormValues) => void;
   onSubmitRemove: (data: EditTypeFormValues) => void;
-  tipo: TipoDeControle;
+  type: TypeOfControl;
 };
 
 export const TypeEdit = (props: TypeEditProps) => {
@@ -28,7 +28,7 @@ export const TypeEdit = (props: TypeEditProps) => {
               <FormComponent.Label>Tipo de Controle</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

@@ -25,7 +25,7 @@ export default function SectorRegister(props: SectorRegisterProps) {
               <FormComponent.Label>Setor de Utilização</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

@@ -1,211 +1,207 @@
-// Produtos
+/* TRADUÇÃO
+Produtos               -> Products           (Product)
+Tipos de Controle      -> Types of Control   (Type of Control)
+Categorias de Produtos -> Product Categories (Product Category) 
+Setores de Utilização  -> Sectors of Use     (Sector of Use)
 
-export type TipoDeControle = {
-  descricao: string;
-};
-
-export const TiposDeControle = [
-  { descricao: "Patrimônio" },
-  { descricao: "Produtos de Bar" },
-  { descricao: "Produtos de Finalização" },
-  { descricao: "Produtos de Funcionários" },
-  { descricao: "Produtos de Hortifruti" },
-  { descricao: "Produtos de Limpeza" },
-  { descricao: "Produtos de Produção" },
-  { descricao: "Produtos de Salao" },
-  { descricao: "Produtos Evento" },
-  { descricao: "Produtos Porcionados" },
-];
-
-export type CategoriaDoProduto = {
-  descricao: string;
-};
-
-export const CategoriasDoProduto = [
-  { descricao: "Acompanhamento" },
-  { descricao: "Bebidas" },
-  { descricao: "Bebidas - Águas" },
-  { descricao: "Bebidas - Café" },
-  { descricao: "Bebidas - Cervejas" },
-  { descricao: "Bebidas - Chop" },
-  { descricao: "Bebidas - Destilados" },
-  { descricao: "Bebidas - Energéticos" },
-  { descricao: "Bebidas - Refrigerantes" },
-  { descricao: "Bebidas - Vinho" },
-  { descricao: "Bebidas - Xaropes" },
-  { descricao: "Carnes" },
-  { descricao: "Carnes - Em Processo" },
-  { descricao: "Carnes - Funcionários" },
-  { descricao: "Carnes - In Natura" },
-  { descricao: "Carnes - Porcionadas" },
-  { descricao: "Embalagens" },
-  { descricao: "Embalagens - A vácuo" },
-  { descricao: "Embalagens - Evento" },
-  { descricao: "Entradas" },
-  { descricao: "Equipamento" },
-  { descricao: "Equipamento - Cozinha" },
-  { descricao: "Equipamento - Refrigeração" },
-  { descricao: "Equipamento - Bar" },
-  { descricao: "Equipamento - Cozinha" },
-  { descricao: "Equipamento - Eletrônico" },
-  { descricao: "Equipamento - Limpeza" },
-  { descricao: "Equipamento - Refrigeração" },
-  { descricao: "Funcionários" },
-  { descricao: "Hortifruti" },
-  { descricao: "Insumos" },
-  { descricao: "Mobiliário" },
-  { descricao: "Mobiliário - Salão" },
-  { descricao: "Mobiliário - Assentos Salão" },
-  { descricao: "Mobiliário - Mesas Salão" },
-  { descricao: "Mobiliário - Cozinha" },
-  { descricao: "Molhos" },
-  { descricao: "Pães" },
-  { descricao: "Produtos" },
-  { descricao: "Produtos - Limpeza" },
-  { descricao: "Queijos" },
-  { descricao: "Queijos - Porcionados" },
-  { descricao: "Queima" },
-  { descricao: "Sobremesas" },
-  { descricao: "Temperos" },
-  { descricao: "Utensilhos" },
-  { descricao: "Utensilhos - Bar" },
-  { descricao: "Utensilhos - Cozinho" },
-  { descricao: "Utensilhos - Quadro" },
-];
-
-export type SetorDeUtilizacao = {
-  descricao: string;
-};
-
-export const SetoresDeUtilizacao = [
-  { descricao: "Bar" },
-  { descricao: "Caixa" },
-  { descricao: "Cozinha" },
-  { descricao: "Delivery" },
-  { descricao: "Evento" },
-  { descricao: "Finalização" },
-  { descricao: "Geral" },
-  { descricao: "Produção" },
-  { descricao: "Salão" },
-  { descricao: "Serviços Gerais" },
-  { descricao: "Sobremesa" },
-];
-
-// Estoques
-export type Prateleira = {
-  descricao: string;
-};
-
-export type ArmarioZona = {
-  descricao: string;
-  prateleiras: Prateleira[];
-};
-
-export type Local = {
-  descricao: string;
-  armariosZonas: ArmarioZona[];
-};
-
-export const locais: Local[] = [
-  {
-    descricao: "Local 1",
-    armariosZonas: [
-      {
-        descricao: "Armário 1",
-        prateleiras: [
-          { descricao: "Prateleira 1" },
-          { descricao: "Prateleira 2" },
-        ],
-      },
-      {
-        descricao: "Armário 2",
-        prateleiras: [
-          { descricao: "Prateleira 3" },
-          { descricao: "Prateleira 4" },
-          { descricao: "Prateleira 5" },
-        ],
-      },
-    ],
-  },
-  {
-    descricao: "Local 2",
-    armariosZonas: [
-      {
-        descricao: "Zona 1",
-        prateleiras: [{ descricao: "Prateleira 6" }],
-      },
-    ],
-  },
-  {
-    descricao: "Local 3",
-    armariosZonas: [
-      {
-        descricao: "Zona 2",
-        prateleiras: [
-          { descricao: "Prateleira 7" },
-          { descricao: "Prateleira 8" },
-          { descricao: "Prateleira 9" },
-        ],
-      },
-      {
-        descricao: "Zona 3",
-        prateleiras: [
-          { descricao: "Prateleira 10" },
-          { descricao: "Prateleira 11" },
-        ],
-      },
-      {
-        descricao: "Zona 4",
-        prateleiras: [
-          { descricao: "Prateleira 12" },
-          { descricao: "Prateleira 13" },
-          { descricao: "Prateleira 14" },
-          { descricao: "Prateleira 15" },
-        ],
-      },
-      {
-        descricao: "Armário 3",
-        prateleiras: [{ descricao: "Prateleira 15" }],
-      },
-      {
-        descricao: "Armário 4",
-        prateleiras: [
-          { descricao: "Prateleira 16" },
-          { descricao: "Prateleira 17" },
-          { descricao: "Prateleira 18" },
-        ],
-      },
-      {
-        descricao: "Armário 5",
-        prateleiras: [
-          { descricao: "Prateleira 19" },
-          { descricao: "Prateleira 20" },
-        ],
-      },
-      {
-        descricao: "Armário 6",
-        prateleiras: [
-          { descricao: "Prateleira 21" },
-          { descricao: "Prateleira 22" },
-          { descricao: "Prateleira 23" },
-          { descricao: "Prateleira 24" },
-        ],
-      },
-    ],
-  },
-];
-
-/*
-Produtos                -> Products (Product)
-
-Tipos de Controle       -> Types of Control   (Type of Control)
-Categorias de Produtos  -> Product Categories (Product Category) 
-Setores de Utilização   -> Sectors of Use     (Sector of Use)
-
-
-Estoques                -> Stocks (Stock)
-
-Locais                  -> Places   (Place)
-Armários/Zonas          -> Storages (Storage)
-Pratelerias             -> Shelves  (Shelf)
+Estoques               -> Stocks   (Stock)
+Locais                 -> Places   (Place)
+Armários/Zonas         -> Storages (Storage)
+Pratelerias            -> Shelves  (Shelf)
 */
+
+// Products
+export type TypeOfControl = {
+  description: string;
+};
+
+export const TypesOfControl = [
+  { description: "Patrimônio" },
+  { description: "Produtos de Bar" },
+  { description: "Produtos de Finalização" },
+  { description: "Produtos de Funcionários" },
+  { description: "Produtos de Hortifruti" },
+  { description: "Produtos de Limpeza" },
+  { description: "Produtos de Produção" },
+  { description: "Produtos de Salao" },
+  { description: "Produtos Evento" },
+  { description: "Produtos Porcionados" },
+];
+
+export type ProductCategory = {
+  description: string;
+};
+
+export const ProductCategories = [
+  { description: "Acompanhamento" },
+  { description: "Bebidas" },
+  { description: "Bebidas - Águas" },
+  { description: "Bebidas - Café" },
+  { description: "Bebidas - Cervejas" },
+  { description: "Bebidas - Chop" },
+  { description: "Bebidas - Destilados" },
+  { description: "Bebidas - Energéticos" },
+  { description: "Bebidas - Refrigerantes" },
+  { description: "Bebidas - Vinho" },
+  { description: "Bebidas - Xaropes" },
+  { description: "Carnes" },
+  { description: "Carnes - Em Processo" },
+  { description: "Carnes - Funcionários" },
+  { description: "Carnes - In Natura" },
+  { description: "Carnes - Porcionadas" },
+  { description: "Embalagens" },
+  { description: "Embalagens - A vácuo" },
+  { description: "Embalagens - Evento" },
+  { description: "Entradas" },
+  { description: "Equipamento" },
+  { description: "Equipamento - Cozinha" },
+  { description: "Equipamento - Refrigeração" },
+  { description: "Equipamento - Bar" },
+  { description: "Equipamento - Cozinha" },
+  { description: "Equipamento - Eletrônico" },
+  { description: "Equipamento - Limpeza" },
+  { description: "Equipamento - Refrigeração" },
+  { description: "Funcionários" },
+  { description: "Hortifruti" },
+  { description: "Insumos" },
+  { description: "Mobiliário" },
+  { description: "Mobiliário - Salão" },
+  { description: "Mobiliário - Assentos Salão" },
+  { description: "Mobiliário - Mesas Salão" },
+  { description: "Mobiliário - Cozinha" },
+  { description: "Molhos" },
+  { description: "Pães" },
+  { description: "Produtos" },
+  { description: "Produtos - Limpeza" },
+  { description: "Queijos" },
+  { description: "Queijos - Porcionados" },
+  { description: "Queima" },
+  { description: "Sobremesas" },
+  { description: "Temperos" },
+  { description: "Utensilhos" },
+  { description: "Utensilhos - Bar" },
+  { description: "Utensilhos - Cozinho" },
+  { description: "Utensilhos - Quadro" },
+];
+
+export type SectorOfUse = {
+  description: string;
+};
+
+export const SectorsOfUse = [
+  { description: "Bar" },
+  { description: "Caixa" },
+  { description: "Cozinha" },
+  { description: "Delivery" },
+  { description: "Evento" },
+  { description: "Finalização" },
+  { description: "Geral" },
+  { description: "Produção" },
+  { description: "Salão" },
+  { description: "Serviços Gerais" },
+  { description: "Sobremesa" },
+];
+
+// Stocks
+export type Shelf = {
+  description: string;
+};
+
+export type Storage = {
+  description: string;
+  shelves: Shelf[];
+};
+
+export type Place = {
+  description: string;
+  storages: Storage[];
+};
+
+export const Places: Place[] = [
+  {
+    description: "Local 1",
+    storages: [
+      {
+        description: "Armário 1",
+        shelves: [
+          { description: "Prateleira 1" },
+          { description: "Prateleira 2" },
+        ],
+      },
+      {
+        description: "Armário 2",
+        shelves: [
+          { description: "Prateleira 3" },
+          { description: "Prateleira 4" },
+          { description: "Prateleira 5" },
+        ],
+      },
+    ],
+  },
+  {
+    description: "Local 2",
+    storages: [
+      {
+        description: "Zona 1",
+        shelves: [{ description: "Prateleira 6" }],
+      },
+    ],
+  },
+  {
+    description: "Local 3",
+    storages: [
+      {
+        description: "Zona 2",
+        shelves: [
+          { description: "Prateleira 7" },
+          { description: "Prateleira 8" },
+          { description: "Prateleira 9" },
+        ],
+      },
+      {
+        description: "Zona 3",
+        shelves: [
+          { description: "Prateleira 10" },
+          { description: "Prateleira 11" },
+        ],
+      },
+      {
+        description: "Zona 4",
+        shelves: [
+          { description: "Prateleira 12" },
+          { description: "Prateleira 13" },
+          { description: "Prateleira 14" },
+          { description: "Prateleira 15" },
+        ],
+      },
+      {
+        description: "Armário 3",
+        shelves: [{ description: "Prateleira 15" }],
+      },
+      {
+        description: "Armário 4",
+        shelves: [
+          { description: "Prateleira 16" },
+          { description: "Prateleira 17" },
+          { description: "Prateleira 18" },
+        ],
+      },
+      {
+        description: "Armário 5",
+        shelves: [
+          { description: "Prateleira 19" },
+          { description: "Prateleira 20" },
+        ],
+      },
+      {
+        description: "Armário 6",
+        shelves: [
+          { description: "Prateleira 21" },
+          { description: "Prateleira 22" },
+          { description: "Prateleira 23" },
+          { description: "Prateleira 24" },
+        ],
+      },
+    ],
+  },
+];

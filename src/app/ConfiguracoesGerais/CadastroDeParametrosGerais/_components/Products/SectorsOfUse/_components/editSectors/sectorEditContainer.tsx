@@ -1,14 +1,14 @@
 "use client";
-import { type SetorDeUtilizacao } from "../../../../GeneralParametersData";
+import { type SectorOfUse } from "../../../../GeneralParametersData";
 import { SectorEdit } from "./sectorEdit";
 import { useSectorForm } from "./useSectorForm";
 
-export const SectorEditContainer = (setor: SetorDeUtilizacao) => {
-  const { form, onSubmitEdit, onSubmitRemove } = useSectorForm(setor);
+export const SectorEditContainer = (sector: SectorOfUse) => {
+  const { form, onSubmitEdit, onSubmitRemove } = useSectorForm(sector);
 
   return (
     <SectorEdit
-      setor={setor}
+      sector={sector}
       form={form}
       onSubmitEdit={onSubmitEdit}
       onSubmitRemove={onSubmitRemove}

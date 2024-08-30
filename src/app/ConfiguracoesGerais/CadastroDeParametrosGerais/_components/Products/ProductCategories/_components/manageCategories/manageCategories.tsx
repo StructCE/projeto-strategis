@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { CategoriasDoProduto } from "../../../../GeneralParametersData";
+import { ProductCategories } from "../../../../GeneralParametersData";
 import { CategoryEditContainer } from "../editCategories/categoryEditContainer";
 
 export const ManageCategoriesTable = () => {
@@ -21,14 +21,14 @@ export const ManageCategoriesTable = () => {
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {CategoriasDoProduto.map((categoria, index) => (
+        {ProductCategories.map((category, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value>{categoria.descricao}</TableComponent.Value>
+            <TableComponent.Value>{category.description}</TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
@@ -41,7 +41,7 @@ export const ManageCategoriesTable = () => {
                     Utilize o campo abaixo para editar a categoria ou o botão
                     para remover
                   </DialogTitle>
-                  <CategoryEditContainer {...categoria} />
+                  <CategoryEditContainer {...category} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

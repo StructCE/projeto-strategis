@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { locais } from "../../../../GeneralParametersData";
+import { Places } from "../../../../GeneralParametersData";
 import { StorageEditContainer } from "../editStorages/storageEditContainer";
 
 export const ManageStoragesTable = () => {
@@ -16,28 +16,24 @@ export const ManageStoragesTable = () => {
     <TableComponent>
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[1fr_1fr_2fr_130px]">
-          <TableComponent.ValueTitle>Armários/Zonas</TableComponent.ValueTitle>
+          <TableComponent.ValueTitle>Armário/Zona</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Local</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Prateleiras</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {locais.map((local) =>
-          local.armariosZonas.map((armarioZona, index) => (
+        {Places.map((place) =>
+          place.storages.map((storage, index) => (
             <TableComponent.Line
               className={`grid-cols-[1fr_1fr_2fr_130px] ${
                 index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
               }`}
               key={index}
             >
+              <TableComponent.Value>{storage.description}</TableComponent.Value>
+              <TableComponent.Value>{place.description}</TableComponent.Value>
               <TableComponent.Value>
-                {armarioZona.descricao}
-              </TableComponent.Value>
-              <TableComponent.Value>{local.descricao}</TableComponent.Value>
-              <TableComponent.Value>
-                {armarioZona.prateleiras
-                  .map((prateleira) => prateleira.descricao)
-                  .join(", ")}
+                {storage.shelves.map((shelf) => shelf.description).join(", ")}
               </TableComponent.Value>
               <Dialog>
                 <DialogTrigger asChild>
@@ -51,7 +47,7 @@ export const ManageStoragesTable = () => {
                       Utilize o campo abaixo para editar o armário/zona ou o
                       botão para remover
                     </DialogTitle>
-                    <StorageEditContainer {...armarioZona} />
+                    <StorageEditContainer {...storage} />
                     <DialogDescription></DialogDescription>
                   </DialogHeader>
                 </DialogContent>

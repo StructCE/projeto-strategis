@@ -1,28 +1,28 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type TipoDeControle } from "../../../../GeneralParametersData";
+import { type SectorOfUse } from "../../../../GeneralParametersData";
 import {
   editSectorFormSchema,
   type EditSectorFormValues,
 } from "./sectorEditFormSchema";
 
-export const useSectorForm = (tipo: TipoDeControle) => {
+export const useSectorForm = (sector: SectorOfUse) => {
   const form = useForm<EditSectorFormValues>({
     resolver: zodResolver(editSectorFormSchema),
     mode: "onChange",
     defaultValues: {
-      descricao: tipo.descricao,
+      description: sector.description,
     },
   });
 
   function onSubmitEdit(data: EditSectorFormValues) {
-    console.log("Editando categoria:");
-    console.log(JSON.stringify(data, null, 2)); // Editar categoria
+    console.log("Editando setor:");
+    console.log(JSON.stringify(data, null, 2)); // Editar setor
   }
 
   function onSubmitRemove(data: EditSectorFormValues) {
-    console.log("Removendo categoria:");
-    console.log(JSON.stringify(data, null, 2)); // Remover categoria
+    console.log("Removendo setor:");
+    console.log(JSON.stringify(data, null, 2)); // Remover setor
   }
 
   return { form, onSubmitEdit, onSubmitRemove };

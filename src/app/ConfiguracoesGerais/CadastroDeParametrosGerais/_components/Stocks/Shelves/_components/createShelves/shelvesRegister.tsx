@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { locais } from "../../../../GeneralParametersData";
+import { Places } from "../../../../GeneralParametersData";
 import { type CreateShelfFormValues } from "./shelvesRegisterFormSchema";
 
 type ShelfRegisterProps = {
@@ -25,14 +25,13 @@ type ShelfRegisterProps = {
 };
 
 export default function ShelfRegister(props: ShelfRegisterProps) {
-  const [selectedLocal, setSelectedLocal] = useState<string | undefined>(
+  const [selectedPlace, setSelectedPlace] = useState<string | undefined>(
     undefined,
   );
 
-  // Filtrar os armários/zonas com base no local selecionado
-  const filteredArmariosZonas = selectedLocal
-    ? (locais.find((local) => local.descricao === selectedLocal)
-        ?.armariosZonas ?? [])
+  const filteredStorages = selectedPlace
+    ? (Places.find((place) => place.description === selectedPlace)?.storages ??
+      [])
     : [];
 
   return (
@@ -44,13 +43,13 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
               <FormComponent.Label>Local</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="local"
+                name="place"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
-                        setSelectedLocal(value); // Atualiza o estado do local selecionado
+                        setSelectedPlace(value);
                       }}
                       defaultValue={field.value}
                     >
@@ -60,9 +59,9 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {locais.map((local, index) => (
-                          <SelectItem value={local.descricao} key={index}>
-                            {local.descricao}
+                        {Places.map((place, index) => (
+                          <SelectItem value={place.description} key={index}>
+                            {place.description}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -77,7 +76,7 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="armarioZona"
+                name="storage"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -90,9 +89,9 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {filteredArmariosZonas.map((armarioZona, index) => (
-                          <SelectItem value={armarioZona.descricao} key={index}>
-                            {armarioZona.descricao}
+                        {filteredStorages.map((storage, index) => (
+                          <SelectItem value={storage.description} key={index}>
+                            {storage.description}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -107,7 +106,7 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
               <FormComponent.Label>Prateleira</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

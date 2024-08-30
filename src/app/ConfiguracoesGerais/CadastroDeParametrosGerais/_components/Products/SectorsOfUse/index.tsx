@@ -18,11 +18,11 @@ export default function SectorsOfUse() {
       </AccordionTrigger>
       <AccordionContent>
         <p className="pb-2 text-[16px] font-medium">
-          Cadastrar novo Setor de Utilização:
+          Cadastrar novo setor de utilização:
         </p>
         <SectorRegister form={form} onSubmit={onSubmit} />
         <p className="py-2 text-[16px] font-medium">
-          Setores de Utilização já cadastrados:
+          Setores de utilização já cadastrados:
         </p>
         <ManageSectorsTable />
       </AccordionContent>

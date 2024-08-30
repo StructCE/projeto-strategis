@@ -18,11 +18,11 @@ export default function TypesOfControl() {
       </AccordionTrigger>
       <AccordionContent>
         <p className="pb-2 text-[16px] font-medium">
-          Cadastrar novo Tipo de Controle:
+          Cadastrar novo tipo de controle:
         </p>
         <TypeRegister form={form} onSubmit={onSubmit} />
         <p className="py-2 text-[16px] font-medium">
-          Tipos de Controle já cadastrados:
+          Tipos de controle já cadastrados:
         </p>
         <ManageTypesTable />
       </AccordionContent>

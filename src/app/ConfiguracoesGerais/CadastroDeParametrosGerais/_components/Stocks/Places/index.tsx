@@ -17,7 +17,7 @@ export default function Places() {
         Locais
       </AccordionTrigger>
       <AccordionContent>
-        <p className="pb-2 text-[16px] font-medium">Cadastrar novo Local:</p>
+        <p className="pb-2 text-[16px] font-medium">Cadastrar novo local:</p>
         <PlaceRegister form={form} onSubmit={onSubmit} />
         <p className="py-2 text-[16px] font-medium">
           Locais já cadastrados e seus armários/zonas pertencentes:

@@ -1,17 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type Local } from "../../../../GeneralParametersData";
+import { type Place } from "../../../../GeneralParametersData";
 import {
   editPlaceFormSchema,
   type EditPlaceFormValues,
 } from "./placeEditFormSchema";
 
-export const usePlaceForm = (local: Local) => {
+export const usePlaceForm = (place: Place) => {
   const form = useForm<EditPlaceFormValues>({
     resolver: zodResolver(editPlaceFormSchema),
     mode: "onChange",
     defaultValues: {
-      descricao: local.descricao,
+      description: place.description,
     },
   });
 

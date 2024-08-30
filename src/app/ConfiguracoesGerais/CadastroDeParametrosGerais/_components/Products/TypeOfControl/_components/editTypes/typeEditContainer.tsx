@@ -1,14 +1,14 @@
 "use client";
-import { type TipoDeControle } from "../../../../GeneralParametersData";
+import { type TypeOfControl } from "../../../../GeneralParametersData";
 import { TypeEdit } from "./typeEdit";
 import { useTypeForm } from "./useTypeForm";
 
-export const TypeEditContainer = (tipo: TipoDeControle) => {
-  const { form, onSubmitEdit, onSubmitRemove } = useTypeForm(tipo);
+export const TypeEditContainer = (type: TypeOfControl) => {
+  const { form, onSubmitEdit, onSubmitRemove } = useTypeForm(type);
 
   return (
     <TypeEdit
-      tipo={tipo}
+      type={type}
       form={form}
       onSubmitEdit={onSubmitEdit}
       onSubmitRemove={onSubmitRemove}

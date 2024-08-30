@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { locais } from "../../../../GeneralParametersData";
+import { Places } from "../../../../GeneralParametersData";
 import { ShelfEditContainer } from "../editShelves/shelvesEditContainer";
 
 export const ManageShelvesTable = () => {
@@ -23,20 +23,18 @@ export const ManageShelvesTable = () => {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {locais.map((local) =>
-          local.armariosZonas.map((armarioZona) =>
-            armarioZona.prateleiras.map((prateleira, index) => (
+        {Places.map((place) =>
+          place.storages.map((storage) =>
+            storage.shelves.map((shelf, index) => (
               <TableComponent.Line
                 className={`grid-cols-[1fr_2fr_130px] ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
               >
+                <TableComponent.Value>{shelf.description}</TableComponent.Value>
                 <TableComponent.Value>
-                  {prateleira.descricao}
-                </TableComponent.Value>
-                <TableComponent.Value>
-                  {local.descricao}, {armarioZona.descricao}
+                  {place.description}, {storage.description}
                 </TableComponent.Value>
                 <Dialog>
                   <DialogTrigger asChild>
@@ -50,7 +48,7 @@ export const ManageShelvesTable = () => {
                         Utilize o campo abaixo para editar a prateleira ou o
                         botão para remover
                       </DialogTitle>
-                      <ShelfEditContainer {...prateleira} />
+                      <ShelfEditContainer {...shelf} />
                       <DialogDescription></DialogDescription>
                     </DialogHeader>
                   </DialogContent>

@@ -1,17 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type CategoriaDoProduto } from "../../../../GeneralParametersData";
+import { type ProductCategory } from "../../../../GeneralParametersData";
 import {
   editCategoryFormSchema,
   type EditCategoryFormValues,
 } from "./categoryEditFormSchema";
 
-export const useCategoryForm = (categoria: CategoriaDoProduto) => {
+export const useCategoryForm = (category: ProductCategory) => {
   const form = useForm<EditCategoryFormValues>({
     resolver: zodResolver(editCategoryFormSchema),
     mode: "onChange",
     defaultValues: {
-      descricao: categoria.descricao,
+      description: category.description,
     },
   });
 

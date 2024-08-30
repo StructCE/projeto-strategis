@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { locais } from "../../../../GeneralParametersData";
+import { Places } from "../../../../GeneralParametersData";
 import { type CreateStorageFormValues } from "./storageRegisterFormSchema";
 
 type StorageRegisterProps = {
@@ -33,7 +33,7 @@ export default function StorageRegister(props: StorageRegisterProps) {
               <FormComponent.Label>Local</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="local"
+                name="place"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -46,9 +46,9 @@ export default function StorageRegister(props: StorageRegisterProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {locais.map((local, index) => (
-                          <SelectItem value={local.descricao} key={index}>
-                            {local.descricao}
+                        {Places.map((place, index) => (
+                          <SelectItem value={place.description} key={index}>
+                            {place.description}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -62,7 +62,7 @@ export default function StorageRegister(props: StorageRegisterProps) {
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

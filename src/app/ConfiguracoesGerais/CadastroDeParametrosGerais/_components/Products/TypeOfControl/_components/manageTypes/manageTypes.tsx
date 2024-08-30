@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { TiposDeControle } from "../../../../GeneralParametersData";
+import { TypesOfControl } from "../../../../GeneralParametersData";
 import { TypeEditContainer } from "../editTypes/typeEditContainer";
 
 export const ManageTypesTable = () => {
@@ -21,14 +21,14 @@ export const ManageTypesTable = () => {
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {TiposDeControle.map((tipo, index) => (
+        {TypesOfControl.map((type, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value>{tipo.descricao}</TableComponent.Value>
+            <TableComponent.Value>{type.description}</TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
@@ -41,7 +41,7 @@ export const ManageTypesTable = () => {
                     Utilize o campo abaixo para editar o tipo ou o botão para
                     remover
                   </DialogTitle>
-                  <TypeEditContainer {...tipo} />
+                  <TypeEditContainer {...type} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

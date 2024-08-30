@@ -8,14 +8,14 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type Prateleira } from "../../../../GeneralParametersData";
+import { type Shelf } from "../../../../GeneralParametersData";
 import { type EditShelfFormValues } from "./shelvesEditFormSchema";
 
 type ShelfEditProps = {
   form: UseFormReturn<EditShelfFormValues>;
   onSubmitEdit: (data: EditShelfFormValues) => void;
   onSubmitRemove: (data: EditShelfFormValues) => void;
-  prateleira: Prateleira;
+  shelf: Shelf;
 };
 
 export const ShelfEdit = (props: ShelfEditProps) => {
@@ -28,7 +28,7 @@ export const ShelfEdit = (props: ShelfEditProps) => {
               <FormComponent.Label>Prateleira</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

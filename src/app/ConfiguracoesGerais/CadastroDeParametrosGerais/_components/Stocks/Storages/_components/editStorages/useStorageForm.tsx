@@ -1,18 +1,18 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type ArmarioZona } from "../../../../GeneralParametersData";
+import { type Storage } from "../../../../GeneralParametersData";
 import {
   editStorageFormSchema,
   type EditStorageFormValues,
 } from "./storageEditFormSchema";
 
-export const useStorageForm = (armarioZona: ArmarioZona) => {
+export const useStorageForm = (storage: Storage) => {
   const form = useForm<EditStorageFormValues>({
     resolver: zodResolver(editStorageFormSchema),
     mode: "onChange",
     defaultValues: {
-      descricao: armarioZona.descricao,
+      description: storage.description,
     },
   });
 

@@ -8,14 +8,14 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type CategoriaDoProduto } from "../../../../GeneralParametersData";
+import { type ProductCategory } from "../../../../GeneralParametersData";
 import { type EditCategoryFormValues } from "./categoryEditFormSchema";
 
 type CategoryEditProps = {
   form: UseFormReturn<EditCategoryFormValues>;
   onSubmitEdit: (data: EditCategoryFormValues) => void;
   onSubmitRemove: (data: EditCategoryFormValues) => void;
-  categoria: CategoriaDoProduto;
+  category: ProductCategory;
 };
 
 export const CategoryEdit = (props: CategoryEditProps) => {
@@ -28,7 +28,7 @@ export const CategoryEdit = (props: CategoryEditProps) => {
               <FormComponent.Label>Categoria do Produto</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

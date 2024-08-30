@@ -1,17 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type TipoDeControle } from "../../../../GeneralParametersData";
+import { type TypeOfControl } from "../../../../GeneralParametersData";
 import {
   editTypeFormSchema,
   type EditTypeFormValues,
 } from "./typeEditFormSchema";
 
-export const useTypeForm = (tipo: TipoDeControle) => {
+export const useTypeForm = (type: TypeOfControl) => {
   const form = useForm<EditTypeFormValues>({
     resolver: zodResolver(editTypeFormSchema),
     mode: "onChange",
     defaultValues: {
-      descricao: tipo.descricao,
+      description: type.description,
     },
   });
 

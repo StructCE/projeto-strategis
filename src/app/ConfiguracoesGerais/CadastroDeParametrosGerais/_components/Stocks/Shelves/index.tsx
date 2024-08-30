@@ -18,7 +18,7 @@ export default function Shelves() {
       </AccordionTrigger>
       <AccordionContent>
         <p className="pb-2 text-[16px] font-medium">
-          Cadastrar nova Prateleira:
+          Cadastrar nova prateleira:
         </p>
         <ShelfRegister form={form} onSubmit={onSubmit} />
         <p className="py-2 text-[16px] font-medium">

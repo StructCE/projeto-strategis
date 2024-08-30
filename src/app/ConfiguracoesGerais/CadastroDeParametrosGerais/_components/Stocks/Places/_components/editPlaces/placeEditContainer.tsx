@@ -1,14 +1,14 @@
 "use client";
-import { type Local } from "../../../../GeneralParametersData";
+import { type Place } from "../../../../GeneralParametersData";
 import { PlaceEdit } from "./placeEdit";
 import { usePlaceForm } from "./usePlaceForm";
 
-export const PlaceEditContainer = (local: Local) => {
-  const { form, onSubmitEdit, onSubmitRemove } = usePlaceForm(local);
+export const PlaceEditContainer = (place: Place) => {
+  const { form, onSubmitEdit, onSubmitRemove } = usePlaceForm(place);
 
   return (
     <PlaceEdit
-      local={local}
+      place={place}
       form={form}
       onSubmitEdit={onSubmitEdit}
       onSubmitRemove={onSubmitRemove}

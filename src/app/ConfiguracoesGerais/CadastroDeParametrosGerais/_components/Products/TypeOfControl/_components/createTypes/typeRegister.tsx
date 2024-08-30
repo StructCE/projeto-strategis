@@ -25,7 +25,7 @@ export default function TypeRegister(props: TypeRegisterProps) {
               <FormComponent.Label>Tipo de Controle</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

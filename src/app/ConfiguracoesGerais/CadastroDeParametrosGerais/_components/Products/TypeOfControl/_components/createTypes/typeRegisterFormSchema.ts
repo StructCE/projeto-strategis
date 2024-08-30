@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const createTypeFormSchema = z.object({
-  descricao: z
+  description: z
     .string()
     .min(3, {
       message: "Descrição/nome deve ter pelo menos 3 caracteres.",

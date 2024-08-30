@@ -8,14 +8,14 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type ArmarioZona } from "../../../../GeneralParametersData";
+import { type Storage } from "../../../../GeneralParametersData";
 import { type EditStorageFormValues } from "./storageEditFormSchema";
 
 type StorageEditProps = {
   form: UseFormReturn<EditStorageFormValues>;
   onSubmitEdit: (data: EditStorageFormValues) => void;
   onSubmitRemove: (data: EditStorageFormValues) => void;
-  armarioZona: ArmarioZona;
+  storage: Storage;
 };
 
 export const StorageEdit = (props: StorageEditProps) => {
@@ -28,7 +28,7 @@ export const StorageEdit = (props: StorageEditProps) => {
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="descricao"
+                name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
