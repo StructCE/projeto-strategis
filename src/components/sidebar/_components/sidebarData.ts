@@ -45,15 +45,6 @@ export const sidebarButtons = {
       iconSource: "importacao-nfs",
       linkRef: "/GestaoDeEstoque/ImportacaoDeNFs",
     },
-    // {
-    //   name: "Recebimento de Mercadoria",
-    //   iconSource: "recebimento-mercadoria",
-    //   linkRef: "/GestaoDeEstoque/",
-    // },
-    // {
-    //   name: "Separação de Mercadoria Solicitada",
-    //   iconSource: "separacao-mercadoria-solicitada",
-    //, linkRef: "/GestaoDeEstoque/" },
     {
       name: "Entrada de Mercadorias",
       iconSource: "entrada-mercadorias",
@@ -86,7 +77,6 @@ export const sidebarButtons = {
       iconSource: "solicitacao-mercadorias",
       linkRef: "/RequisicaoDeMercadoria/SolicitacaDeMercadorias",
     },
-    // { name: "Separação de Mercadorias", iconSource: "separacao-mercadorias", linkRef: "/RequisicaoDeMercadoria/" },
     {
       name: "Status de Solicitações",
       iconSource: "status-solicitacoes",

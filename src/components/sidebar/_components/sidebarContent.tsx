@@ -7,7 +7,7 @@ import {
 } from "../../ui/accordion";
 import { ScrollArea } from "../../ui/scroll-area";
 import SidebarButton from "./sidebarButton";
-import { sidebarButtons } from "./sidebarButtonsData";
+import { sidebarButtons } from "./sidebarData";
 
 export function SidebarContent() {
   const buttonRef = useRef<HTMLAnchorElement>(null);
