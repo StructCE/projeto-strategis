@@ -16,7 +16,9 @@ export const ManageCategoriesTable = () => {
     <TableComponent>
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[1fr_130px]">
-          <TableComponent.ValueTitle>Descrição</TableComponent.ValueTitle>
+          <TableComponent.ValueTitle>
+            Categoria de Produtos
+          </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
         {CategoriasDoProduto.map((categoria, index) => (

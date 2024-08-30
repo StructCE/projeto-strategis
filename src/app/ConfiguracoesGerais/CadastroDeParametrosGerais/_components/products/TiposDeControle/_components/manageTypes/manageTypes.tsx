@@ -16,7 +16,9 @@ export const ManageTypesTable = () => {
     <TableComponent>
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[1fr_130px]">
-          <TableComponent.ValueTitle>Descrição</TableComponent.ValueTitle>
+          <TableComponent.ValueTitle>
+            Tipo de Controle
+          </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
         {TiposDeControle.map((tipo, index) => (

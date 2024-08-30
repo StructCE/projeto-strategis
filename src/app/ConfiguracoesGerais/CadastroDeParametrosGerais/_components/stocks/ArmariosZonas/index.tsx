@@ -17,8 +17,11 @@ export default function ArmariosZonas() {
         Armários/Zonas
       </AccordionTrigger>
       <AccordionContent>
+        <p className="pb-2 text-[16px] font-medium">
+          Cadastrar novo Armário ou Zona:
+        </p>
         <StorageRegister form={form} onSubmit={onSubmit} />
-        <p className="pb-2 text-[16px]">
+        <p className="py-2 text-[16px] font-medium">
           Armários/Zonas já cadastrados, seus locais associados e suas
           prateleiras pertencentes:
         </p>

@@ -16,7 +16,9 @@ export const ManageSectorsTable = () => {
     <TableComponent>
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[1fr_130px]">
-          <TableComponent.ValueTitle>Descrição</TableComponent.ValueTitle>
+          <TableComponent.ValueTitle>
+            Setor de Utilização
+          </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
         {SetoresDeUtilizacao.map((setor, index) => (
