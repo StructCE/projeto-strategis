@@ -4,28 +4,28 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import PlaceRegister from "./_components/createPlaces/placeRegister";
-import { usePlaceForm } from "./_components/createPlaces/usePlaceForm";
-import { ManagePlacesTable } from "./_components/managePlaces/managePlaces";
+import ShelfRegister from "./_components/createShelves/shelvesRegister";
+import { useShelfForm } from "./_components/createShelves/useShelvesForm";
+import { ManageShelvesTable } from "./_components/manageShelves/manageShelves";
 
-export default function Locais() {
-  const { form, onSubmit } = usePlaceForm();
+export default function Prateleiras() {
+  const { form, onSubmit } = useShelfForm();
 
   return (
-    <>
-      <AccordionItem
-        value="item-4"
-        className="border-cinza_borda_acordeao px-0"
-      >
-        <AccordionTrigger className="mx-0 pb-1 text-[24px] font-medium">
-          Locais, Armários/Zonas e Prateleiras
-        </AccordionTrigger>
-        <AccordionContent>
-          <PlaceRegister form={form} onSubmit={onSubmit} />
-          <p className="pb-2 text-[16px]">Endereços já cadastrados:</p>
-          <ManagePlacesTable />
-        </AccordionContent>
-      </AccordionItem>
-    </>
+    <AccordionItem value="item-6" className="border-vinho_strategis px-0">
+      <AccordionTrigger className="mx-0 pb-1 text-[24px] font-medium">
+        Prateleiras
+      </AccordionTrigger>
+      <AccordionContent>
+        <p className="pb-2 text-[16px] font-medium">
+          Cadastrar nova Prateleira:
+        </p>
+        <ShelfRegister form={form} onSubmit={onSubmit} />
+        <p className="py-2 text-[16px] font-medium">
+          Prateleiras já cadastradas e seus endereços:
+        </p>
+        <ManageShelvesTable />
+      </AccordionContent>
+    </AccordionItem>
   );
 }

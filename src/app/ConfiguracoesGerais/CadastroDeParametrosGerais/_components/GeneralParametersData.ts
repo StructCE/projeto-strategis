@@ -136,4 +136,61 @@ export const locais: Local[] = [
       },
     ],
   },
+  {
+    descricao: "Local 3",
+    armariosZonas: [
+      {
+        descricao: "Zona 2",
+        prateleiras: [
+          { descricao: "Prateleira 7" },
+          { descricao: "Prateleira 8" },
+          { descricao: "Prateleira 9" },
+        ],
+      },
+      {
+        descricao: "Zona 3",
+        prateleiras: [
+          { descricao: "Prateleira 10" },
+          { descricao: "Prateleira 11" },
+        ],
+      },
+      {
+        descricao: "Zona 4",
+        prateleiras: [
+          { descricao: "Prateleira 12" },
+          { descricao: "Prateleira 13" },
+          { descricao: "Prateleira 14" },
+          { descricao: "Prateleira 15" },
+        ],
+      },
+      {
+        descricao: "Armário 3",
+        prateleiras: [{ descricao: "Prateleira 15" }],
+      },
+      {
+        descricao: "Armário 4",
+        prateleiras: [
+          { descricao: "Prateleira 16" },
+          { descricao: "Prateleira 17" },
+          { descricao: "Prateleira 18" },
+        ],
+      },
+      {
+        descricao: "Armário 5",
+        prateleiras: [
+          { descricao: "Prateleira 19" },
+          { descricao: "Prateleira 20" },
+        ],
+      },
+      {
+        descricao: "Armário 6",
+        prateleiras: [
+          { descricao: "Prateleira 21" },
+          { descricao: "Prateleira 22" },
+          { descricao: "Prateleira 23" },
+          { descricao: "Prateleira 24" },
+        ],
+      },
+    ],
+  },
 ];
