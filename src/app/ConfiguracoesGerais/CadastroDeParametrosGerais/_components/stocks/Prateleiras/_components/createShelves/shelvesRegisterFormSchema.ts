@@ -5,15 +5,15 @@ export const createShelfFormSchema = z.object({
     required_error: "Por favor selecione um local.",
   }),
   armarioZona: z.string({
-    required_error: "Por favor selecione um local.",
+    required_error: "Por favor selecione um armário/zona.",
   }),
   descricao: z
     .string()
     .min(3, {
-      message: "Nome deve ter pelo menos 3 caracteres.",
+      message: "Descrição/nome deve ter pelo menos 3 caracteres.",
     })
     .max(60, {
-      message: "Nome deve ter no máximo 60 caracteres.",
+      message: "Descrição/nome deve ter no máximo 60 caracteres.",
     }),
 });
 
