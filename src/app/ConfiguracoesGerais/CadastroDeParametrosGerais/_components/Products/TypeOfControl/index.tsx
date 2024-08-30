@@ -8,7 +8,7 @@ import TypeRegister from "./_components/createTypes/typeRegister";
 import { useTypeForm } from "./_components/createTypes/useTypeForm";
 import { ManageTypesTable } from "./_components/manageTypes/manageTypes";
 
-export default function TiposDeControle() {
+export default function TypesOfControl() {
   const { form, onSubmit } = useTypeForm();
 
   return (

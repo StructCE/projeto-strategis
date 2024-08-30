@@ -8,7 +8,7 @@ import ShelfRegister from "./_components/createShelves/shelvesRegister";
 import { useShelfForm } from "./_components/createShelves/useShelvesForm";
 import { ManageShelvesTable } from "./_components/manageShelves/manageShelves";
 
-export default function Prateleiras() {
+export default function Shelves() {
   const { form, onSubmit } = useShelfForm();
 
   return (

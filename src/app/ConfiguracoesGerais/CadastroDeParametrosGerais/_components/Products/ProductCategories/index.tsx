@@ -8,7 +8,7 @@ import CategoryRegister from "./_components/createCategories/categoryRegister";
 import { useCategoryForm } from "./_components/createCategories/useCategoryForm";
 import { ManageCategoriesTable } from "./_components/manageCategories/manageCategories";
 
-export default function CategoriasDeProdutos() {
+export default function ProductCategories() {
   const { form, onSubmit } = useCategoryForm();
 
   return (

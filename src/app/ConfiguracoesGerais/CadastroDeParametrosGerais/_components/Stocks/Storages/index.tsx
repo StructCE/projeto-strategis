@@ -8,7 +8,7 @@ import StorageRegister from "./_components/createStorages/storageRegister";
 import { useStorageForm } from "./_components/createStorages/useStoregeForm";
 import { ManageStoragesTable } from "./_components/manageStorages/manageStorages";
 
-export default function ArmariosZonas() {
+export default function Storages() {
   const { form, onSubmit } = useStorageForm();
 
   return (

@@ -1,25 +1,25 @@
 import { Accordion } from "~/components/ui/accordion";
-import CategoriasDeProdutos from "./_components/products/CategoriasDeProdutos";
-import SetoresDeUtilizacao from "./_components/products/SetoresDeUtilizacao";
-import TiposDeControle from "./_components/products/TiposDeControle";
-import ArmariosZonas from "./_components/stocks/ArmariosZonas";
-import Locais from "./_components/stocks/Locais";
-import Prateleiras from "./_components/stocks/Prateleiras";
+import ProductCategories from "./_components/Products/ProductCategories";
+import SectorsOfUse from "./_components/Products/SectorsOfUse";
+import TypesOfControl from "./_components/Products/TypeOfControl";
+import Places from "./_components/Stocks/Places";
+import Shelves from "./_components/Stocks/Shelves";
+import Storages from "./_components/Stocks/Storages";
 
-export default function ParametersRegister() {
+export default function GeneralParametersRegister() {
   return (
     <div className="flex w-full flex-col gap-4 bg-fundo_branco">
       <h1 className="text-[32px] font-medium">Parâmetros Gerais de Produtos</h1>
       <Accordion type="single" collapsible>
-        <TiposDeControle />
-        <CategoriasDeProdutos />
-        <SetoresDeUtilizacao />
+        <TypesOfControl />
+        <ProductCategories />
+        <SectorsOfUse />
         <h1 className="mt-8 text-[32px] font-medium">
           Parâmetros Gerais de Estoques
         </h1>
-        <Locais />
-        <ArmariosZonas />
-        <Prateleiras />
+        <Places />
+        <Storages />
+        <Shelves />
       </Accordion>
     </div>
   );

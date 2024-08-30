@@ -194,3 +194,18 @@ export const locais: Local[] = [
     ],
   },
 ];
+
+/*
+Produtos                -> Products (Product)
+
+Tipos de Controle       -> Types of Control   (Type of Control)
+Categorias de Produtos  -> Product Categories (Product Category) 
+Setores de Utilização   -> Sectors of Use     (Sector of Use)
+
+
+Estoques                -> Stocks (Stock)
+
+Locais                  -> Places   (Place)
+Armários/Zonas          -> Storages (Storage)
+Pratelerias             -> Shelves  (Shelf)
+*/

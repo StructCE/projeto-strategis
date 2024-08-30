@@ -8,7 +8,7 @@ import SectorRegister from "./_components/createSectors/sectorRegister";
 import { useSectorForm } from "./_components/createSectors/useSectorForm";
 import { ManageSectorsTable } from "./_components/manageSectors/manageSectors";
 
-export default function SetoresDeUtilizacao() {
+export default function SectorsOfUse() {
   const { form, onSubmit } = useSectorForm();
 
   return (

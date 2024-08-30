@@ -8,7 +8,7 @@ import PlaceRegister from "./_components/createPlaces/placeRegister";
 import { usePlaceForm } from "./_components/createPlaces/usePlaceForm";
 import { ManagePlacesTable } from "./_components/managePlaces/managePlaces";
 
-export default function Locais() {
+export default function Places() {
   const { form, onSubmit } = usePlaceForm();
 
   return (
