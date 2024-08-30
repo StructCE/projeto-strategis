@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { UserEditContainer } from "../editUsers/userEditContainer";
-import { Usuarios } from "../usersData";
+import { users } from "../usersData";
 import ManageUsersFilters from "./manageUsersFilters/manageUsersFilters";
 
 export const ManageUsersTable = () => {
@@ -30,17 +30,17 @@ export const ManageUsersTable = () => {
           <TableComponent.ValueTitle>Cargo</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {Usuarios.map((usuario, index) => (
+        {users.map((user, index) => (
           <TableComponent.Line
             className={`grid-cols-[repeat(4,_1fr)_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value>{usuario.nome}</TableComponent.Value>
-            <TableComponent.Value>{usuario.email}</TableComponent.Value>
-            <TableComponent.Value>{usuario.empresa}</TableComponent.Value>
-            <TableComponent.Value>{usuario.cargo}</TableComponent.Value>
+            <TableComponent.Value>{user.username}</TableComponent.Value>
+            <TableComponent.Value>{user.email}</TableComponent.Value>
+            <TableComponent.Value>{user.company}</TableComponent.Value>
+            <TableComponent.Value>{user.role}</TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
@@ -53,7 +53,7 @@ export const ManageUsersTable = () => {
                     Utilize os campos abaixo para editar os dados do usuário ou
                     o botão para remover
                   </DialogTitle>
-                  <UserEditContainer {...usuario} />
+                  <UserEditContainer {...user} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

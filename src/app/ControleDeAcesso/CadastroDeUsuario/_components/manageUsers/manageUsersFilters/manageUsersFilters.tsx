@@ -1,12 +1,12 @@
 import { Building2, Search, UserCog } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter/filterContainer";
-import { Cargos, Empresas } from "../../usersData";
+import { companies, roles } from "../../usersData";
 
 export default function ManageUsersFilters() {
   const [inputNome, setInputNome] = useState("");
-  const [selectEmpresa, setSelectEmpresa] = useState("");
-  const [selectCargo, setSelectCargo] = useState("");
+  const [selectCompany, setSelectCompany] = useState("");
+  const [selectRole, setSelectRole] = useState("");
 
   return (
     <>
@@ -29,13 +29,13 @@ export default function ManageUsersFilters() {
           )}
         />
         <Filter.Select
-          placeholder="Fornecedor"
-          state={selectEmpresa}
-          setState={setSelectEmpresa}
+          placeholder="Empresa"
+          state={selectCompany}
+          setState={setSelectCompany}
         >
-          {Empresas.map((empresa, index) => (
+          {companies.map((company, index) => (
             <Filter.SelectItems
-              value={empresa.nome}
+              value={company.name}
               key={index}
             ></Filter.SelectItems>
           ))}
@@ -49,12 +49,12 @@ export default function ManageUsersFilters() {
         />
         <Filter.Select
           placeholder="Cargo"
-          state={selectCargo}
-          setState={setSelectCargo}
+          state={selectRole}
+          setState={setSelectRole}
         >
-          {Cargos.map((cargo, index) => (
+          {roles.map((role, index) => (
             <Filter.SelectItems
-              value={cargo.nome}
+              value={role.name}
               key={index}
             ></Filter.SelectItems>
           ))}

@@ -19,7 +19,7 @@ export const createUserFormSchema = z
       .max(128, {
         message: "A senha deve ter no máximo 128 caracteres.",
       }),
-    password_confirmation: z.string({
+    passwordConfirmation: z.string({
       required_error: "Por favor confirme a senha.",
     }),
     username: z
@@ -41,14 +41,14 @@ export const createUserFormSchema = z
           "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
       })
       .optional(),
-    empresa: z.string({
+    company: z.string({
       required_error: "Por favor selecione uma empresa.",
     }),
-    cargo: z.string({
+    role: z.string({
       required_error: "Por favor selecione um cargo.",
     }),
   })
-  .refine((data) => data.password === data.password_confirmation, {
+  .refine((data) => data.password === data.passwordConfirmation, {
     message: "As senhas não coincidem.",
     path: ["password_confirmation"],
   });

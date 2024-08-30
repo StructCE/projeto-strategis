@@ -9,7 +9,7 @@ export const editUserFormSchema = z
       .email({
         message: "Email inválido.",
       }),
-    senha: z
+    password: z
       .string({
         required_error: "Por favor digite uma senha.",
       })
@@ -19,10 +19,10 @@ export const editUserFormSchema = z
       .max(128, {
         message: "A senha deve ter no máximo 128 caracteres.",
       }),
-    senhaConfirmacao: z.string({
+    passwordConfirmation: z.string({
       required_error: "Por favor confirme a senha.",
     }),
-    nome: z
+    username: z
       .string()
       .min(3, {
         message: "Nome deve ter pelo menos 3 caracteres.",
@@ -30,7 +30,7 @@ export const editUserFormSchema = z
       .max(60, {
         message: "Nome deve ter no máximo 60 caracteres.",
       }),
-    telefone: z
+    phone: z
       .string()
       .min(8, {
         message:
@@ -41,14 +41,14 @@ export const editUserFormSchema = z
           "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
       })
       .optional(),
-    empresa: z.string({
+    company: z.string({
       required_error: "Por favor selecione uma empresa.",
     }),
-    cargo: z.string({
+    role: z.string({
       required_error: "Por favor selecione um cargo.",
     }),
   })
-  .refine((data) => data.senha === data.senhaConfirmacao, {
+  .refine((data) => data.password === data.passwordConfirmation, {
     message: "As senhas não coincidem.",
     path: ["password_confirmation"],
   });

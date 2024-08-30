@@ -15,14 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Cargos, Empresas, type User } from "../usersData";
+import { companies, roles, type User } from "../usersData";
 import { type EditUserFormValues } from "./userEditFormSchema";
 
 type UserEditProps = {
   form: UseFormReturn<EditUserFormValues>;
   onSubmitEdit: (data: EditUserFormValues) => void;
   onSubmitRemove: (data: EditUserFormValues) => void;
-  usuario: User;
+  user: User;
 };
 
 export const UserEdit = (props: UserEditProps) => {
@@ -55,7 +55,7 @@ export const UserEdit = (props: UserEditProps) => {
               <FormComponent.Label>Senha</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="senha"
+                name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -76,7 +76,7 @@ export const UserEdit = (props: UserEditProps) => {
               <FormComponent.Label>Confirme a senha</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="senhaConfirmacao"
+                name="passwordConfirmation"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -99,7 +99,7 @@ export const UserEdit = (props: UserEditProps) => {
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="nome"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -119,7 +119,7 @@ export const UserEdit = (props: UserEditProps) => {
               <FormComponent.Label>Telefone</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="telefone"
+                name="phone"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -139,7 +139,7 @@ export const UserEdit = (props: UserEditProps) => {
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="empresa"
+                name="company"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -152,9 +152,9 @@ export const UserEdit = (props: UserEditProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Empresas.map((empresa, index) => (
-                          <SelectItem value={empresa.value} key={index}>
-                            {empresa.nome}
+                        {companies.map((company, index) => (
+                          <SelectItem value={company.value} key={index}>
+                            {company.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -169,7 +169,7 @@ export const UserEdit = (props: UserEditProps) => {
               <FormComponent.Label>Cargo</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="cargo"
+                name="role"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -182,9 +182,9 @@ export const UserEdit = (props: UserEditProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Cargos.map((cargo, index) => (
-                          <SelectItem value={cargo.value} key={index}>
-                            {cargo.nome}
+                        {roles.map((role, index) => (
+                          <SelectItem value={role.value} key={index}>
+                            {role.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
