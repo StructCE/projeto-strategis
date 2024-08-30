@@ -25,7 +25,7 @@ export const TypeEdit = (props: TypeEditProps) => {
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
-              <FormComponent.Label>Descrição</FormComponent.Label>
+              <FormComponent.Label>Tipo de Controle</FormComponent.Label>
               <FormField
                 control={props.form.control}
                 name="descricao"
@@ -33,7 +33,7 @@ export const TypeEdit = (props: TypeEditProps) => {
                   <FormItem>
                     <FormControl>
                       <Input
-                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
                         placeholder="Descrição/nome da categoria de produtos"
                         {...field}
                       />

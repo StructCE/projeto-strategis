@@ -33,7 +33,7 @@ export const StorageEdit = (props: StorageEditProps) => {
                   <FormItem>
                     <FormControl>
                       <Input
-                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
                         placeholder="Descrição/nome do armário/zona"
                         {...field}
                       />

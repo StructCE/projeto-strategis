@@ -5,7 +5,7 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import StorageRegister from "./_components/createStorages/storageRegister";
-import { useStorageForm } from "./_components/createStorages/useStoregaForm";
+import { useStorageForm } from "./_components/createStorages/useStoregeForm";
 import { ManageStoragesTable } from "./_components/manageStorages/manageStorages";
 
 export default function ArmariosZonas() {
