@@ -9,14 +9,14 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
+import { modules } from "../accessProfilesData";
 import { type CreateAccessProfileFormValues } from "./accessProfileRegisterFormSchema";
-import { Modulos } from "./accessProfilesData";
 
 type AccessProfileRegisterProps = {
   form: UseFormReturn<CreateAccessProfileFormValues>;
   onSubmit: (data: CreateAccessProfileFormValues) => void;
-  selectedFrameworks: string[];
-  setSelectedFrameworks: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedModule: string[];
+  setSelectedModule: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 export const AccessProfileRegister = (props: AccessProfileRegisterProps) => {
@@ -33,7 +33,7 @@ export const AccessProfileRegister = (props: AccessProfileRegisterProps) => {
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="nome"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -53,13 +53,13 @@ export const AccessProfileRegister = (props: AccessProfileRegisterProps) => {
               <FormComponent.Label>Módulos de acesso</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="modulos"
+                name="modules"
                 render={({ field }) => (
                   <FormItem>
                     <MultiSelect
-                      options={Modulos}
-                      onValueChange={props.setSelectedFrameworks}
-                      defaultValue={props.selectedFrameworks}
+                      options={modules}
+                      onValueChange={props.setSelectedModule}
+                      defaultValue={props.selectedModule}
                       placeholder="Selecione um ou mais conteúdos para o cargo ter acesso"
                       variant="inverted"
                       maxCount={2}

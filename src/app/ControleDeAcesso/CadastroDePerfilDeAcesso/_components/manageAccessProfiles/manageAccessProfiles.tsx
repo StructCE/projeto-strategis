@@ -1,9 +1,9 @@
 import { TableComponent } from "~/components/table/tableContainer";
+import { type Role, roles } from "../accessProfilesData";
 import ManageAccessProfilesFilters from "./manageAccessProfilesFilters/manageAccessProfilesFilters";
-import { TabelaCargos } from "./manageAccessProfilesTableData";
 
 type ManageAccessProfilesTableProps = {
-  handleDetailsPress: ({ nome }: { nome: string }) => void;
+  handleDetailsPress: (role: Role) => void;
 };
 
 export const ManageAccessProfilesTable = (
@@ -19,29 +19,33 @@ export const ManageAccessProfilesTable = (
         <ManageAccessProfilesFilters />
       </TableComponent.FiltersLine>
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1fr_3fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[1fr_4fr_130px]">
           <TableComponent.ValueTitle>Nome</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>
             Módulos de Acesso
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {TabelaCargos.map((cargo, index) => (
+        {roles.map((role, indexRoles) => (
           <TableComponent.Line
-            className={`grid-cols-[1fr_3fr_130px] ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+            className={`grid-cols-[1fr_4fr_130px] ${
+              indexRoles % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
-            key={index}
+            key={indexRoles}
           >
-            <TableComponent.Value>{cargo.nome}</TableComponent.Value>
+            <TableComponent.Value>{role.name}</TableComponent.Value>
             <TableComponent.Value>
-              {cargo.modulos.length > 4
-                ? `${cargo.modulos.slice(0, 4).join(", ")}...`
-                : cargo.modulos.join(", ")}
+              {role.modules
+                .slice(0, 4)
+                .map(
+                  (module, i) =>
+                    `${module.label}${i < role.modules.slice(0, 4).length - 1 ? ", " : ""}`,
+                )}
+              {role.modules.length > 4 ? "..." : "."}
             </TableComponent.Value>
             <TableComponent.LineButton
               className="bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
-              handlePress={() => props.handleDetailsPress(cargo)}
+              handlePress={() => props.handleDetailsPress(role)}
             >
               Detalhes
             </TableComponent.LineButton>
