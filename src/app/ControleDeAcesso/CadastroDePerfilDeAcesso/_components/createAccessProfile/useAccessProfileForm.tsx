@@ -11,6 +11,7 @@ export const useAccessProfileForm = () => {
     resolver: zodResolver(createAccessProfileFormSchema),
     mode: "onChange",
   });
+
   const [selectedModule, setSelectedModule] = useState<string[]>([]);
 
   function onSubmit(data: CreateAccessProfileFormValues) {

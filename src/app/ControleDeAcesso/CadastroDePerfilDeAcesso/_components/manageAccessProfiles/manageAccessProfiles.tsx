@@ -1,14 +1,18 @@
 import { TableComponent } from "~/components/table/tableContainer";
-import { type Role, roles } from "../accessProfilesData";
+import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { roles } from "../accessProfilesData";
+import { AccessProfileEditContainer } from "../editAcessProfile/accessProfileEditContainer";
 import ManageAccessProfilesFilters from "./manageAccessProfilesFilters/manageAccessProfilesFilters";
 
-type ManageAccessProfilesTableProps = {
-  handleDetailsPress: (role: Role) => void;
-};
-
-export const ManageAccessProfilesTable = (
-  props: ManageAccessProfilesTableProps,
-) => {
+export const ManageAccessProfilesTable = () => {
   return (
     <TableComponent>
       <TableComponent.Title>Gerenciar Perfis de Acesso</TableComponent.Title>
@@ -43,12 +47,23 @@ export const ManageAccessProfilesTable = (
                 )}
               {role.modules.length > 4 ? "..." : "."}
             </TableComponent.Value>
-            <TableComponent.LineButton
-              className="bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
-              handlePress={() => props.handleDetailsPress(role)}
-            >
-              Detalhes
-            </TableComponent.LineButton>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                  Detalhes
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-7xl">
+                <DialogHeader>
+                  <DialogTitle className="pb-1.5">
+                    Utilize os campos abaixo para editar os dados do perfil de
+                    acesso ou o botão para remover
+                  </DialogTitle>
+                  <AccessProfileEditContainer {...role} />
+                  <DialogDescription></DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </TableComponent.Line>
         ))}
       </TableComponent.Table>
