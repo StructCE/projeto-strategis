@@ -12,7 +12,7 @@ export default function TiposDeControle() {
   const { form, onSubmit } = useTypeForm();
 
   return (
-    <AccordionItem value="item-1" className="border-cinza_borda_acordeao px-0">
+    <AccordionItem value="item-1" className="border-vinho_strategis px-0">
       <AccordionTrigger className="mx-0 pb-1 text-[24px] font-medium">
         Tipos de Controle
       </AccordionTrigger>
