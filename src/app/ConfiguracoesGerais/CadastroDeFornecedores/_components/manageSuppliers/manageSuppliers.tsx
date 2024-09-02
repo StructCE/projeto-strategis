@@ -23,16 +23,16 @@ export const ManageSuppliersTable = () => {
         <ManageSuppliersFilters />
       </TableComponent.FiltersLine>
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[2fr_4fr_140px_3fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[2fr_4fr_3fr_130px]">
           <TableComponent.ValueTitle>Fornecedor</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Endereço</TableComponent.ValueTitle>
-          <TableComponent.ValueTitle>Telefone</TableComponent.ValueTitle>
+          {/* <TableComponent.ValueTitle>Telefone</TableComponent.ValueTitle> */}
           <TableComponent.ValueTitle>Email</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
         {suppliers.map((supplier, index) => (
           <TableComponent.Line
-            className={`grid-cols-[2fr_4fr_140px_3fr_130px] ${
+            className={`grid-cols-[2fr_4fr_3fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -42,7 +42,7 @@ export const ManageSuppliersTable = () => {
               {supplier.address} - {supplier.neighborhood} - {supplier.city} (
               {supplier.state})
             </TableComponent.Value>
-            <TableComponent.Value>{supplier.phone}</TableComponent.Value>
+            {/* <TableComponent.Value>{supplier.phone}</TableComponent.Value> */}
             <TableComponent.Value>{supplier.email}</TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>

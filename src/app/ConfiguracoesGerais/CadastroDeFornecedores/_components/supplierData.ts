@@ -1,5 +1,6 @@
 export type Role = {
   name: string;
+  value: string;
 };
 
 export type Contact = {
@@ -39,14 +40,14 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Maria Silva",
-        role: { name: "Gerente" },
+        role: { name: "Gerente", value: "" },
         email: "maria.silva@fornecedora.com",
         telephone: "(11) 2345-6789",
         cellphone: "(11) 91234-5678",
       },
       {
         name: "João Souza",
-        role: { name: "Assistente" },
+        role: { name: "Assistente", value: "" },
         email: "joao.souza@fornecedora.com",
         telephone: "(11) 3456-7890",
         cellphone: "(11) 98765-4321",
@@ -67,14 +68,14 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Ana Oliveira",
-        role: { name: "Supervisor" },
+        role: { name: "Supervisor", value: "" },
         email: "ana.oliveira@fornecedorb.com",
         telephone: "(21) 3456-7890",
         cellphone: "(21) 91234-5678",
       },
       {
         name: "Carlos Pereira",
-        role: { name: "Vendedor" },
+        role: { name: "Vendedor", value: "" },
         email: "carlos.pereira@fornecedorb.com",
         telephone: "(21) 4567-8901",
         cellphone: "(21) 98765-4321",
@@ -95,7 +96,7 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Paula Costa",
-        role: { name: "Financeiro" },
+        role: { name: "Financeiro", value: "" },
         email: "paula.costa@fornecedorc.com",
         telephone: "(31) 4567-8901",
         cellphone: "(31) 91234-5678",
@@ -116,21 +117,21 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Roberto Lima",
-        role: { name: "Técnico" },
+        role: { name: "Técnico", value: "" },
         email: "roberto.lima@fornecedord.com",
         telephone: "(41) 5678-9012",
         cellphone: "(41) 98765-4321",
       },
       {
         name: "Fernanda Souza",
-        role: { name: "Coordenadora" },
+        role: { name: "Coordenadora", value: "" },
         email: "fernanda.souza@fornecedord.com",
         telephone: "(41) 6789-0123",
         cellphone: "(41) 91234-5678",
       },
       {
         name: "Pedro Martins",
-        role: { name: "Auxiliar" },
+        role: { name: "Auxiliar", value: "" },
         email: "pedro.martins@fornecedord.com",
         telephone: "(41) 7890-1234",
         cellphone: "(41) 99876-5432",
@@ -151,7 +152,7 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Ricardo Almeida",
-        role: { name: "Diretor" },
+        role: { name: "Diretor", value: "" },
         email: "ricardo.almeida@fornecedore.com",
         telephone: "(51) 6789-0123",
         cellphone: "(51) 98765-4321",
@@ -188,4 +189,27 @@ export const states = [
   { name: "São Paulo (SP)", value: "SP" },
   { name: "Sergipe (SE)", value: "SE" },
   { name: "Tocantins (TO)", value: "TO" },
+];
+
+export const roles: Role[] = [
+  {
+    name: "Administrador",
+    value: "Administrador",
+  },
+  {
+    name: "Operador",
+    value: "Operador",
+  },
+  {
+    name: "Estoquista",
+    value: "Estoquista",
+  },
+  {
+    name: "Requisitante",
+    value: "Requisitante",
+  },
+  {
+    name: "Personalizado 1",
+    value: "Personalizado 1",
+  },
 ];

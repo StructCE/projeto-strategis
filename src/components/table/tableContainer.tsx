@@ -20,7 +20,7 @@ TableComponent.Title = function TableComponentTitle(
   props: TableComponentTitleProps,
 ) {
   const style = cn(
-    "text-[24px] sm:text-[32px] font-inter font-medium",
+    "text-[24px] sm:text-[32px] font-inter font-medium leading-none",
     props.className,
   );
   return <p className={style}>{props.children}</p>;

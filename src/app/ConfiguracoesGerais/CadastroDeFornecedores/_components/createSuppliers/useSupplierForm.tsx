@@ -9,6 +9,19 @@ export const useSupplierForm = () => {
   const form = useForm<CreateSupplierFormValues>({
     resolver: zodResolver(createSupplierFormSchema),
     mode: "onChange",
+    defaultValues: {
+      name: "",
+      cnpj: "",
+      email: "",
+      phone: "",
+      state_registration: "",
+      address: "",
+      neighborhood: "",
+      city: "",
+      state: "",
+      cep: "",
+      contacts: [{ name: "", role: "", email: "", phone: "" }],
+    },
   });
 
   function onSubmit(data: CreateSupplierFormValues) {
