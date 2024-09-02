@@ -5,7 +5,7 @@ import { states } from "../../supplierData";
 
 export default function ManageSuppliersFilters() {
   const [inputName, setInputName] = useState("");
-  const [selectCNPJ, setSelectCNPJ] = useState("");
+  const [selectState, setSelectState] = useState("");
 
   return (
     <>
@@ -29,8 +29,8 @@ export default function ManageSuppliersFilters() {
         />
         <Filter.Select
           placeholder="Estado do Fornecedor"
-          state={selectCNPJ}
-          setState={setSelectCNPJ}
+          state={selectState}
+          setState={setSelectState}
         >
           {states.map((state, index) => (
             <Filter.SelectItems

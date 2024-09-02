@@ -1,4 +1,4 @@
-import { type UseFormReturn } from "react-hook-form";
+import { useFieldArray, type UseFormReturn } from "react-hook-form";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { states, type Supplier } from "../supplierData";
+import { roles, states, type Supplier } from "../supplierData";
 import { type EditSupplierFormValues } from "./supplierEditFormSchema";
 
 type SupplierEditProps = {
@@ -26,10 +26,17 @@ type SupplierEditProps = {
 };
 
 export const SupplierEdit = (props: SupplierEditProps) => {
+  const { fields, append, remove } = useFieldArray({
+    control: props.form.control,
+    name: "contacts",
+  });
+
   return (
     <Form {...props.form}>
       <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
         <FormComponent>
+          <FormComponent.Title>Cadastro de Fornecedor</FormComponent.Title>
+
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
@@ -171,6 +178,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
                 )}
               />
             </FormComponent.Frame>
+
             <FormComponent.Frame>
               <FormComponent.Label>Município/Cidade</FormComponent.Label>
               <FormField
@@ -190,6 +198,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
                 )}
               />
             </FormComponent.Frame>
+
             <FormComponent.Frame>
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
@@ -240,6 +249,120 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               />
             </FormComponent.Frame>
           </FormComponent.Line>
+
+          <FormComponent.BoxSpecify boxName="Contatos">
+            {fields.map((contact, index) => (
+              <FormComponent.Line key={contact.id}>
+                <FormComponent.Frame>
+                  <FormComponent.Label>Nome</FormComponent.Label>
+                  <FormField
+                    control={props.form.control}
+                    name={`contacts.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                            placeholder="Nome do contato"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FormComponent.Frame>
+
+                <FormComponent.Frame>
+                  <FormComponent.Label>Cargo</FormComponent.Label>
+                  <FormField
+                    control={props.form.control}
+                    name={`contacts.${index}.role`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                              <SelectValue placeholder="Selecione um cargo" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {roles.map((role, i) => (
+                              <SelectItem value={role.value} key={i}>
+                                {role.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FormComponent.Frame>
+
+                <FormComponent.Frame>
+                  <FormComponent.Label>Email</FormComponent.Label>
+                  <FormField
+                    control={props.form.control}
+                    name={`contacts.${index}.email`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                            placeholder="Endereço de email do contato"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FormComponent.Frame>
+
+                <FormComponent.Frame>
+                  <FormComponent.Label>Telefone</FormComponent.Label>
+                  <FormField
+                    control={props.form.control}
+                    name={`contacts.${index}.phone`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                            placeholder="(XX) XXXXX-XXXX"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FormComponent.Frame>
+
+                <FormComponent.ButtonRemove
+                  handlePress={() => remove(index)}
+                ></FormComponent.ButtonRemove>
+              </FormComponent.Line>
+            ))}
+          </FormComponent.BoxSpecify>
+
+          <FormComponent.ButtonLayout>
+            <button
+              onClick={() =>
+                append({ name: "", email: "", phone: "", role: "" })
+              }
+              className="hover:bg-hover_cinza_escuro_botao min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white"
+              type="button"
+            >
+              <p className="text-[14px] font-semibold tracking-wider sm:text-[16px] sm:tracking-normal">
+                Adicionar Contato
+              </p>
+            </button>
+          </FormComponent.ButtonLayout>
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">

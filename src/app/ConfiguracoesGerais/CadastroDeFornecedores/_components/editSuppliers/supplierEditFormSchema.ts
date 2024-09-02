@@ -1,12 +1,50 @@
 import { z } from "zod";
 
+const supplierContactSchema = z.object({
+  name: z
+    .string({
+      required_error: "Por favor digite o nome do contato.",
+    })
+    .min(2, {
+      message: "O nome do contato deve ter pelo menos 3 caracteres.",
+    }),
+
+  role: z
+    .string({
+      required_error: "Por favor selecione o cargo do usuário.",
+    })
+    .min(1, {
+      message: "Por favor selecione o cargo do usuário.",
+    }),
+
+  email: z
+    .string({
+      required_error: "Por favor digite o email do contato.",
+    })
+    .email({
+      message: "Email inválido.",
+    }),
+
+  phone: z
+    .string()
+    .min(8, {
+      message:
+        "Número de telefone inválido. O formato correto é (XX) XXXXX-XXXX.",
+    })
+    .max(16, {
+      message:
+        "Número de telefone inválido. O formato correto é (XX) XXXXX-XXXX.",
+    })
+    .optional(),
+});
+
 export const editSupplierFormSchema = z.object({
   name: z
     .string({
       required_error: "Por favor digite o nome da empresa/fornecedor.",
     })
     .min(2, {
-      message: "O nome deve ter pelo menos 2 caracteres.",
+      message: "O nome deve ter pelo menos 3 caracteres.",
     }),
 
   cnpj: z
@@ -30,13 +68,13 @@ export const editSupplierFormSchema = z.object({
 
   phone: z
     .string()
-    .min(10, {
+    .min(8, {
       message:
-        "Número de telefone inválido. O formato correto é (XX)XXXX-XXXX ou (XX)XXXXX-XXXX.",
+        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
     })
     .max(16, {
       message:
-        "Número de telefone inválido. O formato correto é (XX)XXXX-XXXX ou (XX)XXXXX-XXXX.",
+        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
     })
     .optional(),
 
@@ -72,9 +110,13 @@ export const editSupplierFormSchema = z.object({
       message: "A cidade deve ter pelo menos 2 caracteres.",
     }),
 
-  state: z.string({
-    required_error: "Por favor selecione a unidade federativa do fornecedor.",
-  }),
+  state: z
+    .string({
+      required_error: "Por favor selecione a unidade federativa do fornecedor.",
+    })
+    .min(1, {
+      message: "Por favor selecione a unidade federativa do fornecedor.",
+    }),
 
   cep: z
     .string({
@@ -86,6 +128,8 @@ export const editSupplierFormSchema = z.object({
     .regex(/^\d{5}-\d{3}$/, {
       message: "Formato de CEP inválido. Use o formato XXXXX-XXX.",
     }),
+
+  contacts: z.array(supplierContactSchema).optional(),
 });
 
 export type EditSupplierFormValues = z.infer<typeof editSupplierFormSchema>;

@@ -7,8 +7,7 @@ export type Contact = {
   name: string;
   role: Role;
   email: string;
-  telephone: string;
-  cellphone: string;
+  phone: string;
 };
 
 export type Supplier = {
@@ -40,17 +39,15 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Maria Silva",
-        role: { name: "Gerente", value: "" },
+        role: { name: "Estoquista", value: "Estoquista" },
         email: "maria.silva@fornecedora.com",
-        telephone: "(11) 2345-6789",
-        cellphone: "(11) 91234-5678",
+        phone: "(11) 91234-5678",
       },
       {
         name: "João Souza",
-        role: { name: "Assistente", value: "" },
+        role: { name: "Estoquista", value: "Estoquista" },
         email: "joao.souza@fornecedora.com",
-        telephone: "(11) 3456-7890",
-        cellphone: "(11) 98765-4321",
+        phone: "(11) 98765-4321",
       },
     ],
   },
@@ -68,17 +65,15 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Ana Oliveira",
-        role: { name: "Supervisor", value: "" },
+        role: { name: "Estoquista", value: "Estoquista" },
         email: "ana.oliveira@fornecedorb.com",
-        telephone: "(21) 3456-7890",
-        cellphone: "(21) 91234-5678",
+        phone: "(21) 91234-5678",
       },
       {
         name: "Carlos Pereira",
-        role: { name: "Vendedor", value: "" },
+        role: { name: "Estoquista", value: "Estoquista" },
         email: "carlos.pereira@fornecedorb.com",
-        telephone: "(21) 4567-8901",
-        cellphone: "(21) 98765-4321",
+        phone: "(21) 98765-4321",
       },
     ],
   },
@@ -96,10 +91,9 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Paula Costa",
-        role: { name: "Financeiro", value: "" },
+        role: { name: "Estoquista", value: "Estoquista" },
         email: "paula.costa@fornecedorc.com",
-        telephone: "(31) 4567-8901",
-        cellphone: "(31) 91234-5678",
+        phone: "(31) 91234-5678",
       },
     ],
   },
@@ -117,24 +111,21 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Roberto Lima",
-        role: { name: "Técnico", value: "" },
+        role: { name: "Estoquista", value: "Estoquista" },
         email: "roberto.lima@fornecedord.com",
-        telephone: "(41) 5678-9012",
-        cellphone: "(41) 98765-4321",
+        phone: "(41) 98765-4321",
       },
       {
         name: "Fernanda Souza",
-        role: { name: "Coordenadora", value: "" },
+        role: { name: "Estoquista", value: "Estoquista" },
         email: "fernanda.souza@fornecedord.com",
-        telephone: "(41) 6789-0123",
-        cellphone: "(41) 91234-5678",
+        phone: "(41) 91234-5678",
       },
       {
         name: "Pedro Martins",
-        role: { name: "Auxiliar", value: "" },
+        role: { name: "Estoquista", value: "Estoquista" },
         email: "pedro.martins@fornecedord.com",
-        telephone: "(41) 7890-1234",
-        cellphone: "(41) 99876-5432",
+        phone: "(41) 99876-5432",
       },
     ],
   },
@@ -152,10 +143,9 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Ricardo Almeida",
-        role: { name: "Diretor", value: "" },
+        role: { name: "Estoquista", value: "Estoquista" },
         email: "ricardo.almeida@fornecedore.com",
-        telephone: "(51) 6789-0123",
-        cellphone: "(51) 98765-4321",
+        phone: "(51) 98765-4321",
       },
     ],
   },

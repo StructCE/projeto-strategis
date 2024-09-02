@@ -21,6 +21,12 @@ export const useSupplierForm = (supplier: Supplier) => {
       city: supplier.city,
       state: supplier.state,
       cep: supplier.cep,
+      contacts: supplier.contacts.map((contact) => ({
+        name: contact.name,
+        role: contact.role.value,
+        email: contact.email,
+        phone: contact.phone,
+      })),
     },
   });
 
