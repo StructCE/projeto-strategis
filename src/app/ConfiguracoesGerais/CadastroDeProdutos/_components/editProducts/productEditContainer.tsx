@@ -1,17 +1,17 @@
 "use client";
-import { type User } from "../usersData";
-import { UserEdit } from "./productEdit";
-import { useUserForm } from "./useProductForm";
+import { type Product } from "../productsData";
+import { ProductEdit } from "./productEdit";
+import { useProductForm } from "./useProductForm";
 
-export const UserEditContainer = (usuario: User) => {
-  const { form, onSubmitEdit, onSubmitRemove } = useUserForm(usuario);
+export const ProductEditContainer = (product: Product) => {
+  const { form, onSubmitEdit, onSubmitRemove } = useProductForm(product);
 
   return (
-      <UserEdit
-        usuario={usuario}
-        form={form}
-        onSubmitEdit={onSubmitEdit}
-        onSubmitRemove={onSubmitRemove}
-      />
+    <ProductEdit
+      product={product}
+      form={form}
+      onSubmitEdit={onSubmitEdit}
+      onSubmitRemove={onSubmitRemove}
+    />
   );
 };

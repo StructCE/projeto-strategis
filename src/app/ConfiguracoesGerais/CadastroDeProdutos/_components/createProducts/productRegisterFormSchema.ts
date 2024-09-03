@@ -1,5 +1,25 @@
 import { z } from "zod";
 
+export const addressSchema = z.object({
+  place: z
+    .string({
+      required_error: "Selecione um local.",
+    })
+    .min(1, { message: "Selecione um local." }),
+
+  storage: z
+    .string({
+      required_error: "Selecione um armário/zona.",
+    })
+    .min(1, { message: "Selecione um armário/zona." }),
+
+  shelf: z
+    .string({
+      required_error: "Selecione uma prateleira.",
+    })
+    .min(1, { message: "Selecione uma prateleira." }),
+});
+
 export const createProductFormSchema = z.object({
   name: z
     .string({
@@ -67,23 +87,7 @@ export const createProductFormSchema = z.object({
     })
     .min(1, { message: "Selecione o setor de utilização do produto." }),
 
-  place: z
-    .string({
-      required_error: "Selecione um local.",
-    })
-    .min(1, { message: "Selecione um local." }),
-
-  storage: z
-    .string({
-      required_error: "Selecione um armário/zona.",
-    })
-    .min(1, { message: "Selecione um armário/zona." }),
-
-  shelf: z
-    .string({
-      required_error: "Selecione uma prateleira.",
-    })
-    .min(1, { message: "Selecione uma prateleira." }),
+  address: addressSchema,
 });
 
 export type CreateProductFormValues = z.infer<typeof createProductFormSchema>;

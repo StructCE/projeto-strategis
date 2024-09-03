@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
+import { ProductEditContainer } from "../editProducts/productEditContainer";
 import { products } from "../productsData";
 import ManageProductsFilters from "./manageProductsFilters/manageProductsFilters";
 
@@ -91,72 +92,8 @@ export default function ManageProductsTable() {
                     Utilize os campos abaixo para editar os dados do produto ou
                     o botão para remover
                   </DialogTitle>
-                  {/* <UserEditContainer {...usuario} /> */}
-                  <DialogDescription className="text-md flex flex-col gap-1 text-black">
-                    <p>
-                      <span className="font-medium">Nome:</span> {product.name}
-                    </p>
-                    <p>
-                      <span className="font-medium">Código:</span>{" "}
-                      {product.code}
-                    </p>
-                    <p>
-                      <span className="font-medium">Status:</span>{" "}
-                      {product.status.status}
-                    </p>
-                    <p>
-                      <span className="font-medium">Fornecedores:</span>{" "}
-                      {product.suppliers.map((fornecedor) => fornecedor.name)}
-                    </p>
-                    <p>
-                      <span className="font-medium">Quantidade de Compra:</span>{" "}
-                      {product.buy_quantity}
-                    </p>
-                    <p>
-                      <span className="font-medium">Unidade de Compra:</span>{" "}
-                      {product.buy_unit.unit}
-                    </p>
-                    <p>
-                      <span className="font-medium">Dia de Compra:</span>{" "}
-                      {product.buy_day.day}
-                    </p>
-                    <p>
-                      <span className="font-medium">Estoque Atual:</span>{" "}
-                      {product.stock_current}
-                    </p>
-                    <p>
-                      <span className="font-medium">Estoque Mínimo:</span>{" "}
-                      {product.stock_min}
-                    </p>
-                    <p>
-                      <span className="font-medium">Estoque Máxmio:</span>{" "}
-                      {product.stock_max}
-                    </p>
-                    <p>
-                      <span className="font-medium">Tipo de Controle:</span>{" "}
-                      {product.type_of_control.description}
-                    </p>
-                    <p>
-                      <span className="font-medium">Categoria do Produto:</span>{" "}
-                      {product.product_category.description}
-                    </p>
-                    <p>
-                      <span className="font-medium">Setor de Utilização:</span>{" "}
-                      {product.sector_of_use.description}
-                    </p>
-                    <p>
-                      <span className="font-medium">Local:</span>{" "}
-                      {product.place.description}
-                    </p>
-                    <p>
-                      <span className="font-medium">Armário/Zona:</span>{" "}
-                      {product.storage.description}
-                    </p>
-                    <p>
-                      <span className="font-medium">Prateleira:</span>{" "}
-                      {product.shelf.description}
-                    </p>
-                  </DialogDescription>
+                  <ProductEditContainer {...product} />
+                  <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>
             </Dialog>

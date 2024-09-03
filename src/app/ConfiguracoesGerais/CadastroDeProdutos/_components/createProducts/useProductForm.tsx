@@ -22,15 +22,13 @@ export const useProductForm = () => {
       type_of_control: "",
       product_category: "",
       sector_of_use: "",
-      place: "",
-      storage: "",
-      shelf: "",
+      address: { place: "", storage: "", shelf: "" },
     },
   });
 
   function onSubmit(data: CreateProductFormValues) {
     // Criar produto
-    console.log(JSON.stringify(data, null, 2)); // buy_quantity, stock_current, stock_min e stock_max estão como string, passar para float/int (verifica BD)
+    console.log(JSON.stringify(data, null, 2)); // buy_quantity, stock_current, stock_min e stock_max estão como string, passar para float/int (verificar no BD qual tipo é)
   }
 
   return { form, onSubmit };

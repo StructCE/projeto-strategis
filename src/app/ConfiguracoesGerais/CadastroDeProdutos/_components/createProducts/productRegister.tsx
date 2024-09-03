@@ -95,8 +95,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       </FormControl>
                       <SelectContent>
                         {status.map((status, index) => (
-                          <SelectItem value={status.status} key={index}>
-                            {status.status}
+                          <SelectItem value={status.description} key={index}>
+                            {status.description}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -375,7 +375,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
               <FormComponent.Label>Local</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="place"
+                name="address.place"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -409,7 +409,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="storage"
+                name="address.storage"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -442,7 +442,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
               <FormComponent.Label>Prateleira</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="shelf"
+                name="address.shelf"
                 render={({ field }) => (
                   <FormItem>
                     <Select
