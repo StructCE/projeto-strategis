@@ -9,8 +9,15 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import { ProductEditContainer } from "../editProducts/productEditContainer";
-import { products } from "../productsData";
+import { products, units } from "../productsData";
 import ManageProductsFilters from "./manageProductsFilters/manageProductsFilters";
 
 export default function ManageProductsTable() {
@@ -27,11 +34,14 @@ export default function ManageProductsTable() {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[70px_1fr_100px_100px_100px_130px] justify-between gap-7 sm:gap-14">
+        <TableComponent.LineTitle className="grid-cols-[70px_1fr_100px_100px_100px_100px_130px] gap-8">
           <TableComponent.ValueTitle className="text-center">
             Código
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Produto</TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-center">
+            Unidade
+          </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center">
             Estoque Atual
           </TableComponent.ValueTitle>
@@ -45,7 +55,7 @@ export default function ManageProductsTable() {
         </TableComponent.LineTitle>
         {products.map((product, index) => (
           <TableComponent.Line
-            className={`grid-cols-[70px_1fr_100px_100px_100px_130px] justify-between gap-7 sm:gap-14 ${
+            className={`grid-cols-[70px_1fr_100px_100px_100px_100px_130px] gap-8 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -60,24 +70,35 @@ export default function ManageProductsTable() {
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
+              <Select defaultValue={product.buy_unit.unit}>
+                <SelectTrigger className="h-7 bg-cinza_destaque text-center sm:h-8">
+                  <SelectValue placeholder="Selecione a unidade de compra" />
+                </SelectTrigger>
+                <SelectContent>
+                  {units.map((unit, index) => (
+                    <SelectItem value={unit.unit} key={index}>
+                      {unit.unit}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </TableComponent.Value>
+            <TableComponent.Value className="items-center justify-center text-center">
               <Input
                 defaultValue={product.stock_current}
                 className="h-7 bg-cinza_destaque text-center sm:h-8"
-                type="number"
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
               <Input
                 defaultValue={product.stock_min}
                 className="h-7 bg-cinza_destaque text-center sm:h-8"
-                type="number"
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
               <Input
                 defaultValue={product.stock_max}
                 className="h-7 bg-cinza_destaque text-center sm:h-8"
-                type="number"
               />
             </TableComponent.Value>
             <Dialog>
