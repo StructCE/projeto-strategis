@@ -288,6 +288,7 @@ export const units: ProductUnit[] = [
   { unit: "CX" },
 ];
 
+// Verificar como vai ser estruturado o endereço com relação aos parâmetros gerais, não sei se essa é a melhor maneira
 export type Address = {
   place: string;
   storage: string;
@@ -355,9 +356,9 @@ export const products: Product[] = [
     product_category: { description: "Carnes - In Natura" },
     sector_of_use: { description: "Cozinha" },
     address: {
-      place: "Local 1",
-      storage: "Armário 1",
-      shelf: "Prateleira 1",
+      place: "Local 2",
+      storage: "Armário 2",
+      shelf: "Prateleira 2",
     },
   },
   {
@@ -379,9 +380,9 @@ export const products: Product[] = [
     product_category: { description: "Bebidas - Águas" },
     sector_of_use: { description: "Bar" },
     address: {
-      place: "Local 1",
-      storage: "Armário 1",
-      shelf: "Prateleira 1",
+      place: "Local 3",
+      storage: "Armário 3",
+      shelf: "Prateleira 3",
     },
   },
   {
@@ -403,9 +404,9 @@ export const products: Product[] = [
     product_category: { description: "Produtos - Limpeza" },
     sector_of_use: { description: "Serviços Gerais" },
     address: {
-      place: "Local 1",
-      storage: "Armário 1",
-      shelf: "Prateleira 1",
+      place: "Local 4",
+      storage: "Armário 4",
+      shelf: "Prateleira 4",
     },
   },
   {
@@ -427,9 +428,9 @@ export const products: Product[] = [
     product_category: { description: "Bebidas - Vinho" },
     sector_of_use: { description: "Bar" },
     address: {
-      place: "Local 1",
-      storage: "Armário 1",
-      shelf: "Prateleira 1",
+      place: "Local 5",
+      storage: "Armário 5",
+      shelf: "Prateleira 5",
     },
   },
 ];

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
@@ -38,20 +38,29 @@ type ProductEditProps = {
 };
 
 export const ProductEdit = (props: ProductEditProps) => {
-  // Filtra os armários/zona com base no local selecionado
-  const [selectedPlace, setSelectedPlace] = useState<string>("");
+  // Filtra os armários/zonas com base no local selecionado
+  const [selectedPlace, setSelectedPlace] = useState<string>(
+    props.form.getValues("address.place"),
+  );
   const filteredStorages = selectedPlace
     ? (Places.find((place) => place.description === selectedPlace)?.storages ??
       [])
     : [];
 
   // Filtra as prateleiras com base no armário/zona selecionado
-  const [selectedStorage, setSelectedStorage] = useState<string>("");
+  const [selectedStorage, setSelectedStorage] = useState<string>(
+    props.form.getValues("address.storage"),
+  );
   const filteredShelves = selectedStorage
     ? (filteredStorages.find(
         (storage) => storage.description === selectedStorage,
       )?.shelves ?? [])
     : [];
+
+  useEffect(() => {
+    setSelectedPlace(props.form.getValues("address.place"));
+    setSelectedStorage(props.form.getValues("address.storage"));
+  }, [props.form]);
 
   return (
     <Form {...props.form}>
