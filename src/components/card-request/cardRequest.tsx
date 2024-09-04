@@ -19,15 +19,13 @@ export const RequestComponent = (props: RequestProps) => {
 type RequestComponentGridProps = {
   className?: string;
   children: React.ReactNode;
-  showFourColumn?: boolean;
 };
 
 RequestComponent.Grid = function RequestComponentGrid(
   props: RequestComponentGridProps,
 ) {
-  const gridLayout = props.showFourColumn ? "grid-flow-col" : "grid-flow-row";
   const style = cn(
-    `grid ${gridLayout} grid-cols-5 max-[768px]:grid-cols-2 max-[768px]:grid-rows-2 grid-rows-2 gap-2 items-center`,
+    `grid grid-cols-5 max-[768px]:grid-cols-2 gap-2 items-center`,
     props.className,
   );
   return <div className={style}>{props.children}</div>;
@@ -37,72 +35,37 @@ RequestComponent.Grid = function RequestComponentGrid(
 type RequestComponentColumnItemProps = {
   title: string;
   description: string;
+  isnº?: boolean;
 };
 
 RequestComponent.ColumnItem = function RequestComponentColumnItem(
   props: RequestComponentColumnItemProps,
 ) {
+  const { isnº = false } = props;
   return (
     <div className="flex flex-col max-[768px]:text-center">
       <span className="text-base font-medium max-[1100px]:text-sm">
         {props.title}
       </span>
       <span className="text-sm font-normal text-[#828282] max-[1100px]:text-xs">
-        {props.description}
+        {isnº ? `nº ${props.description}` : props.description}
       </span>
     </div>
   );
 };
 
-//// Botão confirmar ////
+//// Botão gerenciar  ////
 
-RequestComponent.ColumnButtonConfirm =
-  function RequestComponentColumnButtonConfirm() {
+RequestComponent.ColumnButtonManage =
+  function RequestComponentColumnButtonManage() {
     return (
-      <div className="flex items-center justify-center max-[768px]:row-end-6">
+      <div className="flex items-center justify-center max-[768px]:col-span-2 max-[768px]:row-end-4">
         <Button
           size={"sm"}
-          className="w-28 rounded-xl bg-verde_botao hover:bg-hover_verde_botao"
+          className="w-28 rounded-xl bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
         >
-          Confirmar
+          Gerenciar
         </Button>
       </div>
     );
   };
-
-//// Botão rejeitar  ////
-
-RequestComponent.ColumnButtonReject =
-  function RequestComponentColumnButtonReject() {
-    return (
-      <div className="flex items-center justify-center">
-        <Button
-          size={"sm"}
-          className="w-28 rounded-xl bg-vermelho_botao_1 hover:bg-hover_vermelho_botao"
-        >
-          Rejeitar
-        </Button>
-      </div>
-    );
-  };
-
-//// Coluna responsável (título e descrição, ocupando 2 rows) ////
-type RequestComponentColumnResponsibleProps = {
-  title?: string;
-  description?: string;
-};
-
-RequestComponent.ColumnResponsible = function RequestComponentColumnItem(
-  props: RequestComponentColumnResponsibleProps,
-) {
-  return (
-    <div className="row-span-2 mx-auto flex flex-col justify-center max-[768px]:col-span-2 max-[768px]:row-span-1 max-[768px]:row-end-6 max-[768px]:text-center">
-      <span className="text-base font-medium max-[1100px]:text-sm">
-        {props.title}
-      </span>
-      <span className="text-sm font-medium text-[#828282] max-[1100px]:text-sm">
-        {props.description}
-      </span>
-    </div>
-  );
-};
