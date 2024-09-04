@@ -1,5 +1,16 @@
 import { RequestComponent } from "~/components/card-request/cardRequest";
 
+import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+
 export default function CardRequest() {
   return (
     <div>
@@ -22,7 +33,24 @@ export default function CardRequest() {
             title="Fornecedor(es)"
             description="Brasal, Ambev, etc"
           />
-          <RequestComponent.ColumnButtonManage />
+          <Dialog>
+            <DialogTrigger asChild>
+              <RequestComponent.ColumnButtonManage />
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Detalhes da Entrada:</DialogTitle>
+                <DialogDescription>
+                  Make changes to your profile here. Click save when you're
+                  done.
+                </DialogDescription>
+              </DialogHeader>
+
+              <DialogFooter>
+                <Button type="submit">Save changes</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </RequestComponent.Grid>
       </RequestComponent>
     </div>
