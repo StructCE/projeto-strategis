@@ -22,7 +22,10 @@ export const NavbarDropdown: React.FC<NavbarDropdownProps> = ({ userData }) => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="flex cursor-pointer rounded-full border-[2px] border-white p-1">
-          <UserRound color="white" size={26} strokeWidth={2} />
+          <UserRound
+            color="white"
+            className="size-[23px] stroke-[1.5px] sm:size-[26px] sm:stroke-2"
+          />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-4 mt-1.5 flex w-64 flex-col gap-2 p-4">
