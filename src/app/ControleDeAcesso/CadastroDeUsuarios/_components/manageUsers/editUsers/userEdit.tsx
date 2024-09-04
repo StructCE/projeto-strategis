@@ -1,5 +1,5 @@
-import { type UseFormReturn } from "react-hook-form";
-import { FormComponent } from "~/components/forms/formsContainer";
+"use client";
+import { FormComponent } from "~/components/forms";
 import {
   Form,
   FormControl,
@@ -15,26 +15,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Cargos, Empresas, type User } from "../usersData";
-import { type EditUserFormValues } from "./userEditFormSchema";
+import { Cargos, Empresas, type User } from "../../usersData";
+import { useUserForm } from "./useUserForm";
 
-type UserEditProps = {
-  form: UseFormReturn<EditUserFormValues>;
-  onSubmitEdit: (data: EditUserFormValues) => void;
-  onSubmitRemove: (data: EditUserFormValues) => void;
+type UserEdituserEditForm = {
   usuario: User;
 };
 
-export const UserEdit = (props: UserEditProps) => {
+export const UserEdit = (props: UserEdituserEditForm) => {
+  const userEditForm = useUserForm(props.usuario);
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
+    <Form {...userEditForm.form}>
+      <form
+        onSubmit={userEditForm.form.handleSubmit(userEditForm.onSubmitEdit)}
+      >
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Email</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userEditForm.form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -54,7 +54,7 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Senha</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userEditForm.form.control}
                 name="senha"
                 render={({ field }) => (
                   <FormItem>
@@ -75,7 +75,7 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Confirme a senha</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userEditForm.form.control}
                 name="senhaConfirmacao"
                 render={({ field }) => (
                   <FormItem>
@@ -98,7 +98,7 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userEditForm.form.control}
                 name="nome"
                 render={({ field }) => (
                   <FormItem>
@@ -118,7 +118,7 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Telefone</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userEditForm.form.control}
                 name="telefone"
                 render={({ field }) => (
                   <FormItem>
@@ -138,7 +138,7 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userEditForm.form.control}
                 name="empresa"
                 render={({ field }) => (
                   <FormItem>
@@ -168,7 +168,7 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Cargo</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userEditForm.form.control}
                 name="cargo"
                 render={({ field }) => (
                   <FormItem>
@@ -202,7 +202,9 @@ export const UserEdit = (props: UserEditProps) => {
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={props.form.handleSubmit(props.onSubmitRemove)}
+              handlePress={userEditForm.form.handleSubmit(
+                userEditForm.onSubmitRemove,
+              )}
             >
               Remover Usuário
             </FormComponent.Button>

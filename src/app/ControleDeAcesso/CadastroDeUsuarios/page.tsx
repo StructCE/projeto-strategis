@@ -1,11 +1,11 @@
-import { UserRegisterContainer } from "./_components/createUsers/userRegisterContainer";
-import { ManageUsersContainer } from "./_components/manageUsers/manageUsersContainer";
+import { UserRegister } from "./_components/createUsers/userRegister";
+import { ManageUsersTable } from "./_components/manageUsers/manageUsers";
 
 export default function UsersRegister() {
   return (
     <div className="flex w-full flex-col gap-4 bg-fundo_branco">
-      <UserRegisterContainer />
-      <ManageUsersContainer />
+      <UserRegister />
+      <ManageUsersTable />
     </div>
   );
 }
