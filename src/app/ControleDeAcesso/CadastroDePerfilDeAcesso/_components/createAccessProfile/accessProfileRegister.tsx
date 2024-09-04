@@ -1,3 +1,4 @@
+"use client";
 import { FormComponent } from "~/components/forms";
 import {
   Form,

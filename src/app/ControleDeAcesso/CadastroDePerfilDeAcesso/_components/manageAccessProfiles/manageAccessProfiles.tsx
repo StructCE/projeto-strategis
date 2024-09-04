@@ -1,3 +1,4 @@
+"use client";
 import { TableComponent } from "~/components/table";
 import ManageAccessProfilesFilters from "./manageAccessProfilesFilters/manageAccessProfilesFilters";
 import { TabelaCargos } from "./manageAccessProfilesTableData";

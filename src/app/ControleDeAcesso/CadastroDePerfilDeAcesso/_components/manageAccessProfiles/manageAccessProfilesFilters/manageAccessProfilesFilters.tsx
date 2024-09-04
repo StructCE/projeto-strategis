@@ -1,3 +1,4 @@
+"use client";
 import { Search } from "lucide-react";
 import { Filter } from "~/components/filter";
 import { useManageAccessProfilesFilters } from "./useManageAccessProfilesFiltersContainer";

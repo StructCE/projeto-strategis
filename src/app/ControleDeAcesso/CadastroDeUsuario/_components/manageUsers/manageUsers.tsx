@@ -8,9 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { UserEditContainer } from "./editUsers/userEditContainer";
+import { UserEdit } from "./editUsers/userEdit";
 import { Usuarios } from "../usersData";
-import ManageUsersFiltersContainer from "./manageUsersFilters/manageUsersFiltersContainer";
+import ManageUsersFilters from "./manageUsersFilters/manageUsersFilters";
 
 export const ManageUsersTable = () => {
   return (
@@ -20,7 +20,7 @@ export const ManageUsersTable = () => {
         Selecione um usuário para editar ou remover
       </TableComponent.Subtitle>
       <TableComponent.FiltersLine>
-        <ManageUsersFiltersContainer />
+        <ManageUsersFilters />
       </TableComponent.FiltersLine>
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[repeat(4,_1fr)_130px]">
@@ -53,7 +53,7 @@ export const ManageUsersTable = () => {
                     Utilize os campos abaixo para editar os dados do usuário ou
                     o botão para remover
                   </DialogTitle>
-                  <UserEditContainer {...usuario} />
+                  <UserEdit usuario={usuario} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>
