@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import { SidebarContent } from "../sidebar/_components/sidebarContent";
+import { SidebarContent } from "../sidebar/_components/sidebarContent/sidebarContent";
 import { NavbarDropdown } from "./_components/navbarDropdown";
 import { NavbarSelect } from "./_components/navbarSelect";
 import { Empresas, UserData } from "./_components/userData";
