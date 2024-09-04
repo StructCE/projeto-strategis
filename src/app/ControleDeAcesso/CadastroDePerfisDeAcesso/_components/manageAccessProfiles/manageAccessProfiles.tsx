@@ -1,14 +1,11 @@
-import { TableComponent } from "~/components/table/tableContainer";
+"use client";
+import { TableComponent } from "~/components/table";
 import ManageAccessProfilesFilters from "./manageAccessProfilesFilters/manageAccessProfilesFilters";
 import { TabelaCargos } from "./manageAccessProfilesTableData";
+import { useManageAccessProfileTable } from "./useManageAccessProfileTable";
 
-type ManageAccessProfilesTableProps = {
-  handleDetailsPress: ({ nome }: { nome: string }) => void;
-};
-
-export const ManageAccessProfilesTable = (
-  props: ManageAccessProfilesTableProps,
-) => {
+export const ManageAccessProfilesTable = () => {
+  const manageAcessProfilesTable = useManageAccessProfileTable();
   return (
     <TableComponent>
       <TableComponent.Title>Gerenciar Perfis de Acesso</TableComponent.Title>
@@ -41,7 +38,9 @@ export const ManageAccessProfilesTable = (
             </TableComponent.Value>
             <TableComponent.LineButton
               className="bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
-              handlePress={() => props.handleDetailsPress(cargo)}
+              handlePress={() =>
+                manageAcessProfilesTable.handleDetailsPress(cargo)
+              }
             >
               Detalhes
             </TableComponent.LineButton>

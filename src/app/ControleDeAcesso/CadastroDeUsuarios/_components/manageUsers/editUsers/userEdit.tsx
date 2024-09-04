@@ -15,22 +15,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Cargos, Empresas } from "../usersData";
+import { Cargos, Empresas, type User } from "../../usersData";
 import { useUserForm } from "./useUserForm";
 
-export const UserRegister = () => {
-  const userForm = useUserForm();
-  return (
-    <Form {...userForm.form}>
-      <form onSubmit={userForm.form.handleSubmit(userForm.onSubmit)}>
-        <FormComponent>
-          <FormComponent.Title>Cadastro de Usuário</FormComponent.Title>
+type UserEdituserEditForm = {
+  usuario: User;
+};
 
+export const UserEdit = (props: UserEdituserEditForm) => {
+  const userEditForm = useUserForm(props.usuario);
+  return (
+    <Form {...userEditForm.form}>
+      <form
+        onSubmit={userEditForm.form.handleSubmit(userEditForm.onSubmitEdit)}
+      >
+        <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Email</FormComponent.Label>
               <FormField
-                control={userForm.form.control}
+                control={userEditForm.form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -50,14 +54,14 @@ export const UserRegister = () => {
             <FormComponent.Frame>
               <FormComponent.Label>Senha</FormComponent.Label>
               <FormField
-                control={userForm.form.control}
-                name="password"
+                control={userEditForm.form.control}
+                name="senha"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <Input
                         className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Crie uma senha para acesso ao sistema"
+                        placeholder="Senha de acesso ao sistema"
                         type="password"
                         {...field}
                       />
@@ -71,14 +75,14 @@ export const UserRegister = () => {
             <FormComponent.Frame>
               <FormComponent.Label>Confirme a senha</FormComponent.Label>
               <FormField
-                control={userForm.form.control}
-                name="password_confirmation"
+                control={userEditForm.form.control}
+                name="senhaConfirmacao"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <Input
                         className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Confirme a senha"
+                        placeholder="Confirmação de senha"
                         type="password"
                         {...field}
                       />
@@ -94,8 +98,8 @@ export const UserRegister = () => {
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
-                control={userForm.form.control}
-                name="username"
+                control={userEditForm.form.control}
+                name="nome"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -114,8 +118,8 @@ export const UserRegister = () => {
             <FormComponent.Frame>
               <FormComponent.Label>Telefone</FormComponent.Label>
               <FormField
-                control={userForm.form.control}
-                name="phone"
+                control={userEditForm.form.control}
+                name="telefone"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -134,7 +138,7 @@ export const UserRegister = () => {
             <FormComponent.Frame>
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
-                control={userForm.form.control}
+                control={userEditForm.form.control}
                 name="empresa"
                 render={({ field }) => (
                   <FormItem>
@@ -144,7 +148,7 @@ export const UserRegister = () => {
                     >
                       <FormControl>
                         <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione uma empresa" />
+                          <SelectValue placeholder="Empresa do usuário" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -164,7 +168,7 @@ export const UserRegister = () => {
             <FormComponent.Frame>
               <FormComponent.Label>Cargo</FormComponent.Label>
               <FormField
-                control={userForm.form.control}
+                control={userEditForm.form.control}
                 name="cargo"
                 render={({ field }) => (
                   <FormItem>
@@ -174,7 +178,7 @@ export const UserRegister = () => {
                     >
                       <FormControl>
                         <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione um cargo" />
+                          <SelectValue placeholder="Cargo do usuário" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -193,8 +197,16 @@ export const UserRegister = () => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
-              Criar Usuário
+            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
+              Editar Usuário
+            </FormComponent.Button>
+            <FormComponent.Button
+              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
+              handlePress={userEditForm.form.handleSubmit(
+                userEditForm.onSubmitRemove,
+              )}
+            >
+              Remover Usuário
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

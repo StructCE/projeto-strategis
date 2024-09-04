@@ -1,4 +1,4 @@
-import { TableComponent } from "~/components/table/tableContainer";
+import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { UserEditContainer } from "../editUsers/userEditContainer";
+import { UserEdit } from "./editUsers/userEdit";
 import { Usuarios } from "../usersData";
 import ManageUsersFilters from "./manageUsersFilters/manageUsersFilters";
 
@@ -53,7 +53,7 @@ export const ManageUsersTable = () => {
                     Utilize os campos abaixo para editar os dados do usuário ou
                     o botão para remover
                   </DialogTitle>
-                  <UserEditContainer {...usuario} />
+                  <UserEdit usuario={usuario} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

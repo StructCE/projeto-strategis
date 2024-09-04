@@ -1,7 +1,7 @@
 "use client";
 import { ProductsRegister } from "./productsRegister";
-import { useProductsRegister } from "./useProductsRegister";
 import { productsTable } from "./productsRegisterData";
+import { useProductsRegister } from "./useProductsRegister";
 
 export const ProductsRegisterContainer = () => {
   const { handleDetailsPress } = useProductsRegister();
