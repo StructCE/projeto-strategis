@@ -22,7 +22,7 @@ export const NavbarSelect: React.FC<NavbarSelectProps> = ({
 
   return (
     <Select onValueChange={setSelectEmpresa} defaultValue={selectEmpresa}>
-      <SelectTrigger className="right-px w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-4 py-2 text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0">
+      <SelectTrigger className="h-fit w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-3 py-1.5 text-[12px] text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-4 sm:py-2 sm:text-base">
         <SelectValue placeholder="Cargo do usuário" />
       </SelectTrigger>
       <SelectContent>
