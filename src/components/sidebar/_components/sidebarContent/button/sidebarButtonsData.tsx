@@ -1,27 +1,27 @@
-import type React from "react";
 import {
   type LucideProps,
-  Home,
   Building2,
-  Truck,
-  ShoppingBasket,
-  PackageOpen,
-  Info,
-  Users,
-  UserCog,
-  FileInput,
-  PackagePlus,
-  PackageMinus,
   CircleDollarSign,
-  FolderSearch,
-  FolderCog,
-  ClipboardPlus,
   ClipboardCheck,
-  TriangleAlert,
-  SlidersHorizontal,
-  Settings,
+  ClipboardPlus,
+  FileInput,
   FileText,
+  FolderCog,
+  FolderSearch,
+  Home,
+  Info,
+  PackageMinus,
+  PackageOpen,
+  PackagePlus,
+  Settings,
+  ShoppingBasket,
+  SlidersHorizontal,
+  TriangleAlert,
+  Truck,
+  UserCog,
+  Users,
 } from "lucide-react";
+import type React from "react";
 
 type SidebarButton = {
   name: string;
@@ -33,24 +33,24 @@ export const sidebarButtons: Record<string, SidebarButton[]> = {
   "Configurações Gerais": [
     { name: "Dashboard", icon: (props) => <Home {...props} />, refLink: "/" },
     {
-      name: "Cadastro de Empresa",
+      name: "Cadastro de Empresas",
       icon: (props) => <Building2 {...props} />,
-      refLink: "/ConfiguracoesGerais/CadastroDeEmpresa",
+      refLink: "/ConfiguracoesGerais/CadastroDeEmpresas",
     },
     {
-      name: "Cadastro de Fornecedor",
+      name: "Cadastro de Fornecedores",
       icon: (props) => <Truck {...props} />,
-      refLink: "/ConfiguracoesGerais/CadastroDeFornecedor",
+      refLink: "/ConfiguracoesGerais/CadastroDeFornecedores",
     },
     {
-      name: "Cadastro de Produto",
+      name: "Cadastro de Produtos",
       icon: (props) => <ShoppingBasket {...props} />,
-      refLink: "/ConfiguracoesGerais/CadastroDeProduto",
+      refLink: "/ConfiguracoesGerais/CadastroDeProdutos",
     },
     {
-      name: "Cadastro de Estoque",
+      name: "Cadastro de Estoques",
       icon: (props) => <PackageOpen {...props} />,
-      refLink: "/ConfiguracoesGerais/CadastroDeEstoque",
+      refLink: "/ConfiguracoesGerais/CadastroDeEstoques",
     },
     {
       name: "Cadastro de Parâmetros Gerais",
@@ -60,14 +60,14 @@ export const sidebarButtons: Record<string, SidebarButton[]> = {
   ],
   "Controle de Acesso": [
     {
-      name: "Cadastro de Usuário",
+      name: "Cadastro de Usuários",
       icon: (props) => <Users {...props} />,
-      refLink: "/ControleDeAcesso/CadastroDeUsuario",
+      refLink: "/ControleDeAcesso/CadastroDeUsuarios",
     },
     {
-      name: "Cadastro de Perfil de Acesso",
+      name: "Cadastro de Perfis de Acesso",
       icon: (props) => <UserCog {...props} />,
-      refLink: "/ControleDeAcesso/CadastroDePerfilDeAcesso",
+      refLink: "/ControleDeAcesso/CadastroDePerfisDeAcesso",
     },
   ],
   "Gestão de Estoque": [
@@ -92,14 +92,14 @@ export const sidebarButtons: Record<string, SidebarButton[]> = {
       refLink: "/GestaoDeEstoque/CompraDeMercadorias",
     },
     {
-      name: "Inventário de Estoque",
+      name: "Inventários de Estoque",
       icon: (props) => <FolderSearch {...props} />,
-      refLink: "/GestaoDeEstoque/InventarioDeEstoque",
+      refLink: "/GestaoDeEstoque/InventariosDeEstoque",
     },
     {
-      name: "Ajuste de Estoque",
+      name: "Ajustes de Estoque",
       icon: (props) => <FolderCog {...props} />,
-      refLink: "/GestaoDeEstoque/AjusteDeEstoque",
+      refLink: "/GestaoDeEstoque/AjustesDeEstoque",
     },
   ],
   "Requisição de Mercadoria": [
