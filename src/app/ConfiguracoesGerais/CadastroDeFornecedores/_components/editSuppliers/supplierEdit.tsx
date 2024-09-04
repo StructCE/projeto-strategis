@@ -1,4 +1,4 @@
-import { useFieldArray, type UseFormReturn } from "react-hook-form";
+"use client";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -16,24 +16,18 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { roles, states, type Supplier } from "../supplierData";
-import { type EditSupplierFormValues } from "./supplierEditFormSchema";
+import { useSupplierForm } from "./useSupplierForm";
 
 type SupplierEditProps = {
-  form: UseFormReturn<EditSupplierFormValues>;
-  onSubmitEdit: (data: EditSupplierFormValues) => void;
-  onSubmitRemove: (data: EditSupplierFormValues) => void;
   supplier: Supplier;
 };
 
 export const SupplierEdit = (props: SupplierEditProps) => {
-  const { fields, append, remove } = useFieldArray({
-    control: props.form.control,
-    name: "contacts",
-  });
+  const form = useSupplierForm(props.supplier);
 
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
+    <Form {...form.form}>
+      <form onSubmit={form.form.handleSubmit(form.onSubmitEdit)}>
         <FormComponent>
           <FormComponent.Title>Cadastro de Fornecedor</FormComponent.Title>
 
@@ -41,7 +35,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={form.form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
@@ -60,7 +54,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>CNPJ</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={form.form.control}
                 name="cnpj"
                 render={({ field }) => (
                   <FormItem>
@@ -82,7 +76,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Email</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={form.form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -101,7 +95,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Telefone</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={form.form.control}
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
@@ -120,7 +114,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={form.form.control}
                 name="state_registration"
                 render={({ field }) => (
                   <FormItem>
@@ -142,7 +136,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Endereço</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={form.form.control}
                 name="address"
                 render={({ field }) => (
                   <FormItem>
@@ -162,7 +156,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Bairro</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={form.form.control}
                 name="neighborhood"
                 render={({ field }) => (
                   <FormItem>
@@ -182,7 +176,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Município/Cidade</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={form.form.control}
                 name="city"
                 render={({ field }) => (
                   <FormItem>
@@ -202,7 +196,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={form.form.control}
                 name="state"
                 render={({ field }) => (
                   <FormItem>
@@ -232,7 +226,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>CEP</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={form.form.control}
                 name="cep"
                 render={({ field }) => (
                   <FormItem>
@@ -251,12 +245,12 @@ export const SupplierEdit = (props: SupplierEditProps) => {
           </FormComponent.Line>
 
           <FormComponent.BoxSpecify boxName="Contatos">
-            {fields.map((contact, index) => (
+            {form.fieldsArray.map((contact, index) => (
               <FormComponent.Line key={contact.id}>
                 <FormComponent.Frame>
                   <FormComponent.Label>Nome</FormComponent.Label>
                   <FormField
-                    control={props.form.control}
+                    control={form.form.control}
                     name={`contacts.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
@@ -276,7 +270,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
                 <FormComponent.Frame>
                   <FormComponent.Label>Cargo</FormComponent.Label>
                   <FormField
-                    control={props.form.control}
+                    control={form.form.control}
                     name={`contacts.${index}.role`}
                     render={({ field }) => (
                       <FormItem>
@@ -306,7 +300,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
                 <FormComponent.Frame>
                   <FormComponent.Label>Email</FormComponent.Label>
                   <FormField
-                    control={props.form.control}
+                    control={form.form.control}
                     name={`contacts.${index}.email`}
                     render={({ field }) => (
                       <FormItem>
@@ -326,7 +320,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
                 <FormComponent.Frame>
                   <FormComponent.Label>Telefone</FormComponent.Label>
                   <FormField
-                    control={props.form.control}
+                    control={form.form.control}
                     name={`contacts.${index}.phone`}
                     render={({ field }) => (
                       <FormItem>
@@ -344,7 +338,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
                 </FormComponent.Frame>
 
                 <FormComponent.ButtonRemove
-                  handlePress={() => remove(index)}
+                  handlePress={() => form.fieldRemove(index)}
                 ></FormComponent.ButtonRemove>
               </FormComponent.Line>
             ))}
@@ -353,9 +347,9 @@ export const SupplierEdit = (props: SupplierEditProps) => {
           <FormComponent.ButtonLayout>
             <button
               onClick={() =>
-                append({ name: "", email: "", phone: "", role: "" })
+                form.fieldAppend({ name: "", email: "", phone: "", role: "" })
               }
-              className="hover:bg-hover_cinza_escuro_botao min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white"
+              className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"
               type="button"
             >
               <p className="text-[14px] font-semibold tracking-wider sm:text-[16px] sm:tracking-normal">
@@ -370,7 +364,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={props.form.handleSubmit(props.onSubmitRemove)}
+              handlePress={form.form.handleSubmit(form.onSubmitRemove)}
             >
               Remover Fornecedor
             </FormComponent.Button>

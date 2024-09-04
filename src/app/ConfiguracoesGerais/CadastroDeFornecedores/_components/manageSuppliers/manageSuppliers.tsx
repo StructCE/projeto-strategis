@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { SupplierEditContainer } from "../editSuppliers/supplierEditContainer";
+import { SupplierEdit } from "../editSuppliers/supplierEdit";
 import { suppliers } from "../supplierData";
 import ManageSuppliersFilters from "./manageSuppliersFilters/manageSuppliersFilters";
 
@@ -56,7 +56,7 @@ export const ManageSuppliersTable = () => {
                     Utilize os campos abaixo para editar os dados do fornecedor
                     ou o botão para remover
                   </DialogTitle>
-                  <SupplierEditContainer {...supplier} />
+                  <SupplierEdit supplier={supplier} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

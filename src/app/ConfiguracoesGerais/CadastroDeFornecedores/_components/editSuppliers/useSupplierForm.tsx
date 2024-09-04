@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { type Supplier } from "../supplierData";
 import {
   editSupplierFormSchema,
@@ -40,5 +40,17 @@ export const useSupplierForm = (supplier: Supplier) => {
     console.log(JSON.stringify(data, null, 2)); // Remover fornecedor
   }
 
-  return { form, onSubmitEdit, onSubmitRemove };
+  const fieldArray = useFieldArray({
+    control: form.control,
+    name: "contacts",
+  });
+
+  return {
+    form,
+    onSubmitEdit,
+    onSubmitRemove,
+    fieldsArray: fieldArray.fields,
+    fieldAppend: fieldArray.append,
+    fieldRemove: fieldArray.remove,
+  };
 };
