@@ -1,4 +1,4 @@
-import { type UseFormReturn } from "react-hook-form";
+import { type SectorOfUse } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -8,26 +8,26 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type SectorOfUse } from "../../../../GeneralParametersData";
-import { type EditSectorFormValues } from "./sectorEditFormSchema";
+import { useSectorForm } from "./useSectorForm";
 
-type SectorEditProps = {
-  form: UseFormReturn<EditSectorFormValues>;
-  onSubmitEdit: (data: EditSectorFormValues) => void;
-  onSubmitRemove: (data: EditSectorFormValues) => void;
+type SectorEditForm = {
   sector: SectorOfUse;
 };
 
-export const SectorEdit = (props: SectorEditProps) => {
+export const SectorEdit = (props: SectorEditForm) => {
+  const sectorEditForm = useSectorForm(props.sector);
+
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
+    <Form {...sectorEditForm.form}>
+      <form
+        onSubmit={sectorEditForm.form.handleSubmit(sectorEditForm.onSubmitEdit)}
+      >
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Setor de Utilização</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={sectorEditForm.form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
@@ -51,7 +51,9 @@ export const SectorEdit = (props: SectorEditProps) => {
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={props.form.handleSubmit(props.onSubmitRemove)}
+              handlePress={sectorEditForm.form.handleSubmit(
+                sectorEditForm.onSubmitRemove,
+              )}
             >
               Remover Setor
             </FormComponent.Button>

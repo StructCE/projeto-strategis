@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type SectorOfUse } from "../../../../GeneralParametersData";
+import { type SectorOfUse } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import {
   editSectorFormSchema,
   type EditSectorFormValues,

@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { SectorsOfUse } from "../../../../GeneralParametersData";
-import { SectorEditContainer } from "../editSectors/sectorEditContainer";
+import { SectorEdit } from "./editSectors/sectorEdit";
 
 export const ManageSectorsTable = () => {
   return (
@@ -41,7 +41,7 @@ export const ManageSectorsTable = () => {
                     Utilize o campo abaixo para editar o setor ou o botão para
                     remover
                   </DialogTitle>
-                  <SectorEditContainer {...sector} />
+                  <SectorEdit sector={sector} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>
