@@ -1,6 +1,6 @@
 export default function LoadingPage() {
   return (
-    <div className="bg-fundo_branco text-vermelho_strategis flex h-screen w-full items-center justify-center">
+    <div className="flex h-screen w-full items-center justify-center bg-fundo_branco text-vermelho_strategis">
       <div role="status">
         <svg
           aria-hidden="true"
@@ -18,7 +18,7 @@ export default function LoadingPage() {
             fill="currentFill"
           />
         </svg>
-        <span className="sr-only">Loading...</span>
+        <span className="sr-only">Carregando...</span>
       </div>
     </div>
   );

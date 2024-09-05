@@ -21,6 +21,7 @@ const config = {
       fontFamily: {
         sans: ["var(--font-inter)"],
         montserrat: ["Montserrat", "sans-serif"],
+        aldrich: ["Aldrich-Regular", "sans-serif"],
       },
       fontWeight: {
         "500": "500",
@@ -37,7 +38,10 @@ const config = {
         filtro: "#D6DBD8", // Fundo de filtros
         cinza_destaque: "#DEDEDE", // Botão detalhes, inputs em tabelas
         hover_cinza_destaque: "#D0D0D0",
-        cinza_escuro_botao: "#2D3648", // Talvez algum botão
+        hover_cinza_destaque_escuro: "#BBBBBB",
+        cinza_escuro_botao: "#888888", // Talvez algum botão
+        hover_cinza_escuro_botao: "#777777", // Talvez algum botão
+        cinza_mais_escuro_botao: "#2D3648", // Talvez algum botão
 
         fundo_titulo_relatorio: "#ADB5BD",
         fundo_destaque_relatorio: "#DEDEDE",
@@ -48,6 +52,7 @@ const config = {
         vermelho_botao_1: "#D01F30", // Botões de forms (ex: remover usuário)
         vermelho_botao_2: "#C43D3D", // Botões de tabelas (ex: gerar relatório)
         hover_vermelho_botao: "#C21828",
+        hover_vermelho_login: "#772B39",
 
         azul_dashboard: "#007BFF",
         azul_botao: "#3F90EF", // Botões de forms e tabelas
