@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { ProductCategories } from "../../../../GeneralParametersData";
-import { CategoryEditContainer } from "../editCategories/categoryEditContainer";
+import { CategoryEdit } from "./editCategories/categoryEdit";
 
 export const ManageCategoriesTable = () => {
   return (
@@ -41,7 +41,7 @@ export const ManageCategoriesTable = () => {
                     Utilize o campo abaixo para editar a categoria ou o botão
                     para remover
                   </DialogTitle>
-                  <CategoryEditContainer {...category} />
+                  <CategoryEdit category={category} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

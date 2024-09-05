@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Places } from "../../../../GeneralParametersData";
-import { PlaceEditContainer } from "../editPlaces/placeEditContainer";
+import { PlaceEdit } from "./editPlaces/placeEdit";
 
 export const ManagePlacesTable = () => {
   return (
@@ -52,7 +52,7 @@ export const ManagePlacesTable = () => {
                     Utilize o campo abaixo para editar o local ou o botão para
                     remover
                   </DialogTitle>
-                  <PlaceEditContainer {...place} />
+                  <PlaceEdit place={place} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

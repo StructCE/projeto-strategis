@@ -1,4 +1,4 @@
-import { type UseFormReturn } from "react-hook-form";
+import { type Place } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -8,33 +8,33 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type ProductCategory } from "../../../../GeneralParametersData";
-import { type EditCategoryFormValues } from "./categoryEditFormSchema";
+import { usePlaceForm } from "./usePlaceForm";
 
-type CategoryEditProps = {
-  form: UseFormReturn<EditCategoryFormValues>;
-  onSubmitEdit: (data: EditCategoryFormValues) => void;
-  onSubmitRemove: (data: EditCategoryFormValues) => void;
-  category: ProductCategory;
+type PlaceEditForm = {
+  place: Place;
 };
 
-export const CategoryEdit = (props: CategoryEditProps) => {
+export const PlaceEdit = (props: PlaceEditForm) => {
+  const placeEditForm = usePlaceForm(props.place);
+
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
+    <Form {...placeEditForm.form}>
+      <form
+        onSubmit={placeEditForm.form.handleSubmit(placeEditForm.onSubmitEdit)}
+      >
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
-              <FormComponent.Label>Categoria do Produto</FormComponent.Label>
+              <FormComponent.Label>Local</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={placeEditForm.form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <Input
                         className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Descrição/nome da categoria de produtos"
+                        placeholder="Descrição/nome do local"
                         {...field}
                       />
                     </FormControl>
@@ -47,13 +47,15 @@ export const CategoryEdit = (props: CategoryEditProps) => {
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Categoria
+              Editar Local
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={props.form.handleSubmit(props.onSubmitRemove)}
+              handlePress={placeEditForm.form.handleSubmit(
+                placeEditForm.onSubmitRemove,
+              )}
             >
-              Remover Categoria
+              Remover Local
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>
