@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { type UseFormReturn } from "react-hook-form";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -29,19 +28,18 @@ import {
   weekDays,
   type Product,
 } from "../../productsData";
-import { type EditProductFormValues } from "./productEditFormSchema";
+import { useProductForm } from "./useProductForm";
 
-type ProductEditProps = {
-  form: UseFormReturn<EditProductFormValues>;
-  onSubmitEdit: (data: EditProductFormValues) => void;
-  onSubmitRemove: (data: EditProductFormValues) => void;
+type ProductEditForm = {
   product: Product;
 };
 
-export const ProductEdit = (props: ProductEditProps) => {
+export const ProductEdit = (props: ProductEditForm) => {
+  const productEditForm = useProductForm(props.product);
+
   // Filtra os armários/zonas com base no local selecionado
   const [selectedPlace, setSelectedPlace] = useState<string>(
-    props.form.getValues("address.place"),
+    productEditForm.form.getValues("address.place"),
   );
   const filteredStorages = selectedPlace
     ? (Places.find((place) => place.description === selectedPlace)?.storages ??
@@ -50,7 +48,7 @@ export const ProductEdit = (props: ProductEditProps) => {
 
   // Filtra as prateleiras com base no armário/zona selecionado
   const [selectedStorage, setSelectedStorage] = useState<string>(
-    props.form.getValues("address.storage"),
+    productEditForm.form.getValues("address.storage"),
   );
   const filteredShelves = selectedStorage
     ? (filteredStorages.find(
@@ -59,19 +57,23 @@ export const ProductEdit = (props: ProductEditProps) => {
     : [];
 
   useEffect(() => {
-    setSelectedPlace(props.form.getValues("address.place"));
-    setSelectedStorage(props.form.getValues("address.storage"));
-  }, [props.form]);
+    setSelectedPlace(productEditForm.form.getValues("address.place"));
+    setSelectedStorage(productEditForm.form.getValues("address.storage"));
+  }, [productEditForm.form]);
 
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
+    <Form {...productEditForm.form}>
+      <form
+        onSubmit={productEditForm.form.handleSubmit(
+          productEditForm.onSubmitEdit,
+        )}
+      >
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Produto</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
@@ -91,7 +93,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Fornecedor(es)</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="suppliers"
                 render={({ field }) => (
                   <FormItem>
@@ -115,7 +117,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Status</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
@@ -145,7 +147,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Produto Pai</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="parent_product"
                 render={({ field }) => (
                   <FormItem>
@@ -177,7 +179,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Unidade de Compra</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="buy_unit"
                 render={({ field }) => (
                   <FormItem>
@@ -209,7 +211,7 @@ export const ProductEdit = (props: ProductEditProps) => {
                 Quantidade de Compra (und)
               </FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="buy_quantity"
                 render={({ field }) => (
                   <FormItem>
@@ -229,7 +231,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Dia de Compra</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="buy_day"
                 render={({ field }) => (
                   <FormItem>
@@ -261,7 +263,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Estoque Atual (und)</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="stock_current"
                 render={({ field }) => (
                   <FormItem>
@@ -281,7 +283,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Estoque Mínimo (und)</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="stock_min"
                 render={({ field }) => (
                   <FormItem>
@@ -301,7 +303,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Estoque Máximo (und)</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="stock_max"
                 render={({ field }) => (
                   <FormItem>
@@ -323,7 +325,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Tipo de Controle</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="type_of_control"
                 render={({ field }) => (
                   <FormItem>
@@ -353,7 +355,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Categoria do Produto</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="product_category"
                 render={({ field }) => (
                   <FormItem>
@@ -383,7 +385,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Setor de Utilização</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="sector_of_use"
                 render={({ field }) => (
                   <FormItem>
@@ -415,7 +417,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Local</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="address.place"
                 render={({ field }) => (
                   <FormItem>
@@ -449,7 +451,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="address.storage"
                 render={({ field }) => (
                   <FormItem>
@@ -482,7 +484,7 @@ export const ProductEdit = (props: ProductEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Prateleira</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productEditForm.form.control}
                 name="address.shelf"
                 render={({ field }) => (
                   <FormItem>
@@ -516,7 +518,9 @@ export const ProductEdit = (props: ProductEditProps) => {
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={props.form.handleSubmit(props.onSubmitRemove)}
+              handlePress={productEditForm.form.handleSubmit(
+                productEditForm.onSubmitRemove,
+              )}
             >
               Remover Usuário
             </FormComponent.Button>

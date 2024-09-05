@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { products, units } from "../productsData";
-import { ProductEditContainer } from "./editProducts/productEditContainer";
+import { ProductEdit } from "./editProducts/productEdit";
 import ManageProductsFilters from "./manageProductsFilters/manageProductsFilters";
 
 export default function ManageProductsTable() {
@@ -113,7 +113,7 @@ export default function ManageProductsTable() {
                     Utilize os campos abaixo para editar os dados do produto ou
                     o botão para remover
                   </DialogTitle>
-                  <ProductEditContainer {...product} />
+                  <ProductEdit product={product} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>
