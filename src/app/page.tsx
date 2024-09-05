@@ -1,5 +1,3 @@
-import CardRequest from "~/components/card-request/cardRequestExemple";
-
 export default function Home() {
   return (
     <>
