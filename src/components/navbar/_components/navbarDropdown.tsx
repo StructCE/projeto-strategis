@@ -13,6 +13,7 @@ interface NavbarDropdownProps {
   user: User;
 }
 
+import Link from "next/link";
 import { useNavbar } from "./useNavbar";
 
 export const NavbarDropdown: React.FC<NavbarDropdownProps> = ({ user }) => {
@@ -48,6 +49,14 @@ export const NavbarDropdown: React.FC<NavbarDropdownProps> = ({ user }) => {
           >
             Sair
           </Button>
+        </DropdownMenuLabel>
+        <DropdownMenuLabel className="p-0">
+          <Link
+            className="h-fit bg-white p-0 pt-1 text-[15px] font-bold text-verde_botao hover:bg-white"
+            href="/login"
+          >
+            Entrar
+          </Link>
         </DropdownMenuLabel>
       </DropdownMenuContent>
     </DropdownMenu>
