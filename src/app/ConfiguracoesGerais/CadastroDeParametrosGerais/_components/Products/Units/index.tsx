@@ -4,12 +4,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import CategoryRegister from "./_components/createUnits/unitRegister";
-import { useCategoryForm } from "./_components/createUnits/useUnitForm";
+import UnitRegister from "./_components/createUnits/unitRegister";
+import { useUnitForm } from "./_components/createUnits/useUnitForm";
 import { ManageCategoriesTable } from "./_components/manageUnits/manageUnits";
 
 export default function Units() {
-  const { form, onSubmit } = useCategoryForm();
+  const { form, onSubmit } = useUnitForm();
 
   return (
     <AccordionItem value="item-7" className="border-vinho_strategis px-0">
@@ -18,7 +18,7 @@ export default function Units() {
       </AccordionTrigger>
       <AccordionContent>
         <p className="pb-2 text-[16px] font-medium">Cadastrar nova unidade:</p>
-        <CategoryRegister form={form} onSubmit={onSubmit} />
+        <UnitRegister form={form} onSubmit={onSubmit} />
         <p className="py-2 text-[16px] font-medium">Unidades já cadastradas:</p>
         <ManageCategoriesTable />
       </AccordionContent>

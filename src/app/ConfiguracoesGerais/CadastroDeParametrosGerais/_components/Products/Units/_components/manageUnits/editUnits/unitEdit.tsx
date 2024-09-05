@@ -1,4 +1,3 @@
-import { type UseFormReturn } from "react-hook-form";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -8,33 +7,54 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type ProductCategory } from "../../../../../GeneralParametersData";
-import { type EditCategoryFormValues } from "./unitEditFormSchema";
+import { type Unit } from "../../../../../GeneralParametersData";
+import { useUnitForm } from "./useUnitForm";
 
-type CategoryEditProps = {
-  form: UseFormReturn<EditCategoryFormValues>;
-  onSubmitEdit: (data: EditCategoryFormValues) => void;
-  onSubmitRemove: (data: EditCategoryFormValues) => void;
-  category: ProductCategory;
+type UnitEditForm = {
+  unit: Unit;
 };
 
-export const CategoryEdit = (props: CategoryEditProps) => {
+export const UnitEdit = (props: UnitEditForm) => {
+  const unitEditForm = useUnitForm(props.unit);
+
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
+    <Form {...unitEditForm.form}>
+      <form
+        onSubmit={unitEditForm.form.handleSubmit(unitEditForm.onSubmitEdit)}
+      >
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
-              <FormComponent.Label>Categoria do Produto</FormComponent.Label>
+              <FormComponent.Label>Unidade</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={unitEditForm.form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <Input
                         className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Descrição/nome da categoria de produtos"
+                        placeholder="Descrição/nome da unidade"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>Sigla</FormComponent.Label>
+              <FormField
+                control={unitEditForm.form.control}
+                name="abbreviation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Descrição/nome da unidade"
                         {...field}
                       />
                     </FormControl>
@@ -47,13 +67,15 @@ export const CategoryEdit = (props: CategoryEditProps) => {
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Categoria
+              Editar Unidade
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={props.form.handleSubmit(props.onSubmitRemove)}
+              handlePress={unitEditForm.form.handleSubmit(
+                unitEditForm.onSubmitRemove,
+              )}
             >
-              Remover Categoria
+              Remover Unidade
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

@@ -102,6 +102,24 @@ export const SectorsOfUse = [
   { description: "Sobremesa" },
 ];
 
+export type Unit = {
+  description: string;
+  abbreviation: string;
+};
+
+export const units = [
+  { description: "Kilograma", abbreviation: "KG" },
+  { description: "Litro", abbreviation: "L" },
+  { description: "Grama", abbreviation: "G" },
+  { description: "Mililitro", abbreviation: "ML" },
+  { description: "Unidade", abbreviation: "UN" },
+  { description: "Pacote", abbreviation: "PCT" },
+  { description: "Caixa", abbreviation: "CX" },
+  { description: "Fardo", abbreviation: "FRD" },
+  { description: "Saco", abbreviation: "SC" },
+  { description: "Lata", abbreviation: "LT" },
+];
+
 // Stocks
 export type Shelf = {
   description: string;

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createCategoryFormSchema = z.object({
+export const createUnitFormSchema = z.object({
   description: z
     .string()
     .min(3, {
@@ -14,4 +14,4 @@ export const createCategoryFormSchema = z.object({
   }),
 });
 
-export type CreateCategoryFormValues = z.infer<typeof createCategoryFormSchema>;
+export type CreateUnitFormValues = z.infer<typeof createUnitFormSchema>;

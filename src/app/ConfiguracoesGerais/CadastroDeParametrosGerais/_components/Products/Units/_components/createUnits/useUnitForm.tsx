@@ -1,18 +1,18 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
-  createCategoryFormSchema,
-  type CreateCategoryFormValues,
+  createUnitFormSchema,
+  type CreateUnitFormValues,
 } from "./unitRegisterFormSchema";
 
-export const useCategoryForm = () => {
-  const form = useForm<CreateCategoryFormValues>({
-    resolver: zodResolver(createCategoryFormSchema),
+export const useUnitForm = () => {
+  const form = useForm<CreateUnitFormValues>({
+    resolver: zodResolver(createUnitFormSchema),
     mode: "onChange",
   });
 
-  function onSubmit(data: CreateCategoryFormValues) {
-    console.log(JSON.stringify(data, null, 2)); // Criar categoria
+  function onSubmit(data: CreateUnitFormValues) {
+    console.log(JSON.stringify(data, null, 2)); // Criar unidade
   }
 
   return { form, onSubmit };

@@ -1,28 +1,29 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type ProductCategory } from "../../../../../GeneralParametersData";
+import { type Unit } from "../../../../../GeneralParametersData";
 import {
-  editCategoryFormSchema,
-  type EditCategoryFormValues,
+  editUnitFormSchema,
+  type EditUnitFormValues,
 } from "./unitEditFormSchema";
 
-export const useCategoryForm = (category: ProductCategory) => {
-  const form = useForm<EditCategoryFormValues>({
-    resolver: zodResolver(editCategoryFormSchema),
+export const useUnitForm = (unit: Unit) => {
+  const form = useForm<EditUnitFormValues>({
+    resolver: zodResolver(editUnitFormSchema),
     mode: "onChange",
     defaultValues: {
-      description: category.description,
+      description: unit.description,
+      abbreviation: unit.abbreviation,
     },
   });
 
-  function onSubmitEdit(data: EditCategoryFormValues) {
-    console.log("Editando categoria:");
-    console.log(JSON.stringify(data, null, 2)); // Editar categoria
+  function onSubmitEdit(data: EditUnitFormValues) {
+    console.log("Editando unidade:");
+    console.log(JSON.stringify(data, null, 2)); // Editar unidade
   }
 
-  function onSubmitRemove(data: EditCategoryFormValues) {
-    console.log("Removendo categoria:");
-    console.log(JSON.stringify(data, null, 2)); // Remover categoria
+  function onSubmitRemove(data: EditUnitFormValues) {
+    console.log("Removendo unidade:");
+    console.log(JSON.stringify(data, null, 2)); // Remover unidade
   }
 
   return { form, onSubmitEdit, onSubmitRemove };

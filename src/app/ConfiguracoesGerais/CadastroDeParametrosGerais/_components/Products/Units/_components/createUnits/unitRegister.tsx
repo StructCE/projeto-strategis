@@ -45,7 +45,7 @@ export default function UnitRegister(props: UnitRegisterProps) {
               <FormComponent.Label>Sigla</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="description"
+                name="abbreviation"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -64,7 +64,7 @@ export default function UnitRegister(props: UnitRegisterProps) {
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
-              Criar Categoria
+              Criar Unidade
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>
