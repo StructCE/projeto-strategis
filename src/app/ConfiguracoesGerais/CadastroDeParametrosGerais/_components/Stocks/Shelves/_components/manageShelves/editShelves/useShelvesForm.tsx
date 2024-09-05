@@ -1,7 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type Shelf } from "../../../../GeneralParametersData";
+import { type Shelf } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import {
   editShelfFormSchema,
   type EditShelfFormValues,

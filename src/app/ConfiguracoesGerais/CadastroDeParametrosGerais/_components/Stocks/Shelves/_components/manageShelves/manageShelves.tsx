@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Places } from "../../../../GeneralParametersData";
-import { ShelfEditContainer } from "../editShelves/shelvesEditContainer";
+import { ShelfEdit } from "./editShelves/shelvesEdit";
 
 export const ManageShelvesTable = () => {
   return (
@@ -48,7 +48,7 @@ export const ManageShelvesTable = () => {
                         Utilize o campo abaixo para editar a prateleira ou o
                         botão para remover
                       </DialogTitle>
-                      <ShelfEditContainer {...shelf} />
+                      <ShelfEdit shelf={shelf} />
                       <DialogDescription></DialogDescription>
                     </DialogHeader>
                   </DialogContent>

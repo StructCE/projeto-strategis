@@ -1,4 +1,4 @@
-import { type UseFormReturn } from "react-hook-form";
+import { type Shelf } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -8,26 +8,26 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type Shelf } from "../../../../GeneralParametersData";
-import { type EditShelfFormValues } from "./shelvesEditFormSchema";
+import { useShelfForm } from "./useShelvesForm";
 
-type ShelfEditProps = {
-  form: UseFormReturn<EditShelfFormValues>;
-  onSubmitEdit: (data: EditShelfFormValues) => void;
-  onSubmitRemove: (data: EditShelfFormValues) => void;
+type ShelfEditForm = {
   shelf: Shelf;
 };
 
-export const ShelfEdit = (props: ShelfEditProps) => {
+export const ShelfEdit = (props: ShelfEditForm) => {
+  const shelfEditForm = useShelfForm(props.shelf);
+
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
+    <Form {...shelfEditForm.form}>
+      <form
+        onSubmit={shelfEditForm.form.handleSubmit(shelfEditForm.onSubmitEdit)}
+      >
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Prateleira</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={shelfEditForm.form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
@@ -51,7 +51,9 @@ export const ShelfEdit = (props: ShelfEditProps) => {
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={props.form.handleSubmit(props.onSubmitRemove)}
+              handlePress={shelfEditForm.form.handleSubmit(
+                shelfEditForm.onSubmitRemove,
+              )}
             >
               Remover Prateleira
             </FormComponent.Button>

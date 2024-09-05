@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type Place } from "../../../../GeneralParametersData";
+import { type Place } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import {
   editPlaceFormSchema,
   type EditPlaceFormValues,

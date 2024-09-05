@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type ProductCategory } from "../../../../GeneralParametersData";
+import { type ProductCategory } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import {
   editCategoryFormSchema,
   type EditCategoryFormValues,
