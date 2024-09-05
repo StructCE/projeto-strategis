@@ -1,4 +1,4 @@
-export const Modulos = [
+export const modules = [
   {
     value: "cadastrar_empresa",
     label: "Cadastrar Empresas",
