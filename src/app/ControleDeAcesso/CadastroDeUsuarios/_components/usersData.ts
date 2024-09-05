@@ -1,99 +1,99 @@
 export type User = {
-  nome: string;
+  name: string;
   email: string;
-  senha: string;
-  senhaConfirmacao: string;
-  telefone: string;
-  cargoId: number;
-  cargo: string;
-  empresa: string;
+  password: string;
+  password_confirmation: string;
+  phone: string;
+  roleId: number;
+  role: string;
+  company: string;
 };
 
-export const Usuarios = [
+export const users = [
   {
-    nome: "Nome do Usuário 1",
+    name: "Nome do Usuário 1",
     email: "usuario1@gmail.com",
-    empresa: "Empresa 1",
-    cargo: "Administrador",
-    senha: "12345678",
-    senhaConfirmacao: "12345678",
-    telefone: "61999999999",
-    cargoId: 1,
+    company: "Empresa 1",
+    role: "Administrador",
+    password: "12345678",
+    password_confirmation: "12345678",
+    phone: "61999999999",
+    roleId: 1,
   },
   {
-    nome: "Nome do Usuário 2",
+    name: "Nome do Usuário 2",
     email: "usuario2@gmail.com",
-    empresa: "Empresa 2",
-    cargo: "Operador",
-    senha: "12345678",
-    senhaConfirmacao: "12345678",
-    telefone: "61999999999",
-    cargoId: 2,
+    company: "Empresa 2",
+    role: "Operador",
+    password: "12345678",
+    password_confirmation: "12345678",
+    phone: "61999999999",
+    roleId: 2,
   },
   {
-    nome: "Nome do Usuário 3",
+    name: "Nome do Usuário 3",
     email: "usuario3@gmail.com",
-    empresa: "Empresa 3",
-    cargo: "Estoquista",
-    senha: "12345678",
-    senhaConfirmacao: "12345678",
-    telefone: "61999999999",
-    cargoId: 3,
+    company: "Empresa 3",
+    role: "Estoquista",
+    password: "12345678",
+    password_confirmation: "12345678",
+    phone: "61999999999",
+    roleId: 3,
   },
   {
-    nome: "Nome do Usuário 4",
+    name: "Nome do Usuário 4",
     email: "usuario4@gmail.com",
-    empresa: "Empresa 4",
-    cargo: "Requisitante",
-    senha: "12345678",
-    senhaConfirmacao: "12345678",
-    telefone: "61999999999",
-    cargoId: 4,
+    company: "Empresa 4",
+    role: "Requisitante",
+    password: "12345678",
+    password_confirmation: "12345678",
+    phone: "61999999999",
+    roleId: 4,
   },
 ];
 
-export const Empresas = [
+export const companies = [
   {
-    nome: "Empresa 1",
+    name: "Empresa 1",
     value: "Empresa 1",
   },
   {
-    nome: "Empresa 2",
+    name: "Empresa 2",
     value: "Empresa 2",
   },
   {
-    nome: "Empresa 3",
+    name: "Empresa 3",
     value: "Empresa 3",
   },
   {
-    nome: "Empresa 4",
+    name: "Empresa 4",
     value: "Empresa 4",
   },
   {
-    nome: "Empresa 5",
+    name: "Empresa 5",
     value: "Empresa 5",
   },
 ];
 
-export const Cargos = [
+export const roles = [
   {
-    nome: "Administrador",
+    name: "Administrador",
     value: "Administrador",
   },
   {
-    nome: "Operador",
+    name: "Operador",
     value: "Operador",
   },
   {
-    nome: "Estoquista",
+    name: "Estoquista",
     value: "Estoquista",
   },
   {
-    nome: "Requisitante",
+    name: "Requisitante",
     value: "Requisitante",
   },
   {
-    nome: "Personalizado 1",
+    name: "Personalizado 1",
     value: "Personalizado 1",
   },
 ];

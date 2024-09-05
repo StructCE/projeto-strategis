@@ -1,6 +1,6 @@
 export const useManageAccessProfileTable = () => {
-  function handleDetailsPress(cargo: { nome: string }) {
-    console.log(`Abre Pop Up do Cargo: ${cargo.nome}`);
+  function handleDetailsPress(role: { name: string }) {
+    console.log(`Abre Pop Up do Cargo: ${role.name}`);
   }
 
   return { handleDetailsPress };

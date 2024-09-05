@@ -9,15 +9,18 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
-import { Modulos } from "./accessProfilesData";
+import { modules } from "./accessProfileData";
 import { useAccessProfileForm } from "./useAccessProfileForm";
 
-export const AccessProfileRegister = () => {
-  const acessProfileForm = useAccessProfileForm();
+export const AccessProfilesRegister = () => {
+  const accessProfileForm = useAccessProfileForm();
+
   return (
-    <Form {...acessProfileForm.form}>
+    <Form {...accessProfileForm.form}>
       <form
-        onSubmit={acessProfileForm.form.handleSubmit(acessProfileForm.onSubmit)}
+        onSubmit={accessProfileForm.form.handleSubmit(
+          accessProfileForm.onSubmit,
+        )}
       >
         <FormComponent>
           <FormComponent.Title>
@@ -28,8 +31,8 @@ export const AccessProfileRegister = () => {
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
-                control={acessProfileForm.form.control}
-                name="nome"
+                control={accessProfileForm.form.control}
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -48,14 +51,14 @@ export const AccessProfileRegister = () => {
             <FormComponent.Frame>
               <FormComponent.Label>Módulos de acesso</FormComponent.Label>
               <FormField
-                control={acessProfileForm.form.control}
-                name="modulos"
+                control={accessProfileForm.form.control}
+                name="modules"
                 render={({ field }) => (
                   <FormItem>
                     <MultiSelect
-                      options={Modulos}
-                      onValueChange={acessProfileForm.setSelectedFrameworks}
-                      defaultValue={acessProfileForm.selectedFrameworks}
+                      options={modules}
+                      onValueChange={accessProfileForm.setSelectedModules}
+                      defaultValue={accessProfileForm.selectedModules}
                       placeholder="Selecione um ou mais conteúdos para o cargo ter acesso"
                       variant="inverted"
                       maxCount={2}

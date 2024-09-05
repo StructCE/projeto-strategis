@@ -41,10 +41,10 @@ export const createUserFormSchema = z
           "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
       })
       .optional(),
-    empresa: z.string({
+    company: z.string({
       required_error: "Por favor selecione uma empresa.",
     }),
-    cargo: z.string({
+    role: z.string({
       required_error: "Por favor selecione um cargo.",
     }),
   })
