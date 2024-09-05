@@ -25,7 +25,7 @@ RequestComponent.Grid = function RequestComponentGrid(
   props: RequestComponentGridProps,
 ) {
   const style = cn(
-    `grid grid-cols-5 max-[768px]:grid-cols-2 gap-2 items-center`,
+    `flex flex-col sm:grid md:grid-cols-[repeat(4,_1fr)_130px] sm:grid-cols-2 gap-3 sm:gap-4 items-center`,
     props.className,
   );
   return <div className={style}>{props.children}</div>;
@@ -55,14 +55,13 @@ RequestComponent.ColumnItem = function RequestComponentColumnItem(
 };
 
 //// Botão gerenciar  ////
-
 RequestComponent.ColumnButtonManage =
   function RequestComponentColumnButtonManage() {
     return (
       <div className="flex items-center justify-center max-[768px]:col-span-2 max-[768px]:row-end-4">
         <Button
           size={"sm"}
-          className="w-28 rounded-xl bg-cinza_destaque text-black hover:bg-hover_cinza_destaque"
+          className="w-[130px] rounded-xl bg-cinza_destaque text-base font-semibold text-black hover:bg-hover_cinza_destaque"
         >
           Gerenciar
         </Button>
