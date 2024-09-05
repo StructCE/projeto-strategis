@@ -39,7 +39,9 @@ const config = {
         cinza_destaque: "#DEDEDE", // Botão detalhes, inputs em tabelas
         hover_cinza_destaque: "#D0D0D0",
         hover_cinza_destaque_escuro: "#BBBBBB",
-        cinza_escuro_botao: "#2D3648", // Talvez algum botão
+        cinza_escuro_botao: "#888888", // Talvez algum botão
+        hover_cinza_escuro_botao: "#777777", // Talvez algum botão
+        cinza_mais_escuro_botao: "#2D3648", // Talvez algum botão
 
         fundo_titulo_relatorio: "#ADB5BD",
         fundo_destaque_relatorio: "#DEDEDE",
@@ -119,7 +121,6 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
-      
     },
   },
   plugins: [require("tailwindcss-animate")],

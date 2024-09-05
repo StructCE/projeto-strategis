@@ -1,7 +1,7 @@
 import BgLogin from "../../lib/assets/bg-login";
 import Ilustracao from "../../lib/assets/ilustracao";
 import LogoBranca from "../../lib/assets/logo-branca";
-import { FormsContainer } from "./_components/signInForm/formsContainer";
+import { SignInForm } from "./_components/signInForm/signInForm";
 
 export default function Login() {
   return (
@@ -22,7 +22,7 @@ export default function Login() {
           <p className="font-montserrat text-4xl font-semibold text-white max-[1400px]:text-3xl max-[650px]:mx-2 max-[650px]:text-center max-[425px]:text-2xl">
             Faça login na sua conta
           </p>
-          <FormsContainer />
+          <SignInForm />
         </div>
       </div>
       <div className="row-start-2 p-2 max-[1024px]:hidden">
