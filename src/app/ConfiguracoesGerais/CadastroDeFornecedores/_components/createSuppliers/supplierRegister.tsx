@@ -1,5 +1,5 @@
 "use client";
-import { FormComponent } from "~/components/forms/formsContainer";
+import { FormComponent } from "~/components/forms/index";
 import {
   Form,
   FormControl,

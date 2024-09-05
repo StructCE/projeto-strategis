@@ -1,7 +1,7 @@
 "use client";
 import { Search } from "lucide-react";
 import { useState } from "react";
-import { Filter } from "~/components/filter/filterContainer";
+import { Filter } from "~/components/filter/index";
 import { states } from "../../supplierData";
 
 export default function ManageSuppliersFilters() {
