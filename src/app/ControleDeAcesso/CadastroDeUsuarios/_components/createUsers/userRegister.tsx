@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Cargos, Empresas } from "../usersData";
+import { companies, roles } from "../usersData";
 import { useUserForm } from "./useUserForm";
 
 export const UserRegister = () => {
@@ -135,7 +135,7 @@ export const UserRegister = () => {
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
                 control={userForm.form.control}
-                name="empresa"
+                name="company"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -148,9 +148,9 @@ export const UserRegister = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Empresas.map((empresa, index) => (
-                          <SelectItem value={empresa.value} key={index}>
-                            {empresa.nome}
+                        {companies.map((company, index) => (
+                          <SelectItem value={company.value} key={index}>
+                            {company.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -165,7 +165,7 @@ export const UserRegister = () => {
               <FormComponent.Label>Cargo</FormComponent.Label>
               <FormField
                 control={userForm.form.control}
-                name="cargo"
+                name="role"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -178,9 +178,9 @@ export const UserRegister = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Cargos.map((cargo, index) => (
-                          <SelectItem value={cargo.value} key={index}>
-                            {cargo.nome}
+                        {roles.map((role, index) => (
+                          <SelectItem value={role.value} key={index}>
+                            {role.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

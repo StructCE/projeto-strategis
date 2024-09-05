@@ -1,7 +1,7 @@
 "use client";
 import { Building2, Search, UserCog } from "lucide-react";
 import { Filter } from "~/components/filter";
-import { Cargos, Empresas } from "../../usersData";
+import { companies, roles } from "../../usersData";
 import { useManageUsersFilters } from "./useManageUsersFilters";
 
 export default function ManageUsersFilters() {
@@ -16,8 +16,8 @@ export default function ManageUsersFilters() {
         />
         <Filter.Input
           placeholder="Nome do Usuário"
-          state={filters.inputNome}
-          setState={filters.setInputNome}
+          state={filters.inputName}
+          setState={filters.setInputName}
         />
       </Filter>
       <Filter>
@@ -28,12 +28,12 @@ export default function ManageUsersFilters() {
         />
         <Filter.Select
           placeholder="Fornecedor"
-          state={filters.selectEmpresa}
-          setState={filters.setSelectEmpresa}
+          state={filters.selectCompany}
+          setState={filters.setSelectCompany}
         >
-          {Empresas.map((empresa, index) => (
+          {companies.map((company, index) => (
             <Filter.SelectItems
-              value={empresa.nome}
+              value={company.name}
               key={index}
             ></Filter.SelectItems>
           ))}
@@ -47,12 +47,12 @@ export default function ManageUsersFilters() {
         />
         <Filter.Select
           placeholder="Cargo"
-          state={filters.selectCargo}
-          setState={filters.setSelectCargo}
+          state={filters.selectRole}
+          setState={filters.setSelectRole}
         >
-          {Cargos.map((cargo, index) => (
+          {roles.map((role, index) => (
             <Filter.SelectItems
-              value={cargo.nome}
+              value={role.name}
               key={index}
             ></Filter.SelectItems>
           ))}
