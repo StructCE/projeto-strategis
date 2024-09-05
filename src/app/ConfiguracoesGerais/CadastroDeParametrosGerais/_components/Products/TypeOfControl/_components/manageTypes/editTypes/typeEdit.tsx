@@ -1,4 +1,4 @@
-import { type UseFormReturn } from "react-hook-form";
+import { type TypeOfControl } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -8,26 +8,26 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type TypeOfControl } from "../../../../GeneralParametersData";
-import { type EditTypeFormValues } from "./typeEditFormSchema";
+import { useTypeForm } from "./useTypeForm";
 
-type TypeEditProps = {
-  form: UseFormReturn<EditTypeFormValues>;
-  onSubmitEdit: (data: EditTypeFormValues) => void;
-  onSubmitRemove: (data: EditTypeFormValues) => void;
-  type: TypeOfControl;
+type TypeEditForm = {
+  type_of_control: TypeOfControl;
 };
 
-export const TypeEdit = (props: TypeEditProps) => {
+export const TypeEdit = (props: TypeEditForm) => {
+  const typeEditForm = useTypeForm(props.type_of_control);
+
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
+    <Form {...typeEditForm.form}>
+      <form
+        onSubmit={typeEditForm.form.handleSubmit(typeEditForm.onSubmitEdit)}
+      >
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Tipo de Controle</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={typeEditForm.form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
@@ -51,7 +51,9 @@ export const TypeEdit = (props: TypeEditProps) => {
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={props.form.handleSubmit(props.onSubmitRemove)}
+              handlePress={typeEditForm.form.handleSubmit(
+                typeEditForm.onSubmitRemove,
+              )}
             >
               Remover Tipo
             </FormComponent.Button>

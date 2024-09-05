@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type TypeOfControl } from "../../../../GeneralParametersData";
+import { type TypeOfControl } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import {
   editTypeFormSchema,
   type EditTypeFormValues,

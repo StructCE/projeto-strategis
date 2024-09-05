@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { TypesOfControl } from "../../../../GeneralParametersData";
-import { TypeEditContainer } from "../editTypes/typeEditContainer";
+import { TypeEdit } from "./editTypes/typeEdit";
 
 export const ManageTypesTable = () => {
   return (
@@ -41,7 +41,7 @@ export const ManageTypesTable = () => {
                     Utilize o campo abaixo para editar o tipo ou o botão para
                     remover
                   </DialogTitle>
-                  <TypeEditContainer {...type} />
+                  <TypeEdit type_of_control={type} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>
