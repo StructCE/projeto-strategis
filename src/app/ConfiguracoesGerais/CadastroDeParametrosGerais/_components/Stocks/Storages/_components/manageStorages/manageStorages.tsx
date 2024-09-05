@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Places } from "../../../../GeneralParametersData";
-import { StorageEditContainer } from "../editStorages/storageEditContainer";
+import { StorageEdit } from "./editStorages/storageEdit";
 
 export const ManageStoragesTable = () => {
   return (
@@ -47,7 +47,7 @@ export const ManageStoragesTable = () => {
                       Utilize o campo abaixo para editar o armário/zona ou o
                       botão para remover
                     </DialogTitle>
-                    <StorageEditContainer {...storage} />
+                    <StorageEdit storage={storage} />
                     <DialogDescription></DialogDescription>
                   </DialogHeader>
                 </DialogContent>

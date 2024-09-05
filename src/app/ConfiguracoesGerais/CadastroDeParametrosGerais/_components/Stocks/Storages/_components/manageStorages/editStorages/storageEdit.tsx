@@ -1,4 +1,4 @@
-import { type UseFormReturn } from "react-hook-form";
+import { type Storage } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { FormComponent } from "~/components/forms/formsContainer";
 import {
   Form,
@@ -8,26 +8,28 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type Storage } from "../../../../GeneralParametersData";
-import { type EditStorageFormValues } from "./storageEditFormSchema";
+import { useStorageForm } from "./useStorageForm";
 
-type StorageEditProps = {
-  form: UseFormReturn<EditStorageFormValues>;
-  onSubmitEdit: (data: EditStorageFormValues) => void;
-  onSubmitRemove: (data: EditStorageFormValues) => void;
+type StorageEditForm = {
   storage: Storage;
 };
 
-export const StorageEdit = (props: StorageEditProps) => {
+export const StorageEdit = (props: StorageEditForm) => {
+  const storageEditForm = useStorageForm(props.storage);
+
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
+    <Form {...storageEditForm.form}>
+      <form
+        onSubmit={storageEditForm.form.handleSubmit(
+          storageEditForm.onSubmitEdit,
+        )}
+      >
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={storageEditForm.form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
@@ -51,7 +53,9 @@ export const StorageEdit = (props: StorageEditProps) => {
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={props.form.handleSubmit(props.onSubmitRemove)}
+              handlePress={storageEditForm.form.handleSubmit(
+                storageEditForm.onSubmitRemove,
+              )}
             >
               Remover Armário/Zona
             </FormComponent.Button>
