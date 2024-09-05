@@ -16,8 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { ProductEditContainer } from "../editProducts/productEditContainer";
 import { products, units } from "../productsData";
+import { ProductEditContainer } from "./editProducts/productEditContainer";
 import ManageProductsFilters from "./manageProductsFilters/manageProductsFilters";
 
 export default function ManageProductsTable() {

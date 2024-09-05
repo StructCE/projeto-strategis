@@ -1,5 +1,5 @@
 "use client";
-import { type Product } from "../productsData";
+import { type Product } from "../../productsData";
 import { ProductEdit } from "./productEdit";
 import { useProductForm } from "./useProductForm";
 

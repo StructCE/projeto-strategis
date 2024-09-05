@@ -20,6 +20,7 @@ import {
 import {
   Places,
   ProductCategories,
+  products,
   SectorsOfUse,
   status,
   suppliers,
@@ -27,7 +28,7 @@ import {
   units,
   weekDays,
   type Product,
-} from "../productsData";
+} from "../../productsData";
 import { type EditProductFormValues } from "./productEditFormSchema";
 
 type ProductEditProps = {
@@ -88,6 +89,30 @@ export const ProductEdit = (props: ProductEditProps) => {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
+              <FormComponent.Label>Fornecedor(es)</FormComponent.Label>
+              <FormField
+                control={props.form.control}
+                name="suppliers"
+                render={({ field }) => (
+                  <FormItem>
+                    <MultiSelect
+                      options={suppliers.map((supplier) => ({
+                        label: supplier.name,
+                        value: supplier.name,
+                      }))}
+                      onValueChange={field.onChange}
+                      defaultValue={field.value ?? []}
+                      placeholder="Selecione o(s) fornecedor(es) do produto"
+                      variant="inverted"
+                      maxCount={1}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
               <FormComponent.Label>Status</FormComponent.Label>
               <FormField
                 control={props.form.control}
@@ -118,23 +143,29 @@ export const ProductEdit = (props: ProductEditProps) => {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
-              <FormComponent.Label>Fornecedor(es)</FormComponent.Label>
+              <FormComponent.Label>Produto Pai</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="suppliers"
+                name="parent_product"
                 render={({ field }) => (
                   <FormItem>
-                    <MultiSelect
-                      options={suppliers.map((supplier) => ({
-                        label: supplier.name,
-                        value: supplier.name,
-                      }))}
+                    <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value ?? []}
-                      placeholder="Selecione o(s) fornecedor(es) do produto"
-                      variant="inverted"
-                      maxCount={1}
-                    />
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                          <SelectValue placeholder="Selecione o produto pai do produto" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {products.map((product, index) => (
+                          <SelectItem value={product.name} key={index}>
+                            {product.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

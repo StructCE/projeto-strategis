@@ -27,15 +27,17 @@ export const editProductFormSchema = z.object({
     })
     .min(1, { message: "Digite o nome do produto." }),
 
+  suppliers: z
+    .array(z.string())
+    .min(1, { message: "Selecione um ou mais fornecedores." }),
+
   status: z
     .string({
       required_error: "Selecione o status do produto.",
     })
     .min(1, { message: "Selecione o status do produto." }),
 
-  suppliers: z
-    .array(z.string())
-    .min(1, { message: "Selecione um ou mais fornecedores." }),
+  parent_product: z.string().optional(),
 
   buy_unit: z
     .string({

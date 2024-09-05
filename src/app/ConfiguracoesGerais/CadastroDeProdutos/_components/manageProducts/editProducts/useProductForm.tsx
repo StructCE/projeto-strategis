@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type Product } from "../productsData";
+import { type Product } from "../../productsData";
 import {
   editProductFormSchema,
   type EditProductFormValues,
@@ -12,8 +12,9 @@ export const useProductForm = (product: Product) => {
     mode: "onChange",
     defaultValues: {
       name: product.name,
-      status: product.status.description,
       suppliers: product.suppliers.map((supplier) => supplier.name),
+      status: product.status.description,
+      parent_product: product.parent_product,
       buy_unit: product.buy_unit.unit,
       buy_quantity: product.buy_quantity,
       buy_day: product.buy_day.day,

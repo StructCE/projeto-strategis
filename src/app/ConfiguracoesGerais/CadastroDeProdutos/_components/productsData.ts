@@ -298,8 +298,9 @@ export type Address = {
 export type Product = {
   name: string;
   code: number;
-  status: Status;
   suppliers: Supplier[];
+  status: Status;
+  parent_product?: string;
   buy_unit: ProductUnit;
   buy_quantity: string;
   buy_day: WeekDay;
@@ -354,6 +355,31 @@ export const products: Product[] = [
     stock_max: "200",
     type_of_control: { description: "Produtos de Produção" },
     product_category: { description: "Carnes - In Natura" },
+    sector_of_use: { description: "Cozinha" },
+    address: {
+      place: "Local 2",
+      storage: "Armário 2",
+      shelf: "Prateleira 2",
+    },
+  },
+  {
+    name: "Carne Moída",
+    code: 1006,
+    status: { description: "Ativo" },
+    suppliers: [
+      {
+        name: "Fornecedor B",
+      },
+    ],
+    parent_product: "Carne Bovina",
+    buy_unit: { unit: "KG" },
+    buy_quantity: "20",
+    buy_day: { day: "Quarta" },
+    stock_current: "60",
+    stock_min: "10",
+    stock_max: "100",
+    type_of_control: { description: "Produtos de Produção" },
+    product_category: { description: "Carnes - Processadas" },
     sector_of_use: { description: "Cozinha" },
     address: {
       place: "Local 2",
@@ -434,126 +460,3 @@ export const products: Product[] = [
     },
   },
 ];
-
-// export const products: Product[] = [
-//   {
-//     name: "Cerveja Pilsen",
-//     code: 1001,
-//     status: { description: "Ativo" },
-//     suppliers: [{ name: "Fornecedor A" }, { name: "Fornecedor B" }],
-//     buy_unit: { unit: "L" },
-//     buy_quantity: "500",
-//     buy_day: { day: "Segunda" },
-//     stock_current: "300",
-//     stock_min: "100",
-//     stock_max: "600",
-//     type_of_control: { description: "Produtos de Bar" },
-//     product_category: { description: "Bebidas - Cervejas" },
-//     sector_of_use: { description: "Bar" },
-//     place: {
-//       description: "Local 1",
-//       storages: [
-//         {
-//           description: "Armário 1",
-//           shelves: [{ description: "Prateleira 1" }],
-//         },
-//       ],
-//     },
-//   },
-//   {
-//     name: "Carne Bovina",
-//     code: 1002,
-//     status: { description: "Ativo" },
-//     suppliers: [{ name: "Fornecedor C" }],
-//     buy_unit: { unit: "KG" },
-//     buy_quantity: "1000",
-//     buy_day: { day: "Quarta" },
-//     stock_current: "500",
-//     stock_min: "200",
-//     stock_max: "1200",
-//     type_of_control: { description: "Carnes - In Natura" },
-//     product_category: { description: "Carnes" },
-//     sector_of_use: { description: "Cozinha" },
-//     place: {
-//       description: "Local 2",
-//       storages: [
-//         {
-//           description: "Armário 2",
-//           shelves: [{ description: "Prateleira 2" }],
-//         },
-//       ],
-//     },
-//   },
-//   {
-//     name: "Detergente Líquido",
-//     code: 1003,
-//     status: { description: "Ativo" },
-//     suppliers: [{ name: "Fornecedor D" }, { name: "Fornecedor E" }],
-//     buy_unit: { unit: "L" },
-//     buy_quantity: "200",
-//     buy_day: { day: "Qualquer dia" },
-//     stock_current: "150",
-//     stock_min: "50",
-//     stock_max: "300",
-//     type_of_control: { description: "Produtos de Limpeza" },
-//     product_category: { description: "Produtos - Limpeza" },
-//     sector_of_use: { description: "Serviços Gerais" },
-//     place: {
-//       description: "Local 3",
-//       storages: [
-//         {
-//           description: "Armário 3",
-//           shelves: [{ description: "Prateleira 3" }],
-//         },
-//       ],
-//     },
-//   },
-//   {
-//     name: "Queijo Parmesão",
-//     code: 1004,
-//     status: { description: "Ativo" },
-//     suppliers: [{ name: "Fornecedor F" }],
-//     buy_unit: { unit: "KG" },
-//     buy_quantity: "50",
-//     buy_day: { day: "Sexta" },
-//     stock_current: "25",
-//     stock_min: "10",
-//     stock_max: "60",
-//     type_of_control: { description: "Queijos" },
-//     product_category: { description: "Queijos" },
-//     sector_of_use: { description: "Finalização" },
-//     place: {
-//       description: "Local 4",
-//       storages: [
-//         {
-//           description: "Armário 4",
-//           shelves: [{ description: "Prateleira 4" }],
-//         },
-//       ],
-//     },
-//   },
-//   {
-//     name: "Água Mineral",
-//     code: 1005,
-//     status: { description: "Ativo" },
-//     suppliers: [{ name: "Fornecedor G" }, { name: "Fornecedor H" }],
-//     buy_unit: { unit: "L" },
-//     buy_quantity: "1000",
-//     buy_day: { day: "Terça" },
-//     stock_current: "800",
-//     stock_min: "200",
-//     stock_max: "1500",
-//     type_of_control: { description: "Produtos de Bar" },
-//     product_category: { description: "Bebidas - Águas" },
-//     sector_of_use: { description: "Bar" },
-//     place: {
-//       description: "Local 5",
-//       storages: [
-//         {
-//           description: "Armário 5",
-//           shelves: [{ description: "Prateleira 5" }],
-//         },
-//       ],
-//     },
-//   },
-// ];
