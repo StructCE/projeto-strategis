@@ -1,0 +1,16 @@
+export const modulos = [
+  { operacao: "Cadastrar Empresas" },
+  { operacao: "Cadastrar Perfis" },
+  { operacao: "Cadastrar Usuários" },
+  { operacao: "Dar Permissões de Acesso" },
+  { operacao: "Importar NFs" },
+  { operacao: "Validar Dados Cadastrados" },
+  { operacao: "Dar Entrada de Mercadorias" },
+  { operacao: "Cadastrar Fornecedores" },
+  { operacao: "Gerar Relatorios de Estoque" },
+  { operacao: "Dar Saída de Mercadorias" },
+  { operacao: "Fazer Inventário" },
+  { operacao: "Fazer Ajuste de Estoque" },
+  { operacao: "Requisitar Mercadorias do Estoque" },
+  { operacao: "Dar Aceite de Mercadorias Recebidas" },
+];
