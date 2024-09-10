@@ -5,8 +5,12 @@ import { Filter } from "~/components/filter/index";
 import { RegimeTribuario } from "../companiesData";
 
 export default function ManageCompaniesFilters() {
-  const [inputName, setInputName] = useState("");
-  const [selectState, setSelectState] = useState("");
+  const [companyNameInput, setcompanyNameInput] = useState("");
+  const [cnpjInput, setCNPJInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
+  const [selectStateRegistration, setSelectStateRegistration] = useState("");
+  const [selectTaxRegime, setSelectTaxRegime] = useState("");
+  const [addressInput, setAddressInput] = useState("");
 
   return (
     <>
@@ -18,8 +22,8 @@ export default function ManageCompaniesFilters() {
         />
         <Filter.Input
           placeholder="Empresa"
-          state={inputName}
-          setState={setInputName}
+          state={companyNameInput}
+          setState={setcompanyNameInput}
         />
       </Filter>
       <Filter>
@@ -30,8 +34,8 @@ export default function ManageCompaniesFilters() {
         />
         <Filter.Input
           placeholder="CNPJ"
-          state={inputName}
-          setState={setInputName}
+          state={cnpjInput}
+          setState={setCNPJInput}
         />
       </Filter>
       <Filter>
@@ -42,8 +46,8 @@ export default function ManageCompaniesFilters() {
         />
         <Filter.Input
           placeholder="Email"
-          state={inputName}
-          setState={setInputName}
+          state={emailInput}
+          setState={setEmailInput}
         />
       </Filter>
       <Filter>
@@ -54,8 +58,8 @@ export default function ManageCompaniesFilters() {
         />
         <Filter.Input
           placeholder="Inscrição Estadual"
-          state={inputName}
-          setState={setInputName}
+          state={selectStateRegistration}
+          setState={setSelectStateRegistration}
         />
       </Filter>
 
@@ -67,8 +71,8 @@ export default function ManageCompaniesFilters() {
         />
         <Filter.Select
           placeholder="Regime Tributário"
-          state={selectState}
-          setState={setSelectState}
+          state={selectTaxRegime}
+          setState={setSelectTaxRegime}
         >
           {RegimeTribuario.map((tributo, index) => (
             <Filter.SelectItems
@@ -86,8 +90,8 @@ export default function ManageCompaniesFilters() {
         />
         <Filter.Input
           placeholder="Endereço"
-          state={inputName}
-          setState={setInputName}
+          state={addressInput}
+          setState={setAddressInput}
         />
       </Filter>
     </>
