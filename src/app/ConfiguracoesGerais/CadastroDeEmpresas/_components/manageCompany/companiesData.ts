@@ -123,7 +123,7 @@ export const companies: Companies[] = [
     legalRepresentative: [
       {
         name: "João Pereira",
-        role: { name: "Gerente", value: "Gerente" },
+        role: { name: "Requisitante", value: "Requisitante" },
         email: "joao.pereira@technovafilial.com",
         phone: "(21) 98765-4321",
       },
@@ -150,7 +150,7 @@ export const companies: Companies[] = [
     legalRepresentative: [
       {
         name: "Carlos Andrade",
-        role: { name: "Diretor", value: "Diretor" },
+        role: { name: "Requisitante", value: "Requisitante" },
         email: "carlos.andrade@quantumdynamics.com",
         phone: "(31) 99876-5432",
       },
@@ -177,7 +177,7 @@ export const companies: Companies[] = [
     legalRepresentative: [
       {
         name: "Ana Costa",
-        role: { name: "Supervisor", value: "Supervisor" },
+        role: { name: "Estoquista", value: "Estoquista" },
         email: "ana.costa@apexfilial.com",
         phone: "(41) 90987-6543",
       },
@@ -204,7 +204,7 @@ export const companies: Companies[] = [
     legalRepresentative: [
       {
         name: "Roberto Lima",
-        role: { name: "Coordenador", value: "Coordenador" },
+        role: { name: "Operador", value: "Operador" },
         email: "roberto.lima@fusionware.com",
         phone: "(51) 99876-1234",
       },

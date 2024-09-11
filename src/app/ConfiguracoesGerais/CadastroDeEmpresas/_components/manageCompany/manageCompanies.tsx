@@ -1,18 +1,14 @@
+"use client";
+
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
 //import { SupplierEdit } from "../editSuppliers/supplierEdit";
 import ManageCompaniesFilters from "./manageCompaniesFilters/manageCompaniesFilters";
 import { companies } from "./companiesData";
+import { useRouter } from "next/navigation";
 
 export const ManageCompaniesTable = () => {
+  const router = useRouter();
   return (
     <TableComponent>
       <TableComponent.Title>Gerenciar Empresas</TableComponent.Title>
@@ -61,23 +57,17 @@ export const ManageCompaniesTable = () => {
             <TableComponent.Value className="text-center">
               {company.low_stock_products}
             </TableComponent.Value>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-7xl">
-                <DialogHeader>
-                  <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados da empresa ou
-                    o botão para remover
-                  </DialogTitle>
-                  {/*<CompanyEdit company={company} />*/}
-                  <DialogDescription></DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+
+            <Button
+              onClick={() =>
+                router.push(
+                  `/ConfiguracoesGerais/CadastroDeEmpresas/DetalhesDaEmpresa?cnpj=${encodeURIComponent(company.cnpj)}`,
+                )
+              }
+              className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]"
+            >
+              Detalhes
+            </Button>
           </TableComponent.Line>
         ))}
       </TableComponent.Table>
