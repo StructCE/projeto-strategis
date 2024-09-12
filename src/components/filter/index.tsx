@@ -127,7 +127,7 @@ Filter.DatePicker = function FilterDatePicker(props: FilterDatePickerProps) {
             )}
           </button>
         </PopoverTrigger>
-        <PopoverContent className="m-0 w-auto">
+        <PopoverContent className="m-0 w-auto opacity-100">
           <Calendar
             required
             mode="single"
