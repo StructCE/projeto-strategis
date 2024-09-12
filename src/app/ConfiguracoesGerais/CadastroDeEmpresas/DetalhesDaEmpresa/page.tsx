@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CompanyEdit } from "../_components/editCompany/editCompany";
+import { CompanyEdit } from "./_components/editCompany/editCompany";
 import {
   type Companies,
   companies,

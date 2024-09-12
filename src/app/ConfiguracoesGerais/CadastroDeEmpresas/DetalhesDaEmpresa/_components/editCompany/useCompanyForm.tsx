@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
-import { type Companies } from "../manageCompany/companiesData";
+import { type Companies } from "../../../_components/manageCompany/companiesData";
 import {
   editCompanyFormSchema,
   type EditCompanyFormValues,

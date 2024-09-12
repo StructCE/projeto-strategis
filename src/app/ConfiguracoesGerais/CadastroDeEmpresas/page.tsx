@@ -1,4 +1,4 @@
-import { CompanyRegister } from "./_components/createCompany.tsx/companyRegister";
+import { CompanyRegister } from "./_components/createCompany/companyRegister";
 import { ManageCompaniesTable } from "./_components/manageCompany/manageCompanies";
 
 export default function CompanyRegistration() {
