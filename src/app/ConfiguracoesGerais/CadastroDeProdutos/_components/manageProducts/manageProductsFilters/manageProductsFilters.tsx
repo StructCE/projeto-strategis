@@ -1,6 +1,6 @@
 import { Building2, Search, UserCog } from "lucide-react";
 import { useState } from "react";
-import { Filter } from "~/components/filter/filterContainer";
+import { Filter } from "~/components/filter";
 
 export default function ManageProductsFilters() {
   const [inputNome, setInputNome] = useState("");

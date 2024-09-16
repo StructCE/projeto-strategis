@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
-import { FormComponent } from "~/components/forms/formsContainer";
+import { FormComponent } from "~/components/forms";
 import {
   Form,
   FormControl,
