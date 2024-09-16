@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        inter: ["Inter", "sans-serif"],
+        sans: ["var(--font-inter)"],
         montserrat: ["Montserrat", "sans-serif"],
         aldrich: ["Aldrich-Regular", "sans-serif"],
       },
@@ -41,6 +41,8 @@ const config = {
         hover_cinza_destaque_escuro: "#BBBBBB",
         cinza_escuro_botao: "#2D3648", // Talvez algum botão
         cinza_borda_acordeao: "#696969",
+        hover_cinza_escuro_botao: "#777777", // Talvez algum botão
+        cinza_mais_escuro_botao: "#2D3648", // Talvez algum botão
 
         fundo_titulo_relatorio: "#ADB5BD",
         fundo_destaque_relatorio: "#DEDEDE",

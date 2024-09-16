@@ -1,16 +1,17 @@
-import { useRef } from "react";
+"use client";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "../../ui/accordion";
-import { ScrollArea } from "../../ui/scroll-area";
-import SidebarButton from "./sidebarButton";
-import { sidebarButtons } from "./sidebarButtonsData";
+} from "../../../ui/accordion";
+import { ScrollArea } from "../../../ui/scroll-area";
+import { sidebarButtons } from "./button/sidebarButtonsData";
+import SidebarButton from "./button/sidebarButton";
+import { useSidebarButtons } from "./button/useSidebarButtons";
 
 export function SidebarContent() {
-  const buttonRef = useRef<HTMLAnchorElement>(null);
+  const buttons = useSidebarButtons();
   return (
     <ScrollArea className="w-fill">
       <Accordion type="multiple" className="mb-0 w-full">
@@ -26,9 +27,9 @@ export function SidebarContent() {
                 key={itemIndex}
               >
                 <SidebarButton
-                  iconSource={item.iconSource}
-                  refLink={item.linkRef}
-                  buttonRef={buttonRef}
+                  {...buttons}
+                  icon={item.icon}
+                  refLink={item.refLink}
                   name={item.name}
                   disabled={false} //TODO: logica para habilitar o botão
                 />

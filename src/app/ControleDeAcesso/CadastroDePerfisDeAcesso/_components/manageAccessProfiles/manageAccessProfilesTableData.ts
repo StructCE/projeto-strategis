@@ -1,7 +1,7 @@
-export const TabelaCargos = [
+export const roles = [
   {
-    nome: "Administrador",
-    modulos: [
+    name: "Administrador",
+    modules: [
       "Cadastrar Empresas",
       "Cadastrar Perfis",
       "Cadastrar Usuários",
@@ -20,8 +20,8 @@ export const TabelaCargos = [
     ],
   },
   {
-    nome: "Operador",
-    modulos: [
+    name: "Operador",
+    modules: [
       "Cadastrar Usuários",
       "Importar NFs de Qualquer Empresa",
       "Validar Dados Cadastrados",
@@ -29,8 +29,8 @@ export const TabelaCargos = [
     ],
   },
   {
-    nome: "Estoquista",
-    modulos: [
+    name: "Estoquista",
+    modules: [
       "Dar Entrada de Mercadorias",
       "Cadastrar Fornecedores",
       "Gerar Relatorios de Estoque",
@@ -41,15 +41,15 @@ export const TabelaCargos = [
     ],
   },
   {
-    nome: "Requisitante",
-    modulos: [
+    name: "Requisitante",
+    modules: [
       "Requisitar Mercadorias do Estoque",
       "Dar Aceite de Mercadorias Recebidas",
     ],
   },
   {
-    nome: "Personalizado 1",
-    modulos: [
+    name: "Personalizado 1",
+    modules: [
       "Dar Entrada de Mercadorias",
       "Cadastrar Fornecedores",
       "Gerar Relatorios de Estoque",

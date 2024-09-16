@@ -1,13 +1,11 @@
+"use client";
 import { Building2, Search, UserCog } from "lucide-react";
-import { useState } from "react";
-import { Filter } from "~/components/filter/filterContainer";
-import { Cargos, Empresas } from "../../usersData";
+import { Filter } from "~/components/filter";
+import { companies, roles } from "../../usersData";
+import { useManageUsersFilters } from "./useManageUsersFilters";
 
 export default function ManageUsersFilters() {
-  const [inputNome, setInputNome] = useState("");
-  const [selectEmpresa, setSelectEmpresa] = useState("");
-  const [selectCargo, setSelectCargo] = useState("");
-
+  const filters = useManageUsersFilters();
   return (
     <>
       <Filter>
@@ -18,8 +16,8 @@ export default function ManageUsersFilters() {
         />
         <Filter.Input
           placeholder="Nome do Usuário"
-          state={inputNome}
-          setState={setInputNome}
+          state={filters.inputName}
+          setState={filters.setInputName}
         />
       </Filter>
       <Filter>
@@ -30,12 +28,12 @@ export default function ManageUsersFilters() {
         />
         <Filter.Select
           placeholder="Fornecedor"
-          state={selectEmpresa}
-          setState={setSelectEmpresa}
+          state={filters.selectCompany}
+          setState={filters.setSelectCompany}
         >
-          {Empresas.map((empresa, index) => (
+          {companies.map((company, index) => (
             <Filter.SelectItems
-              value={empresa.nome}
+              value={company.name}
               key={index}
             ></Filter.SelectItems>
           ))}
@@ -49,12 +47,12 @@ export default function ManageUsersFilters() {
         />
         <Filter.Select
           placeholder="Cargo"
-          state={selectCargo}
-          setState={setSelectCargo}
+          state={filters.selectRole}
+          setState={filters.setSelectRole}
         >
-          {Cargos.map((cargo, index) => (
+          {roles.map((role, index) => (
             <Filter.SelectItems
-              value={cargo.nome}
+              value={role.name}
               key={index}
             ></Filter.SelectItems>
           ))}

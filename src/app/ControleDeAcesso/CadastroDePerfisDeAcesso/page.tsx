@@ -1,11 +1,11 @@
-import AccessProfileRegisterContainer from "./_components/createAccessProfile/accessProfileRegisterContainer";
-import { ManageAccessProfilesContainer } from "./_components/manageAccessProfiles/manageAccessProfilesContainer";
+import { AccessProfilesRegister } from "./_components/createAccessProfile/accessProfileRegister";
+import { ManageAccessProfilesTable } from "./_components/manageAccessProfiles/manageAccessProfiles";
 
 export default function AccessProfileRegister() {
   return (
     <div className="flex w-full flex-col gap-4 bg-fundo_branco">
-      <AccessProfileRegisterContainer />
-      <ManageAccessProfilesContainer />
+      <AccessProfilesRegister />
+      <ManageAccessProfilesTable />
     </div>
   );
 }

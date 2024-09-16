@@ -1,5 +1,5 @@
-import { type UseFormReturn } from "react-hook-form";
-import { FormComponent } from "~/components/forms/formsContainer";
+"use client";
+import { FormComponent } from "~/components/forms";
 import {
   Form,
   FormControl,
@@ -9,20 +9,19 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
-import { type CreateAccessProfileFormValues } from "./accessProfileRegisterFormSchema";
-import { Modulos } from "./accessProfilesData";
+import { modules } from "./accessProfileData";
+import { useAccessProfileForm } from "./useAccessProfileForm";
 
-type AccessProfileRegisterProps = {
-  form: UseFormReturn<CreateAccessProfileFormValues>;
-  onSubmit: (data: CreateAccessProfileFormValues) => void;
-  selectedFrameworks: string[];
-  setSelectedFrameworks: React.Dispatch<React.SetStateAction<string[]>>;
-};
+export const AccessProfilesRegister = () => {
+  const accessProfileForm = useAccessProfileForm();
 
-export const AccessProfileRegister = (props: AccessProfileRegisterProps) => {
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmit)}>
+    <Form {...accessProfileForm.form}>
+      <form
+        onSubmit={accessProfileForm.form.handleSubmit(
+          accessProfileForm.onSubmit,
+        )}
+      >
         <FormComponent>
           <FormComponent.Title>
             Cadastro de Perfil de Acesso
@@ -32,8 +31,8 @@ export const AccessProfileRegister = (props: AccessProfileRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="nome"
+                control={accessProfileForm.form.control}
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -52,14 +51,14 @@ export const AccessProfileRegister = (props: AccessProfileRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Módulos de acesso</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="modulos"
+                control={accessProfileForm.form.control}
+                name="modules"
                 render={({ field }) => (
                   <FormItem>
                     <MultiSelect
-                      options={Modulos}
-                      onValueChange={props.setSelectedFrameworks}
-                      defaultValue={props.selectedFrameworks}
+                      options={modules}
+                      onValueChange={accessProfileForm.setSelectedModules}
+                      defaultValue={accessProfileForm.selectedModules}
                       placeholder="Selecione um ou mais conteúdos para o cargo ter acesso"
                       variant="inverted"
                       maxCount={2}

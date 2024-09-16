@@ -1,5 +1,5 @@
-import { type UseFormReturn } from "react-hook-form";
-import { FormComponent } from "~/components/forms/formsContainer";
+"use client";
+import { FormComponent } from "~/components/forms";
 import {
   Form,
   FormControl,
@@ -15,26 +15,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Cargos, Empresas, type User } from "../usersData";
-import { type EditUserFormValues } from "./userEditFormSchema";
+import { companies, roles, type User } from "../../usersData";
+import { useUserForm } from "./useUserForm";
 
-type UserEditProps = {
-  form: UseFormReturn<EditUserFormValues>;
-  onSubmitEdit: (data: EditUserFormValues) => void;
-  onSubmitRemove: (data: EditUserFormValues) => void;
-  usuario: User;
+type UserEdituserEditForm = {
+  user: User;
 };
 
-export const UserEdit = (props: UserEditProps) => {
+export const UserEdit = (props: UserEdituserEditForm) => {
+  const userEditForm = useUserForm(props.user);
+
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmitEdit)}>
+    <Form {...userEditForm.form}>
+      <form
+        onSubmit={userEditForm.form.handleSubmit(userEditForm.onSubmitEdit)}
+      >
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Email</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userEditForm.form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -54,8 +55,8 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Senha</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="senha"
+                control={userEditForm.form.control}
+                name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -75,8 +76,8 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Confirme a senha</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="senhaConfirmacao"
+                control={userEditForm.form.control}
+                name="password_confirmation"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -98,8 +99,8 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="nome"
+                control={userEditForm.form.control}
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -118,8 +119,8 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Telefone</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="telefone"
+                control={userEditForm.form.control}
+                name="phone"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -138,8 +139,8 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="empresa"
+                control={userEditForm.form.control}
+                name="company"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -152,9 +153,9 @@ export const UserEdit = (props: UserEditProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Empresas.map((empresa, index) => (
-                          <SelectItem value={empresa.value} key={index}>
-                            {empresa.nome}
+                        {companies.map((company, index) => (
+                          <SelectItem value={company.value} key={index}>
+                            {company.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -168,8 +169,8 @@ export const UserEdit = (props: UserEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Cargo</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="cargo"
+                control={userEditForm.form.control}
+                name="role"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -182,9 +183,9 @@ export const UserEdit = (props: UserEditProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Cargos.map((cargo, index) => (
-                          <SelectItem value={cargo.value} key={index}>
-                            {cargo.nome}
+                        {roles.map((role, index) => (
+                          <SelectItem value={role.value} key={index}>
+                            {role.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -202,7 +203,9 @@ export const UserEdit = (props: UserEditProps) => {
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={props.form.handleSubmit(props.onSubmitRemove)}
+              handlePress={userEditForm.form.handleSubmit(
+                userEditForm.onSubmitRemove,
+              )}
             >
               Remover Usuário
             </FormComponent.Button>

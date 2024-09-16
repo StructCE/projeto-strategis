@@ -1,5 +1,5 @@
-import { type UseFormReturn } from "react-hook-form";
-import { FormComponent } from "~/components/forms/formsContainer";
+"use client";
+import { FormComponent } from "~/components/forms";
 import {
   Form,
   FormControl,
@@ -15,18 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Cargos, Empresas } from "../usersData";
-import { type CreateUserFormValues } from "./userRegisterFormSchema";
+import { companies, roles } from "../usersData";
+import { useUserForm } from "./useUserForm";
 
-type UserRegisterProps = {
-  form: UseFormReturn<CreateUserFormValues>;
-  onSubmit: (data: CreateUserFormValues) => void;
-};
-
-export const UserRegister = (props: UserRegisterProps) => {
+export const UserRegister = () => {
+  const userForm = useUserForm();
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmit)}>
+    <Form {...userForm.form}>
+      <form onSubmit={userForm.form.handleSubmit(userForm.onSubmit)}>
         <FormComponent>
           <FormComponent.Title>Cadastro de Usuário</FormComponent.Title>
 
@@ -34,7 +30,7 @@ export const UserRegister = (props: UserRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Email</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userForm.form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -54,7 +50,7 @@ export const UserRegister = (props: UserRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Senha</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userForm.form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
@@ -75,7 +71,7 @@ export const UserRegister = (props: UserRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Confirme a senha</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userForm.form.control}
                 name="password_confirmation"
                 render={({ field }) => (
                   <FormItem>
@@ -98,7 +94,7 @@ export const UserRegister = (props: UserRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userForm.form.control}
                 name="username"
                 render={({ field }) => (
                   <FormItem>
@@ -118,7 +114,7 @@ export const UserRegister = (props: UserRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Telefone</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={userForm.form.control}
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
@@ -138,8 +134,8 @@ export const UserRegister = (props: UserRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="empresa"
+                control={userForm.form.control}
+                name="company"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -152,9 +148,9 @@ export const UserRegister = (props: UserRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Empresas.map((empresa, index) => (
-                          <SelectItem value={empresa.value} key={index}>
-                            {empresa.nome}
+                        {companies.map((company, index) => (
+                          <SelectItem value={company.value} key={index}>
+                            {company.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -168,8 +164,8 @@ export const UserRegister = (props: UserRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Cargo</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="cargo"
+                control={userForm.form.control}
+                name="role"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -182,9 +178,9 @@ export const UserRegister = (props: UserRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Cargos.map((cargo, index) => (
-                          <SelectItem value={cargo.value} key={index}>
-                            {cargo.nome}
+                        {roles.map((role, index) => (
+                          <SelectItem value={role.value} key={index}>
+                            {role.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

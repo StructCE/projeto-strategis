@@ -1,10 +1,10 @@
+"use client";
 import { Search } from "lucide-react";
-import { useState } from "react";
-import { Filter } from "~/components/filter/filterContainer";
+import { Filter } from "~/components/filter";
+import { useManageAccessProfilesFilters } from "./useManageAccessProfilesFiltersContainer";
 
 export default function ManageAccessProfilesFilters() {
-  const [inputNome, setInputNome] = useState("");
-
+  const filters = useManageAccessProfilesFilters();
   return (
     <>
       <Filter>
@@ -15,8 +15,8 @@ export default function ManageAccessProfilesFilters() {
         />
         <Filter.Input
           placeholder="Nome do Cargo"
-          state={inputNome}
-          setState={setInputNome}
+          state={filters.inputName}
+          setState={filters.setInputName}
         />
       </Filter>
     </>
