@@ -1,4 +1,4 @@
-import { TableComponent } from "~/components/table/tableContainer";
+import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,

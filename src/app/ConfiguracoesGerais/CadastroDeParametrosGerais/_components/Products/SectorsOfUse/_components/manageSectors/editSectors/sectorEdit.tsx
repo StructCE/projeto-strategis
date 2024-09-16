@@ -1,5 +1,5 @@
 import { type SectorOfUse } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
-import { FormComponent } from "~/components/forms/formsContainer";
+import { FormComponent } from "~/components/forms";
 import {
   Form,
   FormControl,
