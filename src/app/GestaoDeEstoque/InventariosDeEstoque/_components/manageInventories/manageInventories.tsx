@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { inventories } from "../inventoriesData";
+import InventoryDetails from "./inventoryDetails/inventoryDetails";
 import ManageInventoriesFilters from "./manageInventoriesFilters/manageInventoriesFilters";
 
 export default function ManageInventoriesTable() {
@@ -50,10 +51,9 @@ export default function ManageInventoriesTable() {
               <DialogContent className="sm:max-w-7xl">
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do usuário ou
-                    o botão para remover
+                    Informações do {inventory.name}
                   </DialogTitle>
-                  {/* <UserEdit user={user} /> */}
+                  <InventoryDetails inventory={inventory} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

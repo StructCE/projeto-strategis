@@ -49,7 +49,7 @@ type TableComponentTableProps = {
 TableComponent.Table = function TableComponentTable(
   props: TableComponentTableProps,
 ) {
-  const style = cn("grid gap-[8px] overflow-x-auto", props.className);
+  const style = cn("grid overflow-x-auto", props.className);
   return <div className={style}>{props.children}</div>;
 };
 
