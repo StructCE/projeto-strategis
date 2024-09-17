@@ -22,9 +22,9 @@ import {
 } from "~/components/ui/tooltip";
 
 export default function CreateInventory() {
-  const [inputResponsible, setInputResponsible] = useState("");
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
+  const [inputResponsible, setInputResponsible] = useState("");
 
   const [inputCode, setInputCode] = useState("");
   const [inputName, setInputName] = useState("");
@@ -98,12 +98,16 @@ export default function CreateInventory() {
 
   // Função para finalizar o inventário
   const handleFinalizeInventory = () => {
-    const inventoryData = addedProducts.map((product) => ({
-      code: product.code,
-      name: product.name,
-      stock_current: product.stock_current,
-      inventory_quantity: quantities[product.code] ?? 0,
-    }));
+    const inventoryData = {
+      responsible: inputResponsible,
+      date: date?.toISOString(),
+      products: addedProducts.map((product) => ({
+        code: product.code,
+        name: product.name,
+        stock_current: product.stock_current,
+        quantity_in_inventory: quantities[product.code] ?? 0,
+      })),
+    };
 
     // Exemplo de exportação do inventário como JSON (feito com gpt, verificar se ta tudo certo)
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
@@ -125,6 +129,7 @@ export default function CreateInventory() {
           responsável.
         </TableComponent.Subtitle>
 
+        {/* Inputs da data e do responsável pelo inventário */}
         <TableComponent.FiltersLine>
           <Filter>
             <Filter.Icon
