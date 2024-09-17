@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { cn } from "~/lib/utils";
 
@@ -34,6 +35,34 @@ TableButtonComponent.Button = function TableButtonComponentButton(
       <p className="text-[14px] font-medium tracking-wider text-white sm:text-[18px] sm:tracking-normal">
         {props.children}
       </p>
+    </button>
+  );
+};
+
+type TableButtonComponentLinkProps = {
+  icon?: React.ReactNode;
+  handlePress?: () => void;
+  className?: string;
+  children: string;
+  link_ref: string;
+};
+
+TableButtonComponent.Link = function TableButtonComponentLink(
+  props: TableButtonComponentLinkProps,
+) {
+  const style = cn(
+    "px-[16px] sm:px-[24px] py-[8px] rounded-xl min-w-28",
+    props.className,
+  );
+  return (
+    <button onClick={props.handlePress} className={style}>
+      {props.icon}
+      <Link
+        href={props.link_ref}
+        className="text-[14px] font-medium tracking-wider text-white sm:text-[18px] sm:tracking-normal"
+      >
+        {props.children}
+      </Link>
     </button>
   );
 };
