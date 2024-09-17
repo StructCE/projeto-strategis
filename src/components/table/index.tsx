@@ -132,7 +132,7 @@ type TableComponentButtonSpaceProps = {
 TableComponent.ButtonSpace = function TableComponentButtonSpace(
   props: TableComponentButtonSpaceProps,
 ) {
-  const style = cn("w-[110px]sm:w-[130px] place-self-end", props.className);
+  const style = cn("w-[110px] sm:w-[130px] place-self-end", props.className);
   return <div className={style}></div>;
 };
 
