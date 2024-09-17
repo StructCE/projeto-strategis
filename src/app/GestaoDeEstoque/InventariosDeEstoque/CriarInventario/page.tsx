@@ -4,6 +4,8 @@ import { useState } from "react";
 import {
   Places,
   ProductCategories,
+  SectorsOfUse,
+  TypesOfControl,
 } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import {
   products,
@@ -203,11 +205,30 @@ export default function CreateInventory() {
                   storage.shelves.map((shelf, index) => (
                     <Filter.SelectItems
                       key={index}
-                      value={shelf.description} // melhorar esse filtro pois so ta mostrando a prateleira e não mostra o local e armário/zona dela
+                      value={`${place.description}, ${storage.description}, ${shelf.description}`}
                     ></Filter.SelectItems>
                   )),
                 ),
               )}
+            </Filter.Select>
+          </Filter>
+          <Filter>
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Search className={className} />
+              )}
+            />
+            <Filter.Select
+              placeholder="Tipo de Controle"
+              state={selectCategory}
+              setState={setSelectCategory}
+            >
+              {TypesOfControl.map((type, index) => (
+                <Filter.SelectItems
+                  key={index}
+                  value={type.description}
+                ></Filter.SelectItems>
+              ))}
             </Filter.Select>
           </Filter>
           <Filter>
@@ -225,6 +246,25 @@ export default function CreateInventory() {
                 <Filter.SelectItems
                   key={index}
                   value={category.description}
+                ></Filter.SelectItems>
+              ))}
+            </Filter.Select>
+          </Filter>
+          <Filter>
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Search className={className} />
+              )}
+            />
+            <Filter.Select
+              placeholder="Setor de Uso"
+              state={selectCategory}
+              setState={setSelectCategory}
+            >
+              {SectorsOfUse.map((sector, index) => (
+                <Filter.SelectItems
+                  key={index}
+                  value={sector.description}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -296,8 +336,7 @@ export default function CreateInventory() {
                   {product.stock_current}
                 </TableComponent.Value>
                 <TableComponent.Value>
-                  {product.address.place}, {product.address.storage},{" "}
-                  {product.address.shelf}
+                  {`${product.address.place}, ${product.address.storage}, ${product.address.shelf}`}
                 </TableComponent.Value>
                 <Button
                   onClick={() => handleAddProduct(product)}
