@@ -1,5 +1,5 @@
 "use client";
-import { Calendar, UserCog2 } from "lucide-react";
+import { Calendar, Eraser, UserCog2 } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -13,21 +13,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { inventories } from "../inventoriesData";
 import InventoryDetails from "./inventoryDetails/inventoryDetailsTable";
 
 export default function ManageInventoriesTable() {
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
 
   const filteredInventories = inventories.filter((inventory) => {
-    // const formattedInventoryDate = new Date(
-    //   inventory.date,
-    // ).toLocaleDateString();
-    // const formattedInputDate = date?.toLocaleDateString();
-
-    // const matchesDate = !date || formattedInventoryDate === formattedInputDate;
+    const matchesDate =
+      !date ||
+      (inventory.date.getDate() === date.getDate() &&
+        inventory.date.getMonth() === date.getMonth() + 1 &&
+        inventory.date.getFullYear() === date.getFullYear());
 
     const matchesResponsible =
       inputResponsible === "" ||
@@ -35,7 +40,7 @@ export default function ManageInventoriesTable() {
         .toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
-    return matchesResponsible;
+    return matchesDate && matchesResponsible;
   });
 
   return (
@@ -53,8 +58,10 @@ export default function ManageInventoriesTable() {
             setDate={setDate}
             open={open}
             setOpen={setOpen}
+            placeholder="Data"
           />
         </Filter>
+
         <Filter className="lg:w-[250px]">
           <Filter.Icon
             icon={({ className }: { className: string }) => (
@@ -67,6 +74,23 @@ export default function ManageInventoriesTable() {
             setState={setInputResponsible}
           />
         </Filter>
+
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger className="flex h-full cursor-pointer self-center">
+              <Eraser
+                size={20}
+                onClick={() => {
+                  setDate(undefined);
+                  setInputResponsible("");
+                }}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Limpar filtros</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
@@ -90,7 +114,7 @@ export default function ManageInventoriesTable() {
             key={index}
           >
             <TableComponent.Value>
-              {inventory.date.toString()}
+              {`${inventory.date.getDate()}/${inventory.date.getMonth()}/${inventory.date.getFullYear()}`}
             </TableComponent.Value>
             <TableComponent.Value>{inventory.name}</TableComponent.Value>
             <TableComponent.Value>{inventory.responsible}</TableComponent.Value>
@@ -108,7 +132,7 @@ export default function ManageInventoriesTable() {
                   <DialogDescription className="w-fit text-base text-black">
                     <p className="w-fit">
                       <span className="font-semibold">Data do Inventário:</span>{" "}
-                      {inventory.date.toString()}
+                      {`${inventory.date.getDate()}/${inventory.date.getMonth()}/${inventory.date.getFullYear()}`}
                     </p>
                     <p className="w-fit">
                       <span className="font-semibold">

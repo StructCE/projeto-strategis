@@ -6,7 +6,7 @@ type Product = {
 };
 
 export type Inventory = {
-  date: string;
+  date: Date;
   name: string;
   responsible: string;
   products: Product[];
@@ -14,7 +14,7 @@ export type Inventory = {
 
 export const inventories: Inventory[] = [
   {
-    date: "16/09/2024",
+    date: new Date(2024, 9, 18),
     name: "Inventário 2024.09.16.001.Categoria.Estoquista",
     responsible: "Estoquista 1",
     products: [
@@ -36,7 +36,7 @@ export const inventories: Inventory[] = [
     ],
   },
   {
-    date: "16/09/2024",
+    date: new Date(2024, 9, 18),
     name: "Inventário 2024.09.16.002.Categoria.Estoquista",
     responsible: "Estoquista 2",
     products: [
@@ -58,7 +58,7 @@ export const inventories: Inventory[] = [
     ],
   },
   {
-    date: "16/09/2024",
+    date: new Date(2024, 9, 18),
     name: "Inventário 2024.09.16.003.Categoria.Estoquista",
     responsible: "Estoquista 3",
     products: [
