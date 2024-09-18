@@ -31,7 +31,9 @@ export default function CreateInventory() {
   const [inputCode, setInputCode] = useState("");
   const [inputName, setInputName] = useState("");
   const [selectAddress, setSelectAddress] = useState("");
+  const [selectControlType, setSelectControlType] = useState("");
   const [selectCategory, setSelectCategory] = useState("");
+  const [selectSector, setSelectSector] = useState("");
 
   const [addedProducts, setAddedProducts] = useState<Product[]>([]);
   const [quantities, setQuantities] = useState<Record<string, string>>({});
@@ -40,7 +42,9 @@ export default function CreateInventory() {
     inputCode === "" &&
     inputName === "" &&
     selectAddress === "" &&
-    selectCategory === "";
+    selectControlType === "" &&
+    selectCategory === "" &&
+    selectSector === "";
 
   // Função para filtrar produtos
   const filteredProducts = areAllFiltersEmpty
@@ -56,11 +60,24 @@ export default function CreateInventory() {
           `${product.address.place}, ${product.address.storage}, ${product.address.shelf}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
+        const matchesControlType =
+          selectControlType === "" ||
+          product.type_of_control?.description === selectControlType;
         const matchesCategory =
           selectCategory === "" ||
-          product.product_category.description === selectCategory;
+          product.product_category?.description === selectCategory;
+        const matchesSector =
+          selectSector === "" ||
+          product.sector_of_use?.description === selectSector;
 
-        return matchesCode && matchesName && matchesAddress && matchesCategory;
+        return (
+          matchesCode &&
+          matchesName &&
+          matchesAddress &&
+          matchesControlType &&
+          matchesCategory &&
+          matchesSector
+        );
       });
 
   // Função para adicionar produtos ao inventário
@@ -98,6 +115,21 @@ export default function CreateInventory() {
     }
   }
 
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}.${month}.${day}`;
+  };
+
+  const formatResponsibleName = (name: string) => {
+    const withoutAccents = name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    const formattedName = withoutAccents.replace(/\s+/g, "");
+    return formattedName;
+  };
+
   // Função para finalizar o inventário
   const handleFinalizeInventory = () => {
     const inventoryData = {
@@ -117,7 +149,7 @@ export default function CreateInventory() {
     )}`;
     const link = document.createElement("a");
     link.href = jsonString;
-    link.download = "inventario.json";
+    link.download = `Inventario_${formatDate(date ?? new Date())}_${formatResponsibleName(inputResponsible)}`;
     link.click();
   };
 
@@ -220,8 +252,8 @@ export default function CreateInventory() {
             />
             <Filter.Select
               placeholder="Tipo de Controle"
-              state={selectCategory}
-              setState={setSelectCategory}
+              state={selectControlType}
+              setState={setSelectControlType}
             >
               {TypesOfControl.map((type, index) => (
                 <Filter.SelectItems
@@ -231,6 +263,7 @@ export default function CreateInventory() {
               ))}
             </Filter.Select>
           </Filter>
+
           <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -250,6 +283,7 @@ export default function CreateInventory() {
               ))}
             </Filter.Select>
           </Filter>
+
           <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -258,8 +292,8 @@ export default function CreateInventory() {
             />
             <Filter.Select
               placeholder="Setor de Uso"
-              state={selectCategory}
-              setState={setSelectCategory}
+              state={selectSector}
+              setState={setSelectSector}
             >
               {SectorsOfUse.map((sector, index) => (
                 <Filter.SelectItems
@@ -279,7 +313,9 @@ export default function CreateInventory() {
                     setInputCode("");
                     setInputName("");
                     setSelectAddress("");
+                    setSelectControlType("");
                     setSelectCategory("");
+                    setSelectSector("");
                   }}
                 />
               </TooltipTrigger>
