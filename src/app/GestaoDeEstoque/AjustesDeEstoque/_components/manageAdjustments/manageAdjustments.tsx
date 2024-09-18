@@ -1,3 +1,6 @@
+import { Calendar, Eraser, UserCog2 } from "lucide-react";
+import { useState } from "react";
+import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
 import {
@@ -8,19 +11,87 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { adjustments } from "../adjustmentsData";
 import AdjustmentDetails from "./adjustmentDetails/adjustmentDetailsTable";
-import ManageAdjustmentsFilters from "./manageAdjustmentsFilters/manageAdjustmentsFilters";
 
 export default function ManageAdjustmentsTable() {
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [open, setOpen] = useState(false);
+  const [inputResponsible, setInputResponsible] = useState("");
+
+  const filteredAdjustments = adjustments.filter((adjustment) => {
+    const matchesDate =
+      !date ||
+      (adjustment.date.getDate() === date.getDate() &&
+        adjustment.date.getMonth() === date.getMonth() + 1 &&
+        adjustment.date.getFullYear() === date.getFullYear());
+
+    const matchesResponsible =
+      inputResponsible === "" ||
+      adjustment.responsible
+        .toLowerCase()
+        .includes(inputResponsible.toLowerCase());
+
+    return matchesDate && matchesResponsible;
+  });
+
   return (
     <TableComponent className="gap-3">
       <TableComponent.Title>
         Histórico de Ajustes de Estoque
       </TableComponent.Title>
       <TableComponent.FiltersLine>
-        <ManageAdjustmentsFilters />
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Calendar className={className} />
+            )}
+          />
+          <Filter.DatePicker
+            date={date}
+            setDate={setDate}
+            open={open}
+            setOpen={setOpen}
+          />
+        </Filter>
+
+        <Filter className="lg:w-[250px]">
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <UserCog2 className={className} />
+            )}
+          />
+          <Filter.Input
+            placeholder="Responsável"
+            state={inputResponsible}
+            setState={setInputResponsible}
+          />
+        </Filter>
+
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger className="flex h-full cursor-pointer self-center">
+              <Eraser
+                size={20}
+                onClick={() => {
+                  setDate(undefined);
+                  setInputResponsible("");
+                }}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Limpar filtros</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </TableComponent.FiltersLine>
+
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[1fr_2.5fr_1.5fr_1.5fr_130px]">
           <TableComponent.ValueTitle>Data do Ajuste</TableComponent.ValueTitle>
@@ -31,14 +102,14 @@ export default function ManageAdjustmentsTable() {
           <TableComponent.ValueTitle>Tipo de Ajuste</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {adjustments.map((adjustment, index) => (
+        {filteredAdjustments.map((adjustment, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_2.5fr_1.5fr_1.5fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value>{adjustment.date}</TableComponent.Value>
+            <TableComponent.Value>{`${adjustment.date.getDate()}/${adjustment.date.getMonth()}/${adjustment.date.getFullYear()}`}</TableComponent.Value>
             <TableComponent.Value>{adjustment.name}</TableComponent.Value>
             <TableComponent.Value>
               {adjustment.responsible}
@@ -58,7 +129,7 @@ export default function ManageAdjustmentsTable() {
                   <DialogDescription className="w-fit text-base text-black">
                     <p className="w-fit">
                       <span className="font-semibold">Data do Ajuste:</span>{" "}
-                      {adjustment.date}
+                      {`${adjustment.date.getDate()}/${adjustment.date.getMonth()}/${adjustment.date.getFullYear()}`}
                     </p>
                     <p className="w-fit">
                       <span className="font-semibold">

@@ -29,7 +29,7 @@ export const adjustment_reasons: AdjustmentReason[] = [
 ];
 
 export type Adjustment = {
-  date: string;
+  date: Date;
   name: string;
   responsible: string;
   type: string;
@@ -38,7 +38,7 @@ export type Adjustment = {
 
 export const adjustments: Adjustment[] = [
   {
-    date: "17/09/2024",
+    date: new Date(2024, 9, 18),
     name: "Ajuste 2024.09.17.00X.Categoria.Estoquista1",
     responsible: "Estoquista 1",
     type: "Manual",
@@ -67,7 +67,7 @@ export const adjustments: Adjustment[] = [
     ],
   },
   {
-    date: "18/09/2024",
+    date: new Date(2024, 9, 19),
     name: "Ajuste 2024.09.18.00X.Categoria.Estoquista2",
     responsible: "Estoquista 2",
     type: "Manual",
@@ -89,7 +89,7 @@ export const adjustments: Adjustment[] = [
     ],
   },
   {
-    date: "19/09/2024",
+    date: new Date(2024, 9, 20),
     name: "Ajuste 2024.09.19.00X.Categoria.Estoquista1",
     responsible: "Estoquista 1",
     type: "Automático",
@@ -111,7 +111,7 @@ export const adjustments: Adjustment[] = [
     ],
   },
   {
-    date: "20/09/2024",
+    date: new Date(2024, 9, 21),
     name: "Ajuste 2024.09.20.00X.Categoria.Estoquista2",
     responsible: "Estoquista 2",
     type: "Automático",
