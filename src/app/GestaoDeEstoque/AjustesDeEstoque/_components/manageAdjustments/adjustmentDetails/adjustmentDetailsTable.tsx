@@ -9,16 +9,16 @@ export default function AdjustmentDetails(props: AdjustmentType) {
   function handleProductDescription(stock: number, adjustment: number) {
     const difference = adjustment - stock;
     if (difference == 0) {
-      return "Estoque bateu, não é necessário ajuste.";
+      return "Não foi feito ajuste.";
     } else {
-      return "Ajuste de estoque necessário.";
+      return `Ajuste realizado -> ${difference}`;
     }
   }
 
   return (
     <TableComponent className="gap-3 text-left">
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[70px_1fr_113px_113px_1fr_1fr] gap-6 sm:px-3">
+        <TableComponent.LineTitle className="grid-cols-[70px_1fr_100px_100px_1fr_1fr] gap-6 sm:px-3">
           <TableComponent.ValueTitle className="text-center text-[14px] sm:text-base">
             Código
           </TableComponent.ValueTitle>
@@ -26,10 +26,10 @@ export default function AdjustmentDetails(props: AdjustmentType) {
             Produto
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center text-[14px] sm:text-base">
-            Quantidade em Estoque
+            Estoque Antigo
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center text-[14px] sm:text-base">
-            Quantidade em Inventário
+            Estoque Ajustado
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-[14px] sm:text-base">
             Descrição
@@ -41,7 +41,7 @@ export default function AdjustmentDetails(props: AdjustmentType) {
 
         {props.adjustment.products.map((product, index) => (
           <TableComponent.Line
-            className={`min-w-full grid-cols-[70px_1fr_113px_113px_1fr_1fr] gap-6 sm:px-3 ${
+            className={`min-w-full grid-cols-[70px_1fr_100px_100px_1fr_1fr] gap-6 sm:px-3 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -53,19 +53,19 @@ export default function AdjustmentDetails(props: AdjustmentType) {
               {product.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.stockQuantity}
+              {product.stock_old}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.inventoryQuantity}
+              {product.stock_adjusted}
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] sm:text-[15px]">
               {handleProductDescription(
-                product.stockQuantity,
-                product.inventoryQuantity,
+                product.stock_old,
+                product.stock_adjusted,
               )}
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] sm:text-[15px]">
-              Motivo
+              {product.reason.description}
             </TableComponent.Value>
           </TableComponent.Line>
         ))}

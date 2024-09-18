@@ -1,93 +1,30 @@
 type Product = {
   code: string;
   name: string;
-  stockQuantity: number;
-  inventoryQuantity: number;
+  stock_old: number;
+  stock_adjusted: number;
+  reason: AdjustmentReason;
 };
 
-export type Inventory = {
-  date: string;
-  name: string;
-  responsible: string;
-  products: Product[];
+export type AdjustmentReason = {
+  description: string;
 };
 
-export const inventories: Inventory[] = [
+export const adjustment_reasons: AdjustmentReason[] = [
   {
-    date: "16/09/2024",
-    name: "Inventário 2024.09.16.001.Categoria.Estoquista",
-    responsible: "Estoquista 1",
-    products: [
-      { code: "P001", name: "Arroz", stockQuantity: 20, inventoryQuantity: 18 },
-      {
-        code: "P002",
-        name: "Feijão",
-        stockQuantity: 15,
-        inventoryQuantity: 15,
-      },
-      { code: "P003", name: "Óleo", stockQuantity: 10, inventoryQuantity: 9 },
-      { code: "P004", name: "Sal", stockQuantity: 30, inventoryQuantity: 29 },
-      {
-        code: "P005",
-        name: "Açúcar",
-        stockQuantity: 12,
-        inventoryQuantity: 15,
-      },
-    ],
+    description: "Congelamento",
   },
   {
-    date: "16/09/2024",
-    name: "Inventário 2024.09.16.002.Categoria.Estoquista",
-    responsible: "Estoquista 2",
-    products: [
-      {
-        code: "P006",
-        name: "Farinha",
-        stockQuantity: 25,
-        inventoryQuantity: 24,
-      },
-      { code: "P007", name: "Leite", stockQuantity: 40, inventoryQuantity: 38 },
-      { code: "P008", name: "Carne", stockQuantity: 60, inventoryQuantity: 59 },
-      {
-        code: "P009",
-        name: "Manteiga",
-        stockQuantity: 20,
-        inventoryQuantity: 19,
-      },
-      { code: "P010", name: "Ovos", stockQuantity: 50, inventoryQuantity: 48 },
-    ],
+    description: "Queima/desperdício",
   },
   {
-    date: "16/09/2024",
-    name: "Inventário 2024.09.16.003.Categoria.Estoquista",
-    responsible: "Estoquista 3",
-    products: [
-      {
-        code: "P011",
-        name: "Batata",
-        stockQuantity: 35,
-        inventoryQuantity: 34,
-      },
-      {
-        code: "P012",
-        name: "Cebola",
-        stockQuantity: 22,
-        inventoryQuantity: 20,
-      },
-      { code: "P013", name: "Alho", stockQuantity: 18, inventoryQuantity: 18 },
-      {
-        code: "P014",
-        name: "Tomate",
-        stockQuantity: 25,
-        inventoryQuantity: 23,
-      },
-      {
-        code: "P015",
-        name: "Cenoura",
-        stockQuantity: 30,
-        inventoryQuantity: 29,
-      },
-    ],
+    description: "Quebra/extravio",
+  },
+  {
+    description: "Contagem anterior errada",
+  },
+  {
+    description: "Outro",
   },
 ];
 
@@ -107,29 +44,25 @@ export const adjustments: Adjustment[] = [
     type: "Manual",
     products: [
       {
-        code: "P011",
-        name: "Batata",
-        stockQuantity: 35,
-        inventoryQuantity: 34,
+        code: "1001",
+        name: "Cerveja Pilsen",
+        stock_old: 200,
+        stock_adjusted: 180,
+        reason: { description: "Congelamento" },
       },
       {
-        code: "P012",
-        name: "Cebola",
-        stockQuantity: 22,
-        inventoryQuantity: 20,
-      },
-      { code: "P013", name: "Alho", stockQuantity: 18, inventoryQuantity: 18 },
-      {
-        code: "P014",
-        name: "Tomate",
-        stockQuantity: 25,
-        inventoryQuantity: 23,
+        code: "1003",
+        name: "Água Mineral",
+        stock_old: 250,
+        stock_adjusted: 240,
+        reason: { description: "Queima/desperdício" },
       },
       {
-        code: "P015",
-        name: "Cenoura",
-        stockQuantity: 30,
-        inventoryQuantity: 29,
+        code: "1005",
+        name: "Vinho Tinto",
+        stock_old: 150,
+        stock_adjusted: 140,
+        reason: { description: "Congelamento" },
       },
     ],
   },
@@ -140,29 +73,18 @@ export const adjustments: Adjustment[] = [
     type: "Manual",
     products: [
       {
-        code: "P011",
-        name: "Batata",
-        stockQuantity: 35,
-        inventoryQuantity: 34,
+        code: "1004",
+        name: "Sabão em Pó",
+        stock_old: 80,
+        stock_adjusted: 75,
+        reason: { description: "Queima/desperdício" },
       },
       {
-        code: "P012",
-        name: "Cebola",
-        stockQuantity: 22,
-        inventoryQuantity: 20,
-      },
-      { code: "P013", name: "Alho", stockQuantity: 18, inventoryQuantity: 18 },
-      {
-        code: "P014",
-        name: "Tomate",
-        stockQuantity: 25,
-        inventoryQuantity: 23,
-      },
-      {
-        code: "P015",
-        name: "Cenoura",
-        stockQuantity: 30,
-        inventoryQuantity: 29,
+        code: "1003",
+        name: "Água Mineral",
+        stock_old: 240,
+        stock_adjusted: 230,
+        reason: { description: "Congelamento" },
       },
     ],
   },
@@ -173,29 +95,18 @@ export const adjustments: Adjustment[] = [
     type: "Automático",
     products: [
       {
-        code: "P011",
-        name: "Batata",
-        stockQuantity: 35,
-        inventoryQuantity: 34,
+        code: "1002",
+        name: "Carne Bovina",
+        stock_old: 120,
+        stock_adjusted: 110,
+        reason: { description: "Queima/desperdício" },
       },
       {
-        code: "P012",
-        name: "Cebola",
-        stockQuantity: 22,
-        inventoryQuantity: 20,
-      },
-      { code: "P013", name: "Alho", stockQuantity: 18, inventoryQuantity: 18 },
-      {
-        code: "P014",
-        name: "Tomate",
-        stockQuantity: 25,
-        inventoryQuantity: 23,
-      },
-      {
-        code: "P015",
-        name: "Cenoura",
-        stockQuantity: 30,
-        inventoryQuantity: 29,
+        code: "1006",
+        name: "Carne Moída",
+        stock_old: 60,
+        stock_adjusted: 58,
+        reason: { description: "Contagem anterior errada" },
       },
     ],
   },
@@ -206,29 +117,18 @@ export const adjustments: Adjustment[] = [
     type: "Automático",
     products: [
       {
-        code: "P011",
-        name: "Batata",
-        stockQuantity: 35,
-        inventoryQuantity: 34,
+        code: "1001",
+        name: "Cerveja Pilsen",
+        stock_old: 180,
+        stock_adjusted: 178,
+        reason: { description: "Quebra/extravio" },
       },
       {
-        code: "P012",
-        name: "Cebola",
-        stockQuantity: 22,
-        inventoryQuantity: 20,
-      },
-      { code: "P013", name: "Alho", stockQuantity: 18, inventoryQuantity: 18 },
-      {
-        code: "P014",
-        name: "Tomate",
-        stockQuantity: 25,
-        inventoryQuantity: 23,
-      },
-      {
-        code: "P015",
-        name: "Cenoura",
-        stockQuantity: 30,
-        inventoryQuantity: 29,
+        code: "1005",
+        name: "Vinho Tinto",
+        stock_old: 140,
+        stock_adjusted: 135,
+        reason: { description: "Outro" },
       },
     ],
   },

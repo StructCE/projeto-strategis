@@ -40,11 +40,11 @@ TableButtonComponent.Button = function TableButtonComponentButton(
 };
 
 type TableButtonComponentLinkProps = {
-  icon?: React.ReactNode;
   handlePress?: () => void;
   className?: string;
-  children: string;
+  children?: React.ReactNode;
   link_ref: string;
+  placeholder: string;
 };
 
 TableButtonComponent.Link = function TableButtonComponentLink(
@@ -56,12 +56,12 @@ TableButtonComponent.Link = function TableButtonComponentLink(
   );
   return (
     <button onClick={props.handlePress} className={style}>
-      {props.icon}
       <Link
         href={props.link_ref}
-        className="text-[14px] font-medium tracking-wider text-white sm:text-[18px] sm:tracking-normal"
+        className="flex gap-2 text-[14px] font-medium tracking-wider text-white sm:text-[18px] sm:tracking-normal"
       >
         {props.children}
+        {props.placeholder}
       </Link>
     </button>
   );

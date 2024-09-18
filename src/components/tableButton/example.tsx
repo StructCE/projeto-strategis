@@ -1,12 +1,10 @@
-"use client";
 import { ExternalLink } from "lucide-react";
-import { TableButtonComponent } from "~/components/tableButton";
-import ManageAdjustmentsTable from "./_components/manageAdjustments/manageAdjustments";
+import { TableButtonComponent } from ".";
 
-export default function StockAdjustments() {
+export default function ButtonsExamples() {
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
-      <ManageAdjustmentsTable />
+      {/* Botão de link para redirecionar para outra página */}
       <TableButtonComponent className="pt-2 sm:pt-4">
         <TableButtonComponent.Link
           link_ref="/GestaoDeEstoque/AjustesDeEstoque/CriarAjusteDeEstoque"
@@ -20,6 +18,16 @@ export default function StockAdjustments() {
             color="white"
           />
         </TableButtonComponent.Link>
+      </TableButtonComponent>
+
+      {/* Botão que faz uma ação/operação */}
+      <TableButtonComponent className="pt-2 sm:pt-4">
+        <TableButtonComponent.Button
+          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao"
+          handlePress={() => console.log("a")}
+        >
+          Finalizar Ajuste de Estoque
+        </TableButtonComponent.Button>
       </TableButtonComponent>
     </div>
   );
