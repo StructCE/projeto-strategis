@@ -31,7 +31,7 @@ type SidebarButton = {
 
 export const sidebarButtons: Record<string, SidebarButton[]> = {
   "Configurações Gerais": [
-    { name: "Dashboard", icon: (props) => <Home {...props} />, refLink: "/" },
+    // { name: "Dashboard", icon: (props) => <Home {...props} />, refLink: "/" },
     {
       name: "Cadastro de Empresas",
       icon: (props) => <Building2 {...props} />,

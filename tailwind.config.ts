@@ -36,10 +36,11 @@ const config = {
 
         fundo_tabela_destaque: "#E9E9E9", // Linhas das tabelas alternam entre essa cor e fundo_branco
         filtro: "#D6DBD8", // Fundo de filtros
-        cinza_destaque: "#DEDEDE", // Botão detalhes, inputs em tabelas
+        cinza_destaque: "#D2D2D2", // Botão detalhes, inputs em tabelas
         hover_cinza_destaque: "#D0D0D0",
         hover_cinza_destaque_escuro: "#BBBBBB",
         cinza_escuro_botao: "#888888", // Talvez algum botão
+        cinza_borda_acordeao: "#696969",
         hover_cinza_escuro_botao: "#777777", // Talvez algum botão
         cinza_mais_escuro_botao: "#2D3648", // Talvez algum botão
 
