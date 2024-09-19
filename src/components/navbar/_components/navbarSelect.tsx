@@ -7,28 +7,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { type EmpresasType, type UserDataType } from "./userData";
+import { type Company, type User } from "./userData";
 
 interface NavbarSelectProps {
-  userData: UserDataType;
-  empresas: EmpresasType;
+  user: User;
+  companies: Company;
 }
 
 export const NavbarSelect: React.FC<NavbarSelectProps> = ({
-  userData,
-  empresas,
+  user,
+  companies,
 }) => {
-  const [selectEmpresa, setSelectEmpresa] = useState(userData.empresa);
+  const [selectCompany, setSelectCompany] = useState(user.company);
 
   return (
-    <Select onValueChange={setSelectEmpresa} defaultValue={selectEmpresa}>
+    <Select onValueChange={setSelectCompany} defaultValue={selectCompany}>
       <SelectTrigger className="h-fit w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-3 py-1.5 text-[12px] text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-4 sm:py-2 sm:text-base">
         <SelectValue placeholder="Cargo do usuário" />
       </SelectTrigger>
       <SelectContent>
-        {empresas.map((empresa, index) => (
-          <SelectItem value={empresa.value} key={index}>
-            {empresa.nome}
+        {companies.map((company, index) => (
+          <SelectItem value={company.value} key={index}>
+            {company.name}
           </SelectItem>
         ))}
       </SelectContent>

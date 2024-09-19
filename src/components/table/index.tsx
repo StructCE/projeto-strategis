@@ -7,7 +7,7 @@ type TableProps = {
 };
 
 export const TableComponent = (props: TableProps) => {
-  const rootStyle = cn("flex flex-col gap-[8px]", props.className);
+  const rootStyle = cn("flex flex-col gap-[4px]", props.className);
   return <div className={rootStyle}>{props.children}</div>;
 };
 
@@ -49,7 +49,7 @@ type TableComponentTableProps = {
 TableComponent.Table = function TableComponentTable(
   props: TableComponentTableProps,
 ) {
-  const style = cn("flex flex-col overflow-x-auto", props.className);
+  const style = cn("grid overflow-x-auto", props.className);
   return <div className={style}>{props.children}</div>;
 };
 
@@ -118,7 +118,10 @@ type TableComponentValueTitleProps = {
 TableComponent.ValueTitle = function TableComponentValueTitle(
   props: TableComponentValueTitleProps,
 ) {
-  const style = cn("text-[18px] font-semibold sm:text-[20px]", props.className);
+  const style = cn(
+    "text-[18px] font-semibold sm:text-[20px] leading-none sm:leading-[1.45rem]",
+    props.className,
+  );
   return <div className={style}>{props.children}</div>;
 };
 
@@ -129,7 +132,7 @@ type TableComponentButtonSpaceProps = {
 TableComponent.ButtonSpace = function TableComponentButtonSpace(
   props: TableComponentButtonSpaceProps,
 ) {
-  const style = cn("w-[110px]sm:w-[130px] place-self-end", props.className);
+  const style = cn("w-[110px] sm:w-[130px] place-self-end", props.className);
   return <div className={style}></div>;
 };
 

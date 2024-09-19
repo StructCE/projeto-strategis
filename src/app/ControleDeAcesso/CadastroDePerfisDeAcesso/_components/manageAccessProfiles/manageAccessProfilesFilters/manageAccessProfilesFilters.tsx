@@ -15,8 +15,8 @@ export default function ManageAccessProfilesFilters() {
         />
         <Filter.Input
           placeholder="Nome do Cargo"
-          state={filters.inputNome}
-          setState={filters.setInputNome}
+          state={filters.inputName}
+          setState={filters.setInputName}
         />
       </Filter>
     </>

@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 export const useManageAccessProfilesFilters = () => {
-  const [inputNome, setInputNome] = useState("");
+  const [inputName, setInputName] = useState("");
   return {
-    inputNome,
-    setInputNome,
+    inputName,
+    setInputName,
   };
 };

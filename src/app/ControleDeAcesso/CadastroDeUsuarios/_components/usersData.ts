@@ -1,17 +1,17 @@
 export type User = {
-  nome: string;
+  name: string;
   email: string;
-  senha: string;
-  senhaConfirmacao: string;
-  telefone: string;
-  cargoId: number;
-  cargo: string;
-  empresa: string;
+  password: string;
+  password_confirmation: string;
+  phone: string;
+  roleId: number;
+  role: string;
+  company: string;
 };
 
-export const Usuarios = [
+export const users = [
   {
-    nome: "Nome do Usuário 1",
+    name: "Nome do Usuário 1",
     email: "usuario1@gmail.com",
     empresa: "Alimentos WCW",
     cargo: "Administrador",
@@ -21,7 +21,7 @@ export const Usuarios = [
     cargoId: 1,
   },
   {
-    nome: "Nome do Usuário 2",
+    name: "Nome do Usuário 2",
     email: "usuario2@gmail.com",
     empresa: "TechNova Filial",
     cargo: "Operador",
@@ -31,7 +31,7 @@ export const Usuarios = [
     cargoId: 2,
   },
   {
-    nome: "Nome do Usuário 3",
+    name: "Nome do Usuário 3",
     email: "usuario3@gmail.com",
     empresa: "Quantum Dynamics",
     cargo: "Estoquista",
@@ -41,7 +41,7 @@ export const Usuarios = [
     cargoId: 3,
   },
   {
-    nome: "Nome do Usuário 4",
+    name: "Nome do Usuário 4",
     email: "usuario4@gmail.com",
     empresa: "Apex Innovations Filial",
     cargo: "Requisitante",
@@ -62,7 +62,7 @@ export const Usuarios = [
   },
 ];
 
-export const Empresas = [
+export const companies = [
   {
     nome: "Alimentos WCW",
     value: "Alimentos WCW",
@@ -85,25 +85,25 @@ export const Empresas = [
   },
 ];
 
-export const Cargos = [
+export const roles = [
   {
-    nome: "Administrador",
+    name: "Administrador",
     value: "Administrador",
   },
   {
-    nome: "Operador",
+    name: "Operador",
     value: "Operador",
   },
   {
-    nome: "Estoquista",
+    name: "Estoquista",
     value: "Estoquista",
   },
   {
-    nome: "Requisitante",
+    name: "Requisitante",
     value: "Requisitante",
   },
   {
-    nome: "Personalizado 1",
+    name: "Personalizado 1",
     value: "Personalizado 1",
   },
 ];

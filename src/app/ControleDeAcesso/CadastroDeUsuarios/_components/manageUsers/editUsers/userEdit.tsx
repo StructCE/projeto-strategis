@@ -15,15 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Cargos, Empresas, type User } from "../../usersData";
+import { companies, roles, type User } from "../../usersData";
 import { useUserForm } from "./useUserForm";
 
 type UserEdituserEditForm = {
-  usuario: User;
+  user: User;
 };
 
 export const UserEdit = (props: UserEdituserEditForm) => {
-  const userEditForm = useUserForm(props.usuario);
+  const userEditForm = useUserForm(props.user);
+
   return (
     <Form {...userEditForm.form}>
       <form
@@ -55,7 +56,7 @@ export const UserEdit = (props: UserEdituserEditForm) => {
               <FormComponent.Label>Senha</FormComponent.Label>
               <FormField
                 control={userEditForm.form.control}
-                name="senha"
+                name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -76,7 +77,7 @@ export const UserEdit = (props: UserEdituserEditForm) => {
               <FormComponent.Label>Confirme a senha</FormComponent.Label>
               <FormField
                 control={userEditForm.form.control}
-                name="senhaConfirmacao"
+                name="password_confirmation"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -99,7 +100,7 @@ export const UserEdit = (props: UserEdituserEditForm) => {
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
                 control={userEditForm.form.control}
-                name="nome"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -119,7 +120,7 @@ export const UserEdit = (props: UserEdituserEditForm) => {
               <FormComponent.Label>Telefone</FormComponent.Label>
               <FormField
                 control={userEditForm.form.control}
-                name="telefone"
+                name="phone"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -139,7 +140,7 @@ export const UserEdit = (props: UserEdituserEditForm) => {
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
                 control={userEditForm.form.control}
-                name="empresa"
+                name="company"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -152,9 +153,9 @@ export const UserEdit = (props: UserEdituserEditForm) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Empresas.map((empresa, index) => (
-                          <SelectItem value={empresa.value} key={index}>
-                            {empresa.nome}
+                        {companies.map((company, index) => (
+                          <SelectItem value={company.value} key={index}>
+                            {company.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -169,7 +170,7 @@ export const UserEdit = (props: UserEdituserEditForm) => {
               <FormComponent.Label>Cargo</FormComponent.Label>
               <FormField
                 control={userEditForm.form.control}
-                name="cargo"
+                name="role"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -182,9 +183,9 @@ export const UserEdit = (props: UserEdituserEditForm) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Cargos.map((cargo, index) => (
-                          <SelectItem value={cargo.value} key={index}>
-                            {cargo.nome}
+                        {roles.map((role, index) => (
+                          <SelectItem value={role.value} key={index}>
+                            {role.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

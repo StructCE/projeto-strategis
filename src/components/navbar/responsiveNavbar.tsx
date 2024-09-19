@@ -9,7 +9,7 @@ import {
 import { SidebarContent } from "../sidebar/_components/sidebarContent/sidebarContent";
 import { NavbarDropdown } from "./_components/navbarDropdown";
 import { NavbarSelect } from "./_components/navbarSelect";
-import { Empresas, UserData } from "./_components/userData";
+import { companies, user } from "./_components/userData";
 
 export default function Navbar() {
   return (
@@ -21,8 +21,8 @@ export default function Navbar() {
               <Menu className="size-[36px]" color="white" />
             </AccordionTrigger>
             <div className="flex items-center gap-6 sm:gap-8">
-              <NavbarSelect userData={UserData} empresas={Empresas} />
-              <NavbarDropdown userData={UserData} />
+              <NavbarSelect user={user} companies={companies} />
+              <NavbarDropdown user={user} />
             </div>
           </div>
           <AccordionContent className="mt-4 w-full text-white">
