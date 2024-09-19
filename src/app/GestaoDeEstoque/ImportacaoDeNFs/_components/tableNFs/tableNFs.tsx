@@ -13,6 +13,7 @@ export type NotaFiscal = {
   description: string;
 };
 
+
 export const TableNFs = (props: { tableData: NotaFiscal[] }) => {
   return (
     <TableComponent>

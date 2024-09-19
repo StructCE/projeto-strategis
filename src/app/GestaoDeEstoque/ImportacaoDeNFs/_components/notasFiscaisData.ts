@@ -16,7 +16,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
-    description: "Arroz, Feijão, Macarrão, Óleo de cozinha",
+    description: "Tomate, Alface, Batata",
   },
   {
     numNF: 67890,
