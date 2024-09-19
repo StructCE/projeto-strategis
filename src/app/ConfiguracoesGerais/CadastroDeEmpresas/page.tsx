@@ -3,8 +3,9 @@ import { ManageCompaniesTable } from "./_components/manageCompany/manageCompanie
 
 export default function CompanyRegistration() {
   return (
-    <>
-      <CompanyRegister /> <ManageCompaniesTable />
-    </>
+    <div className="flex w-full flex-col gap-4 bg-fundo_branco">
+      <CompanyRegister />
+      <ManageCompaniesTable />
+    </div>
   );
 }

@@ -2,14 +2,14 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CompanyEdit } from "./_components/editCompany/editCompany";
+import LoadingPage from "~/app/loading";
 import {
   type Companies,
   companies,
 } from "../../CadastroDeEmpresas/_components/manageCompany/companiesData";
-import { ManageUsersTableFromCompany } from "./_components/manageDetailsCompany/manageUsersFromCompany";
+import { CompanyEdit } from "./_components/editCompany/editCompany";
 import { ManageSuppliersTableFromComapany } from "./_components/manageDetailsCompany/manageSupplierFromCompany";
-import LoadingPage from "~/app/loading";
+import { ManageUsersTableFromCompany } from "./_components/manageDetailsCompany/manageUsersFromCompany";
 
 export default function DetalhesDaEmpresa() {
   const searchParams = useSearchParams();
@@ -29,7 +29,7 @@ export default function DetalhesDaEmpresa() {
   if (!company) return <LoadingPage />;
 
   return (
-    <>
+    <div className="flex flex-col gap-4 bg-fundo_branco">
       <CompanyEdit
         company={{
           empresa: company.empresa,
@@ -55,6 +55,6 @@ export default function DetalhesDaEmpresa() {
       />
       <ManageUsersTableFromCompany empresa={company.empresa} />
       <ManageSuppliersTableFromComapany />
-    </>
+    </div>
   );
 }

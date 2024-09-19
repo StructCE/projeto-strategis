@@ -1,6 +1,6 @@
 "use client";
-import { FormComponent } from "~/components/forms";
 import { Upload } from "lucide-react";
+import { FormComponent } from "~/components/forms";
 import {
   Form,
   FormControl,
@@ -17,16 +17,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { useCompanies } from "./useCompaniesRegister";
 import {
-  TipoEmpresa,
   EmpresaMatriz,
   RegimeTribuario,
+  TipoEmpresa,
 } from "../manageCompany/companiesData";
+import { useCompanies } from "./useCompaniesRegister";
 
 import {
-  states,
   roles,
+  states,
 } from "../../../CadastroDeFornecedores/_components/supplierData";
 
 export const CompanyRegister = () => {
