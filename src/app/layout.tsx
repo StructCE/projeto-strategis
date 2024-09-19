@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body
-        className={`${inter.variable} flex min-h-screen w-screen overflow-x-hidden bg-fundo_branco font-sans`}
+        className={`${inter.variable} flex min-h-screen overflow-x-hidden bg-fundo_branco font-sans`}
       >
         <TRPCReactProvider>
           <SidebarContainer />
@@ -36,7 +36,7 @@ export default function RootLayout({
             <div className="block xl:hidden">
               <ResponsiveNavbar />
             </div>
-            <div className="p-4 sm:p-6 lg:p-8">{children}</div>
+            <div className="w-full p-4 sm:p-6 lg:p-8">{children}</div>
           </div>
         </TRPCReactProvider>
       </body>
