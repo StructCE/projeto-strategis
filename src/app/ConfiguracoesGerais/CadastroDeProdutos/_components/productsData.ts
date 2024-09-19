@@ -297,7 +297,7 @@ export type Address = {
 
 export type Product = {
   name: string;
-  code: number;
+  code: string;
   suppliers: Supplier[];
   status: Status;
   parent_product?: string;
@@ -316,7 +316,7 @@ export type Product = {
 export const products: Product[] = [
   {
     name: "Cerveja Pilsen",
-    code: 1001,
+    code: "1001",
     status: { description: "Ativo" },
     suppliers: [
       {
@@ -340,7 +340,7 @@ export const products: Product[] = [
   },
   {
     name: "Carne Bovina",
-    code: 1002,
+    code: "1002",
     status: { description: "Ativo" },
     suppliers: [
       {
@@ -364,7 +364,7 @@ export const products: Product[] = [
   },
   {
     name: "Carne Moída",
-    code: 1006,
+    code: "1006",
     status: { description: "Ativo" },
     suppliers: [
       {
@@ -389,7 +389,7 @@ export const products: Product[] = [
   },
   {
     name: "Água Mineral",
-    code: 1003,
+    code: "1003",
     status: { description: "Ativo" },
     suppliers: [
       {
@@ -413,7 +413,7 @@ export const products: Product[] = [
   },
   {
     name: "Sabão em Pó",
-    code: 1004,
+    code: "1004",
     status: { description: "Ativo" },
     suppliers: [
       {
@@ -437,7 +437,7 @@ export const products: Product[] = [
   },
   {
     name: "Vinho Tinto",
-    code: 1005,
+    code: "1005",
     status: { description: "Ativo" },
     suppliers: [
       {
