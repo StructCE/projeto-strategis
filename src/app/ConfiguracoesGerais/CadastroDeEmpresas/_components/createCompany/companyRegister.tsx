@@ -36,7 +36,7 @@ export const CompanyRegister = () => {
     <Form {...companyForm.form}>
       <form onSubmit={companyForm.form.handleSubmit(companyForm.onSubmit)}>
         <FormComponent>
-          <FormComponent.Title>Cadastrar Empresa</FormComponent.Title>
+          <FormComponent.Title>Cadastro de Empresa</FormComponent.Title>
 
           <FormComponent.Line>
             <FormComponent.Frame>

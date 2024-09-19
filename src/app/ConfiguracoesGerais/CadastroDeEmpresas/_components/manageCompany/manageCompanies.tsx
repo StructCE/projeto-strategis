@@ -3,9 +3,9 @@
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
 //import { SupplierEdit } from "../editSuppliers/supplierEdit";
-import ManageCompaniesFilters from "./manageCompaniesFilters/manageCompaniesFilters";
-import { companies } from "./companiesData";
 import { useRouter } from "next/navigation";
+import { companies } from "./companiesData";
+import ManageCompaniesFilters from "./manageCompaniesFilters/manageCompaniesFilters";
 
 export const ManageCompaniesTable = () => {
   const router = useRouter();
