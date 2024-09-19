@@ -6,7 +6,7 @@ import {
 } from "~/components/ui/accordion";
 import UnitRegister from "./_components/createUnits/unitRegister";
 import { useUnitForm } from "./_components/createUnits/useUnitForm";
-import { ManageCategoriesTable } from "./_components/manageUnits/manageUnits";
+import { ManageUnitsTable } from "./_components/manageUnits/manageUnits";
 
 export default function Units() {
   const { form, onSubmit } = useUnitForm();
@@ -20,7 +20,7 @@ export default function Units() {
         <p className="pb-2 text-[16px] font-medium">Cadastrar nova unidade:</p>
         <UnitRegister form={form} onSubmit={onSubmit} />
         <p className="py-2 text-[16px] font-medium">Unidades já cadastradas:</p>
-        <ManageCategoriesTable />
+        <ManageUnitsTable />
       </AccordionContent>
     </AccordionItem>
   );

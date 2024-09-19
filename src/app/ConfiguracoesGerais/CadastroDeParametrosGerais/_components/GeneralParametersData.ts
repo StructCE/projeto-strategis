@@ -120,6 +120,28 @@ export const units = [
   { description: "Lata", abbreviation: "LT" },
 ];
 
+export type AdjustmentReason = {
+  description: string;
+};
+
+export const adjustment_reasons: AdjustmentReason[] = [
+  {
+    description: "Congelamento",
+  },
+  {
+    description: "Queima/desperdício",
+  },
+  {
+    description: "Quebra/extravio",
+  },
+  {
+    description: "Contagem anterior errada",
+  },
+  {
+    description: "Outro",
+  },
+];
+
 // Stocks
 export type Shelf = {
   description: string;
