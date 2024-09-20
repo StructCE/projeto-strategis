@@ -7,7 +7,7 @@ import {
   type Companies,
   companies,
 } from "../../CadastroDeEmpresas/_components/manageCompany/companiesData";
-import { CompanyEdit } from "./_components/editCompany/editCompany";
+import { CompanyEdit } from "./_components/manageDetailsCompany/editCompany/editCompany";
 import { ManageSuppliersTableFromComapany } from "./_components/manageDetailsCompany/manageSupplierFromCompany";
 import { ManageUsersTableFromCompany } from "./_components/manageDetailsCompany/manageUsersFromCompany";
 

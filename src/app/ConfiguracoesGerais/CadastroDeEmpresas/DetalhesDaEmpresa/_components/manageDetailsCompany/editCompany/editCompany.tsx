@@ -1,4 +1,5 @@
 "use client";
+import { Upload } from "lucide-react";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -18,15 +19,14 @@ import {
 import {
   roles,
   states,
-} from "../../../../CadastroDeFornecedores/_components/supplierData";
+} from "../../../../../CadastroDeFornecedores/_components/supplierData";
 import {
   EmpresaMatriz,
   RegimeTribuario,
   TipoEmpresa,
   type Companies,
-} from "../../../_components/manageCompany/companiesData";
+} from "../../../../_components/manageCompany/companiesData";
 import { useCompanyForm } from "./useCompanyForm";
-import { Upload } from "lucide-react";
 
 type CompanyEditProps = {
   company: Companies;

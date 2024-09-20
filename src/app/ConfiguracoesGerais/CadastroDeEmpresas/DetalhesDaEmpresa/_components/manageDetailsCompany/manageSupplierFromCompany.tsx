@@ -1,3 +1,4 @@
+import { SupplierEdit } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/manageSuppliers/editSuppliers/supplierEdit";
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
 import {
@@ -8,7 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { SupplierEdit } from "../../../../CadastroDeFornecedores/_components/editSuppliers/supplierEdit";
 import { suppliers } from "../../../../CadastroDeFornecedores/_components/supplierData";
 
 export const ManageSuppliersTableFromComapany = () => {

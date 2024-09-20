@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { roles, states, type Supplier } from "../supplierData";
+import { roles, states, type Supplier } from "../../supplierData";
 import { useSupplierForm } from "./useSupplierForm";
 
 type SupplierEditProps = {

@@ -8,8 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { SupplierEdit } from "../editSuppliers/supplierEdit";
 import { suppliers } from "../supplierData";
+import { SupplierEdit } from "./editSuppliers/supplierEdit";
 import ManageSuppliersFilters from "./manageSuppliersFilters/manageSuppliersFilters";
 
 export const ManageSuppliersTable = () => {
