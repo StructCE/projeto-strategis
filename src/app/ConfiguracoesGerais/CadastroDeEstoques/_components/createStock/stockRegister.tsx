@@ -25,7 +25,7 @@ export const StockRegister = () => {
     <Form {...form.form}>
       <form onSubmit={form.form.handleSubmit(form.onSubmit)}>
         <FormComponent>
-          <FormComponent.Title>Cadastrar Estoque</FormComponent.Title>
+          <FormComponent.Title>Cadastro de Estoque</FormComponent.Title>
 
           <FormComponent.Line>
             <FormComponent.Frame>

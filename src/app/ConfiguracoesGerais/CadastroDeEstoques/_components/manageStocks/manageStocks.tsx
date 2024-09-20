@@ -8,9 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import { StockEdit } from "../editStocks/stockEdit";
 import { stocks } from "../stockData";
 import ManageStocksFilters from "./manageStocksFilters/manageStocksFilters";
-import { StockEdit } from "../editStocks/stockEdit";
 
 export const ManageStocksTable = () => {
   // metodo que coloca endereço do estoque em abreviação
@@ -40,7 +40,7 @@ export const ManageStocksTable = () => {
         <ManageStocksFilters />
       </TableComponent.FiltersLine>
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[0.8fr_1.7fr_1fr_1fr_2fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[0.6fr_1.7fr_1fr_1fr_2fr_130px]">
           <TableComponent.ValueTitle className="text-center">
             Código
           </TableComponent.ValueTitle>
@@ -48,11 +48,11 @@ export const ManageStocksTable = () => {
           <TableComponent.ValueTitle className="text-center">
             Sigla
           </TableComponent.ValueTitle>
-          <TableComponent.ValueTitle className="text-center">
+          <TableComponent.ValueTitle className="text-center leading-6">
             Nome do <br />
             Responsável
           </TableComponent.ValueTitle>
-          <TableComponent.ValueTitle className="text-center">
+          <TableComponent.ValueTitle className="text-center leading-6">
             Email do <br />
             Responsável
           </TableComponent.ValueTitle>
@@ -60,7 +60,7 @@ export const ManageStocksTable = () => {
         </TableComponent.LineTitle>
         {stocks.map((stock, index) => (
           <TableComponent.Line
-            className={`grid-cols-[0.8fr_1.7fr_1fr_1fr_2fr_130px] ${
+            className={`grid-cols-[0.6fr_1.7fr_1fr_1fr_2fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}

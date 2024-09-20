@@ -322,7 +322,7 @@ export const StockEdit = (props: StockEditProps) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
+            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
               Editar Estoque
             </FormComponent.Button>
 
