@@ -3,7 +3,7 @@ export type Role = {
   value: string;
 };
 
-export type ResponsableStock = {
+export type ResponsibleStock = {
   name: string;
   role: Role;
   email: string;
@@ -33,8 +33,8 @@ export type Company = {
 export type Stock = {
   code: string;
   name: string;
-  company: Company[];
-  responsable_stock: ResponsableStock[];
+  company: Company;
+  responsible_stock: ResponsibleStock;
   stock_address: StockAddress[];
   zone: Zone[];
   shelf: Shelf[];
@@ -44,12 +44,10 @@ export const stocks: Stock[] = [
   {
     code: "001",
     name: "Cerveja Pilsen",
-    company: [
-      {
-        nameCompany: "TechNova",
-        value: "TechNova",
-      },
-    ],
+    company: {
+      nameCompany: "TechNova",
+      value: "TechNova",
+    },
     stock_address: [
       {
         nameAddress: "Estoque Secos",
@@ -68,24 +66,20 @@ export const stocks: Stock[] = [
         value: "P001",
       },
     ],
-    responsable_stock: [
-      {
-        name: "Maria Silva",
-        role: { name: "Estoquista", value: "Estoquista" },
-        email: "maria.silva@fornecedora.com",
-        phone: "(11) 91234-5678",
-      },
-    ],
+    responsible_stock: {
+      name: "Maria Silva",
+      role: { name: "Estoquista", value: "Estoquista" },
+      email: "maria.silva@fornecedora.com",
+      phone: "(11) 91234-5678",
+    },
   },
   {
     code: "002",
     name: "Refrigerante Cola",
-    company: [
-      {
-        nameCompany: "Skyline Solutions",
-        value: "Skyline Solutions",
-      },
-    ],
+    company: {
+      nameCompany: "Skyline Solutions",
+      value: "Skyline Solutions",
+    },
     stock_address: [
       {
         nameAddress: "Bar",
@@ -104,24 +98,20 @@ export const stocks: Stock[] = [
         value: "P002",
       },
     ],
-    responsable_stock: [
-      {
-        name: "Carlos Pereira",
-        role: { name: "Operador", value: "Operador" },
-        email: "carlos.pereira@distribuidora.com",
-        phone: "(21) 92345-6789",
-      },
-    ],
+    responsible_stock: {
+      name: "Carlos Pereira",
+      role: { name: "Operador", value: "Operador" },
+      email: "carlos.pereira@distribuidora.com",
+      phone: "(21) 92345-6789",
+    },
   },
   {
     code: "003",
     name: "Água Mineral",
-    company: [
-      {
-        nameCompany: "Quantum Dynamics",
-        value: "Quantum Dynamics",
-      },
-    ],
+    company: {
+      nameCompany: "Quantum Dynamics",
+      value: "Quantum Dynamics",
+    },
     stock_address: [
       {
         nameAddress: "Estoque Secos",
@@ -140,24 +130,20 @@ export const stocks: Stock[] = [
         value: "P003",
       },
     ],
-    responsable_stock: [
-      {
-        name: "Juliana Costa",
-        role: { name: "Administrador", value: "Administrador" },
-        email: "juliana.costa@fornecedora.com",
-        phone: "(31) 98765-4321",
-      },
-    ],
+    responsible_stock: {
+      name: "Juliana Costa",
+      role: { name: "Administrador", value: "Administrador" },
+      email: "juliana.costa@fornecedora.com",
+      phone: "(31) 98765-4321",
+    },
   },
   {
     code: "004",
     name: "Leite Integral",
-    company: [
-      {
-        nameCompany: "Apex Innovations",
-        value: "Apex Innovations",
-      },
-    ],
+    company: {
+      nameCompany: "Apex Innovations",
+      value: "Apex Innovations",
+    },
     stock_address: [
       {
         nameAddress: "Estoque Frio",
@@ -176,24 +162,20 @@ export const stocks: Stock[] = [
         value: "P004",
       },
     ],
-    responsable_stock: [
-      {
-        name: "Rafael Souza",
-        role: { name: "Operador", value: "Operador" },
-        email: "rafael.souza@logistica.com",
-        phone: "(41) 91234-5678",
-      },
-    ],
+    responsible_stock: {
+      name: "Rafael Souza",
+      role: { name: "Operador", value: "Operador" },
+      email: "rafael.souza@logistica.com",
+      phone: "(41) 91234-5678",
+    },
   },
   {
     code: "005",
     name: "Achocolatado em Pó",
-    company: [
-      {
-        nameCompany: "FusionWare",
-        value: "FusionWare",
-      },
-    ],
+    company: {
+      nameCompany: "FusionWare",
+      value: "FusionWare",
+    },
     stock_address: [
       {
         nameAddress: "Estoque Frio",
@@ -212,14 +194,12 @@ export const stocks: Stock[] = [
         value: "P005",
       },
     ],
-    responsable_stock: [
-      {
-        name: "Patricia Oliveira",
-        role: { name: "Requisitante", value: "Requisitante" },
-        email: "patricia.oliveira@suprimentos.com",
-        phone: "(51) 92345-6789",
-      },
-    ],
+    responsible_stock: {
+      name: "Patricia Oliveira",
+      role: { name: "Requisitante", value: "Requisitante" },
+      email: "patricia.oliveira@suprimentos.com",
+      phone: "(51) 92345-6789",
+    },
   },
 ];
 

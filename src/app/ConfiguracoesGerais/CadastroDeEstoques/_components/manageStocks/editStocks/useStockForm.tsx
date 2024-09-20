@@ -1,11 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
+import { type Stock } from "../../stockData";
 import {
   editStockFormSchema,
   type EditStockFormValues,
 } from "../editStocks/stockEditFormSchema";
-import { useFieldArray } from "react-hook-form";
-import { type Stock } from "../stockData";
 
 export const useStockForm = (stock: Stock) => {
   const form = useForm<EditStockFormValues>({
@@ -14,10 +13,7 @@ export const useStockForm = (stock: Stock) => {
     defaultValues: {
       code: stock.code,
       name: stock.name,
-      company: stock.company.map((company) => ({
-        nameStockCompany: company.nameCompany,
-        value: company.value,
-      })),
+      company: stock.company.nameCompany,
       stockAddress: stock.stock_address.map((stock_Address) => ({
         nameStockAddress: stock_Address.nameAddress,
         value: stock_Address.value,
@@ -30,19 +26,17 @@ export const useStockForm = (stock: Stock) => {
         nameShelf: shelf.nameShelf,
         value: shelf.value,
       })),
-      stockRepresentative: stock.responsable_stock.map(
-        (stockRepresentative) => ({
-          name: stockRepresentative.name,
-          role: stockRepresentative.role.value,
-          email: stockRepresentative.email,
-          phone: stockRepresentative.phone,
-        }),
-      ),
+      stockRepresentative: {
+        name: stock.responsible_stock.name,
+        role: stock.responsible_stock.role.value,
+        email: stock.responsible_stock.email,
+        phone: stock.responsible_stock.phone,
+      },
     },
   });
   const fieldArray = useFieldArray({
     control: form.control,
-    name: "stockRepresentative",
+    name: "stockAddress",
   });
 
   function onSubmitEdit(data: EditStockFormValues) {

@@ -85,14 +85,10 @@ export const ManageStocksTable = () => {
               ))}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {stock.responsable_stock.map((responsable, index) => (
-                <div key={index}>{responsable.name}</div>
-              ))}
+              {stock.responsible_stock.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {stock.responsable_stock.map((responsable, index) => (
-                <div key={index}>{responsable.email}</div>
-              ))}
+              {stock.responsible_stock.email}
             </TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>
