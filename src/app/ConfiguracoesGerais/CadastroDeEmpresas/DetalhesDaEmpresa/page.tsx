@@ -53,7 +53,7 @@ export default function DetalhesDaEmpresa() {
           low_stock_products: 0,
         }}
       />
-      <ManageUsersTableFromCompany empresa={company.empresa} />
+      <ManageUsersTableFromCompany company={company.empresa} />
       <ManageSuppliersTableFromComapany />
     </div>
   );

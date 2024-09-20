@@ -1,3 +1,4 @@
+import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
 import {
@@ -8,19 +9,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { Usuarios } from "../../../../../ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { UserEdit } from "../../../../../ControleDeAcesso/CadastroDeUsuarios/_components/manageUsers/editUsers/userEdit";
 
 type ManageUsersTableFromCompanyProps = {
-  empresa: string;
+  company: string;
 };
 
 export const ManageUsersTableFromCompany = ({
-  empresa,
+  company,
 }: ManageUsersTableFromCompanyProps) => {
-  const filteredUsuarios = Usuarios.filter(
-    (usuario) => usuario.empresa === empresa,
-  );
+  const filteredUsers = users.filter((user) => user.company === company);
 
   return (
     <TableComponent className="mb-4">
@@ -37,17 +35,17 @@ export const ManageUsersTableFromCompany = ({
           <TableComponent.ValueTitle>Cargo</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {filteredUsuarios.map((usuario, index) => (
+        {filteredUsers.map((user, index) => (
           <TableComponent.Line
             className={`grid-cols-[repeat(4,_1fr)_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value>{usuario.nome}</TableComponent.Value>
-            <TableComponent.Value>{usuario.email}</TableComponent.Value>
-            <TableComponent.Value>{usuario.empresa}</TableComponent.Value>
-            <TableComponent.Value>{usuario.cargo}</TableComponent.Value>
+            <TableComponent.Value>{user.name}</TableComponent.Value>
+            <TableComponent.Value>{user.email}</TableComponent.Value>
+            <TableComponent.Value>{user.company}</TableComponent.Value>
+            <TableComponent.Value>{user.role}</TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
@@ -60,7 +58,7 @@ export const ManageUsersTableFromCompany = ({
                     Utilize os campos abaixo para editar os dados do usuário ou
                     o botão para remover o usuário da empresa
                   </DialogTitle>
-                  <UserEdit usuario={usuario} />
+                  <UserEdit user={user} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

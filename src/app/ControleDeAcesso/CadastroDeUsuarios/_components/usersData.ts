@@ -4,83 +4,77 @@ export type User = {
   password: string;
   password_confirmation: string;
   phone: string;
-  roleId: number;
   role: string;
   company: string;
 };
 
-export const users = [
+export const users: User[] = [
   {
     name: "Nome do Usuário 1",
     email: "usuario1@gmail.com",
-    empresa: "Alimentos WCW",
-    cargo: "Administrador",
-    senha: "12345678",
-    senhaConfirmacao: "12345678",
-    telefone: "61999999999",
-    cargoId: 1,
+    company: "Alimentos WCW",
+    role: "Administrador",
+    password: "12345678",
+    password_confirmation: "12345678",
+    phone: "61999999999",
   },
   {
     name: "Nome do Usuário 2",
     email: "usuario2@gmail.com",
-    empresa: "TechNova Filial",
-    cargo: "Operador",
-    senha: "12345678",
-    senhaConfirmacao: "12345678",
-    telefone: "61999999999",
-    cargoId: 2,
+    company: "TechNova Filial",
+    role: "Operador",
+    password: "12345678",
+    password_confirmation: "12345678",
+    phone: "61999999999",
   },
   {
     name: "Nome do Usuário 3",
     email: "usuario3@gmail.com",
-    empresa: "Quantum Dynamics",
-    cargo: "Estoquista",
-    senha: "12345678",
-    senhaConfirmacao: "12345678",
-    telefone: "61999999999",
-    cargoId: 3,
+    company: "Quantum Dynamics",
+    role: "Estoquista",
+    password: "12345678",
+    password_confirmation: "12345678",
+    phone: "61999999999",
   },
   {
     name: "Nome do Usuário 4",
     email: "usuario4@gmail.com",
-    empresa: "Apex Innovations Filial",
-    cargo: "Requisitante",
-    senha: "12345678",
-    senhaConfirmacao: "12345678",
-    telefone: "61999999999",
-    cargoId: 4,
+    company: "Apex Innovations Filial",
+    role: "Requisitante",
+    password: "12345678",
+    password_confirmation: "12345678",
+    phone: "61999999999",
   },
   {
-    nome: "Nome do Usuário 5",
+    name: "Nome do Usuário 5",
     email: "usuario5@gmail.com",
-    empresa: "Alimentos WCW",
-    cargo: "Requisitante",
-    senha: "12345678",
-    senhaConfirmacao: "12345678",
-    telefone: "61999999999",
-    cargoId: 4,
+    company: "Alimentos WCW",
+    role: "Requisitante",
+    password: "12345678",
+    password_confirmation: "12345678",
+    phone: "61999999999",
   },
 ];
 
 export const companies = [
   {
-    nome: "Alimentos WCW",
+    name: "Alimentos WCW",
     value: "Alimentos WCW",
   },
   {
-    nome: "TechNova Filial",
+    name: "TechNova Filial",
     value: "TechNova Filial",
   },
   {
-    nome: "Quantum Dynamics",
+    name: "Quantum Dynamics",
     value: "Quantum Dynamics",
   },
   {
-    nome: "Apex Innovations Filial",
+    name: "Apex Innovations Filial",
     value: "Apex Innovations Filial",
   },
   {
-    nome: "FusionWare",
+    name: "FusionWare",
     value: "FusionWare",
   },
 ];
