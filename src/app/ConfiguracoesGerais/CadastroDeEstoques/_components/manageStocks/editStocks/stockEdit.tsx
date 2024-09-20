@@ -15,14 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { roles } from "../../../CadastroDeFornecedores/_components/supplierData";
+import { roles } from "../../../../CadastroDeFornecedores/_components/supplierData";
 import {
   shelfs,
   stockCompanies,
   stocksAddress,
   zones,
   type Stock,
-} from "../stockData";
+} from "../../stockData";
 import { useStockForm } from "./useStockForm";
 
 type StockEditProps = {
@@ -35,8 +35,6 @@ export const StockEdit = (props: StockEditProps) => {
     <Form {...form.form}>
       <form onSubmit={form.form.handleSubmit(form.onSubmitEdit)}>
         <FormComponent>
-          <FormComponent.Title>Editar Estoque</FormComponent.Title>
-
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Código</FormComponent.Label>

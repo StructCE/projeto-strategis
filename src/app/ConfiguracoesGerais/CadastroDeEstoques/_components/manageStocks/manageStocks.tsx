@@ -8,8 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { StockEdit } from "../editStocks/stockEdit";
 import { stocks } from "../stockData";
+import { StockEdit } from "./editStocks/stockEdit";
 import ManageStocksFilters from "./manageStocksFilters/manageStocksFilters";
 
 export const ManageStocksTable = () => {
