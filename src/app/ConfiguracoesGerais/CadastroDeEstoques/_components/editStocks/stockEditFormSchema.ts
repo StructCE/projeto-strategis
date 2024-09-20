@@ -38,6 +38,28 @@ const StockRepresentativeSchema = z.object({
     .optional(),
 });
 
+const ZoneSchema = z.object({
+  nameZone: z.string().min(1, { message: "Por favor digite o nome da zona." }),
+});
+
+const ShelfSchema = z.object({
+  nameShelf: z
+    .string()
+    .min(1, { message: "Por favor digite o nome da prateleira." }),
+});
+
+const StockAddressSchema = z.object({
+  nameStockAddress: z
+    .string()
+    .min(1, { message: "Por favor selecione o endereço" }),
+});
+
+const StockCompanySchema = z.object({
+  nameStockCompany: z
+    .string()
+    .min(1, { message: "Por favor selecione a empresa do estoque" }),
+});
+
 export const editStockFormSchema = z.object({
   code: z
     .string({
@@ -51,27 +73,11 @@ export const editStockFormSchema = z.object({
     })
     .min(2, { message: "O nome do estoque deve ter pelomenos 2 caracteres" })
     .max(32, { message: "O estoque deve possuir menos de 30 caracteres" }),
-  company: z
-    .string({
-      required_error: "Por favor selecione a empresa do estoque",
-    })
-    .min(1, { message: "Por favor selecione uma empresa do estoque" }),
+  company: z.array(StockCompanySchema).optional(),
   stockRepresentative: z.array(StockRepresentativeSchema).optional(),
-  stockAddress: z
-    .string()
-    .min(2, { message: "O endereço deve ter pelo menos 3 caracteres" })
-    .max(32, { message: "O endereço deve possuir menos de 30 caracteres" }),
-  zone: z
-    .string({
-      required_error: "Por favor selecione um ou mais armários/zonas",
-    })
-    .min(1, { message: "Por favor selecione um ou mais armários/zonas" }),
-
-  shelf: z
-    .string({
-      required_error: "Por favor selecione uma ou mais prateleiras",
-    })
-    .min(1, { message: "Por favor selecione uma ou mais prateleiras" }),
+  stockAddress: z.array(StockAddressSchema).optional(),
+  zone: z.array(ZoneSchema).optional(),
+  shelf: z.array(ShelfSchema).optional(),
 });
 
 export type EditStockFormValues = z.infer<typeof editStockFormSchema>;

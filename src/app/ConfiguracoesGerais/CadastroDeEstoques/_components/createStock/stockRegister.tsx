@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { roles } from "../../../CadastroDeFornecedores/_components/supplierData";
-import { shelfs, stockCompanies, zones } from "../stockData";
+import { shelfs, stockCompanies, stocksAddress, zones } from "../stockData";
 import { useStockForm } from "./useStockForm";
 
 export const StockRegister = () => {
@@ -201,13 +201,23 @@ export const StockRegister = () => {
                 name="stockAddress"
                 render={({ field }) => (
                   <FormItem>
-                    <FormControl>
-                      <Input
-                        className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Selecione um Endereço"
-                        {...field}
-                      />
-                    </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                          <SelectValue placeholder="Selecione um Endereço" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {stocksAddress.map((address, index) => (
+                          <SelectItem value={address.value} key={index}>
+                            {address.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

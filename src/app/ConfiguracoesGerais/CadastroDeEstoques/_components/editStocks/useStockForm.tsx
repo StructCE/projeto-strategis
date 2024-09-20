@@ -14,10 +14,22 @@ export const useStockForm = (stock: Stock) => {
     defaultValues: {
       code: stock.code,
       name: stock.name,
-      company: stock.company,
-      stockAddress: stock.stock_address,
-      zone: stock.zone,
-      shelf: stock.shelf,
+      company: stock.company.map((company) => ({
+        nameStockCompany: company.nameCompany,
+        value: company.value,
+      })),
+      stockAddress: stock.stock_address.map((stock_Address) => ({
+        nameStockAddress: stock_Address.nameAddress,
+        value: stock_Address.value,
+      })),
+      zone: stock.zone.map((zone) => ({
+        nameZone: zone.nameZone,
+        value: zone.value,
+      })),
+      shelf: stock.shelf.map((shelf) => ({
+        nameShelf: shelf.nameShelf,
+        value: shelf.value,
+      })),
       stockRepresentative: stock.responsable_stock.map(
         (stockRepresentative) => ({
           name: stockRepresentative.name,
@@ -34,13 +46,19 @@ export const useStockForm = (stock: Stock) => {
   });
 
   function onSubmitEdit(data: EditStockFormValues) {
-    console.log("Editando fornecedor:");
+    console.log("Editando Estoque:");
     console.log(JSON.stringify(data, null, 2)); // Editar Estoque
+  }
+
+  function onSubmitRemove(data: EditStockFormValues) {
+    console.log("Removendo Estoque:");
+    console.log(JSON.stringify(data, null, 2)); // Remover Estoque
   }
 
   return {
     form,
     onSubmitEdit,
+    onSubmitRemove,
     fieldsArray: fieldArray.fields,
     arrayRemove: fieldArray.remove,
   };

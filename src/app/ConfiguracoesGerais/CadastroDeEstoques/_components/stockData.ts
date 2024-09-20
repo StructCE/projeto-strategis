@@ -10,24 +10,64 @@ export type ResponsableStock = {
   phone: string;
 };
 
+export type Zone = {
+  nameZone: string;
+  value: string;
+};
+
+export type Shelf = {
+  nameShelf: string;
+  value: string;
+};
+
+export type StockAddress = {
+  nameAddress: string;
+  value: string;
+};
+
+export type Company = {
+  nameCompany: string;
+  value: string;
+};
+
 export type Stock = {
   code: string;
   name: string;
-  company: string;
+  company: Company[];
   responsable_stock: ResponsableStock[];
-  stock_address: string;
-  zone: string;
-  shelf: string;
+  stock_address: StockAddress[];
+  zone: Zone[];
+  shelf: Shelf[];
 };
 
 export const stocks: Stock[] = [
   {
     code: "001",
     name: "Cerveja Pilsen",
-    company: "Ambev",
-    stock_address: "A",
-    zone: "Area 4",
-    shelf: "Zona 1",
+    company: [
+      {
+        nameCompany: "TechNova",
+        value: "TechNova",
+      },
+    ],
+    stock_address: [
+      {
+        nameAddress: "Estoque Secos",
+        value: "Estoque Secos",
+      },
+    ],
+    zone: [
+      {
+        nameZone: "A001",
+        value: "A001",
+      },
+    ],
+    shelf: [
+      {
+        nameShelf: "P001",
+        value: "P001",
+      },
+    ],
     responsable_stock: [
       {
         name: "Maria Silva",
@@ -40,14 +80,34 @@ export const stocks: Stock[] = [
   {
     code: "002",
     name: "Refrigerante Cola",
-    company: "Coca-Cola",
-    stock_address: "B",
-    zone: "Area 2",
-    shelf: "Zona 3",
+    company: [
+      {
+        nameCompany: "Skyline Solutions",
+        value: "Skyline Solutions",
+      },
+    ],
+    stock_address: [
+      {
+        nameAddress: "Bar",
+        value: "Bar",
+      },
+    ],
+    zone: [
+      {
+        nameZone: "A002",
+        value: "A002",
+      },
+    ],
+    shelf: [
+      {
+        nameShelf: "P002",
+        value: "P002",
+      },
+    ],
     responsable_stock: [
       {
         name: "Carlos Pereira",
-        role: { name: "Supervisor de Estoque", value: "Supervisor" },
+        role: { name: "Operador", value: "Operador" },
         email: "carlos.pereira@distribuidora.com",
         phone: "(21) 92345-6789",
       },
@@ -56,14 +116,34 @@ export const stocks: Stock[] = [
   {
     code: "003",
     name: "Água Mineral",
-    company: "Nestlé",
-    stock_address: "C",
-    zone: "Area 1",
-    shelf: "Zona 2",
+    company: [
+      {
+        nameCompany: "Quantum Dynamics",
+        value: "Quantum Dynamics",
+      },
+    ],
+    stock_address: [
+      {
+        nameAddress: "Estoque Secos",
+        value: "Estoque Secos",
+      },
+    ],
+    zone: [
+      {
+        nameZone: "A003",
+        value: "A003",
+      },
+    ],
+    shelf: [
+      {
+        nameShelf: "P003",
+        value: "P003",
+      },
+    ],
     responsable_stock: [
       {
         name: "Juliana Costa",
-        role: { name: "Coordenadora de Estoques", value: "Coordenadora" },
+        role: { name: "Administrador", value: "Administrador" },
         email: "juliana.costa@fornecedora.com",
         phone: "(31) 98765-4321",
       },
@@ -72,14 +152,34 @@ export const stocks: Stock[] = [
   {
     code: "004",
     name: "Leite Integral",
-    company: "Itambé",
-    stock_address: "D",
-    zone: "Area 3",
-    shelf: "Zona 5",
+    company: [
+      {
+        nameCompany: "Apex Innovations",
+        value: "Apex Innovations",
+      },
+    ],
+    stock_address: [
+      {
+        nameAddress: "Estoque Frio",
+        value: "Estoque Frio",
+      },
+    ],
+    zone: [
+      {
+        nameZone: "A004",
+        value: "A004",
+      },
+    ],
+    shelf: [
+      {
+        nameShelf: "P004",
+        value: "P004",
+      },
+    ],
     responsable_stock: [
       {
         name: "Rafael Souza",
-        role: { name: "Gerente de Estoques", value: "Gerente" },
+        role: { name: "Operador", value: "Operador" },
         email: "rafael.souza@logistica.com",
         phone: "(41) 91234-5678",
       },
@@ -88,14 +188,34 @@ export const stocks: Stock[] = [
   {
     code: "005",
     name: "Achocolatado em Pó",
-    company: "Nestlé",
-    stock_address: "E",
-    zone: "Area 5",
-    shelf: "Zona 7",
+    company: [
+      {
+        nameCompany: "FusionWare",
+        value: "FusionWare",
+      },
+    ],
+    stock_address: [
+      {
+        nameAddress: "Estoque Frio",
+        value: "Estoque Frio",
+      },
+    ],
+    zone: [
+      {
+        nameZone: "A005",
+        value: "A005",
+      },
+    ],
+    shelf: [
+      {
+        nameShelf: "P005",
+        value: "P005",
+      },
+    ],
     responsable_stock: [
       {
         name: "Patricia Oliveira",
-        role: { name: "Assistente de Estoque", value: "Assistente" },
+        role: { name: "Requisitante", value: "Requisitante" },
         email: "patricia.oliveira@suprimentos.com",
         phone: "(51) 92345-6789",
       },
@@ -177,5 +297,20 @@ export const shelfs = [
   {
     nome: "P005",
     value: "P005",
+  },
+];
+
+export const stocksAddress = [
+  {
+    nome: "Estoque Secos",
+    value: "Estoque Secos",
+  },
+  {
+    nome: "Bar",
+    value: "Bar",
+  },
+  {
+    nome: "Estoque Frio",
+    value: "Estoque Frio",
   },
 ];

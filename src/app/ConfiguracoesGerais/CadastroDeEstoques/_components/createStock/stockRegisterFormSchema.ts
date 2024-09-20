@@ -59,8 +59,7 @@ export const createStockFormSchema = z.object({
   stockRepresentative: z.array(StockRepresentativeSchema).optional(),
   stockAddress: z
     .string()
-    .min(2, { message: "O endereço deve ter pelo menos 3 caracteres" })
-    .max(32, { message: "O endereço deve possuir menos de 30 caracteres" }),
+    .min(2, { message: "Por favor selecione o endereço" }),
   zone: z
     .string({
       required_error: "Por favor selecione um ou mais armários/zonas",

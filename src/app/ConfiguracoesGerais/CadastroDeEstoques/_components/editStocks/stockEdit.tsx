@@ -16,7 +16,13 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { roles } from "../../../CadastroDeFornecedores/_components/supplierData";
-import { shelfs, stockCompanies, zones, type Stock } from "../stockData";
+import {
+  shelfs,
+  stockCompanies,
+  stocksAddress,
+  zones,
+  type Stock,
+} from "../stockData";
 import { useStockForm } from "./useStockForm";
 
 type StockEditProps = {
@@ -29,7 +35,7 @@ export const StockEdit = (props: StockEditProps) => {
     <Form {...form.form}>
       <form onSubmit={form.form.handleSubmit(form.onSubmitEdit)}>
         <FormComponent>
-          <FormComponent.Title>Cadastrar Estoque</FormComponent.Title>
+          <FormComponent.Title>Editar Estoque</FormComponent.Title>
 
           <FormComponent.Line>
             <FormComponent.Frame>
@@ -71,33 +77,39 @@ export const StockEdit = (props: StockEditProps) => {
               />
             </FormComponent.Frame>
             <FormComponent.Frame>
-              <FormComponent.Label>Empresa</FormComponent.Label>
-              <FormField
-                control={form.form.control}
-                name="company"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Empresa do estoque" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {stockCompanies.map((company, index) => (
-                          <SelectItem value={company.value} key={index}>
-                            {company.value}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {form.fieldsArray.map((company, index) => (
+                <FormComponent.Line key={company.id}>
+                  <FormComponent.Frame>
+                    <FormComponent.Label>Empresa</FormComponent.Label>
+                    <FormField
+                      control={form.form.control}
+                      name={`company.${index}.nameStockCompany`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                                <SelectValue placeholder="Empresa do estoque" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {stockCompanies.map((company, index) => (
+                                <SelectItem value={company.value} key={index}>
+                                  {company.nome}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </FormComponent.Frame>
+                </FormComponent.Line>
+              ))}
             </FormComponent.Frame>
           </FormComponent.Line>
 
@@ -199,89 +211,126 @@ export const StockEdit = (props: StockEditProps) => {
 
           <FormComponent.Line>
             <FormComponent.Frame>
-              <FormComponent.Label>Endereço do Estoque</FormComponent.Label>
-              <FormField
-                control={form.form.control}
-                name="stockAddress"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Selecione um Endereço"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {form.fieldsArray.map((stockAddress, index) => (
+                <FormComponent.Line key={stockAddress.id}>
+                  <FormComponent.Frame>
+                    <FormComponent.Label>
+                      Endereço do Estoque
+                    </FormComponent.Label>
+                    <FormField
+                      control={form.form.control}
+                      name={`stockAddress.${index}.nameStockAddress`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                                <SelectValue placeholder="Selecione um endereço" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {stocksAddress.map((address, index) => (
+                                <SelectItem value={address.value} key={index}>
+                                  {address.nome}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </FormComponent.Frame>
+                </FormComponent.Line>
+              ))}
             </FormComponent.Frame>
 
             <FormComponent.Frame>
-              <FormComponent.Label>Armários/Zonas</FormComponent.Label>
-              <FormField
-                control={form.form.control}
-                name="zone"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione um ou mais Armários/Zonas" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {zones.map((zone, index) => (
-                          <SelectItem value={zone.value} key={index}>
-                            {zone.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {form.fieldsArray.map((zone, index) => (
+                <FormComponent.Line key={zone.id}>
+                  <FormComponent.Frame>
+                    <FormComponent.Label>Armários/Zonas</FormComponent.Label>
+                    <FormField
+                      control={form.form.control}
+                      name={`zone.${index}.nameZone`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                                <SelectValue placeholder="Selecione um cargo" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {zones.map((zone, index) => (
+                                <SelectItem value={zone.value} key={index}>
+                                  {zone.nome}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </FormComponent.Frame>
+                </FormComponent.Line>
+              ))}
             </FormComponent.Frame>
 
             <FormComponent.Frame>
-              <FormComponent.Label>Prateleiras</FormComponent.Label>
-              <FormField
-                control={form.form.control}
-                name="shelf"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione uma ou mais Prateleiras" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {shelfs.map((shelf, index) => (
-                          <SelectItem value={shelf.value} key={index}>
-                            {shelf.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {form.fieldsArray.map((shelf, index) => (
+                <FormComponent.Line key={shelf.id}>
+                  <FormComponent.Frame>
+                    <FormComponent.Label>Prateleiras</FormComponent.Label>
+                    <FormField
+                      control={form.form.control}
+                      name={`shelf.${index}.nameShelf`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                                <SelectValue placeholder="Selecione uma ou mais Prateleiras" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {shelfs.map((shelf, index) => (
+                                <SelectItem value={shelf.value} key={index}>
+                                  {shelf.nome}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </FormComponent.Frame>
+                </FormComponent.Line>
+              ))}
             </FormComponent.Frame>
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
               Editar Estoque
+            </FormComponent.Button>
+
+            <FormComponent.Button
+              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
+              handlePress={form.form.handleSubmit(form.onSubmitRemove)}
+            >
+              Remover Estoque
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

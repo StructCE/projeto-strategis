@@ -13,6 +13,23 @@ import ManageStocksFilters from "./manageStocksFilters/manageStocksFilters";
 import { StockEdit } from "../editStocks/stockEdit";
 
 export const ManageStocksTable = () => {
+  // metodo que coloca endereço do estoque em abreviação
+  const generateAbbreviationAddress = (address: string): string => {
+    const words = address.trim().split(/\s+/).filter(Boolean);
+
+    // Se tiver apenas uma palavra, retorna apenas a primeira letra
+    if (words.length === 1) {
+      return words[0]?.[0]?.toUpperCase() ?? "";
+    }
+
+    // Se tiver duas ou mais palavras, pega a primeira letra de cada uma
+    const abbreviation = words
+      .map((word) => word[0]?.toUpperCase() ?? "")
+      .join("");
+
+    return abbreviation;
+  };
+
   return (
     <TableComponent>
       <TableComponent.Title>Estoques</TableComponent.Title>
@@ -23,7 +40,7 @@ export const ManageStocksTable = () => {
         <ManageStocksFilters />
       </TableComponent.FiltersLine>
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[0.8fr_2fr_1fr_1fr_2fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[0.8fr_1.7fr_1fr_1fr_2fr_130px]">
           <TableComponent.ValueTitle className="text-center">
             Código
           </TableComponent.ValueTitle>
@@ -43,7 +60,7 @@ export const ManageStocksTable = () => {
         </TableComponent.LineTitle>
         {stocks.map((stock, index) => (
           <TableComponent.Line
-            className={`grid-cols-[0.8fr_2fr_1fr_1fr_2fr_130px] ${
+            className={`grid-cols-[0.8fr_1.7fr_1fr_1fr_2fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -53,7 +70,19 @@ export const ManageStocksTable = () => {
             </TableComponent.Value>
             <TableComponent.Value>{stock.name}</TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {stock.zone} - {stock.shelf} - {stock.stock_address}
+              {stock.stock_address.map((address, index) => (
+                <span key={index}>
+                  {generateAbbreviationAddress(address.nameAddress)}
+                </span>
+              ))}
+              -
+              {stock.zone.map((zone, index) => (
+                <span key={index}>{zone.nameZone}</span>
+              ))}
+              -
+              {stock.shelf.map((shelf, index) => (
+                <span key={index}>{shelf.nameShelf}</span>
+              ))}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
               {stock.responsable_stock.map((responsable, index) => (
@@ -74,8 +103,8 @@ export const ManageStocksTable = () => {
               <DialogContent className="sm:max-w-7xl">
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do fornecedor
-                    ou o botão para remover
+                    Utilize os campos abaixo para editar os dados do estoque ou
+                    o botão para remover
                   </DialogTitle>
                   <StockEdit stock={stock} />
                   <DialogDescription></DialogDescription>
