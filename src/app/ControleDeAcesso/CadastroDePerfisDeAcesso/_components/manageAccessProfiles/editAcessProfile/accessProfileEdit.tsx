@@ -9,29 +9,29 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
-import { modules } from "../accessProfileData";
+import { modules, type Role } from "../../accessProfileData";
 import { useAccessProfileForm } from "./useAccessProfileForm";
 
-export const AccessProfilesRegister = () => {
-  const accessProfileForm = useAccessProfileForm();
+type AccessProfileEditForm = {
+  role: Role;
+};
+
+export const AccessProfileEdit = (props: AccessProfileEditForm) => {
+  const accessProfileEditForm = useAccessProfileForm(props.role);
 
   return (
-    <Form {...accessProfileForm.form}>
+    <Form {...accessProfileEditForm.form}>
       <form
-        onSubmit={accessProfileForm.form.handleSubmit(
-          accessProfileForm.onSubmit,
+        onSubmit={accessProfileEditForm.form.handleSubmit(
+          accessProfileEditForm.onSubmitEdit,
         )}
       >
         <FormComponent>
-          <FormComponent.Title>
-            Cadastro de Perfil de Acesso
-          </FormComponent.Title>
-
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
-                control={accessProfileForm.form.control}
+                control={accessProfileEditForm.form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
@@ -51,14 +51,14 @@ export const AccessProfilesRegister = () => {
             <FormComponent.Frame>
               <FormComponent.Label>Módulos de acesso</FormComponent.Label>
               <FormField
-                control={accessProfileForm.form.control}
+                control={accessProfileEditForm.form.control}
                 name="modules"
                 render={({ field }) => (
                   <FormItem>
                     <MultiSelect
                       options={modules}
-                      onValueChange={accessProfileForm.setSelectedModules}
-                      defaultValue={accessProfileForm.selectedModules}
+                      onValueChange={accessProfileEditForm.setSelectedModules}
+                      defaultValue={accessProfileEditForm.selectedModules}
                       placeholder="Selecione um ou mais conteúdos para o cargo ter acesso"
                       variant="inverted"
                       maxCount={2}
@@ -71,8 +71,16 @@ export const AccessProfilesRegister = () => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
-              Criar Perfil de Acesso
+            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
+              Editar Perfil de Acesso
+            </FormComponent.Button>
+            <FormComponent.Button
+              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
+              handlePress={accessProfileEditForm.form.handleSubmit(
+                accessProfileEditForm.onSubmitRemove,
+              )}
+            >
+              Remover Perfil de Acesso
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>
