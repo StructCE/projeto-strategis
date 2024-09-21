@@ -70,7 +70,7 @@ export default function CreateAdjustment() {
           product.name.toLowerCase().includes(inputName.toLowerCase());
         const matchesAddress =
           selectAddress === "" ||
-          `${product.address.place}, ${product.address.storage}, ${product.address.shelf}`
+          `${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
@@ -383,7 +383,7 @@ export default function CreateAdjustment() {
                   {product.stock_current}
                 </TableComponent.Value>
                 <TableComponent.Value>
-                  {`${product.address.place}, ${product.address.storage}, ${product.address.shelf}`}
+                  {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
                 </TableComponent.Value>
                 <Button
                   onClick={() => handleAddProduct(product)}

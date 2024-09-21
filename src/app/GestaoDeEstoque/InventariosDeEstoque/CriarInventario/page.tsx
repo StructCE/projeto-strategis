@@ -57,7 +57,7 @@ export default function CreateInventory() {
           product.name.toLowerCase().includes(inputName.toLowerCase());
         const matchesAddress =
           selectAddress === "" ||
-          `${product.address.place}, ${product.address.storage}, ${product.address.shelf}`
+          `${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
@@ -209,6 +209,7 @@ export default function CreateInventory() {
               setState={setInputCode}
             />
           </Filter>
+
           <Filter className="lg:w-[250px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -221,6 +222,7 @@ export default function CreateInventory() {
               setState={setInputName}
             />
           </Filter>
+
           <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -244,6 +246,7 @@ export default function CreateInventory() {
               )}
             </Filter.Select>
           </Filter>
+
           <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -372,7 +375,7 @@ export default function CreateInventory() {
                   {product.stock_current}
                 </TableComponent.Value>
                 <TableComponent.Value>
-                  {`${product.address.place}, ${product.address.storage}, ${product.address.shelf}`}
+                  {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
                 </TableComponent.Value>
                 <Button
                   onClick={() => handleAddProduct(product)}
