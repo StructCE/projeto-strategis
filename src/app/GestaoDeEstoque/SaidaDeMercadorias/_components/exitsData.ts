@@ -14,8 +14,9 @@ type Requisicao = {
   produtos: Produto[];
   quant_solicitada_unidade: number;
   quant_solicitada_fardo: 1;
-  quant_confirmada: null;
 };
+
+
 
 export const requisicoes: Requisicao[] = [
   {
@@ -50,7 +51,6 @@ export const requisicoes: Requisicao[] = [
     ],
     quant_solicitada_unidade: 15,
     quant_solicitada_fardo: 1,
-    quant_confirmada: null,
   },
   {
     data: "02/02/2024",
@@ -84,7 +84,6 @@ export const requisicoes: Requisicao[] = [
     ],
     quant_solicitada_unidade: 25,
     quant_solicitada_fardo: 1,
-    quant_confirmada: null,
   },
   {
     data: "03/02/2024",
@@ -118,16 +117,51 @@ export const requisicoes: Requisicao[] = [
     ],
     quant_solicitada_unidade: 12,
     quant_solicitada_fardo: 1,
-    quant_confirmada: null,
   },
 ];
 
-export const saidas = [
+
+type Saida = {
+  numero: number;
+  data: string;
+  responsavel: string;
+  requisitante: string;
+  descricao: string;
+  produtos: Produto[];
+  quant_solicitada_unidade: number;
+  quant_solicitada_fardo: number;
+  quant_confirmada: number | null;
+  area: string;
+};
+
+export const saidas: Saida[] = [
   {
     numero: 1,
     data: "01/01/2024",
     responsavel: "João Pedro",
     requisitante: "Pedro Silva",
+    descricao: "Solicitação de carnes",
+    produtos: [
+      {
+        codigo: 101,
+        nome: "Alcatra",
+        unidade: "kg",
+        estoque_atual: 50,
+        estoque_min: 10,
+        estoque_max: 100,
+      },
+      {
+        codigo: 102,
+        nome: "Picanha",
+        unidade: "kg",
+        estoque_atual: 30,
+        estoque_min: 5,
+        estoque_max: 50,
+      },
+    ],
+    quant_solicitada_unidade: 15,
+    quant_solicitada_fardo: 1,
+    quant_confirmada: 15,
     area: "Área x",
   },
   {
@@ -135,6 +169,28 @@ export const saidas = [
     data: "02/01/2024",
     responsavel: "João Pedro",
     requisitante: "Thiago Santos",
+    descricao: "Solicitação de vegetais",
+    produtos: [
+      {
+        codigo: 201,
+        nome: "Alface",
+        unidade: "unidade",
+        estoque_atual: 100,
+        estoque_min: 20,
+        estoque_max: 200,
+      },
+      {
+        codigo: 202,
+        nome: "Abóbora",
+        unidade: "kg",
+        estoque_atual: 60,
+        estoque_min: 10,
+        estoque_max: 80,
+      },
+    ],
+    quant_solicitada_unidade: 20,
+    quant_solicitada_fardo: 1,
+    quant_confirmada: 20,
     area: "Área x",
   },
   {
@@ -142,6 +198,28 @@ export const saidas = [
     data: "03/01/2024",
     responsavel: "João Pedro",
     requisitante: "Pedro Silva",
+    descricao: "Solicitação de bebidas",
+    produtos: [
+      {
+        codigo: 301,
+        nome: "Cerveja",
+        unidade: "litro",
+        estoque_atual: 500,
+        estoque_min: 100,
+        estoque_max: 1000,
+      },
+      {
+        codigo: 302,
+        nome: "Vodka",
+        unidade: "litro",
+        estoque_atual: 200,
+        estoque_min: 50,
+        estoque_max: 400,
+      },
+    ],
+    quant_solicitada_unidade: 12,
+    quant_solicitada_fardo: 1,
+    quant_confirmada: 12,
     area: "Área x",
   },
   {
@@ -149,6 +227,28 @@ export const saidas = [
     data: "04/01/2024",
     responsavel: "João Pedro",
     requisitante: "Pedro Silva",
+    descricao: "Solicitação de carnes adicionais",
+    produtos: [
+      {
+        codigo: 101,
+        nome: "Alcatra",
+        unidade: "kg",
+        estoque_atual: 50,
+        estoque_min: 10,
+        estoque_max: 100,
+      },
+      {
+        codigo: 103,
+        nome: "Limão",
+        unidade: "unidade",
+        estoque_atual: 200,
+        estoque_min: 50,
+        estoque_max: 500,
+      },
+    ],
+    quant_solicitada_unidade: 10,
+    quant_solicitada_fardo: 1,
+    quant_confirmada: 10,
     area: "Área x",
   },
 ];

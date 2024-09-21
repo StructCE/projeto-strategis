@@ -1,10 +1,8 @@
 "use client";
 
-import { Input } from "~/components/ui/input";
 
 import { TableComponent } from "~/components/table";
 import { Separator } from "~/components/ui/separator";
-import { Button } from "~/components/ui/button";
 
 type Produto = {
   codigo: number;
@@ -15,16 +13,17 @@ type Produto = {
   estoque_max: number;
 };
 
-type Requisicao = {
+type Saida = {
   data: string;
   requisitante: string;
   descricao: string;
   produtos: Produto[];
   quant_solicitada_unidade: number;
   quant_solicitada_fardo: number;
+  quant_confirmada: number | null;
 };
 
-export const DetailRequisition = (props: { requisition: Requisicao }) => {
+export const DetailExit = (props: { exit: Saida }) => {
   return (
     <div>
       <TableComponent>
@@ -55,7 +54,7 @@ export const DetailRequisition = (props: { requisition: Requisicao }) => {
             </TableComponent.ValueTitle>
           </TableComponent.LineTitle>
 
-          {props.requisition.produtos.map((produto, index) => (
+          {props.exit.produtos.map((produto, index) => (
             <TableComponent.Line
               className={`grid-cols-[repeat(9,_1fr)] ${
                 index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -74,25 +73,19 @@ export const DetailRequisition = (props: { requisition: Requisicao }) => {
               <Separator orientation="vertical" className="bg-black" />
 
               <TableComponent.Value>
-                {props.requisition.quant_solicitada_unidade}
+                {props.exit.quant_solicitada_unidade}
               </TableComponent.Value>
               <TableComponent.Value>
-                {props.requisition.quant_solicitada_fardo}
+                {props.exit.quant_solicitada_fardo}
               </TableComponent.Value>
 
               <TableComponent.Value>
-                <Input type="number" className="w-[100px]"></Input>
+                {props.exit.quant_confirmada}
               </TableComponent.Value>
             </TableComponent.Line>
           ))}
         </TableComponent.Table>
       </TableComponent>
-
-      <div className="mt-6 flex w-full items-center justify-end">
-        <Button className="bg-vermelho_botao_1 text-white">
-          Confirmar Saída
-        </Button>
-      </div>
     </div>
   );
 };

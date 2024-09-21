@@ -13,6 +13,7 @@ import {
 import { saidas } from "../exitsData";
 import ExitsHistoryFilters from "./exitsHistoryFilters/exitsHistoryFilters";
 import { DetailRequisition } from "../manageExits/detailRequisition/detailRequisition";
+import { DetailExit } from "./detailExit/detailExit";
 
 export default function ExitsHistory() {
   return (
@@ -55,7 +56,7 @@ export default function ExitsHistory() {
                   <DialogTitle className="pb-1.5">
                     Detalhes da Saída:
                   </DialogTitle>
-                  {/* <DetailExit exit={saida}/> */}
+                  <DetailExit exit={saida}/>
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

@@ -49,7 +49,7 @@ export default function ManageExits() {
                     <DialogTitle className="pb-1.5">
                       Detalhes da Requisição:
                     </DialogTitle>
-                    <DetailRequisition requisition={req} manage={true} />
+                    <DetailRequisition requisition={req}  />
                     <DialogDescription></DialogDescription>
                   </DialogHeader>
                 </DialogContent>
