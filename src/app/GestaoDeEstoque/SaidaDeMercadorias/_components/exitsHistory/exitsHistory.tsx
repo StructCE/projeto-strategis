@@ -12,6 +12,7 @@ import {
 
 import { saidas } from "../exitsData";
 import ExitsHistoryFilters from "./exitsHistoryFilters/exitsHistoryFilters";
+import { DetailRequisition } from "../manageExits/detailRequisition/detailRequisition";
 
 export default function ExitsHistory() {
   return (
@@ -43,13 +44,7 @@ export default function ExitsHistory() {
             <TableComponent.Value>{saida.responsavel}</TableComponent.Value>
             <TableComponent.Value>{saida.requisitante}</TableComponent.Value>
             <TableComponent.Value>{saida.area}</TableComponent.Value>
-            <TableComponent.Value>
-              <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
-                Detalhes
-              </Button>
-            </TableComponent.Value>
-
-            {/* <Dialog>
+            <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
                   Detalhes
@@ -58,14 +53,13 @@ export default function ExitsHistory() {
               <DialogContent className="sm:max-w-7xl">
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do usuário ou
-                    o botão para remover
+                    Detalhes da Saída:
                   </DialogTitle>
-                  <UserEdit user={user} />
+                  {/* <DetailExit exit={saida}/> */}
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>
-            </Dialog> */}
+            </Dialog>
           </TableComponent.Line>
         ))}
       </TableComponent.Table>

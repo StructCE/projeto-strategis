@@ -1,12 +1,21 @@
 import { Button } from "~/components/ui/button";
 import { requisicoes } from "../exitsData";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import { DetailRequisition } from "./detailRequisition/detailRequisition";
 
 export default function ManageExits() {
   return (
     <>
       <div>
-        <h1 className="text-4xl font-bold">Gerenciar Saídas</h1>
-        <h2 className="text-xl font-bold">Requisições pendentes</h2>
+        <h1 className="text-4xl">Gerenciar Saídas</h1>
+        <h2 className="text-xl">Requisições pendentes</h2>
         {requisicoes.map((req, index) => (
           <div
             key={index}
@@ -25,9 +34,26 @@ export default function ManageExits() {
               <p className="opacity-75">{req.descricao}</p>
             </div>
             <div className="flex items-center justify-end">
-              <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+              {/* <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
                 Gerenciar
-              </Button>
+              </Button> */}
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                    Detalhes
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-7xl">
+                  <DialogHeader>
+                    <DialogTitle className="pb-1.5">
+                      Detalhes da Requisição:
+                    </DialogTitle>
+                    <DetailRequisition requisition={req} manage={true} />
+                    <DialogDescription></DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         ))}
