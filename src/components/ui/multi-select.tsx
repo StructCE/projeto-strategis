@@ -74,7 +74,7 @@ interface MultiSelectProps
   onValueChange: (value: string[]) => void;
 
   /** The default selected values when the component mounts. */
-  defaultValue: string[];
+  defaultValue?: string[];
 
   /**
    * Placeholder text to be displayed when no values are selected.

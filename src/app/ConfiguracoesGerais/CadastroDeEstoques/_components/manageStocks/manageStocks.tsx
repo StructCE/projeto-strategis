@@ -1,3 +1,8 @@
+"use client";
+import { Search } from "lucide-react";
+import { useState } from "react";
+import { companies } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
+import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
 import {
@@ -10,25 +15,25 @@ import {
 } from "~/components/ui/dialog";
 import { stocks } from "../stockData";
 import { StockEdit } from "./editStocks/stockEdit";
-import ManageStocksFilters from "./manageStocksFilters/manageStocksFilters";
 
 export const ManageStocksTable = () => {
-  // metodo que coloca endereço do estoque em abreviação
-  const generateAbbreviationAddress = (address: string): string => {
-    const words = address.trim().split(/\s+/).filter(Boolean);
+  const [inputName, setInputName] = useState("");
+  const [selectCompany, setSelectCompany] = useState("");
 
-    // Se tiver apenas uma palavra, retorna apenas a primeira letra
-    if (words.length === 1) {
-      return words[0]?.[0]?.toUpperCase() ?? "";
-    }
+  const filteredStocks = stocks.filter((stock) => {
+    // Filtro por nome
+    const nameMatches = stock.name
+      .toLowerCase()
+      .includes(inputName.toLowerCase());
 
-    // Se tiver duas ou mais palavras, pega a primeira letra de cada uma
-    const abbreviation = words
-      .map((word) => word[0]?.toUpperCase() ?? "")
-      .join("");
+    // Filtro por empresa
+    const companyMatches = selectCompany
+      ? stock.company.value === selectCompany
+      : true;
 
-    return abbreviation;
-  };
+    // Retorna true se ambos os filtros forem atendidos
+    return nameMatches && companyMatches;
+  });
 
   return (
     <TableComponent>
@@ -36,18 +41,46 @@ export const ManageStocksTable = () => {
       <TableComponent.Subtitle>
         Selecione um estoque para editar ou remover
       </TableComponent.Subtitle>
+
       <TableComponent.FiltersLine>
-        <ManageStocksFilters />
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Input
+            placeholder="Nome"
+            state={inputName}
+            setState={setInputName}
+          />
+        </Filter>
+
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Select
+            placeholder="Empresa"
+            state={selectCompany}
+            setState={setSelectCompany}
+          >
+            {companies.map((company, index) => (
+              <Filter.SelectItems
+                value={company.value}
+                key={index}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
       </TableComponent.FiltersLine>
+
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[0.6fr_1.7fr_1fr_1fr_2fr_130px]">
-          <TableComponent.ValueTitle className="text-center">
-            Código
-          </TableComponent.ValueTitle>
+        <TableComponent.LineTitle className="grid-cols-[1.7fr_1fr_1fr_2fr_130px]">
           <TableComponent.ValueTitle>Nome</TableComponent.ValueTitle>
-          <TableComponent.ValueTitle className="text-center">
-            Sigla
-          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle>Sigla</TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center leading-6">
             Nome do <br />
             Responsável
@@ -58,37 +91,26 @@ export const ManageStocksTable = () => {
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {stocks.map((stock, index) => (
+
+        {filteredStocks.map((stock, index) => (
           <TableComponent.Line
-            className={`grid-cols-[0.6fr_1.7fr_1fr_1fr_2fr_130px] ${
+            className={`grid-cols-[1.7fr_1fr_1fr_2fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value className="text-center">
-              {stock.code}
-            </TableComponent.Value>
             <TableComponent.Value>{stock.name}</TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {stock.stock_address.map((address, index) => (
-                <span key={index}>
-                  {generateAbbreviationAddress(address.nameAddress)}
-                </span>
-              ))}
-              -
-              {stock.zone.map((zone, index) => (
-                <span key={index}>{zone.nameZone}</span>
-              ))}
-              -
-              {stock.shelf.map((shelf, index) => (
-                <span key={index}>{shelf.nameShelf}</span>
-              ))}
+            <TableComponent.Value>
+              {`${stock.name
+                .split(" ")
+                .map((word) => word.charAt(0).toUpperCase())
+                .join("")}-${stock.company.name.split(" ")[0]}`}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {stock.responsible_stock.name}
+              {stock.stock_representative.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {stock.responsible_stock.email}
+              {stock.stock_representative.email}
             </TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>

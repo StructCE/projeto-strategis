@@ -21,7 +21,7 @@ export default function GeneralParametersRegister() {
         <h1 className="mt-8 text-[32px] font-medium">
           Parâmetros Gerais de Estoques
         </h1>
-        <Places />
+        {/* <Places /> */}
         <Storages />
         <Shelves />
       </Accordion>

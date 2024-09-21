@@ -1,8 +1,8 @@
 "use client";
 import { CalendarIcon, Eraser, Search, Trash2, UserCog2 } from "lucide-react";
 import { useState } from "react";
+import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import {
-  Places,
   ProductCategories,
   SectorsOfUse,
   TypesOfControl,
@@ -228,16 +228,16 @@ export default function CreateInventory() {
               )}
             />
             <Filter.Select
-              placeholder="Local"
+              placeholder="Endereço"
               state={selectAddress}
               setState={setSelectAddress}
             >
-              {Places.map((place) =>
-                place.storages.map((storage) =>
-                  storage.shelves.map((shelf, index) => (
+              {stocks.map((stock) =>
+                stock.address.map((address) =>
+                  address.shelves.map((shelf, index) => (
                     <Filter.SelectItems
                       key={index}
-                      value={`${place.description}, ${storage.description}, ${shelf.description}`}
+                      value={`${stock.name}, ${address.description}, ${shelf.description}`}
                     ></Filter.SelectItems>
                   )),
                 ),

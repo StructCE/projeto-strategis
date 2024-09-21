@@ -1,296 +1,160 @@
-export type Role = {
+export type Company = {
   name: string;
   value: string;
 };
 
-export type ResponsibleStock = {
+export type StockRepresentative = {
   name: string;
-  role: Role;
+  role: string;
   email: string;
   phone: string;
 };
 
-export type Zone = {
-  nameZone: string;
-  value: string;
-};
-
 export type Shelf = {
-  nameShelf: string;
-  value: string;
+  description: string;
 };
 
-export type StockAddress = {
-  nameAddress: string;
-  value: string;
-};
-
-export type Company = {
-  nameCompany: string;
-  value: string;
+export type Storage = {
+  description: string;
+  shelves: Shelf[];
 };
 
 export type Stock = {
-  code: string;
   name: string;
   company: Company;
-  responsible_stock: ResponsibleStock;
-  stock_address: StockAddress[];
-  zone: Zone[];
-  shelf: Shelf[];
+  stock_representative: StockRepresentative;
+  address: Storage[];
 };
 
 export const stocks: Stock[] = [
   {
-    code: "001",
-    name: "Cerveja Pilsen",
-    company: {
-      nameCompany: "TechNova",
-      value: "TechNova",
-    },
-    stock_address: [
-      {
-        nameAddress: "Estoque Secos",
-        value: "Estoque Secos",
-      },
-    ],
-    zone: [
-      {
-        nameZone: "A001",
-        value: "A001",
-      },
-    ],
-    shelf: [
-      {
-        nameShelf: "P001",
-        value: "P001",
-      },
-    ],
-    responsible_stock: {
+    name: "Estoque Bar",
+    company: { name: "Alimentos WCW", value: "Alimentos WCW" },
+    stock_representative: {
       name: "Maria Silva",
-      role: { name: "Estoquista", value: "Estoquista" },
+      role: "Estoquista",
       email: "maria.silva@fornecedora.com",
       phone: "(11) 91234-5678",
     },
+    address: [
+      {
+        description: "Armário 1",
+        shelves: [
+          { description: "Prateleira 1" },
+          { description: "Prateleira 2" },
+        ],
+      },
+    ],
   },
   {
-    code: "002",
-    name: "Refrigerante Cola",
-    company: {
-      nameCompany: "Skyline Solutions",
-      value: "Skyline Solutions",
-    },
-    stock_address: [
-      {
-        nameAddress: "Bar",
-        value: "Bar",
-      },
-    ],
-    zone: [
-      {
-        nameZone: "A002",
-        value: "A002",
-      },
-    ],
-    shelf: [
-      {
-        nameShelf: "P002",
-        value: "P002",
-      },
-    ],
-    responsible_stock: {
+    name: "Estoque Cozinha",
+    company: { name: "TechNova Filial", value: "TechNova Filial" },
+    stock_representative: {
       name: "Carlos Pereira",
-      role: { name: "Operador", value: "Operador" },
+      role: "Operador",
       email: "carlos.pereira@distribuidora.com",
       phone: "(21) 92345-6789",
     },
+    address: [
+      {
+        description: "Armário 2",
+        shelves: [
+          { description: "Prateleira 3" },
+          { description: "Prateleira 4" },
+          { description: "Prateleira 5" },
+        ],
+      },
+    ],
   },
   {
-    code: "003",
-    name: "Água Mineral",
-    company: {
-      nameCompany: "Quantum Dynamics",
-      value: "Quantum Dynamics",
-    },
-    stock_address: [
-      {
-        nameAddress: "Estoque Secos",
-        value: "Estoque Secos",
-      },
-    ],
-    zone: [
-      {
-        nameZone: "A003",
-        value: "A003",
-      },
-    ],
-    shelf: [
-      {
-        nameShelf: "P003",
-        value: "P003",
-      },
-    ],
-    responsible_stock: {
+    name: "Estoque Salão",
+    company: { name: "Quantum Dynamics", value: "Quantum Dynamics" },
+    stock_representative: {
       name: "Juliana Costa",
-      role: { name: "Administrador", value: "Administrador" },
+      role: "Administrador",
       email: "juliana.costa@fornecedora.com",
       phone: "(31) 98765-4321",
     },
+    address: [
+      {
+        description: "Zona 1",
+        shelves: [{ description: "Prateleira 6" }],
+      },
+    ],
   },
   {
-    code: "004",
-    name: "Leite Integral",
+    name: "Estoque Geral",
     company: {
-      nameCompany: "Apex Innovations",
-      value: "Apex Innovations",
+      name: "Apex Innovations Filial",
+      value: "Apex Innovations Filial",
     },
-    stock_address: [
-      {
-        nameAddress: "Estoque Frio",
-        value: "Estoque Frio",
-      },
-    ],
-    zone: [
-      {
-        nameZone: "A004",
-        value: "A004",
-      },
-    ],
-    shelf: [
-      {
-        nameShelf: "P004",
-        value: "P004",
-      },
-    ],
-    responsible_stock: {
+    stock_representative: {
       name: "Rafael Souza",
-      role: { name: "Operador", value: "Operador" },
+      role: "Operador",
       email: "rafael.souza@logistica.com",
       phone: "(41) 91234-5678",
     },
+    address: [
+      {
+        description: "Zona 2",
+        shelves: [
+          { description: "Prateleira 7" },
+          { description: "Prateleira 8" },
+          { description: "Prateleira 9" },
+        ],
+      },
+    ],
   },
   {
-    code: "005",
-    name: "Achocolatado em Pó",
-    company: {
-      nameCompany: "FusionWare",
-      value: "FusionWare",
-    },
-    stock_address: [
-      {
-        nameAddress: "Estoque Frio",
-        value: "Estoque Frio",
-      },
-    ],
-    zone: [
-      {
-        nameZone: "A005",
-        value: "A005",
-      },
-    ],
-    shelf: [
-      {
-        nameShelf: "P005",
-        value: "P005",
-      },
-    ],
-    responsible_stock: {
+    name: "Estoque Padaria",
+    company: { name: "FusionWare", value: "FusionWare" },
+    stock_representative: {
       name: "Patricia Oliveira",
-      role: { name: "Requisitante", value: "Requisitante" },
+      role: "Requisitante",
       email: "patricia.oliveira@suprimentos.com",
       phone: "(51) 92345-6789",
     },
+    address: [
+      {
+        description: "Zona 3",
+        shelves: [
+          { description: "Prateleira 10" },
+          { description: "Prateleira 11" },
+        ],
+      },
+    ],
   },
 ];
 
-export const roles: Role[] = [
-  {
-    name: "Administrador",
-    value: "Administrador",
-  },
-  {
-    name: "Operador",
-    value: "Operador",
-  },
-  {
-    name: "Estoquista",
-    value: "Estoquista",
-  },
-  {
-    name: "Requisitante",
-    value: "Requisitante",
-  },
-  {
-    name: "Personalizado 1",
-    value: "Personalizado 1",
-  },
-];
-
-export const stockCompanies = [
-  { nome: "TechNova", value: "TechNova" },
-  { nome: "Skyline Solutions", value: "Skyline Solutions" },
-  { nome: "Quantum Dynamics", value: "Quantum Dynamics" },
-  { nome: "Apex Innovations", value: "Apex Innovations" },
-  { nome: "FusionWare", value: "FusionWare" },
-];
-
-export const zones = [
-  {
-    nome: "A001",
-    value: "A001",
-  },
-  {
-    nome: "A002",
-    value: "A002",
-  },
-  {
-    nome: "A003",
-    value: "A003",
-  },
-  {
-    nome: "A004",
-    value: "A004",
-  },
-  {
-    nome: "A005",
-    value: "A005",
-  },
-];
-
-export const shelfs = [
-  {
-    nome: "P001",
-    value: "P001",
-  },
-  {
-    nome: "P002",
-    value: "P002",
-  },
-  {
-    nome: "P003",
-    value: "P003",
-  },
-  {
-    nome: "P004",
-    value: "P004",
-  },
-  {
-    nome: "P005",
-    value: "P005",
-  },
-];
-
-export const stocksAddress = [
-  {
-    nome: "Estoque Secos",
-    value: "Estoque Secos",
-  },
-  {
-    nome: "Bar",
-    value: "Bar",
-  },
-  {
-    nome: "Estoque Frio",
-    value: "Estoque Frio",
-  },
+export const shelves = [
+  { value: "Prateleira 1", label: "Prateleira 1" },
+  { value: "Prateleira 2", label: "Prateleira 2" },
+  { value: "Prateleira 3", label: "Prateleira 3" },
+  { value: "Prateleira 4", label: "Prateleira 4" },
+  { value: "Prateleira 5", label: "Prateleira 5" },
+  { value: "Prateleira 6", label: "Prateleira 6" },
+  { value: "Prateleira 7", label: "Prateleira 7" },
+  { value: "Prateleira 8", label: "Prateleira 8" },
+  { value: "Prateleira 9", label: "Prateleira 9" },
+  { value: "Prateleira 10", label: "Prateleira 10" },
+  { value: "Prateleira 11", label: "Prateleira 11" },
+  { value: "Prateleira 12", label: "Prateleira 12" },
+  { value: "Prateleira 13", label: "Prateleira 13" },
+  { value: "Prateleira 14", label: "Prateleira 14" },
+  { value: "Prateleira 15", label: "Prateleira 15" },
+  { value: "Prateleira 16", label: "Prateleira 16" },
+  { value: "Prateleira 17", label: "Prateleira 17" },
+  { value: "Prateleira 18", label: "Prateleira 18" },
+  { value: "Prateleira 19", label: "Prateleira 19" },
+  { value: "Prateleira 20", label: "Prateleira 20" },
+  { value: "Prateleira 21", label: "Prateleira 21" },
+  { value: "Prateleira 22", label: "Prateleira 22" },
+  { value: "Prateleira 23", label: "Prateleira 23" },
+  { value: "Prateleira 24", label: "Prateleira 24" },
+  { value: "Prateleira 25", label: "Prateleira 25" },
+  { value: "Prateleira 26", label: "Prateleira 26" },
+  { value: "Prateleira 27", label: "Prateleira 27" },
+  { value: "Prateleira 28", label: "Prateleira 28" },
+  { value: "Prateleira 29", label: "Prateleira 29" },
+  { value: "Prateleira 30", label: "Prateleira 30" },
 ];

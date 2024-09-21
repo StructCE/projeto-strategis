@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { type Stock } from "../../stockData";
 import {
@@ -11,32 +12,26 @@ export const useStockForm = (stock: Stock) => {
     resolver: zodResolver(editStockFormSchema),
     mode: "onChange",
     defaultValues: {
-      code: stock.code,
       name: stock.name,
-      company: stock.company.nameCompany,
-      stockAddress: stock.stock_address.map((stock_Address) => ({
-        nameStockAddress: stock_Address.nameAddress,
-        value: stock_Address.value,
-      })),
-      zone: stock.zone.map((zone) => ({
-        nameZone: zone.nameZone,
-        value: zone.value,
-      })),
-      shelf: stock.shelf.map((shelf) => ({
-        nameShelf: shelf.nameShelf,
-        value: shelf.value,
-      })),
-      stockRepresentative: {
-        name: stock.responsible_stock.name,
-        role: stock.responsible_stock.role.value,
-        email: stock.responsible_stock.email,
-        phone: stock.responsible_stock.phone,
+      company: stock.company.name,
+      stock_representative: {
+        name: stock.stock_representative.name,
+        role: stock.stock_representative.role,
+        email: stock.stock_representative.email,
+        phone: stock.stock_representative.phone,
       },
+      address: stock.address.map((address) => ({
+        storage: address.description,
+        shelves: address.shelves.map((shelf) => shelf.description),
+      })),
     },
   });
+
+  const [selectedStorages, setSelectedStorages] = useState<string[]>([]);
+
   const fieldArray = useFieldArray({
     control: form.control,
-    name: "stockAddress",
+    name: "address",
   });
 
   function onSubmitEdit(data: EditStockFormValues) {
@@ -53,7 +48,10 @@ export const useStockForm = (stock: Stock) => {
     form,
     onSubmitEdit,
     onSubmitRemove,
+    selectedStorages,
+    setSelectedStorages,
     fieldsArray: fieldArray.fields,
     arrayRemove: fieldArray.remove,
+    arrayAppend: fieldArray.append,
   };
 };
