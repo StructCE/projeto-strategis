@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -17,15 +18,12 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import {
-  Places,
   ProductCategories,
   products,
   SectorsOfUse,
-  status,
   suppliers,
   TypesOfControl,
   units,
-  weekDays,
   type Product,
 } from "../../productsData";
 import { useProductForm } from "./useProductForm";
@@ -37,29 +35,24 @@ type ProductEditForm = {
 export const ProductEdit = (props: ProductEditForm) => {
   const productEditForm = useProductForm(props.product);
 
-  // Filtra os armários/zonas com base no local selecionado
-  const [selectedPlace, setSelectedPlace] = useState<string>(
-    productEditForm.form.getValues("address.place"),
+  const [selectedStock, setSelectedStock] = useState(
+    props.product.address.stock,
   );
-  const filteredStorages = selectedPlace
-    ? (Places.find((place) => place.description === selectedPlace)?.storages ??
-      [])
+  const [selectedStorage, setSelectedStorage] = useState(
+    props.product.address.storage,
+  );
+
+  // Filtra os armários/zona com base no estoque selecionado
+  const filteredStorages = selectedStock
+    ? (stocks.find((stock) => stock.name === selectedStock)?.address ?? [])
     : [];
 
   // Filtra as prateleiras com base no armário/zona selecionado
-  const [selectedStorage, setSelectedStorage] = useState<string>(
-    productEditForm.form.getValues("address.storage"),
-  );
   const filteredShelves = selectedStorage
     ? (filteredStorages.find(
         (storage) => storage.description === selectedStorage,
       )?.shelves ?? [])
     : [];
-
-  useEffect(() => {
-    setSelectedPlace(productEditForm.form.getValues("address.place"));
-    setSelectedStorage(productEditForm.form.getValues("address.storage"));
-  }, [productEditForm.form]);
 
   return (
     <Form {...productEditForm.form}>
@@ -113,7 +106,9 @@ export const ProductEdit = (props: ProductEditForm) => {
                 )}
               />
             </FormComponent.Frame>
+          </FormComponent.Line>
 
+          <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Status</FormComponent.Label>
               <FormField
@@ -131,11 +126,8 @@ export const ProductEdit = (props: ProductEditForm) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {status.map((status, index) => (
-                          <SelectItem value={status.description} key={index}>
-                            {status.description}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="Ativo">Ativo</SelectItem>
+                        <SelectItem value="Inativo">Inativo</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -166,6 +158,37 @@ export const ProductEdit = (props: ProductEditForm) => {
                             {product.name}
                           </SelectItem>
                         ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>Compra/Produção</FormComponent.Label>
+              <FormField
+                control={productEditForm.form.control}
+                name="buy_or_production"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                          <SelectValue placeholder="Selecione se o produto é de compra ou produção" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Produto de Compra">
+                          Produto de Compra
+                        </SelectItem>
+                        <SelectItem value="Produto de Produção">
+                          Produto de Produção
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -245,11 +268,16 @@ export const ProductEdit = (props: ProductEditForm) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {weekDays.map((day_of_week, index) => (
-                          <SelectItem value={day_of_week.day} key={index}>
-                            {day_of_week.day}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="Segunda">Segunda</SelectItem>
+                        <SelectItem value="Terça">Terça</SelectItem>
+                        <SelectItem value="Quarta">Quarta</SelectItem>
+                        <SelectItem value="Quinta">Quinta</SelectItem>
+                        <SelectItem value="Sexta">Sexta</SelectItem>
+                        <SelectItem value="Sábado">Sábado</SelectItem>
+                        <SelectItem value="Domingo">Domingo</SelectItem>
+                        <SelectItem value="Qualquer dia">
+                          Qualquer dia
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -415,29 +443,29 @@ export const ProductEdit = (props: ProductEditForm) => {
 
           <FormComponent.Line>
             <FormComponent.Frame>
-              <FormComponent.Label>Local</FormComponent.Label>
+              <FormComponent.Label>Estoque</FormComponent.Label>
               <FormField
                 control={productEditForm.form.control}
-                name="address.place"
+                name="address.stock"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={(value) => {
-                        field.onChange(value);
-                        setSelectedPlace(value);
+                        setSelectedStock(value);
                         setSelectedStorage("");
+                        field.onChange(value);
                       }}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione o local do produto" />
+                          <SelectValue placeholder="Selecione o estoque do produto" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Places.map((place, index) => (
-                          <SelectItem value={place.description} key={index}>
-                            {place.description}
+                        {stocks.map((stock, index) => (
+                          <SelectItem value={stock.name} key={index}>
+                            {stock.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -457,8 +485,8 @@ export const ProductEdit = (props: ProductEditForm) => {
                   <FormItem>
                     <Select
                       onValueChange={(value) => {
-                        field.onChange(value);
                         setSelectedStorage(value);
+                        field.onChange(value);
                       }}
                       defaultValue={field.value}
                     >
@@ -514,7 +542,7 @@ export const ProductEdit = (props: ProductEditForm) => {
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Usuário
+              Editar Produto
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
@@ -522,7 +550,7 @@ export const ProductEdit = (props: ProductEditForm) => {
                 productEditForm.onSubmitRemove,
               )}
             >
-              Remover Usuário
+              Remover Produto
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

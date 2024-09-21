@@ -13,6 +13,7 @@ export const useProductForm = () => {
       name: "",
       status: "",
       suppliers: [],
+      buy_or_production: "",
       buy_unit: "",
       buy_quantity: "",
       buy_day: "",
@@ -22,7 +23,7 @@ export const useProductForm = () => {
       type_of_control: "",
       product_category: "",
       sector_of_use: "",
-      address: { place: "", storage: "", shelf: "" },
+      address: { stock: "", storage: "", shelf: "" },
     },
   });
 
