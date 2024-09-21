@@ -3,7 +3,7 @@ export type Company = {
   value: string;
 };
 
-export type StockRepresentative = {
+export type StockManager = {
   name: string;
   role: string;
   email: string;
@@ -22,7 +22,7 @@ export type Storage = {
 export type Stock = {
   name: string;
   company: Company;
-  stock_representative: StockRepresentative;
+  stock_manager: StockManager;
   address: Storage[];
 };
 
@@ -30,7 +30,7 @@ export const stocks: Stock[] = [
   {
     name: "Estoque Bar",
     company: { name: "Alimentos WCW", value: "Alimentos WCW" },
-    stock_representative: {
+    stock_manager: {
       name: "Maria Silva",
       role: "Estoquista",
       email: "maria.silva@fornecedora.com",
@@ -49,7 +49,7 @@ export const stocks: Stock[] = [
   {
     name: "Estoque Cozinha",
     company: { name: "TechNova Filial", value: "TechNova Filial" },
-    stock_representative: {
+    stock_manager: {
       name: "Carlos Pereira",
       role: "Operador",
       email: "carlos.pereira@distribuidora.com",
@@ -69,7 +69,7 @@ export const stocks: Stock[] = [
   {
     name: "Estoque Salão",
     company: { name: "Quantum Dynamics", value: "Quantum Dynamics" },
-    stock_representative: {
+    stock_manager: {
       name: "Juliana Costa",
       role: "Administrador",
       email: "juliana.costa@fornecedora.com",
@@ -88,7 +88,7 @@ export const stocks: Stock[] = [
       name: "Apex Innovations Filial",
       value: "Apex Innovations Filial",
     },
-    stock_representative: {
+    stock_manager: {
       name: "Rafael Souza",
       role: "Operador",
       email: "rafael.souza@logistica.com",
@@ -108,7 +108,7 @@ export const stocks: Stock[] = [
   {
     name: "Estoque Padaria",
     company: { name: "FusionWare", value: "FusionWare" },
-    stock_representative: {
+    stock_manager: {
       name: "Patricia Oliveira",
       role: "Requisitante",
       email: "patricia.oliveira@suprimentos.com",

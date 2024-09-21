@@ -1,5 +1,5 @@
 "use client";
-import { Search } from "lucide-react";
+import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
 import { companies } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { Filter } from "~/components/filter";
@@ -13,26 +13,34 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { stocks } from "../stockData";
 import { StockEdit } from "./editStocks/stockEdit";
 
 export const ManageStocksTable = () => {
-  const [inputName, setInputName] = useState("");
+  const [inputStockName, setInputStockName] = useState("");
+  const [inputManagerName, setInputManagerName] = useState("");
   const [selectCompany, setSelectCompany] = useState("");
 
   const filteredStocks = stocks.filter((stock) => {
-    // Filtro por nome
-    const nameMatches = stock.name
+    const stockNameMatches = stock.name
       .toLowerCase()
-      .includes(inputName.toLowerCase());
+      .includes(inputStockName.toLowerCase());
 
-    // Filtro por empresa
     const companyMatches = selectCompany
       ? stock.company.value === selectCompany
       : true;
 
-    // Retorna true se ambos os filtros forem atendidos
-    return nameMatches && companyMatches;
+    const managerNameMatches = stock.stock_manager.name
+      .toLowerCase()
+      .includes(inputManagerName.toLowerCase());
+
+    return stockNameMatches && companyMatches && managerNameMatches;
   });
 
   return (
@@ -50,9 +58,9 @@ export const ManageStocksTable = () => {
             )}
           />
           <Filter.Input
-            placeholder="Nome"
-            state={inputName}
-            setState={setInputName}
+            placeholder="Nome do estoque"
+            state={inputStockName}
+            setState={setInputStockName}
           />
         </Filter>
 
@@ -75,6 +83,37 @@ export const ManageStocksTable = () => {
             ))}
           </Filter.Select>
         </Filter>
+
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Input
+            placeholder="Nome do responsável"
+            state={inputManagerName}
+            setState={setInputManagerName}
+          />
+        </Filter>
+
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger className="flex h-full cursor-pointer self-center">
+              <Eraser
+                size={20}
+                onClick={() => {
+                  setInputStockName("");
+                  setSelectCompany("");
+                  setInputManagerName("");
+                }}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Limpar filtros</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
@@ -107,10 +146,10 @@ export const ManageStocksTable = () => {
                 .join("")}-${stock.company.name.split(" ")[0]}`}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {stock.stock_representative.name}
+              {stock.stock_manager.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {stock.stock_representative.email}
+              {stock.stock_manager.email}
             </TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>

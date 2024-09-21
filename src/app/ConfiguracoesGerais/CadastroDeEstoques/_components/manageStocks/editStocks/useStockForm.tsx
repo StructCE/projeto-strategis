@@ -14,11 +14,11 @@ export const useStockForm = (stock: Stock) => {
     defaultValues: {
       name: stock.name,
       company: stock.company.name,
-      stock_representative: {
-        name: stock.stock_representative.name,
-        role: stock.stock_representative.role,
-        email: stock.stock_representative.email,
-        phone: stock.stock_representative.phone,
+      stock_manager: {
+        name: stock.stock_manager.name,
+        role: stock.stock_manager.role,
+        email: stock.stock_manager.email,
+        phone: stock.stock_manager.phone,
       },
       address: stock.address.map((address) => ({
         storage: address.description,

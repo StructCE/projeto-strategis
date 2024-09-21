@@ -90,7 +90,7 @@ export const StockEdit = (props: StockEditProps) => {
                 <FormComponent.Label>Nome</FormComponent.Label>
                 <FormField
                   control={stockForm.form.control}
-                  name={`stock_representative.name`}
+                  name={`stock_manager.name`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -110,7 +110,7 @@ export const StockEdit = (props: StockEditProps) => {
                 <FormComponent.Label>Cargo</FormComponent.Label>
                 <FormField
                   control={stockForm.form.control}
-                  name={`stock_representative.role`}
+                  name={`stock_manager.role`}
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -140,7 +140,7 @@ export const StockEdit = (props: StockEditProps) => {
                 <FormComponent.Label>Email</FormComponent.Label>
                 <FormField
                   control={stockForm.form.control}
-                  name={`stock_representative.email`}
+                  name={`stock_manager.email`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -160,7 +160,7 @@ export const StockEdit = (props: StockEditProps) => {
                 <FormComponent.Label>Telefone</FormComponent.Label>
                 <FormField
                   control={stockForm.form.control}
-                  name={`stock_representative.phone`}
+                  name={`stock_manager.phone`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>

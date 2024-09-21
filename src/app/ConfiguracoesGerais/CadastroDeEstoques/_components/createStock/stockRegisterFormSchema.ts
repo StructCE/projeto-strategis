@@ -7,7 +7,7 @@ const AddressSchema = z.object({
   shelves: z.array(z.string()),
 });
 
-const StockRepresentativeSchema = {
+const StockManagerSchema = {
   name: z
     .string({
       required_error: "Por favor digite o nome do responsável.",
@@ -61,7 +61,7 @@ export const createStockFormSchema = z.object({
     })
     .min(1, { message: "Por favor selecione uma empresa do estoque" }),
 
-  stock_representative: z.object(StockRepresentativeSchema).optional(),
+  stock_manager: z.object(StockManagerSchema).optional(),
 
   address: z.array(AddressSchema).min(1),
 });

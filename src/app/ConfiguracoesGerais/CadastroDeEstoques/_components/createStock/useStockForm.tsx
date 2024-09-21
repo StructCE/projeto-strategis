@@ -13,7 +13,7 @@ export const useStockForm = () => {
     defaultValues: {
       name: "",
       company: "",
-      stock_representative: { name: "", role: "", email: "", phone: "" },
+      stock_manager: { name: "", role: "", email: "", phone: "" },
       address: [{ storage: "", shelves: [] }],
     },
   });
