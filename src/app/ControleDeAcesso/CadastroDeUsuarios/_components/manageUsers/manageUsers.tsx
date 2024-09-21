@@ -59,7 +59,8 @@ export const ManageUsersTable = () => {
               </DialogContent>
             </Dialog>
           </TableComponent.Line>
-        ))}
+        ))
+        }
       </TableComponent.Table>
     </TableComponent>
   );
