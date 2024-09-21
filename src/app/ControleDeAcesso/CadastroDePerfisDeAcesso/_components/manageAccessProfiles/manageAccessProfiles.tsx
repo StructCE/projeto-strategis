@@ -1,5 +1,5 @@
 "use client";
-import { Search } from "lucide-react";
+import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -12,14 +12,33 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { roles } from "../accessProfileData";
+import { MultiSelect } from "~/components/ui/multi-select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import { modules, roles } from "../accessProfileData";
 import { AccessProfileEdit } from "./editAcessProfile/accessProfileEdit";
 
 export const ManageAccessProfilesTable = () => {
   const [inputName, setInputName] = useState("");
+  const [selectModules, setSelectModules] = useState<string[]>([]);
 
-  const filteredRoles = roles.filter((role) =>
-    role.name.toLowerCase().includes(inputName.toLowerCase()),
+  // Função para verificar se o cargo tem pelo menos um módulo selecionado
+  const roleMatchesSelectedModules = (
+    roleModules: { label: string; value: string }[],
+  ) => {
+    if (selectModules.length === 0) return true; // Se nenhum módulo foi selecionado, não filtrar por módulos
+    return roleModules.some((module) => selectModules.includes(module.value));
+  };
+
+  // Filtrar os cargos com base no nome e módulos selecionados
+  const filteredRoles = roles.filter(
+    (role) =>
+      role.name.toLowerCase().includes(inputName.toLowerCase()) && // Filtrar pelo nome do cargo
+      roleMatchesSelectedModules(role.modules), // Filtrar pelos módulos selecionados
   );
 
   return (
@@ -41,6 +60,36 @@ export const ManageAccessProfilesTable = () => {
             setState={setInputName}
           />
         </Filter>
+
+        <div className="font-inter font-regular m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
+          <MultiSelect
+            FilterIcon={Search}
+            options={modules} // Suas opções de módulos
+            onValueChange={setSelectModules} // Atualiza os módulos selecionados
+            defaultValue={selectModules}
+            placeholder="Módulos de acesso"
+            variant="inverted"
+            maxCount={2}
+            className="font-regular font-inter rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 text-left text-[16px] text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+          />
+        </div>
+
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger className="flex h-full cursor-pointer self-center">
+              <Eraser
+                size={20}
+                onClick={() => {
+                  setInputName("");
+                  setSelectModules([]);
+                }}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Limpar filtros</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
@@ -53,9 +102,7 @@ export const ManageAccessProfilesTable = () => {
         </TableComponent.LineTitle>
         {filteredRoles.map((role, index) => (
           <TableComponent.Line
-            className={`grid-cols-[1fr_3fr_130px] ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
+            className={`grid-cols-[1fr_3fr_130px] ${index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""}`}
             key={index}
           >
             <TableComponent.Value>{role.name}</TableComponent.Value>

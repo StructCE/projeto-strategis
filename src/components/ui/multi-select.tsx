@@ -2,6 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import {
   CheckIcon,
   ChevronDown,
+  Search,
   WandSparkles,
   XCircle,
   XIcon,
@@ -76,6 +77,8 @@ interface MultiSelectProps
   /** The default selected values when the component mounts. */
   defaultValue?: string[];
 
+  FilterIcon?: React.ComponentType<{ className?: string }>;
+
   /**
    * Placeholder text to be displayed when no values are selected.
    * Optional, defaults to "Select options".
@@ -118,6 +121,7 @@ export const MultiSelect = React.forwardRef<
       onValueChange,
       variant,
       defaultValue = [],
+      FilterIcon,
       placeholder = "Selecione uma ou mais opções",
       maxCount = 2,
       modalPopover = false,
@@ -259,8 +263,11 @@ export const MultiSelect = React.forwardRef<
                 </div>
               </div>
             ) : (
-              <div className="mx-auto flex w-full items-center justify-between">
-                <span className="mx-3 text-sm text-muted-foreground">
+              <div className="mx-auto flex w-full items-center justify-start lg:justify-between">
+                {FilterIcon && (
+                  <FilterIcon className="ml-3 size-[20px] stroke-[1.5px] lg:size-[18px]" />
+                )}
+                <span className="mx-3 w-full text-sm text-muted-foreground lg:w-auto">
                   {placeholder}
                 </span>
                 <ChevronDown className="mx-2 h-4 cursor-pointer text-muted-foreground" />
