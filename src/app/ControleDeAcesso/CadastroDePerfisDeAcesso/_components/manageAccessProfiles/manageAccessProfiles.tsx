@@ -70,7 +70,7 @@ export const ManageAccessProfilesTable = () => {
             placeholder="Módulos de acesso"
             variant="inverted"
             maxCount={2}
-            className="font-regular font-inter rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 text-left text-[16px] text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+            className="font-regular font-inter min-h-8 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
           />
         </div>
 

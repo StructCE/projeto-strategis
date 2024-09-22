@@ -1,6 +1,7 @@
 import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
+import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import {
   ProductCategories,
   SectorsOfUse,
@@ -18,6 +19,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
+import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -37,6 +39,7 @@ import { ProductEdit } from "./editProducts/productEdit";
 export default function ManageProductsTable() {
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
+  const [selectSuppliers, setSelectSuppliers] = useState<string[]>([]);
   const [selectStock, setSelectStock] = useState("");
   const [selectAddress, setSelectAddress] = useState("");
   const [selectControlType, setSelectControlType] = useState("");
@@ -48,6 +51,11 @@ export default function ManageProductsTable() {
     const matchesProduct =
       inputProduct === "" ||
       product.name.toLowerCase().includes(inputProduct.toLowerCase());
+    const matchesSupplier =
+      selectSuppliers.length === 0 ||
+      product.suppliers.some((supplier) =>
+        selectSuppliers.includes(supplier.name),
+      );
     const matchesStock =
       selectStock === "" ||
       `${product.address.stock}`
@@ -71,6 +79,7 @@ export default function ManageProductsTable() {
     return (
       matchesCode &&
       matchesProduct &&
+      matchesSupplier &&
       matchesStock &&
       matchesAddress &&
       matchesControlType &&
@@ -114,6 +123,42 @@ export default function ManageProductsTable() {
           />
         </Filter>
 
+        <div className="font-inter font-regular m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
+          <MultiSelect
+            FilterIcon={Search}
+            options={suppliers.flatMap((supplier) => ({
+              label: supplier.name,
+              value: supplier.name,
+            }))}
+            onValueChange={setSelectSuppliers}
+            defaultValue={selectSuppliers}
+            placeholder="Fornecedores"
+            variant="inverted"
+            maxCount={2}
+            className="font-regular font-inter min-h-8 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+          />
+        </div>
+
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger className="flex h-full cursor-pointer self-center">
+              <Eraser
+                size={20}
+                onClick={() => {
+                  setInputCode("");
+                  setInputProduct("");
+                  setSelectSuppliers([]);
+                }}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Limpar filtros</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </TableComponent.FiltersLine>
+
+      <TableComponent.FiltersLine>
         <Filter>
           <Filter.Icon
             icon={({ className }: { className: string }) => (
@@ -236,8 +281,6 @@ export default function ManageProductsTable() {
               <Eraser
                 size={20}
                 onClick={() => {
-                  setInputCode("");
-                  setInputProduct("");
                   setSelectStock("");
                   setSelectAddress("");
                   setSelectControlType("");
