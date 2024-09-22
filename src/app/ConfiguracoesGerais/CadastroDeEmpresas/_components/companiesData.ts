@@ -14,6 +14,10 @@ type Supplier = {
   name: string;
 };
 
+type Stock = {
+  name: string;
+};
+
 export type Company = {
   name: string;
   cnpj: string;
@@ -33,6 +37,7 @@ export type Company = {
   xmlFilePath: string;
   registered_products: number;
   low_stock_products: number;
+  stocks: Stock[];
 };
 
 export const companies: Company[] = [
@@ -63,6 +68,7 @@ export const companies: Company[] = [
       phone: "(11) 91234-5678",
     },
     xmlFilePath: "/caminho/arquivo.xml",
+    stocks: [{ name: "Estoque Bar" }, { name: "Estoque Cozinha" }],
   },
   {
     name: "TechNova Matriz",
@@ -87,6 +93,11 @@ export const companies: Company[] = [
       phone: "(21) 98765-4321",
     },
     xmlFilePath: "/caminho/arquivo2.xml",
+    stocks: [
+      { name: "Estoque Bar" },
+      { name: "Estoque Cozinha" },
+      { name: "Estoque Salão" },
+    ],
   },
   {
     name: "TechNova Filial",
@@ -115,6 +126,11 @@ export const companies: Company[] = [
       phone: "(21) 98765-4321",
     },
     xmlFilePath: "/caminho/arquivo2.xml",
+    stocks: [
+      { name: "Estoque Bar" },
+      { name: "Estoque Cozinha" },
+      { name: "Estoque Salão" },
+    ],
   },
   {
     name: "Quantum Dynamics",
@@ -139,6 +155,7 @@ export const companies: Company[] = [
       phone: "(31) 99876-5432",
     },
     xmlFilePath: "/caminho/arquivo3.xml",
+    stocks: [{ name: "Estoque Bar" }, { name: "Estoque Cozinha" }],
   },
   {
     name: "Apex Innovations Matriz",
@@ -163,6 +180,7 @@ export const companies: Company[] = [
       phone: "(41) 90987-6543",
     },
     xmlFilePath: "/caminho/arquivo4.xml",
+    stocks: [{ name: "Estoque Bar" }],
   },
   {
     name: "Apex Innovations Filial",
@@ -191,6 +209,11 @@ export const companies: Company[] = [
       phone: "(41) 90987-6543",
     },
     xmlFilePath: "/caminho/arquivo4.xml",
+    stocks: [
+      { name: "Estoque Bar" },
+      { name: "Estoque Cozinha" },
+      { name: "Estoque Salão" },
+    ],
   },
   {
     name: "FusionWare",
@@ -215,5 +238,10 @@ export const companies: Company[] = [
       phone: "(51) 99876-1234",
     },
     xmlFilePath: "/caminho/arquivo5.xml",
+    stocks: [
+      { name: "Estoque Bar" },
+      { name: "Estoque Cozinha" },
+      { name: "Estoque Salão" },
+    ],
   },
 ];

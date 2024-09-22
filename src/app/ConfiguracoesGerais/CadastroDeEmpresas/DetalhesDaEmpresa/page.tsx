@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import LoadingPage from "~/app/loading";
 import { companies, type Company } from "../_components/companiesData";
 import { CompanyEdit } from "./_components/manageDetailsCompany/editCompany/companyEdit";
+import { ManageStocksTableFromComapany } from "./_components/manageDetailsCompany/manageStocksFromCompany";
 import { ManageSuppliersTableFromComapany } from "./_components/manageDetailsCompany/manageSupplierFromCompany";
 import { ManageUsersTableFromCompany } from "./_components/manageDetailsCompany/manageUsersFromCompany";
 
@@ -49,10 +50,12 @@ export default function DetalhesDaEmpresa() {
           xmlFilePath: "",
           registered_products: 0,
           low_stock_products: 0,
+          stocks: company.stocks.map((stock) => ({ name: stock.name })),
         }}
       />
       <ManageUsersTableFromCompany company={company.name} />
-      <ManageSuppliersTableFromComapany />
+      <ManageSuppliersTableFromComapany company={company} />
+      <ManageStocksTableFromComapany company={company} />
     </div>
   );
 }

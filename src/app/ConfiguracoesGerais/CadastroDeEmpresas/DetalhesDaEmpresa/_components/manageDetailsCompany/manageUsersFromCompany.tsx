@@ -1,15 +1,12 @@
+import { Trash2 } from "lucide-react";
 import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { TableComponent } from "~/components/table";
-import { Button } from "~/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
-import { UserEdit } from "../../../../../ControleDeAcesso/CadastroDeUsuarios/_components/manageUsers/editUsers/userEdit";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 
 type ManageUsersTableFromCompanyProps = {
   company: string;
@@ -28,7 +25,7 @@ export const ManageUsersTableFromCompany = ({
       </TableComponent.Subtitle>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[repeat(4,_1fr)_130px]">
+        <TableComponent.LineTitle className="grid-cols-[repeat(4,_1fr)_30px]">
           <TableComponent.ValueTitle>Nome</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Email</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Empresa</TableComponent.ValueTitle>
@@ -37,7 +34,7 @@ export const ManageUsersTableFromCompany = ({
         </TableComponent.LineTitle>
         {filteredUsers.map((user, index) => (
           <TableComponent.Line
-            className={`grid-cols-[repeat(4,_1fr)_130px] ${
+            className={`grid-cols-[repeat(4,_1fr)_30px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -46,23 +43,27 @@ export const ManageUsersTableFromCompany = ({
             <TableComponent.Value>{user.email}</TableComponent.Value>
             <TableComponent.Value>{user.company}</TableComponent.Value>
             <TableComponent.Value>{user.role}</TableComponent.Value>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-7xl">
-                <DialogHeader>
-                  <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do usuário ou
-                    o botão para remover o usuário da empresa
-                  </DialogTitle>
-                  <UserEdit user={user} />
-                  <DialogDescription></DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+
+            <TooltipProvider delayDuration={300}>
+              <Tooltip>
+                <TooltipTrigger className="m-1 flex justify-end">
+                  <button
+                    onClick={() =>
+                      console.log(
+                        "Remover ligação entre esse usuário e essa empresa",
+                      )
+                    }
+                    className="text-black"
+                    type="button"
+                  >
+                    <Trash2 />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p>Remover</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </TableComponent.Line>
         ))}
       </TableComponent.Table>
