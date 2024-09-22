@@ -105,19 +105,19 @@ export const SectorsOfUse = [
 export type Unit = {
   description: string;
   abbreviation: string;
+  unitsPerPack: number;
 };
 
-export const units = [
-  { description: "Kilograma", abbreviation: "KG" },
-  { description: "Litro", abbreviation: "L" },
-  { description: "Grama", abbreviation: "G" },
-  { description: "Mililitro", abbreviation: "ML" },
-  { description: "Unidade", abbreviation: "UN" },
-  { description: "Pacote", abbreviation: "PCT" },
-  { description: "Caixa", abbreviation: "CX" },
-  { description: "Fardo", abbreviation: "FRD" },
-  { description: "Saco", abbreviation: "SC" },
-  { description: "Lata", abbreviation: "LT" },
+export const units: Unit[] = [
+  { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
+  { description: "Grama", abbreviation: "G", unitsPerPack: 1 },
+  { description: "Mililitro", abbreviation: "ML", unitsPerPack: 1 },
+  { description: "Unidade", abbreviation: "UN", unitsPerPack: 1 },
+  { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
+  { description: "Caixa", abbreviation: "CX", unitsPerPack: 24 },
+  { description: "Fardo", abbreviation: "FRD", unitsPerPack: 10 },
+  { description: "Saco", abbreviation: "SC", unitsPerPack: 20 },
+  { description: "Lata", abbreviation: "LT", unitsPerPack: 1 },
 ];
 
 export type AdjustmentReason = {

@@ -15,13 +15,16 @@ export const ManageUnitsTable = () => {
   return (
     <TableComponent>
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[1fr_2fr_130px]">
           <TableComponent.ValueTitle>Unidade</TableComponent.ValueTitle>
+          <TableComponent.ValueTitle>
+            Unidades por Pacote/Fardo
+          </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
         {units.map((unit, index) => (
           <TableComponent.Line
-            className={`grid-cols-[1fr_130px] ${
+            className={`grid-cols-[1fr_2fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -29,6 +32,9 @@ export const ManageUnitsTable = () => {
             <TableComponent.Value>
               {unit.description} ({unit.abbreviation})
             </TableComponent.Value>
+
+            <TableComponent.Value>{unit.unitsPerPack}</TableComponent.Value>
+
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
