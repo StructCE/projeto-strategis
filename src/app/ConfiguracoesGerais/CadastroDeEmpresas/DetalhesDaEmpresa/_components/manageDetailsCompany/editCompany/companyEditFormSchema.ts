@@ -48,13 +48,13 @@ export const editCompanyFormSchema = z.object({
     .string({ required_error: "CNPJ não pode ser vazio." })
     .min(14, { message: "São necessarios 14 dígitos." }),
 
-  fornecedores: z.array(z.string()),
+  suppliers: z.array(z.string()),
 
-  tipo_empresa: z.string({
+  company_type: z.string({
     required_error: "Por favor selecione o tipo da empresa.",
   }),
 
-  matriz_empresa: z
+  company_headquarters: z
     .object({
       name: z
         .string()
@@ -82,14 +82,14 @@ export const editCompanyFormSchema = z.object({
         "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
     }),
 
-  inscricao_estadual: z
+  state_registration: z
     .string({ required_error: "Campo obrigatório" })
     .min(9, { message: "Inscrição Estadual deve ter no minimo 9 caracteres" })
     .max(14, {
       message: "Inscrição Estadual deve ter no minimo 14 caracteres",
     }),
 
-  regime_tributario: z.string({
+  tax_regime: z.string({
     required_error: "Por favor selecione um regime tributário",
   }),
 
@@ -98,18 +98,18 @@ export const editCompanyFormSchema = z.object({
     .min(3, { message: "Endereço deve ter pelo menos 3 caracteres." })
     .max(60, { message: "Endereço deve ter no máximo 60 caracteres." }),
 
-  bairro: z
+  neighborhood: z
     .string({ required_error: "Campo obrigatório" })
-    .min(3, { message: "Endereço deve ter pelo menos 3 caracteres." })
+    .min(2, { message: "Endereço deve ter pelo menos 2 caracteres." })
     .max(25, { message: "Endereço deve ter no máximo 25 caracteres." }),
 
-  municipio: z
+  city: z
     .string({ required_error: "Campo obrigatório" })
     .min(3, { message: "Município deve ter pelo menos 3 caracteres." })
     .max(20, { message: "Município deve ter no máximo 20 caracteres." }),
 
-  uf: z.string({
-    required_error: "Por favor selecione uma UF",
+  state: z.string({
+    required_error: "Por favor selecione uma unidade federativa",
   }),
 
   cep: z
@@ -120,7 +120,7 @@ export const editCompanyFormSchema = z.object({
     required_error: "Coloque o endereço local dos arquivos XML",
   }),
 
-  legalRepresentative: z.object(legalRepresentativeSchema).optional(),
+  legal_representative: z.object(legalRepresentativeSchema).optional(),
 });
 
 export type EditCompanyFormValues = z.infer<typeof editCompanyFormSchema>;

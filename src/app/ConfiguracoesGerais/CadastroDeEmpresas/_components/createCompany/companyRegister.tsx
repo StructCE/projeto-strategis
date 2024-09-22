@@ -42,7 +42,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="empresa"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -82,7 +82,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Fornecedores</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="fornecedores"
+                name="suppliers"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -150,7 +150,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="inscricao_estadual"
+                name="state_registration"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -172,7 +172,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Tipo de Empresa</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="tipo_empresa"
+                name="company_type"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -202,7 +202,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Matriz da Empresa</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="matriz_empresa"
+                name="company_headquarters.name"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -234,7 +234,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Regime Tributário</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="regime_tributario"
+                name="tax_regime"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -243,7 +243,7 @@ export const CompanyRegister = () => {
                     >
                       <FormControl>
                         <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="LR/LP/SN" />
+                          <SelectValue placeholder="Selecione um tipo de regime tributário" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -290,7 +290,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Bairro</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="bairro"
+                name="neighborhood"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -310,7 +310,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Município</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="municipio"
+                name="city"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -329,7 +329,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="uf"
+                name="state"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -381,7 +381,7 @@ export const CompanyRegister = () => {
                 <FormComponent.Label>Nome</FormComponent.Label>
                 <FormField
                   control={companyForm.form.control}
-                  name={`legalRepresentative.name`}
+                  name={`legal_representative.name`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -401,7 +401,7 @@ export const CompanyRegister = () => {
                 <FormComponent.Label>Cargo</FormComponent.Label>
                 <FormField
                   control={companyForm.form.control}
-                  name={`legalRepresentative.role`}
+                  name={`legal_representative.role`}
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -431,7 +431,7 @@ export const CompanyRegister = () => {
                 <FormComponent.Label>Email</FormComponent.Label>
                 <FormField
                   control={companyForm.form.control}
-                  name={`legalRepresentative.email`}
+                  name={`legal_representative.email`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -451,7 +451,7 @@ export const CompanyRegister = () => {
                 <FormComponent.Label>Telefone</FormComponent.Label>
                 <FormField
                   control={companyForm.form.control}
-                  name={`legalRepresentative.phone`}
+                  name={`legal_representative.phone`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>

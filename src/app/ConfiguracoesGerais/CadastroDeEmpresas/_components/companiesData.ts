@@ -3,7 +3,7 @@ export type Role = {
   value: string;
 };
 
-export type LegalRepresentative = {
+export type legal_representative = {
   name: string;
   role: Role;
   email: string;
@@ -18,21 +18,20 @@ export type Company = {
   name: string;
   cnpj: string;
   suppliers: Supplier[];
-  tipo_empresa: "Matriz" | "Filial";
-  matriz_empresa?: { name: string; cnpj: string };
+  company_type: "Matriz" | "Filial";
+  company_headquarters?: { name: string; cnpj: string };
   email: string;
   phone: string;
-  endereco: string;
-  bairro: string;
-  municipio: string;
-  uf: string;
+  address: string;
+  neighborhood: string;
+  city: string;
+  state: string;
   cep: string;
-  inscricao_estadual: string;
-  regime_tributario: string;
-  legalRepresentative: LegalRepresentative;
+  state_registration: string;
+  tax_regime: string;
+  legal_representative: legal_representative;
   xmlFilePath: string;
   registered_products: number;
-  registered_suppliers: number;
   low_stock_products: number;
 };
 
@@ -45,20 +44,19 @@ export const companies: Company[] = [
       { name: "Fornecedor B" },
       { name: "Fornecedor C" },
     ],
-    tipo_empresa: "Matriz",
+    company_type: "Matriz",
     email: "contato@wcwalimentos.com",
     phone: "(11) 98765-4321",
-    endereco: "Rua das Flores, 123",
-    bairro: "Centro",
-    municipio: "São Paulo",
-    uf: "SP",
+    address: "Rua das Flores, 123",
+    neighborhood: "Centro",
+    city: "São Paulo",
+    state: "SP",
     cep: "01001-000",
-    inscricao_estadual: "123456789",
-    regime_tributario: "Lucro Real (LR)",
+    state_registration: "123456789",
+    tax_regime: "Lucro Real (LR)",
     registered_products: 10,
-    registered_suppliers: 15,
     low_stock_products: 10,
-    legalRepresentative: {
+    legal_representative: {
       name: "Maria Silva",
       role: { name: "Estoquista", value: "Estoquista" },
       email: "maria.silva@fornecedora.com",
@@ -70,20 +68,19 @@ export const companies: Company[] = [
     name: "TechNova Matriz",
     cnpj: "23.456.800/0001-01",
     suppliers: [{ name: "Fornecedor A" }],
-    tipo_empresa: "Matriz",
+    company_type: "Matriz",
     email: "contato@technovamatriz.com",
     phone: "(21) 91234-5678",
-    endereco: "Av. Paulista, 456",
-    bairro: "Bela Vista",
-    municipio: "São Paulo",
-    uf: "SP",
+    address: "Av. Paulista, 456",
+    neighborhood: "Bela Vista",
+    city: "São Paulo",
+    state: "SP",
     cep: "01311-200",
-    inscricao_estadual: "987654321",
-    regime_tributario: "Lucro Presumido (LP)",
+    state_registration: "987654321",
+    tax_regime: "Lucro Presumido (LP)",
     registered_products: 10,
-    registered_suppliers: 15,
     low_stock_products: 10,
-    legalRepresentative: {
+    legal_representative: {
       name: "João Pereira",
       role: { name: "Estoquista", value: "Estoquista" },
       email: "joao.martins@technovamatriz.com",
@@ -95,24 +92,23 @@ export const companies: Company[] = [
     name: "TechNova Filial",
     cnpj: "23.456.789/0001-01",
     suppliers: [{ name: "Fornecedor A" }, { name: "Fornecedor B" }],
-    tipo_empresa: "Filial",
-    matriz_empresa: {
+    company_type: "Filial",
+    company_headquarters: {
       name: "TechNova Matriz",
       cnpj: "23.456.800/0001-01",
     },
     email: "contato@technovafilial.com",
     phone: "(21) 91234-5678",
-    endereco: "Av. Paulista, 457",
-    bairro: "Bela Vista",
-    municipio: "São Paulo",
-    uf: "SP",
+    address: "Av. Paulista, 457",
+    neighborhood: "Bela Vista",
+    city: "São Paulo",
+    state: "SP",
     cep: "01311-200",
-    inscricao_estadual: "987654321",
-    regime_tributario: "Lucro Presumido (LP)",
+    state_registration: "987654321",
+    tax_regime: "Lucro Presumido (LP)",
     registered_products: 10,
-    registered_suppliers: 15,
     low_stock_products: 10,
-    legalRepresentative: {
+    legal_representative: {
       name: "João Pereira",
       role: { name: "Requisitante", value: "Requisitante" },
       email: "joao.pereira@technovafilial.com",
@@ -124,20 +120,19 @@ export const companies: Company[] = [
     name: "Quantum Dynamics",
     cnpj: "34.567.890/0001-12",
     suppliers: [{ name: "Fornecedor B" }],
-    tipo_empresa: "Matriz",
+    company_type: "Matriz",
     email: "contact@quantumdynamics.com",
     phone: "(31) 99876-5432",
-    endereco: "Rua dos Andrades, 789",
-    bairro: "Savassi",
-    municipio: "Belo Horizonte",
-    uf: "MG",
+    address: "Rua dos Andrades, 789",
+    neighborhood: "Savassi",
+    city: "Belo Horizonte",
+    state: "MG",
     cep: "30140-000",
-    inscricao_estadual: "123987456",
-    regime_tributario: "Simples Nacional (SN)",
+    state_registration: "123987456",
+    tax_regime: "Simples Nacional (SN)",
     registered_products: 10,
-    registered_suppliers: 15,
     low_stock_products: 10,
-    legalRepresentative: {
+    legal_representative: {
       name: "Carlos Andrade",
       role: { name: "Requisitante", value: "Requisitante" },
       email: "carlos.andrade@quantumdynamics.com",
@@ -149,20 +144,19 @@ export const companies: Company[] = [
     name: "Apex Innovations Matriz",
     cnpj: "45.678.900/0001-23",
     suppliers: [{ name: "Fornecedor B" }],
-    tipo_empresa: "Matriz",
+    company_type: "Matriz",
     email: "contato@apexfilial.com",
     phone: "(41) 90987-6543",
-    endereco: "Av. do Contorno, 158",
-    bairro: "Batel",
-    municipio: "Curitiba",
-    uf: "PR",
+    address: "Av. do Contorno, 158",
+    neighborhood: "Batel",
+    city: "Curitiba",
+    state: "PR",
     cep: "80420-000",
-    inscricao_estadual: "654321789",
-    regime_tributario: "Lucro Real (LR)",
+    state_registration: "654321789",
+    tax_regime: "Lucro Real (LR)",
     registered_products: 10,
-    registered_suppliers: 15,
     low_stock_products: 10,
-    legalRepresentative: {
+    legal_representative: {
       name: "Ana Costa",
       role: { name: "Estoquista", value: "Estoquista" },
       email: "ana.costa@apexmatriz.com",
@@ -174,24 +168,23 @@ export const companies: Company[] = [
     name: "Apex Innovations Filial",
     cnpj: "45.678.901/0001-23",
     suppliers: [{ name: "Fornecedor B" }],
-    tipo_empresa: "Filial",
-    matriz_empresa: {
+    company_type: "Filial",
+    company_headquarters: {
       name: "Apex Innovations Matriz",
       cnpj: "45.678.900/0001-23",
     },
     email: "contato@apexfilial.com",
     phone: "(41) 90987-6543",
-    endereco: "Av. do Contorno, 159",
-    bairro: "Batel",
-    municipio: "Curitiba",
-    uf: "PR",
+    address: "Av. do Contorno, 159",
+    neighborhood: "Batel",
+    city: "Curitiba",
+    state: "PR",
     cep: "80420-000",
-    inscricao_estadual: "654321789",
-    regime_tributario: "Lucro Real (LR)",
+    state_registration: "654321789",
+    tax_regime: "Lucro Real (LR)",
     registered_products: 10,
-    registered_suppliers: 15,
     low_stock_products: 10,
-    legalRepresentative: {
+    legal_representative: {
       name: "Ana Costa",
       role: { name: "Estoquista", value: "Estoquista" },
       email: "ana.costa@apexfilial.com",
@@ -203,20 +196,19 @@ export const companies: Company[] = [
     name: "FusionWare",
     cnpj: "56.789.012/0001-34",
     suppliers: [{ name: "Fornecedor C" }],
-    tipo_empresa: "Matriz",
+    company_type: "Matriz",
     email: "support@fusionware.com",
     phone: "(51) 99876-1234",
-    endereco: "Av. Ipiranga, 202",
-    bairro: "Cidade Baixa",
-    municipio: "Porto Alegre",
-    uf: "RS",
+    address: "Av. Ipiranga, 202",
+    neighborhood: "Cidade Baixa",
+    city: "Porto Alegre",
+    state: "RS",
     cep: "90050-000",
-    inscricao_estadual: "987123654",
-    regime_tributario: "Lucro Presumido (LP)",
+    state_registration: "987123654",
+    tax_regime: "Lucro Presumido (LP)",
     registered_products: 10,
-    registered_suppliers: 15,
     low_stock_products: 10,
-    legalRepresentative: {
+    legal_representative: {
       name: "Roberto Lima",
       role: { name: "Operador", value: "Operador" },
       email: "roberto.lima@fusionware.com",

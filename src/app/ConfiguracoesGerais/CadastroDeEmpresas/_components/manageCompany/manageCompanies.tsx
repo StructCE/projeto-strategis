@@ -26,9 +26,9 @@ export const ManageCompaniesTable = () => {
     const matchesName =
       inputName === "" ||
       company.name.toLowerCase().includes(inputName.toLowerCase());
-    const matchesState = selectState === "" || company.uf === selectState;
+    const matchesState = selectState === "" || company.state === selectState;
     const matchesTaxRegime =
-      selectTaxRegime === "" || company.regime_tributario === selectTaxRegime;
+      selectTaxRegime === "" || company.tax_regime === selectTaxRegime;
 
     return matchesCnpj && matchesName && matchesState && matchesTaxRegime;
   });
@@ -159,7 +159,7 @@ export const ManageCompaniesTable = () => {
               {company.registered_products}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {company.registered_suppliers}
+              {company.suppliers.length}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
               {company.low_stock_products}

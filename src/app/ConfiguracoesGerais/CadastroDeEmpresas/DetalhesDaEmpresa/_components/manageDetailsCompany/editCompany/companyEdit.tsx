@@ -36,7 +36,7 @@ type CompanyEditProps = {
 export const CompanyEdit = (props: CompanyEditProps) => {
   const editCompanyForm = useCompanyForm(props.company);
   const [companyType, setCompanyType] = useState<string>(
-    props.company.tipo_empresa,
+    props.company.company_type,
   );
 
   return (
@@ -98,7 +98,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Fornecedores</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="fornecedores"
+                name="suppliers"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -166,7 +166,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="inscricao_estadual"
+                name="state_registration"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -188,7 +188,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Tipo de Empresa</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="tipo_empresa"
+                name="company_type"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -218,12 +218,12 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Matriz da Empresa</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="matriz_empresa"
+                name="company_headquarters.name"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value?.name}
+                      defaultValue={field.value}
                       disabled={companyType !== "Filial"}
                     >
                       <FormControl>
@@ -249,7 +249,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Regime Tributário</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="regime_tributario"
+                name="tax_regime"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -258,7 +258,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                     >
                       <FormControl>
                         <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="LR/LP/SN" />
+                          <SelectValue placeholder="Selecione um tipo de regime tributário" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -305,7 +305,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Bairro</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="bairro"
+                name="neighborhood"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -325,7 +325,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Município</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="municipio"
+                name="city"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -344,7 +344,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="uf"
+                name="state"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -396,7 +396,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                 <FormComponent.Label>Nome</FormComponent.Label>
                 <FormField
                   control={editCompanyForm.form.control}
-                  name={`legalRepresentative.name`}
+                  name={`legal_representative.name`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -416,7 +416,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                 <FormComponent.Label>Cargo</FormComponent.Label>
                 <FormField
                   control={editCompanyForm.form.control}
-                  name={`legalRepresentative.role`}
+                  name={`legal_representative.role`}
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -446,7 +446,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                 <FormComponent.Label>Email</FormComponent.Label>
                 <FormField
                   control={editCompanyForm.form.control}
-                  name={`legalRepresentative.email`}
+                  name={`legal_representative.email`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -466,7 +466,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                 <FormComponent.Label>Telefone</FormComponent.Label>
                 <FormField
                   control={editCompanyForm.form.control}
-                  name={`legalRepresentative.phone`}
+                  name={`legal_representative.phone`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
