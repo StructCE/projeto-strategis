@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const supplierLegalRepresentativeSchema = z.object({
+const legalRepresentativeSchema = {
   name: z
     .string({
       required_error: "Por favor digite o nome do resposável.",
@@ -36,9 +36,9 @@ const supplierLegalRepresentativeSchema = z.object({
         "Número de telefone inválido. O formato correto é (XX) XXXXX-XXXX.",
     })
     .optional(),
-});
+};
 
-export const craeteCompanyFormSchema = z.object({
+export const createCompanyFormSchema = z.object({
   empresa: z
     .string({ required_error: "Por favor digite o nome." })
     .min(3, { message: "Nome da empresa deve ter pelo menos 3 caracteres." })
@@ -47,12 +47,15 @@ export const craeteCompanyFormSchema = z.object({
   cnpj: z
     .string({ required_error: "CNPJ não pode ser vazio." })
     .length(14, { message: "São necessarios 14 dígitos." }),
+
+  fornecedores: z.array(z.string()),
+
   tipo_empresa: z.string({
     required_error: "Por favor selecione o tipo da empresa.",
   }),
-  matriz_empresa: z.string({
-    required_error: "Por favor seleciona a matriz da empresa",
-  }),
+
+  matriz_empresa: z.string().optional(),
+
   email: z
     .string({
       required_error: "Por favor digite um email.",
@@ -60,6 +63,7 @@ export const craeteCompanyFormSchema = z.object({
     .email({
       message: "Email inválido.",
     }),
+
   phone: z
     .string({ required_error: "Por favor digite o telefone" })
     .min(8, {
@@ -70,65 +74,48 @@ export const craeteCompanyFormSchema = z.object({
       message:
         "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
     }),
+
   inscricao_estadual: z
     .string({ required_error: "Campo obrigatório" })
     .min(9, { message: "Inscrição Estadual deve ter no minimo 9 caracteres" })
     .max(14, {
-      message: "Inscrição Estadual deve ter no minimo 14 caracteres",
+      message: "Inscrição Estadual deve ter no máximo 14 caracteres",
     }),
+
   regime_tributario: z.string({
     required_error: "Por favor selecione um regime tributário",
   }),
+
   address: z
     .string({ required_error: "Campo obrigatório" })
     .min(3, { message: "Endereço deve ter pelo menos 3 caracteres." })
     .max(60, { message: "Endereço deve ter no máximo 60 caracteres." }),
+
   bairro: z
     .string({ required_error: "Campo obrigatório" })
     .min(3, { message: "Endereço deve ter pelo menos 3 caracteres." })
     .max(25, { message: "Endereço deve ter no máximo 25 caracteres." }),
+
   municipio: z
     .string({ required_error: "Campo obrigatório" })
     .min(3, { message: "Município deve ter pelo menos 3 caracteres." })
     .max(20, { message: "Município deve ter no máximo 20 caracteres." }),
+
   uf: z.string({
     required_error: "Por favor selecione uma UF",
   }),
+
   cep: z
     .string({ required_error: "CEP deve ser obrigatório." })
     .length(8, { message: "São necessarios 8 dígitos" }),
-  responsavel_legal: z
-    .string()
-    .min(3, {
-      message: "Nome do responsável deve ter pelo menos 3 caracteres.",
-    })
-    .max(40, {
-      message: "Nome do responsável deve ter no máximo 40 caracteres.",
-    }),
-  cargo: z.string({
-    required_error: "Por favor selecione um cargo.",
-  }),
-  email_responsavel_legal: z
+
+  address_file_XML: z
     .string({
-      required_error: "Por favor digite um email.",
+      required_error: "Coloque o endereço local dos arquivos XML",
     })
-    .email({
-      message: "Email inválido.",
-    }),
-  phone_responsavel_legal: z
-    .string()
-    .min(8, {
-      message:
-        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
-    })
-    .max(16, {
-      message:
-        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
-    }),
-  address_file_XML: z.string({
-    required_error: "Coloque o endereço local dos arquivos XML",
-  }),
-  legalRepresentative: z.array(supplierLegalRepresentativeSchema).optional(),
+    .optional(),
+
+  legalRepresentative: z.object(legalRepresentativeSchema).optional(),
 });
 
-export type CreateCompanyFormValues = z.infer<typeof craeteCompanyFormSchema>;
+export type CreateCompanyFormValues = z.infer<typeof createCompanyFormSchema>;

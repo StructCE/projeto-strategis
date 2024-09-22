@@ -1,5 +1,6 @@
 "use client";
 import { Upload } from "lucide-react";
+import { useState } from "react";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -9,7 +10,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-
+import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -18,19 +19,17 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import {
-  EmpresaMatriz,
-  RegimeTribuario,
-  TipoEmpresa,
-} from "../manageCompany/companiesData";
-import { useCompanies } from "./useCompaniesRegister";
-
-import {
   roles,
   states,
+  suppliers,
 } from "../../../CadastroDeFornecedores/_components/supplierData";
+import { companies } from "../companiesData";
+import { useCompanyForm } from "./useCompanyForm";
 
 export const CompanyRegister = () => {
-  const companyForm = useCompanies();
+  const companyForm = useCompanyForm();
+
+  const [companyType, setCompanyType] = useState<string>("");
 
   return (
     <Form {...companyForm.form}>
@@ -80,65 +79,32 @@ export const CompanyRegister = () => {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
-              <FormComponent.Label>Tipo de Empresa</FormComponent.Label>
+              <FormComponent.Label>Fornecedores</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="tipo_empresa"
+                name="fornecedores"
                 render={({ field }) => (
                   <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione um tipo" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {TipoEmpresa.map((tipo, index) => (
-                          <SelectItem value={tipo.value} key={index}>
-                            {tipo.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-
-            <FormComponent.Frame>
-              <FormComponent.Label>Matriz da Empresa</FormComponent.Label>
-              <FormField
-                control={companyForm.form.control}
-                name="matriz_empresa"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione uma matriz" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {EmpresaMatriz.map((matriz, index) => (
-                          <SelectItem value={matriz.value} key={index}>
-                            {matriz.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <MultiSelect
+                        options={suppliers.flatMap((supplier) => ({
+                          label: supplier.name,
+                          value: supplier.name,
+                        }))}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value ?? []}
+                        placeholder="Selecione um ou mais fornecedores"
+                        variant="inverted"
+                        maxCount={3}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </FormComponent.Frame>
           </FormComponent.Line>
+
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Email</FormComponent.Label>
@@ -199,6 +165,70 @@ export const CompanyRegister = () => {
                 )}
               />
             </FormComponent.Frame>
+          </FormComponent.Line>
+
+          <FormComponent.Line>
+            <FormComponent.Frame>
+              <FormComponent.Label>Tipo de Empresa</FormComponent.Label>
+              <FormField
+                control={companyForm.form.control}
+                name="tipo_empresa"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={(value) => {
+                        setCompanyType(value);
+                        field.onChange(value);
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                          <SelectValue placeholder="Selecione um tipo" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Matriz">Matriz</SelectItem>
+                        <SelectItem value="Filial">Filial</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>Matriz da Empresa</FormComponent.Label>
+              <FormField
+                control={companyForm.form.control}
+                name="matriz_empresa"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={companyType !== "Filial"}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                          <SelectValue placeholder="Selecione uma matriz" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {companyType === "Filial" &&
+                          companies.map((company, index) => (
+                            <SelectItem value={company.name} key={index}>
+                              {company.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
 
             <FormComponent.Frame>
               <FormComponent.Label>Regime Tributário</FormComponent.Label>
@@ -217,11 +247,15 @@ export const CompanyRegister = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {RegimeTribuario.map((regimeTribuario, index) => (
-                          <SelectItem value={regimeTribuario.value} key={index}>
-                            {regimeTribuario.tributo}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="Lucro Real (LR)">
+                          Lucro Real (LR)
+                        </SelectItem>
+                        <SelectItem value="Lucro Presumido (LP)">
+                          Lucro Presumido (LP)
+                        </SelectItem>
+                        <SelectItem value="Simples Nacional (SN)">
+                          Simples Nacional (SN)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -230,6 +264,7 @@ export const CompanyRegister = () => {
               />
             </FormComponent.Frame>
           </FormComponent.Line>
+
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Endereço</FormComponent.Label>
@@ -341,100 +376,99 @@ export const CompanyRegister = () => {
           </FormComponent.Line>
 
           <FormComponent.BoxSpecify boxName="Responsável Legal">
-            {companyForm.fieldsArray.map((contact, index) => (
-              <FormComponent.Line key={contact.id}>
-                <FormComponent.Frame>
-                  <FormComponent.Label>Nome</FormComponent.Label>
-                  <FormField
-                    control={companyForm.form.control}
-                    name={`legalRepresentative.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                            placeholder="Nome do Responsável Legal"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
+            <FormComponent.Line>
+              <FormComponent.Frame>
+                <FormComponent.Label>Nome</FormComponent.Label>
+                <FormField
+                  control={companyForm.form.control}
+                  name={`legalRepresentative.name`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                          placeholder="Nome do Responsável Legal"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
 
-                <FormComponent.Frame>
-                  <FormComponent.Label>Cargo</FormComponent.Label>
-                  <FormField
-                    control={companyForm.form.control}
-                    name={`legalRepresentative.${index}.role`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                              <SelectValue placeholder="Cargo" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {roles.map((role, i) => (
-                              <SelectItem value={role.value} key={i}>
-                                {role.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
-
-                <FormComponent.Frame>
-                  <FormComponent.Label>Email</FormComponent.Label>
-                  <FormField
-                    control={companyForm.form.control}
-                    name={`legalRepresentative.${index}.email`}
-                    render={({ field }) => (
-                      <FormItem>
+              <FormComponent.Frame>
+                <FormComponent.Label>Cargo</FormComponent.Label>
+                <FormField
+                  control={companyForm.form.control}
+                  name={`legalRepresentative.role`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
-                          <Input
-                            className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                            placeholder="email@email.com"
-                            {...field}
-                          />
+                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                            <SelectValue placeholder="Cargo" />
+                          </SelectTrigger>
                         </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
+                        <SelectContent>
+                          {roles.map((role, i) => (
+                            <SelectItem value={role.value} key={i}>
+                              {role.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
 
-                <FormComponent.Frame>
-                  <FormComponent.Label>Telefone</FormComponent.Label>
-                  <FormField
-                    control={companyForm.form.control}
-                    name={`legalRepresentative.${index}.phone`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                            placeholder="(XX) XXXXX-XXXX"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
-              </FormComponent.Line>
-            ))}
+              <FormComponent.Frame>
+                <FormComponent.Label>Email</FormComponent.Label>
+                <FormField
+                  control={companyForm.form.control}
+                  name={`legalRepresentative.email`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                          placeholder="email@email.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+
+              <FormComponent.Frame>
+                <FormComponent.Label>Telefone</FormComponent.Label>
+                <FormField
+                  control={companyForm.form.control}
+                  name={`legalRepresentative.phone`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                          placeholder="(XX) XXXXX-XXXX"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+            </FormComponent.Line>
           </FormComponent.BoxSpecify>
+
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>
@@ -462,8 +496,12 @@ export const CompanyRegister = () => {
               />
             </FormComponent.Frame>
           </FormComponent.Line>
+
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
+            <FormComponent.Button
+              className="bg-verde_botao hover:bg-hover_verde_botao"
+              handlePress={() => companyForm.onSubmit}
+            >
               Cadastrar Empresa
             </FormComponent.Button>
           </FormComponent.ButtonLayout>

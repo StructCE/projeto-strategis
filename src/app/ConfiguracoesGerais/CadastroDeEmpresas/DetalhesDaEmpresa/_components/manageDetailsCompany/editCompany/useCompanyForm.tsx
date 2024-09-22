@@ -1,45 +1,24 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { type Companies } from "../../../../_components/manageCompany/companiesData";
+import { useForm } from "react-hook-form";
+import { type Company } from "../../../../_components/companiesData";
 import {
   editCompanyFormSchema,
   type EditCompanyFormValues,
 } from "./companyEditFormSchema";
 
-const defaultCompany: Companies = {
-  empresa: "",
-  cnpj: "",
-  tipo_empresa: "Matriz",
-  matriz_empresa: [],
-  filial_empresa: [],
-  email: "",
-  phone: "",
-  endereco: "",
-  bairro: "",
-  municipio: "",
-  uf: "",
-  cep: "",
-  inscricao_estadual: "",
-  regime_tributario: "",
-  legalRepresentative: [],
-  xmlFilePath: "",
-  registered_products: 0,
-  registered_suppliers: 0,
-  low_stock_products: 0,
-};
-
-export const useCompanyForm = (company: Companies = defaultCompany) => {
+export const useCompanyForm = (company: Company) => {
   const form = useForm<EditCompanyFormValues>({
     resolver: zodResolver(editCompanyFormSchema),
     mode: "onChange",
     defaultValues: {
-      empresa: company.empresa,
+      name: company.name,
       cnpj: company.cnpj,
       tipo_empresa: company.tipo_empresa,
-      matriz_empresa:
-        company.tipo_empresa === "Matriz" ? (company.matriz_empresa ?? []) : [],
-      filial_empresa:
-        company.tipo_empresa === "Filial" ? (company.filial_empresa ?? []) : [],
+      fornecedores: company.suppliers.map((supplier) => supplier.name),
+      matriz_empresa: {
+        name: company.matriz_empresa?.name,
+        cnpj: company.matriz_empresa?.cnpj,
+      },
       email: company.email,
       phone: company.phone,
       address: company.endereco,
@@ -50,14 +29,12 @@ export const useCompanyForm = (company: Companies = defaultCompany) => {
       inscricao_estadual: company.inscricao_estadual,
       regime_tributario: company.regime_tributario,
       address_file_XML: company.xmlFilePath,
-      legalRepresentative: company.legalRepresentative.map(
-        (legalRepresentative) => ({
-          name: legalRepresentative.name,
-          role: legalRepresentative.role.value,
-          email: legalRepresentative.email,
-          phone: legalRepresentative.phone,
-        }),
-      ),
+      legalRepresentative: {
+        name: company.legalRepresentative.name,
+        role: company.legalRepresentative.role.value,
+        email: company.legalRepresentative.email,
+        phone: company.legalRepresentative.phone,
+      },
     },
   });
 
@@ -71,15 +48,9 @@ export const useCompanyForm = (company: Companies = defaultCompany) => {
     console.log(JSON.stringify(data, null, 2));
   }
 
-  const fieldArray = useFieldArray({
-    control: form.control,
-    name: "legalRepresentative",
-  });
-
   return {
     form,
     onSubmitEdit,
     onSubmitRemove,
-    fieldsArray: fieldArray.fields,
   };
 };

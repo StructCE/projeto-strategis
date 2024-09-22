@@ -1,5 +1,10 @@
 "use client";
 import { Upload } from "lucide-react";
+import { useState } from "react";
+import {
+  companies,
+  type Company,
+} from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/companiesData";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -9,6 +14,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -19,37 +25,40 @@ import {
 import {
   roles,
   states,
+  suppliers,
 } from "../../../../../CadastroDeFornecedores/_components/supplierData";
-import {
-  EmpresaMatriz,
-  RegimeTribuario,
-  TipoEmpresa,
-  type Companies,
-} from "../../../../_components/manageCompany/companiesData";
 import { useCompanyForm } from "./useCompanyForm";
 
 type CompanyEditProps = {
-  company: Companies;
+  company: Company;
 };
 
 export const CompanyEdit = (props: CompanyEditProps) => {
-  const form = useCompanyForm(props.company);
+  const editCompanyForm = useCompanyForm(props.company);
+  const [companyType, setCompanyType] = useState<string>(
+    props.company.tipo_empresa,
+  );
 
   return (
-    <Form {...form.form}>
-      <form onSubmit={form.form.handleSubmit(form.onSubmitEdit)}>
+    <Form {...editCompanyForm.form}>
+      <form
+        onSubmit={editCompanyForm.form.handleSubmit(
+          editCompanyForm.onSubmitEdit,
+        )}
+      >
         <FormComponent>
-          <FormComponent.Title>{props.company.empresa}</FormComponent.Title>
+          <FormComponent.Title>{props.company.name}</FormComponent.Title>
           <FormComponent.Label>
             Utilize os campos abaixo para editar os dados da empresa ou o botão
             para remover
           </FormComponent.Label>
+
           <FormComponent.Line>
             <FormComponent.Frame>
-              <FormComponent.Label>Nome da Empresa 1</FormComponent.Label>
+              <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
-                control={form.form.control}
-                name="empresa"
+                control={editCompanyForm.form.control}
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -68,7 +77,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>CNPJ</FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name="cnpj"
                 render={({ field }) => (
                   <FormItem>
@@ -86,70 +95,37 @@ export const CompanyEdit = (props: CompanyEditProps) => {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
-              <FormComponent.Label>Tipo de Empresa</FormComponent.Label>
+              <FormComponent.Label>Fornecedores</FormComponent.Label>
               <FormField
-                control={form.form.control}
-                name="tipo_empresa"
+                control={editCompanyForm.form.control}
+                name="fornecedores"
                 render={({ field }) => (
                   <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione um tipo" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {TipoEmpresa.map((tipo, index) => (
-                          <SelectItem value={tipo.value} key={index}>
-                            {tipo.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-
-            <FormComponent.Frame>
-              <FormComponent.Label>Matriz da Empresa</FormComponent.Label>
-              <FormField
-                control={form.form.control}
-                name="matriz_empresa"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      //defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione uma matriz" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {EmpresaMatriz.map((matriz, index) => (
-                          <SelectItem value={matriz.value} key={index}>
-                            {matriz.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <MultiSelect
+                        options={suppliers.flatMap((supplier) => ({
+                          label: supplier.name,
+                          value: supplier.name,
+                        }))}
+                        onValueChange={field.onChange}
+                        defaultValue={field.value ?? []}
+                        placeholder="Selecione um ou mais fornecedores"
+                        variant="inverted"
+                        maxCount={2}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </FormComponent.Frame>
           </FormComponent.Line>
+
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Email</FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -169,7 +145,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Telefone</FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
@@ -189,7 +165,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name="inscricao_estadual"
                 render={({ field }) => (
                   <FormItem>
@@ -205,11 +181,74 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                 )}
               />
             </FormComponent.Frame>
+          </FormComponent.Line>
+
+          <FormComponent.Line>
+            <FormComponent.Frame>
+              <FormComponent.Label>Tipo de Empresa</FormComponent.Label>
+              <FormField
+                control={editCompanyForm.form.control}
+                name="tipo_empresa"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={(value) => {
+                        setCompanyType(value);
+                        field.onChange(value);
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                          <SelectValue placeholder="Selecione um tipo" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Matriz">Matriz</SelectItem>
+                        <SelectItem value="Filial">Filial</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>Matriz da Empresa</FormComponent.Label>
+              <FormField
+                control={editCompanyForm.form.control}
+                name="matriz_empresa"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value?.name}
+                      disabled={companyType !== "Filial"}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                          <SelectValue placeholder="Selecione uma matriz" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {companies.map((company, index) => (
+                          <SelectItem value={company.name} key={index}>
+                            {company.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
 
             <FormComponent.Frame>
               <FormComponent.Label>Regime Tributário</FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name="regime_tributario"
                 render={({ field }) => (
                   <FormItem>
@@ -223,11 +262,15 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {RegimeTribuario.map((regimeTribuario, index) => (
-                          <SelectItem value={regimeTribuario.value} key={index}>
-                            {regimeTribuario.tributo}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="Lucro Real (LR)">
+                          Lucro Real (LR)
+                        </SelectItem>
+                        <SelectItem value="Lucro Presumido (LP)">
+                          Lucro Presumido (LP)
+                        </SelectItem>
+                        <SelectItem value="Simples Nacional (SN)">
+                          Simples Nacional (SN)
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -236,11 +279,12 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               />
             </FormComponent.Frame>
           </FormComponent.Line>
+
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Endereço</FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name="address"
                 render={({ field }) => (
                   <FormItem>
@@ -260,7 +304,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Bairro</FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name="bairro"
                 render={({ field }) => (
                   <FormItem>
@@ -280,7 +324,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Município</FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name="municipio"
                 render={({ field }) => (
                   <FormItem>
@@ -299,7 +343,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name="uf"
                 render={({ field }) => (
                   <FormItem>
@@ -328,7 +372,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>CEP</FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name="cep"
                 render={({ field }) => (
                   <FormItem>
@@ -347,107 +391,106 @@ export const CompanyEdit = (props: CompanyEditProps) => {
           </FormComponent.Line>
 
           <FormComponent.BoxSpecify boxName="Responsável Legal">
-            {form.fieldsArray.map((contact, index) => (
-              <FormComponent.Line key={contact.id}>
-                <FormComponent.Frame>
-                  <FormComponent.Label>Nome</FormComponent.Label>
-                  <FormField
-                    control={form.form.control}
-                    name={`legalRepresentative.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                            placeholder="Nome do Responsável Legal"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
+            <FormComponent.Line>
+              <FormComponent.Frame>
+                <FormComponent.Label>Nome</FormComponent.Label>
+                <FormField
+                  control={editCompanyForm.form.control}
+                  name={`legalRepresentative.name`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                          placeholder="Nome do Responsável Legal"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
 
-                <FormComponent.Frame>
-                  <FormComponent.Label>Cargo</FormComponent.Label>
-                  <FormField
-                    control={form.form.control}
-                    name={`legalRepresentative.${index}.role`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                              <SelectValue placeholder="Cargo" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {roles.map((role, i) => (
-                              <SelectItem value={role.value} key={i}>
-                                {role.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
-
-                <FormComponent.Frame>
-                  <FormComponent.Label>Email</FormComponent.Label>
-                  <FormField
-                    control={form.form.control}
-                    name={`legalRepresentative.${index}.email`}
-                    render={({ field }) => (
-                      <FormItem>
+              <FormComponent.Frame>
+                <FormComponent.Label>Cargo</FormComponent.Label>
+                <FormField
+                  control={editCompanyForm.form.control}
+                  name={`legalRepresentative.role`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
-                          <Input
-                            className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                            placeholder="email@email.com"
-                            {...field}
-                          />
+                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                            <SelectValue placeholder="Cargo" />
+                          </SelectTrigger>
                         </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
+                        <SelectContent>
+                          {roles.map((role, i) => (
+                            <SelectItem value={role.value} key={i}>
+                              {role.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
 
-                <FormComponent.Frame>
-                  <FormComponent.Label>Telefone</FormComponent.Label>
-                  <FormField
-                    control={form.form.control}
-                    name={`legalRepresentative.${index}.phone`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                            placeholder="(XX) XXXXX-XXXX"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
-              </FormComponent.Line>
-            ))}
+              <FormComponent.Frame>
+                <FormComponent.Label>Email</FormComponent.Label>
+                <FormField
+                  control={editCompanyForm.form.control}
+                  name={`legalRepresentative.email`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                          placeholder="email@email.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+
+              <FormComponent.Frame>
+                <FormComponent.Label>Telefone</FormComponent.Label>
+                <FormField
+                  control={editCompanyForm.form.control}
+                  name={`legalRepresentative.phone`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                          placeholder="(XX) XXXXX-XXXX"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+            </FormComponent.Line>
           </FormComponent.BoxSpecify>
+
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>
                 Endereço Local dos Arquivos XML
               </FormComponent.Label>
               <FormField
-                control={form.form.control}
+                control={editCompanyForm.form.control}
                 name={"address_file_XML"}
                 render={({ field }) => (
                   <FormItem>
@@ -468,10 +511,13 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               />
             </FormComponent.Frame>
           </FormComponent.Line>
+
           <FormComponent.ButtonLayout>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
-              handlePress={form.form.handleSubmit(form.onSubmitRemove)}
+              handlePress={editCompanyForm.form.handleSubmit(
+                editCompanyForm.onSubmitRemove,
+              )}
             >
               Remover Empresa
             </FormComponent.Button>

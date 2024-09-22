@@ -3,18 +3,15 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import LoadingPage from "~/app/loading";
-import {
-  type Companies,
-  companies,
-} from "../../CadastroDeEmpresas/_components/manageCompany/companiesData";
-import { CompanyEdit } from "./_components/manageDetailsCompany/editCompany/editCompany";
+import { companies, type Company } from "../_components/companiesData";
+import { CompanyEdit } from "./_components/manageDetailsCompany/editCompany/companyEdit";
 import { ManageSuppliersTableFromComapany } from "./_components/manageDetailsCompany/manageSupplierFromCompany";
 import { ManageUsersTableFromCompany } from "./_components/manageDetailsCompany/manageUsersFromCompany";
 
 export default function DetalhesDaEmpresa() {
   const searchParams = useSearchParams();
   const cnpj = searchParams.get("cnpj");
-  const [company, setCompany] = useState<Companies | undefined>(undefined);
+  const [company, setCompany] = useState<Company | undefined>(undefined);
 
   useEffect(() => {
     if (cnpj) {
@@ -32,11 +29,13 @@ export default function DetalhesDaEmpresa() {
     <div className="flex flex-col gap-4 bg-fundo_branco">
       <CompanyEdit
         company={{
-          empresa: company.empresa,
+          name: company.name,
           cnpj: company.cnpj,
+          suppliers: company.suppliers.map((supplier) => ({
+            name: supplier.name,
+          })),
           tipo_empresa: company.tipo_empresa,
           matriz_empresa: company.matriz_empresa,
-          filial_empresa: company.filial_empresa,
           email: company.email,
           phone: company.phone,
           endereco: company.endereco,
@@ -53,7 +52,7 @@ export default function DetalhesDaEmpresa() {
           low_stock_products: 0,
         }}
       />
-      <ManageUsersTableFromCompany company={company.empresa} />
+      <ManageUsersTableFromCompany company={company.name} />
       <ManageSuppliersTableFromComapany />
     </div>
   );
