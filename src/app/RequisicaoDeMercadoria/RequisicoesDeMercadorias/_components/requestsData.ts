@@ -12,7 +12,7 @@ export type Product = {
   parent_product?: string;
   buy_or_production: string;
   buy_unit: Unit;
-  buy_quantity: string;
+  requested_quantity: string;
   buy_day: string;
   stock_current: string;
   stock_min: string;
@@ -30,7 +30,7 @@ export type Request = {
 export const requests: Request[] = [
   {
     date: new Date(2024, 9, 22),
-    responsible: "Estoquista 1",
+    responsible: "Requisitante 1",
     products: [
       {
         name: "Cerveja Pilsen",
@@ -43,7 +43,7 @@ export const requests: Request[] = [
           abbreviation: "PCT",
           unitsPerPack: 12,
         },
-        buy_quantity: "3",
+        requested_quantity: "3",
         buy_day: "Segunda",
         stock_current: "200",
         stock_min: "50",
@@ -60,7 +60,7 @@ export const requests: Request[] = [
           abbreviation: "PCT",
           unitsPerPack: 12,
         },
-        buy_quantity: "2",
+        requested_quantity: "2",
         buy_day: "Quarta",
         stock_current: "250",
         stock_min: "100",
@@ -72,7 +72,7 @@ export const requests: Request[] = [
   },
   {
     date: new Date(2024, 9, 23),
-    responsible: "Estoquista 2",
+    responsible: "Requisitante 2",
     products: [
       {
         name: "Carne Bovina",
@@ -85,7 +85,7 @@ export const requests: Request[] = [
           abbreviation: "KG",
           unitsPerPack: 1,
         },
-        buy_quantity: "10",
+        requested_quantity: "10",
         buy_day: "Terça",
         stock_current: "120",
         stock_min: "30",
@@ -103,7 +103,7 @@ export const requests: Request[] = [
           abbreviation: "KG",
           unitsPerPack: 1,
         },
-        buy_quantity: "20",
+        requested_quantity: "20",
         buy_day: "Quarta",
         stock_current: "60",
         stock_min: "10",
@@ -115,7 +115,7 @@ export const requests: Request[] = [
   },
   {
     date: new Date(2024, 9, 24),
-    responsible: "Estoquista 3",
+    responsible: "Requisitante 3",
     products: [
       {
         name: "Sabão em Pó",
@@ -128,7 +128,7 @@ export const requests: Request[] = [
           abbreviation: "KG",
           unitsPerPack: 1,
         },
-        buy_quantity: "30",
+        requested_quantity: "30",
         buy_day: "Quinta",
         stock_current: "80",
         stock_min: "20",
@@ -145,7 +145,7 @@ export const requests: Request[] = [
           abbreviation: "FRD",
           unitsPerPack: 10,
         },
-        buy_quantity: "4",
+        requested_quantity: "4",
         buy_day: "Sexta",
         stock_current: "150",
         stock_min: "50",

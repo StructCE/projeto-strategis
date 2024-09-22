@@ -3,7 +3,6 @@ import { Calendar, Eraser, UserCog2 } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
-import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -155,16 +154,6 @@ export default function ManagePendingRequestsTable() {
                   </DialogDescription>
 
                   <PendingRequestDetails request={request} />
-
-                  <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
-                    <TableButtonComponent.Button className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login max-[425px]:w-full">
-                      Rejeitar Requisição
-                    </TableButtonComponent.Button>
-
-                    <TableButtonComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao max-[425px]:w-full">
-                      Confirmar Requisição
-                    </TableButtonComponent.Button>
-                  </TableButtonComponent>
                 </DialogHeader>
               </DialogContent>
             </Dialog>
