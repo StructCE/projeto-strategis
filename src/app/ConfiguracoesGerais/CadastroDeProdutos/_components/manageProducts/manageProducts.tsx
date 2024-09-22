@@ -333,14 +333,14 @@ export default function ManageProductsTable() {
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
-              <Select defaultValue={product.buy_unit.unit}>
+              <Select defaultValue={product.buy_unit.description}>
                 <SelectTrigger className="h-7 bg-cinza_destaque text-center sm:h-8">
                   <SelectValue placeholder="Selecione a unidade de compra" />
                 </SelectTrigger>
                 <SelectContent>
                   {units.map((unit, index) => (
-                    <SelectItem value={unit.unit} key={index}>
-                      {unit.unit}
+                    <SelectItem value={unit.description} key={index}>
+                      {`${unit.description} (${unit.abbreviation})`}
                     </SelectItem>
                   ))}
                 </SelectContent>

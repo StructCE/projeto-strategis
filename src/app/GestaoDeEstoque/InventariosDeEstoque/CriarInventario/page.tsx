@@ -390,15 +390,12 @@ export default function CreateInventory() {
         <TableComponent.Title className="mt-2">Inventário</TableComponent.Title>
 
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_80px_130px_130px_92px_1fr_86px] gap-6 sm:px-[16px]">
+          <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_130px_92px_1fr_86px] gap-8 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Código
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-base sm:text-[18px]">
               Produto
-            </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
-              Unidade
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Quantidade em Estoque
@@ -426,7 +423,7 @@ export default function CreateInventory() {
           ) : (
             addedProducts.map((product, index) => (
               <TableComponent.Line
-                className={`grid-cols-[70px_1.5fr_80px_130px_130px_92px_1fr_86px] gap-6 sm:px-[16px] ${
+                className={`grid-cols-[70px_1.5fr_130px_130px_92px_1fr_86px] gap-8 sm:px-[16px] ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
@@ -436,9 +433,6 @@ export default function CreateInventory() {
                 </TableComponent.Value>
                 <TableComponent.Value className="text-[13px] sm:text-[15px]">
                   {product.name}
-                </TableComponent.Value>
-                <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {product.buy_unit.unit}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
                   {product.stock_current}

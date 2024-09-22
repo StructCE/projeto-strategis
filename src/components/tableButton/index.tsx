@@ -31,8 +31,8 @@ TableButtonComponent.Button = function TableButtonComponentButton(
   );
   return (
     <button onClick={props.handlePress} className={style}>
-      {props.icon}
-      <p className="text-[14px] font-medium tracking-wider text-white sm:text-[18px] sm:tracking-normal">
+      <p className="flex gap-2 text-[14px] font-medium tracking-wider text-white sm:text-[18px] sm:tracking-normal">
+        {props.icon}
         {props.children}
       </p>
     </button>

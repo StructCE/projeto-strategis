@@ -1,5 +1,12 @@
 "use client";
-import { CalendarIcon, Eraser, Search, Trash2, UserCog2 } from "lucide-react";
+import {
+  CalendarIcon,
+  Download,
+  Eraser,
+  Search,
+  Trash2,
+  UserCog2,
+} from "lucide-react";
 import { useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import {
@@ -29,9 +36,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { adjustment_reasons } from "../_components/adjustmentsData";
 
-export default function CreateAdjustment() {
+export default function CreatePurchaseOrder() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
@@ -44,10 +50,8 @@ export default function CreateAdjustment() {
   const [selectSector, setSelectSector] = useState("");
 
   const [addedProducts, setAddedProducts] = useState<Product[]>([]);
-  const [adjustedStock, setAdjustedStock] = useState<Record<string, string>>(
-    {},
-  );
-  const [adjustmentReasons, setAdjustmentReasons] = useState<
+  const [quantities, setQuantities] = useState<Record<string, string>>({});
+  const [selectedSuppliers, setSelectedSuppliers] = useState<
     Record<string, string>
   >({});
 
@@ -93,35 +97,35 @@ export default function CreateAdjustment() {
         );
       });
 
-  // Função para adicionar produtos ao ajuste
+  // Função para adicionar produtos ao pedido
   const handleAddProduct = (product: Product) => {
     setAddedProducts((prev) => [...prev, product]);
   };
 
-  // Função para remover produtos do ajuste
+  // Função para remover produtos do pedido
   const handleRemoveProduct = (productCode: string) => {
     setAddedProducts((prev) =>
       prev.filter((product) => product.code !== productCode),
     );
-    setAdjustedStock((prev) => {
-      const newAdjustedStock = { ...prev };
-      delete newAdjustedStock[productCode];
-      return newAdjustedStock;
+    setQuantities((prev) => {
+      const newQuantities = { ...prev };
+      delete newQuantities[productCode];
+      return newQuantities;
     });
   };
 
   // Função para atualizar a quantidade de um produto específico
-  const handleAdjustedStockChange = (productCode: string, value: string) => {
-    setAdjustedStock((prev) => ({
+  const handleQuantityChange = (productCode: string, value: string) => {
+    setQuantities((prev) => ({
       ...prev,
       [productCode]: value,
     }));
   };
 
-  const handleAdjustmentReasonChange = (productCode: string, value: string) => {
-    setAdjustmentReasons((prev) => ({
+  const handleSupplierChange = (productCode: string, supplier: string) => {
+    setSelectedSuppliers((prev) => ({
       ...prev,
-      [productCode]: value,
+      [productCode]: supplier,
     }));
   };
 
@@ -140,41 +144,45 @@ export default function CreateAdjustment() {
     return formattedName;
   };
 
-  // Função para finalizar o ajuste
-  const handleFinalizeAdjustment = () => {
-    const adjustmentData = {
+  // Função para finalizar o pedido
+  const handleFinalizePurchase = () => {
+    const purchaseData = {
       responsible: inputResponsible,
       date: date?.toISOString(),
       products: addedProducts.map((product) => ({
         code: product.code,
         name: product.name,
         stock_current: product.stock_current,
-        stock_adjusted: adjustedStock[product.code] ?? 0,
-        adjustment_reason:
-          adjustmentReasons[product.code] ?? "Sem motivo informado",
+        buy_quantity_frd: quantities[product.code] ?? 0,
+        buy_quantity_unt:
+          Number(quantities[product.code] ?? 0) * product.buy_unit.unitsPerPack,
+        supplier: selectedSuppliers[product.code] ?? "",
       })),
     };
 
+    // Exemplo de exportação do pedido como JSON (feito com gpt, verificar se ta tudo certo)
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(adjustmentData),
+      JSON.stringify(purchaseData),
     )}`;
     const link = document.createElement("a");
     link.href = jsonString;
-    link.download = `Ajuste_${formatDate(date ?? new Date())}_${formatResponsibleName(inputResponsible)}`;
+    link.download = `PedidoDeCompra_${formatDate(date ?? new Date())}_${formatResponsibleName(inputResponsible)}`;
     link.click();
   };
 
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
       <TableComponent className="gap-2">
-        <TableComponent.Title>Realizar Ajuste de Estoque</TableComponent.Title>
+        <TableComponent.Title>
+          Realizar Pedido de Compra de Mercadorias
+        </TableComponent.Title>
 
         <TableComponent.Subtitle>
-          Preencha os campos abaixo com a data do ajuste e o nome do
+          Preencha os campos abaixo com a data do pedido e o nome do
           responsável.
         </TableComponent.Subtitle>
 
-        {/* Inputs da data e do responsável pelo ajuste */}
+        {/* Inputs da data e do responsável pelo pedido */}
         <TableComponent.FiltersLine>
           <Filter>
             <Filter.Icon
@@ -204,7 +212,7 @@ export default function CreateAdjustment() {
         </TableComponent.FiltersLine>
 
         <TableComponent.Subtitle>
-          Selecione produtos do estoque para fazer ajuste de estoque.
+          Selecione produtos do estoque para fazer pedido.
         </TableComponent.Subtitle>
 
         <TableComponent.FiltersLine>
@@ -220,6 +228,7 @@ export default function CreateAdjustment() {
               setState={setInputCode}
             />
           </Filter>
+
           <Filter className="lg:w-[250px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -232,6 +241,7 @@ export default function CreateAdjustment() {
               setState={setInputName}
             />
           </Filter>
+
           <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -255,6 +265,7 @@ export default function CreateAdjustment() {
               )}
             </Filter.Select>
           </Filter>
+
           <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -338,7 +349,7 @@ export default function CreateAdjustment() {
         </TableComponent.FiltersLine>
 
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16">
+          <TableComponent.LineTitle className="grid-cols-[70px_1.2fr_130px_1fr_90px_90px_130px] gap-8">
             <TableComponent.ValueTitle className="text-center">
               Código
             </TableComponent.ValueTitle>
@@ -348,6 +359,12 @@ export default function CreateAdjustment() {
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle>
               Endereço do Estoque
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-center">
+              Estoque Mínimo
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-center">
+              Estoque Máximo
             </TableComponent.ValueTitle>
             <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
@@ -370,7 +387,7 @@ export default function CreateAdjustment() {
           {!areAllFiltersEmpty &&
             filteredProducts.map((product, index) => (
               <TableComponent.Line
-                className={`grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16 ${
+                className={`grid-cols-[70px_1.2fr_130px_1fr_90px_90px_130px] gap-8 ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
@@ -385,6 +402,12 @@ export default function CreateAdjustment() {
                 <TableComponent.Value>
                   {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
                 </TableComponent.Value>
+                <TableComponent.Value className="text-center">
+                  {product.stock_min}
+                </TableComponent.Value>
+                <TableComponent.Value className="text-center">
+                  {product.stock_max}
+                </TableComponent.Value>
                 <Button
                   onClick={() => handleAddProduct(product)}
                   className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-[#181818] sm:text-[16px]"
@@ -396,28 +419,34 @@ export default function CreateAdjustment() {
         </TableComponent.Table>
 
         <TableComponent.Title className="mt-2">
-          Ajuste de Estoque
+          Pedido de Compra
         </TableComponent.Title>
 
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_100px_100px_92px_1fr_86px] gap-6 sm:px-[16px]">
+          <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_90px_120px_110px_110px_1fr_86px] gap-6 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Código
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-base sm:text-[18px]">
               Produto
             </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
-              Estoque Antigo
+            <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
+              Quantidade em Estoque
             </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
-              Estoque Ajustado
+            <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
+              Estoque Mínimo
             </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
-              Diferença
+            <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
+              Unidade de Compra (qnt)
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
+              Quantidade a Comprar (fardo)
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
+              Quantidade a Comprar (unidade)
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-base sm:text-[18px]">
-              Descrição
+              Fornecedor
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-base sm:text-[18px]">
               Remover
@@ -427,13 +456,13 @@ export default function CreateAdjustment() {
           {addedProducts.length === 0 ? (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Adicione produtos para criar um ajuste de estoque
+                Adicione produtos para criar um pedido de compra
               </TableComponent.Value>
             </TableComponent.Line>
           ) : (
             addedProducts.map((product, index) => (
               <TableComponent.Line
-                className={`grid-cols-[70px_1.5fr_100px_100px_92px_1fr_86px] gap-6 sm:px-[16px] ${
+                className={`grid-cols-[70px_1.5fr_130px_90px_120px_110px_110px_1fr_86px] gap-6 sm:px-[16px] ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
@@ -447,38 +476,46 @@ export default function CreateAdjustment() {
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
                   {product.stock_current}
                 </TableComponent.Value>
+                <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
+                  {product.stock_min}
+                </TableComponent.Value>
+                <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
+                  {`${product.buy_unit.abbreviation} (${product.buy_unit.unitsPerPack})`}
+                </TableComponent.Value>
                 <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
                   <Input
                     type="number"
-                    value={adjustedStock[product.code] ?? ""}
+                    value={quantities[product.code] ?? ""}
                     onChange={(e) =>
-                      handleAdjustedStockChange(product.code, e.target.value)
+                      handleQuantityChange(product.code, e.target.value)
                     }
                     className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
                   ></Input>
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {Number(adjustedStock[product.code] ?? 0) -
-                    Number(product.stock_current)}
+                  {Number(quantities[product.code] ?? 0) *
+                    product.buy_unit.unitsPerPack}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-[13px] sm:text-[15px]">
                   <Select
                     onValueChange={(value) =>
-                      handleAdjustmentReasonChange(product.code, value)
+                      handleSupplierChange(product.code, value)
                     }
+                    defaultValue={selectedSuppliers[product.code] ?? ""}
                   >
                     <SelectTrigger className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
-                      <SelectValue placeholder="Motivo do ajuste" />
+                      <SelectValue placeholder="Selecione um fornecedor" />
                     </SelectTrigger>
                     <SelectContent>
-                      {adjustment_reasons.map((reason, index) => (
-                        <SelectItem key={index} value={reason.description}>
-                          {reason.description}
+                      {product.suppliers.map((supplier, i) => (
+                        <SelectItem value={supplier.name} key={i}>
+                          {supplier.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </TableComponent.Value>
+
                 <Button
                   onClick={() => handleRemoveProduct(product.code)}
                   className="mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent hover:text-[#181818] sm:text-[16px]"
@@ -493,9 +530,17 @@ export default function CreateAdjustment() {
         <TableButtonComponent className="pt-2 sm:pt-4">
           <TableButtonComponent.Button
             className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao"
-            handlePress={handleFinalizeAdjustment}
+            handlePress={handleFinalizePurchase}
+            icon={
+              <Download
+                className="flex h-full cursor-pointer self-center"
+                size={20}
+                strokeWidth={2.2}
+                color="white"
+              />
+            }
           >
-            Finalizar Ajuste de Estoque
+            Gerar Pedido de Compra
           </TableButtonComponent.Button>
         </TableButtonComponent>
       </TableComponent>

@@ -124,21 +124,22 @@ export const suppliers: Supplier[] = [
   },
 ];
 
-export type ProductUnit = {
-  unit: string;
+export type Unit = {
+  description: string;
+  abbreviation: string;
+  unitsPerPack: number;
 };
 
-export const units: ProductUnit[] = [
-  { unit: "KG" },
-  { unit: "L" },
-  { unit: "G" },
-  { unit: "ML" },
-  { unit: "UN" },
-  { unit: "M" },
-  { unit: "CM" },
-  { unit: "MM" },
-  { unit: "PCT" },
-  { unit: "CX" },
+export const units: Unit[] = [
+  { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
+  { description: "Grama", abbreviation: "G", unitsPerPack: 1 },
+  { description: "Mililitro", abbreviation: "ML", unitsPerPack: 1 },
+  { description: "Unidade", abbreviation: "UN", unitsPerPack: 1 },
+  { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
+  { description: "Caixa", abbreviation: "CX", unitsPerPack: 24 },
+  { description: "Fardo", abbreviation: "FRD", unitsPerPack: 10 },
+  { description: "Saco", abbreviation: "SC", unitsPerPack: 20 },
+  { description: "Lata", abbreviation: "LT", unitsPerPack: 1 },
 ];
 
 // Verificar como vai ser estruturado o endereço com relação aos parâmetros gerais, não sei se essa é a melhor maneira
@@ -155,7 +156,7 @@ export type Product = {
   status: string;
   parent_product?: string;
   buy_or_production: string;
-  buy_unit: ProductUnit;
+  buy_unit: Unit;
   buy_quantity: string;
   buy_day: string;
   stock_current: string;
@@ -174,7 +175,7 @@ export const products: Product[] = [
     status: "Ativo",
     suppliers: [{ name: "Fornecedor A" }, { name: "Fornecedor B" }],
     buy_or_production: "Produto de Compra",
-    buy_unit: { unit: "KG" },
+    buy_unit: { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
     buy_quantity: "100",
     buy_day: "Segunda",
     stock_current: "200",
@@ -195,7 +196,7 @@ export const products: Product[] = [
     status: "Ativo",
     suppliers: [{ name: "Fornecedor B" }],
     buy_or_production: "Produto de Compra",
-    buy_unit: { unit: "KG" },
+    buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "50",
     buy_day: "Terça",
     stock_current: "120",
@@ -217,7 +218,7 @@ export const products: Product[] = [
     suppliers: [{ name: "Fornecedor B" }],
     buy_or_production: "Produto de Produção",
     parent_product: "Carne Bovina",
-    buy_unit: { unit: "KG" },
+    buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "20",
     buy_day: "Quarta",
     stock_current: "60",
@@ -238,7 +239,7 @@ export const products: Product[] = [
     status: "Ativo",
     suppliers: [{ name: "Fornecedor C" }],
     buy_or_production: "Produto de Compra",
-    buy_unit: { unit: "KG" },
+    buy_unit: { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
     buy_quantity: "200",
     buy_day: "Quarta",
     stock_current: "250",
@@ -259,7 +260,7 @@ export const products: Product[] = [
     status: "Ativo",
     suppliers: [{ name: "Fornecedor D" }],
     buy_or_production: "Produto de Compra",
-    buy_unit: { unit: "KG" },
+    buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "30",
     buy_day: "Quinta",
     stock_current: "80",
@@ -280,7 +281,7 @@ export const products: Product[] = [
     status: "Ativo",
     suppliers: [{ name: "Fornecedor E" }],
     buy_or_production: "Produto de Compra",
-    buy_unit: { unit: "KG" },
+    buy_unit: { description: "Fardo", abbreviation: "FRD", unitsPerPack: 10 },
     buy_quantity: "120",
     buy_day: "Sexta",
     stock_current: "150",

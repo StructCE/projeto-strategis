@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import { TableButtonComponent } from ".";
 
 export default function ButtonsExamples() {
@@ -27,6 +27,23 @@ export default function ButtonsExamples() {
           handlePress={() => console.log("a")}
         >
           Finalizar Ajuste de Estoque
+        </TableButtonComponent.Button>
+      </TableButtonComponent>
+
+      {/* Botão que faz uma ação/operação com icone */}
+      <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
+        <TableButtonComponent.Button
+          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao max-[425px]:w-full"
+          icon={
+            <Download
+              className="flex h-full cursor-pointer self-center"
+              size={20}
+              strokeWidth={2.2}
+              color="white"
+            />
+          }
+        >
+          Baixar Relatório
         </TableButtonComponent.Button>
       </TableButtonComponent>
     </div>
