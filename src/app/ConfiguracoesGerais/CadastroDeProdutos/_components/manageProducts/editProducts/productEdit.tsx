@@ -217,8 +217,8 @@ export const ProductEdit = (props: ProductEditForm) => {
                       </FormControl>
                       <SelectContent>
                         {units.map((unit, index) => (
-                          <SelectItem value={unit.unit} key={index}>
-                            {unit.unit}
+                          <SelectItem value={unit.description} key={index}>
+                            {unit.description} ({unit.abbreviation})
                           </SelectItem>
                         ))}
                       </SelectContent>
