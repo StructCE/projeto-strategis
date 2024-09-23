@@ -6,14 +6,14 @@ import {
   AccordionTrigger,
 } from "../../../ui/accordion";
 import { ScrollArea } from "../../../ui/scroll-area";
-import { sidebarButtons } from "./button/sidebarButtonsData";
 import SidebarButton from "./button/sidebarButton";
+import { sidebarButtons } from "./button/sidebarButtonsData";
 import { useSidebarButtons } from "./button/useSidebarButtons";
 
 export function SidebarContent() {
   const buttons = useSidebarButtons();
   return (
-    <ScrollArea className="w-fill">
+    <ScrollArea className="w-fill h-[90%]">
       <Accordion type="multiple" className="mb-0 w-full">
         {Object.entries(sidebarButtons).map(([category, items], index) => (
           <AccordionItem className="" key={index} value={`item-${index + 1}`}>

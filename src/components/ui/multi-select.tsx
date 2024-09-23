@@ -1,11 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-  CheckIcon,
-  ChevronDown,
-  WandSparkles,
-  XCircle,
-  XIcon,
-} from "lucide-react";
+import { CheckIcon, ChevronDown, XCircle, XIcon } from "lucide-react";
 import * as React from "react";
 
 import { Badge } from "~/components/ui/badge";
@@ -74,7 +68,9 @@ interface MultiSelectProps
   onValueChange: (value: string[]) => void;
 
   /** The default selected values when the component mounts. */
-  defaultValue: string[];
+  defaultValue?: string[];
+
+  FilterIcon?: React.ComponentType<{ className?: string }>;
 
   /**
    * Placeholder text to be displayed when no values are selected.
@@ -87,7 +83,6 @@ interface MultiSelectProps
    * Optional, defaults to 3.
    */
   maxCount?: number;
-
   /**
    * The modality of the popover. When set to true, interaction with outside elements
    * will be disabled and only popover content will be visible to screen readers.
@@ -118,10 +113,10 @@ export const MultiSelect = React.forwardRef<
       onValueChange,
       variant,
       defaultValue = [],
+      FilterIcon,
       placeholder = "Selecione uma ou mais opções",
       maxCount = 2,
       modalPopover = false,
-      asChild = false,
       className,
       ...props
     },
@@ -259,8 +254,11 @@ export const MultiSelect = React.forwardRef<
                 </div>
               </div>
             ) : (
-              <div className="mx-auto flex w-full items-center justify-between">
-                <span className="mx-3 text-sm text-muted-foreground">
+              <div className="mx-auto flex w-full items-center justify-start lg:justify-between">
+                {FilterIcon && (
+                  <FilterIcon className="ml-3 size-[20px] stroke-[1.5px] lg:size-[18px]" />
+                )}
+                <span className="mx-3 w-full text-sm text-muted-foreground lg:w-auto">
                   {placeholder}
                 </span>
                 <ChevronDown className="mx-2 h-4 cursor-pointer text-muted-foreground" />

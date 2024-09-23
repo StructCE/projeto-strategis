@@ -11,11 +11,11 @@ export const useAccessProfileForm = () => {
     resolver: zodResolver(createAccessProfileFormSchema),
     mode: "onChange",
   });
-  const [selectedFrameworks, setSelectedFrameworks] = useState<string[]>([]);
+  const [selectedModules, setSelectedModules] = useState<string[]>([]);
 
   function onSubmit(data: CreateAccessProfileFormValues) {
-    console.log(JSON.stringify({ data, selectedFrameworks }, null, 2)); // Criar perfil de acesso
+    console.log(JSON.stringify({ data, selectedModules }, null, 2)); // Criar perfil de acesso
   }
 
-  return { form, onSubmit, selectedFrameworks, setSelectedFrameworks };
+  return { form, onSubmit, selectedModules, setSelectedModules };
 };
