@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const approveRequisitionFormSchema = z.object({
   quantity: z.number({
-    required_error: "Por favor indique uma quantidade",
+    required_error: "*",
   }),
 });
 
