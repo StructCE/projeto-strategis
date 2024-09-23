@@ -5,7 +5,6 @@ import { Input } from "~/components/ui/input";
 import { TableComponent } from "~/components/table";
 import { Separator } from "~/components/ui/separator";
 import { Button } from "~/components/ui/button";
-import { useApprovalForm } from "./useApprovalForm";
 
 type Produto = {
   codigo: number;
