@@ -27,7 +27,7 @@ export default function ManageRejectedRequestsTable() {
   const [inputResponsible, setInputResponsible] = useState("");
 
   const filteredRequests = requests.filter((request) => {
-    const matchesStatus = request.status == "rejected";
+    const matchesStatus = request.status == "Rejeitada";
 
     const matchesDate =
       !date ||

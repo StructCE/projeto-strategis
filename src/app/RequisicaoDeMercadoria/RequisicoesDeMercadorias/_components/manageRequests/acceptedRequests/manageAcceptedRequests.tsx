@@ -27,7 +27,7 @@ export default function ManageAcceptedRequestsTable() {
   const [inputResponsible, setInputResponsible] = useState("");
 
   const filteredRequests = requests.filter((request) => {
-    const matchesStatus = request.status == "accepted";
+    const matchesStatus = request.status == "Confirmada";
 
     const matchesDate =
       !date ||

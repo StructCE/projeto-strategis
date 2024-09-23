@@ -37,7 +37,7 @@ export default function PendingRequestDetails(props: RequestType) {
   }, [props.request.products]);
 
   const handleReject = () => {
-    const requestData = (props.request.status = "rejected");
+    const requestData = (props.request.status = "Rejeitada");
 
     console.log(JSON.stringify(requestData, null, 2));
   };

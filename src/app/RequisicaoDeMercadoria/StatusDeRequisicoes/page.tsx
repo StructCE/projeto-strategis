@@ -1,5 +1,5 @@
 "use client";
-import { Calendar, Eraser, UserCog2 } from "lucide-react";
+import { Calendar, Eraser, Search, UserCog2 } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -18,17 +18,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { requests } from "../../requestsData";
-import PendingRequestDetails from "./pendingRequestDetails/requestDetailsTable";
+import {
+  type Request,
+  requests,
+} from "../RequisicoesDeMercadorias/_components/requestsData";
+import AcceptedRequestDetails from "./_components/acceptedRequestDetailsTable";
+import PendingRequestDetails from "./_components/pendingRequestDetailsTable";
+import RejectedRequestDetails from "./_components/rejectedRequestDetailsTable";
 
-export default function ManagePendingRequestsTable() {
+export default function ManageRequestsTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
+  const [selectStatus, setSelectStatus] = useState("");
 
   const filteredRequests = requests.filter((request) => {
-    const matchesStatus = request.status == "Pendente";
-
     const matchesDate =
       !date ||
       (request.request_date.getDate() === date.getDate() &&
@@ -41,8 +45,29 @@ export default function ManagePendingRequestsTable() {
         .toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
-    return matchesStatus && matchesDate && matchesResponsible;
+    const matchesStuatus =
+      selectStatus === "" || request.status == selectStatus;
+
+    return matchesDate && matchesResponsible && matchesStuatus;
   });
+
+  function handleRequestStatus(status: string) {
+    if (status == "Pendente")
+      return <span className="text-amarelo_botao">Esperando confirmação</span>;
+    if (status == "Confirmada")
+      return <span className="text-verde_botao">Confirmada</span>;
+    if (status == "Rejeitada")
+      return <span className="text-vermelho_botao_2">Rejeitada</span>;
+  }
+
+  function handleRequestDetailsPage(status: string, request: Request) {
+    if (status == "Pendente")
+      return <PendingRequestDetails request={request} />;
+    if (status == "Confirmada")
+      return <AcceptedRequestDetails request={request} />;
+    if (status == "Rejeitada")
+      return <RejectedRequestDetails request={request} />;
+  }
 
   return (
     <TableComponent className="gap-3">
@@ -79,6 +104,23 @@ export default function ManagePendingRequestsTable() {
           />
         </Filter>
 
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Select
+            placeholder="Status"
+            state={selectStatus}
+            setState={setSelectStatus}
+          >
+            <Filter.SelectItems value={"Pendente"}></Filter.SelectItems>
+            <Filter.SelectItems value={"Confirmada"}></Filter.SelectItems>
+            <Filter.SelectItems value={"Rejeitada"}></Filter.SelectItems>
+          </Filter.Select>
+        </Filter>
+
         <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger className="flex h-full cursor-pointer self-center">
@@ -87,6 +129,7 @@ export default function ManagePendingRequestsTable() {
                 onClick={() => {
                   setDate(undefined);
                   setInputResponsible("");
+                  setSelectStatus("");
                 }}
               />
             </TooltipTrigger>
@@ -96,7 +139,7 @@ export default function ManagePendingRequestsTable() {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[0.7fr_1fr_0.5fr_2fr_130px] gap-8">
+        <TableComponent.LineTitle className="grid-cols-[0.7fr_1fr_0.5fr_1fr_130px] gap-8">
           <TableComponent.ValueTitle>
             Data da Requisição
           </TableComponent.ValueTitle>
@@ -106,13 +149,13 @@ export default function ManagePendingRequestsTable() {
           <TableComponent.ValueTitle className="text-center">
             Produtos
           </TableComponent.ValueTitle>
-          <TableComponent.ValueTitle>Descrição</TableComponent.ValueTitle>
+          <TableComponent.ValueTitle>Status</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
         {filteredRequests.map((request, index) => (
           <TableComponent.Line
-            className={`grid-cols-[0.7fr_1fr_0.5fr_2fr_130px] gap-8 ${
+            className={`grid-cols-[0.7fr_1fr_0.5fr_1fr_130px] gap-8 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -127,7 +170,7 @@ export default function ManagePendingRequestsTable() {
               {request.products.length}
             </TableComponent.Value>
             <TableComponent.Value>
-              {request.request_description}
+              {handleRequestStatus(request.status)}
             </TableComponent.Value>
 
             <Dialog>
@@ -158,7 +201,8 @@ export default function ManagePendingRequestsTable() {
                     <p className="w-fit font-semibold">Produtos solicitados:</p>
                   </DialogDescription>
 
-                  <PendingRequestDetails request={request} />
+                  {/* Renderiza uma página diferente dependendo do status da requisição */}
+                  {handleRequestDetailsPage(request.status, request)}
                 </DialogHeader>
               </DialogContent>
             </Dialog>
