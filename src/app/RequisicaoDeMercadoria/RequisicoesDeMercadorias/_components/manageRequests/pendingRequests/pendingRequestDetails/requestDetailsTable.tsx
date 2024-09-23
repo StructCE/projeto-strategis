@@ -63,12 +63,15 @@ export default function PendingRequestDetails(props: RequestType) {
   return (
     <TableComponent className="gap-3 text-left">
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_90px_110px_110px] gap-10">
+        <TableComponent.LineTitle className="grid-cols-[70px_1.3fr_1fr_130px_90px_110px_110px] gap-4 sm:px-[16px]">
           <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
             Código
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-base sm:text-[18px]">
             Produto
+          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-base sm:text-[18px]">
+            Endereço de Estoque
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
             Quantidade em Estoque
@@ -86,7 +89,7 @@ export default function PendingRequestDetails(props: RequestType) {
 
         {props.request.products.map((product, index) => (
           <TableComponent.Line
-            className={`grid-cols-[70px_1.5fr_130px_90px_110px_110px] gap-10 ${
+            className={`grid-cols-[70px_1.3fr_1fr_130px_90px_110px_110px] gap-4 sm:px-[16px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -96,6 +99,10 @@ export default function PendingRequestDetails(props: RequestType) {
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] sm:text-[15px]">
               {product.name}
+            </TableComponent.Value>
+            <TableComponent.Value className="text-[13px] tracking-tighter sm:text-[15px]">
+              {product.address.stock}, {product.address.storage},{" "}
+              {product.address.shelf}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
               {product.stock_current}

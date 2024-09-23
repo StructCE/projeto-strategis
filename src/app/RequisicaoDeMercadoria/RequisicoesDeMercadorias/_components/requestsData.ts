@@ -4,6 +4,12 @@ type Supplier = {
   name: string;
 };
 
+export type Address = {
+  stock: string;
+  storage: string;
+  shelf: string;
+};
+
 export type Product = {
   name: string;
   code: string;
@@ -18,6 +24,7 @@ export type Product = {
   stock_current: string;
   stock_min: string;
   stock_max: string;
+  address: Address;
 };
 
 export type Request = {
@@ -53,6 +60,11 @@ export const requests: Request[] = [
         stock_current: "200",
         stock_min: "50",
         stock_max: "300",
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 1",
+        },
       },
       {
         name: "Água Mineral",
@@ -71,6 +83,11 @@ export const requests: Request[] = [
         stock_current: "250",
         stock_min: "100",
         stock_max: "400",
+        address: {
+          stock: "Estoque Cozinha",
+          storage: "Armário 2",
+          shelf: "Prateleira 3",
+        },
       },
     ],
     request_description: "Descrição da requisição 1",
@@ -97,6 +114,11 @@ export const requests: Request[] = [
         stock_current: "120",
         stock_min: "30",
         stock_max: "200",
+        address: {
+          stock: "Estoque Cozinha",
+          storage: "Armário 2",
+          shelf: "Prateleira 4",
+        },
       },
       {
         name: "Carne Moída",
@@ -116,6 +138,11 @@ export const requests: Request[] = [
         stock_current: "60",
         stock_min: "10",
         stock_max: "100",
+        address: {
+          stock: "Estoque Salão",
+          storage: "Zona 1",
+          shelf: "Prateleira 6",
+        },
       },
     ],
     request_description: "Descrição da requisição 2",
@@ -145,6 +172,11 @@ export const requests: Request[] = [
         stock_current: "80",
         stock_min: "20",
         stock_max: "100",
+        address: {
+          stock: "Estoque Geral",
+          storage: "Zona 2",
+          shelf: "Prateleira 7",
+        },
       },
       {
         name: "Vinho Tinto",
@@ -163,6 +195,11 @@ export const requests: Request[] = [
         stock_current: "150",
         stock_min: "50",
         stock_max: "250",
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 1",
+        },
       },
     ],
     request_description: "Descrição da requisição 3",
