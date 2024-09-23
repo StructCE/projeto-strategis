@@ -1,12 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-  CheckIcon,
-  ChevronDown,
-  Search,
-  WandSparkles,
-  XCircle,
-  XIcon,
-} from "lucide-react";
+import { CheckIcon, ChevronDown, XCircle, XIcon } from "lucide-react";
 import * as React from "react";
 
 import { Badge } from "~/components/ui/badge";
@@ -90,7 +83,6 @@ interface MultiSelectProps
    * Optional, defaults to 3.
    */
   maxCount?: number;
-
   /**
    * The modality of the popover. When set to true, interaction with outside elements
    * will be disabled and only popover content will be visible to screen readers.
@@ -125,7 +117,6 @@ export const MultiSelect = React.forwardRef<
       placeholder = "Selecione uma ou mais opções",
       maxCount = 2,
       modalPopover = false,
-      asChild = false,
       className,
       ...props
     },

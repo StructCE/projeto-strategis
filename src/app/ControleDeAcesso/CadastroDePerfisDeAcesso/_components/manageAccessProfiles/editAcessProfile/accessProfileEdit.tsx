@@ -53,7 +53,7 @@ export const AccessProfileEdit = (props: AccessProfileEditForm) => {
               <FormField
                 control={accessProfileEditForm.form.control}
                 name="modules"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <MultiSelect
                       options={modules}

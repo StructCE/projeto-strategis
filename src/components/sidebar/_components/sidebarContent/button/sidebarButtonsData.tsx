@@ -9,7 +9,6 @@ import {
   FileText,
   FolderCog,
   FolderSearch,
-  Home,
   Info,
   PackageMinus,
   PackageOpen,

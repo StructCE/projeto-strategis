@@ -4,7 +4,6 @@ import Reasons from "./_components/Products/Reasons";
 import SectorsOfUse from "./_components/Products/SectorsOfUse";
 import TypesOfControl from "./_components/Products/TypeOfControl";
 import Units from "./_components/Products/Units";
-import Places from "./_components/Stocks/Places";
 import Shelves from "./_components/Stocks/Shelves";
 import Storages from "./_components/Stocks/Storages";
 

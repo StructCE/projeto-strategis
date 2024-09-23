@@ -53,7 +53,7 @@ export const AccessProfilesRegister = () => {
               <FormField
                 control={accessProfileForm.form.control}
                 name="modules"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <MultiSelect
                       options={modules}
