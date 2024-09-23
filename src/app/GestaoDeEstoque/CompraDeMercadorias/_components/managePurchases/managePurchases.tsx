@@ -164,7 +164,10 @@ export default function ManagePurchasesTable() {
                   Detalhes
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6">
+              <DialogContent
+                aria-describedby={undefined}
+                className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
+              >
                 <DialogHeader>
                   <DialogTitle className="w-fit pb-1.5">
                     Informações do Pedido de Compra

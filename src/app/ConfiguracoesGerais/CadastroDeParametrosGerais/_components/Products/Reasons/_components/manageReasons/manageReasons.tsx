@@ -33,7 +33,10 @@ export const ManageReasonsTable = () => {
                   Detalhes
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-7xl">
+              <DialogContent
+                aria-describedby={undefined}
+                className="sm:max-w-7xl"
+              >
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
                     Utilize o campo abaixo para editar o motivo de ajuste de

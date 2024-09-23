@@ -41,7 +41,10 @@ export const ManageUnitsTable = () => {
                   Detalhes
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-7xl">
+              <DialogContent
+                aria-describedby={undefined}
+                className="sm:max-w-7xl"
+              >
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
                     Utilize o campo abaixo para editar a unidade ou o botão para
