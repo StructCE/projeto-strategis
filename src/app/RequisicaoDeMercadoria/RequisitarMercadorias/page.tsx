@@ -373,7 +373,7 @@ export default function CreatePurchaseOrder() {
                     onClick={() => handleAddProduct(product)}
                     className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-[#181818] sm:text-[16px]"
                   >
-                    Adiconar
+                    Adicionar
                   </Button>
                 ) : (
                   <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-[#181818] sm:text-[16px]">
@@ -392,7 +392,7 @@ export default function CreatePurchaseOrder() {
         </TableComponent.Subtitle>
 
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[100px_1fr_110px_110px_130px_86px] gap-16 sm:px-[16px]">
+          <TableComponent.LineTitle className="grid-cols-[100px_1fr_110px_110px_110px_86px] gap-16 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Código
             </TableComponent.ValueTitle>
@@ -406,7 +406,7 @@ export default function CreatePurchaseOrder() {
               Estoque Mínimo
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
-              Quantidade
+              Quantidade a Solicitar
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-base sm:text-[18px]">
               Remover
@@ -423,7 +423,7 @@ export default function CreatePurchaseOrder() {
           ) : (
             addedProducts.map((product, index) => (
               <TableComponent.Line
-                className={`grid-cols-[100px_1fr_110px_110px_130px_86px] gap-16 sm:px-[16px] ${
+                className={`grid-cols-[100px_1fr_110px_110px_110px_86px] gap-16 sm:px-[16px] ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
