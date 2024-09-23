@@ -1,9 +1,9 @@
 "use client";
 import {
   CalendarIcon,
-  Download,
   Eraser,
   Search,
+  Text,
   Trash2,
   UserCog2,
 } from "lucide-react";
@@ -23,13 +23,6 @@ import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
@@ -51,9 +44,7 @@ export default function CreatePurchaseOrder() {
 
   const [addedProducts, setAddedProducts] = useState<Product[]>([]);
   const [quantities, setQuantities] = useState<Record<string, string>>({});
-  const [selectedSuppliers, setSelectedSuppliers] = useState<
-    Record<string, string>
-  >({});
+  const [requestDescription, setRequestDescription] = useState("");
 
   const areAllFiltersEmpty =
     inputCode === "" &&
@@ -97,12 +88,12 @@ export default function CreatePurchaseOrder() {
         );
       });
 
-  // Função para adicionar produtos ao pedido
+  // Função para adicionar produtos a requisição
   const handleAddProduct = (product: Product) => {
     setAddedProducts((prev) => [...prev, product]);
   };
 
-  // Função para remover produtos do pedido
+  // Função para remover produtos da requisição
   const handleRemoveProduct = (productCode: string) => {
     setAddedProducts((prev) =>
       prev.filter((product) => product.code !== productCode),
@@ -122,67 +113,36 @@ export default function CreatePurchaseOrder() {
     }));
   };
 
-  const handleSupplierChange = (productCode: string, supplier: string) => {
-    setSelectedSuppliers((prev) => ({
-      ...prev,
-      [productCode]: supplier,
-    }));
-  };
-
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}.${month}.${day}`;
-  };
-
-  const formatResponsibleName = (name: string) => {
-    const withoutAccents = name
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
-    const formattedName = withoutAccents.replace(/\s+/g, "");
-    return formattedName;
-  };
-
-  // Função para finalizar o pedido
+  // Função para finalizar a requisição
   const handleFinalizePurchase = () => {
-    const purchaseData = {
+    const requestData = {
       responsible: inputResponsible,
       date: date?.toISOString(),
       products: addedProducts.map((product) => ({
         code: product.code,
         name: product.name,
         stock_current: product.stock_current,
-        buy_quantity_frd: quantities[product.code] ?? 0,
-        buy_quantity_unt:
-          Number(quantities[product.code] ?? 0) * product.buy_unit.unitsPerPack,
-        supplier: selectedSuppliers[product.code] ?? "",
+        request_quantity: quantities[product.code] ?? 0,
       })),
     };
 
-    // Exemplo de exportação do pedido como JSON (feito com gpt, verificar se ta tudo certo)
-    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(purchaseData),
-    )}`;
-    const link = document.createElement("a");
-    link.href = jsonString;
-    link.download = `PedidoDeCompra_${formatDate(date ?? new Date())}_${formatResponsibleName(inputResponsible)}`;
-    link.click();
+    // Exemplo de exportação da requisição como JSON (feito com gpt, verificar se ta tudo certo)
+    console.log(JSON.stringify(requestData, null, 2));
   };
 
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
       <TableComponent className="gap-2">
         <TableComponent.Title>
-          Realizar Pedido de Compra de Mercadorias
+          Realizar Pedido de Mercadorias do Estoque
         </TableComponent.Title>
 
         <TableComponent.Subtitle>
-          Preencha os campos abaixo com a data do pedido e o nome do
+          Preencha os campos abaixo com a data da requisição e o nome do
           responsável.
         </TableComponent.Subtitle>
 
-        {/* Inputs da data e do responsável pelo pedido */}
+        {/* Inputs da data e do responsável pela requisição */}
         <TableComponent.FiltersLine>
           <Filter>
             <Filter.Icon
@@ -212,7 +172,7 @@ export default function CreatePurchaseOrder() {
         </TableComponent.FiltersLine>
 
         <TableComponent.Subtitle>
-          Selecione produtos do estoque para fazer pedido.
+          Selecione produtos do estoque para fazer requisição.
         </TableComponent.Subtitle>
 
         <TableComponent.FiltersLine>
@@ -341,24 +301,22 @@ export default function CreatePurchaseOrder() {
                   }}
                 />
               </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Limpar filtros</p>
-              </TooltipContent>
+              <TooltipContent side="right">Limpar filtros</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </TableComponent.FiltersLine>
 
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[70px_1.2fr_130px_1fr_90px_90px_130px] gap-8">
+          <TableComponent.LineTitle className="grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8">
             <TableComponent.ValueTitle className="text-center">
               Código
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle>Produto</TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-center">
-              Quantidade em Estoque
-            </TableComponent.ValueTitle>
             <TableComponent.ValueTitle>
               Endereço do Estoque
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-center">
+              Quantidade em Estoque
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-center">
               Estoque Mínimo
@@ -387,7 +345,7 @@ export default function CreatePurchaseOrder() {
           {!areAllFiltersEmpty &&
             filteredProducts.map((product, index) => (
               <TableComponent.Line
-                className={`grid-cols-[70px_1.2fr_130px_1fr_90px_90px_130px] gap-8 ${
+                className={`grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8 ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
@@ -396,11 +354,11 @@ export default function CreatePurchaseOrder() {
                   {product.code}
                 </TableComponent.Value>
                 <TableComponent.Value>{product.name}</TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.stock_current}
-                </TableComponent.Value>
                 <TableComponent.Value>
                   {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                </TableComponent.Value>
+                <TableComponent.Value className="text-center">
+                  {product.stock_current}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center">
                   {product.stock_min}
@@ -408,22 +366,33 @@ export default function CreatePurchaseOrder() {
                 <TableComponent.Value className="text-center">
                   {product.stock_max}
                 </TableComponent.Value>
-                <Button
-                  onClick={() => handleAddProduct(product)}
-                  className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-[#181818] sm:text-[16px]"
-                >
-                  Adicionar
-                </Button>
+
+                {/* Ver como vai funcionar essa lógica de permissão */}
+                {product.permission ? (
+                  <Button
+                    onClick={() => handleAddProduct(product)}
+                    className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-[#181818] sm:text-[16px]"
+                  >
+                    Adiconar
+                  </Button>
+                ) : (
+                  <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-[#181818] sm:text-[16px]">
+                    Sem Permissão
+                  </Button>
+                )}
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
 
-        <TableComponent.Title className="mt-2">
-          Pedido de Compra
-        </TableComponent.Title>
+        <TableComponent.Title className="mt-2">Requisição</TableComponent.Title>
+        <TableComponent.Subtitle>
+          Preencha os campos destacados abaixo para gerar um relatório de pedido
+          de produtos do estoque. Opcionalmente, adicione uma descrição ao
+          relatório.
+        </TableComponent.Subtitle>
 
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_90px_120px_110px_110px_1fr_86px] gap-6 sm:px-[16px]">
+          <TableComponent.LineTitle className="grid-cols-[100px_1fr_110px_110px_130px_86px] gap-16 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Código
             </TableComponent.ValueTitle>
@@ -437,16 +406,7 @@ export default function CreatePurchaseOrder() {
               Estoque Mínimo
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
-              Unidade de Compra (qnt)
-            </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
-              Quantidade a Comprar (fardo)
-            </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
-              Quantidade a Comprar (unidade)
-            </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-base sm:text-[18px]">
-              Fornecedor
+              Quantidade
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-base sm:text-[18px]">
               Remover
@@ -456,13 +416,14 @@ export default function CreatePurchaseOrder() {
           {addedProducts.length === 0 ? (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Adicione produtos para criar um pedido de compra
+                Adicione produtos para criar uma requisição de mercadorias do
+                estoque
               </TableComponent.Value>
             </TableComponent.Line>
           ) : (
             addedProducts.map((product, index) => (
               <TableComponent.Line
-                className={`grid-cols-[70px_1.5fr_130px_90px_120px_110px_110px_1fr_86px] gap-6 sm:px-[16px] ${
+                className={`grid-cols-[100px_1fr_110px_110px_130px_86px] gap-16 sm:px-[16px] ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
@@ -479,9 +440,6 @@ export default function CreatePurchaseOrder() {
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
                   {product.stock_min}
                 </TableComponent.Value>
-                <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {`${product.buy_unit.abbreviation} (${product.buy_unit.unitsPerPack})`}
-                </TableComponent.Value>
                 <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
                   <Input
                     type="number"
@@ -491,29 +449,6 @@ export default function CreatePurchaseOrder() {
                     }
                     className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
                   ></Input>
-                </TableComponent.Value>
-                <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {Number(quantities[product.code] ?? 0) *
-                    product.buy_unit.unitsPerPack}
-                </TableComponent.Value>
-                <TableComponent.Value className="text-[13px] sm:text-[15px]">
-                  <Select
-                    onValueChange={(value) =>
-                      handleSupplierChange(product.code, value)
-                    }
-                    defaultValue={selectedSuppliers[product.code] ?? ""}
-                  >
-                    <SelectTrigger className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
-                      <SelectValue placeholder="Selecione um fornecedor" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {product.suppliers.map((supplier, i) => (
-                        <SelectItem value={supplier.name} key={i}>
-                          {supplier.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 </TableComponent.Value>
 
                 <Button
@@ -527,20 +462,27 @@ export default function CreatePurchaseOrder() {
           )}
         </TableComponent.Table>
 
-        <TableButtonComponent className="pt-2 sm:pt-4">
+        <div className="pt-1 sm:pt-2">
+          <Filter className="lg:w-full">
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Text className={className} />
+              )}
+            />
+            <Filter.Input
+              placeholder="Insira uma descrição para requisição"
+              state={requestDescription}
+              setState={setRequestDescription}
+            />
+          </Filter>
+        </div>
+
+        <TableButtonComponent className="pt-1 sm:pt-2">
           <TableButtonComponent.Button
             className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao"
             handlePress={handleFinalizePurchase}
-            icon={
-              <Download
-                className="flex h-full cursor-pointer self-center"
-                size={20}
-                strokeWidth={2.2}
-                color="white"
-              />
-            }
           >
-            Gerar Pedido de Compra
+            Requisitar Mercadorias
           </TableButtonComponent.Button>
         </TableButtonComponent>
       </TableComponent>

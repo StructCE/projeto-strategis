@@ -349,16 +349,16 @@ export default function CreatePurchaseOrder() {
         </TableComponent.FiltersLine>
 
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[70px_1.2fr_130px_1fr_90px_90px_130px] gap-8">
+          <TableComponent.LineTitle className="grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8">
             <TableComponent.ValueTitle className="text-center">
               Código
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle>Produto</TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-center">
-              Quantidade em Estoque
-            </TableComponent.ValueTitle>
             <TableComponent.ValueTitle>
               Endereço do Estoque
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-center">
+              Quantidade em Estoque
             </TableComponent.ValueTitle>
             <TableComponent.ValueTitle className="text-center">
               Estoque Mínimo
@@ -387,7 +387,7 @@ export default function CreatePurchaseOrder() {
           {!areAllFiltersEmpty &&
             filteredProducts.map((product, index) => (
               <TableComponent.Line
-                className={`grid-cols-[70px_1.2fr_130px_1fr_90px_90px_130px] gap-8 ${
+                className={`grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8 ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
@@ -396,11 +396,11 @@ export default function CreatePurchaseOrder() {
                   {product.code}
                 </TableComponent.Value>
                 <TableComponent.Value>{product.name}</TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.stock_current}
-                </TableComponent.Value>
                 <TableComponent.Value>
                   {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                </TableComponent.Value>
+                <TableComponent.Value className="text-center">
+                  {product.stock_current}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center">
                   {product.stock_min}

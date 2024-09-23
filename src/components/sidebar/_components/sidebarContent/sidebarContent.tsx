@@ -13,7 +13,7 @@ import { useSidebarButtons } from "./button/useSidebarButtons";
 export function SidebarContent() {
   const buttons = useSidebarButtons();
   return (
-    <ScrollArea className="w-fill h-full">
+    <ScrollArea className="w-fill h-[90%]">
       <Accordion type="multiple" className="mb-0 w-full">
         {Object.entries(sidebarButtons).map(([category, items], index) => (
           <AccordionItem className="" key={index} value={`item-${index + 1}`}>

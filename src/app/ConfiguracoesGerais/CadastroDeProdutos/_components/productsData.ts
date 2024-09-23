@@ -166,6 +166,7 @@ export type Product = {
   product_category: ProductCategory;
   sector_of_use: SectorOfUse;
   address: Address;
+  permission?: boolean;
 };
 
 export const products: Product[] = [
@@ -189,6 +190,7 @@ export const products: Product[] = [
       storage: "Armário 1",
       shelf: "Prateleira 1",
     },
+    permission: true,
   },
   {
     name: "Carne Bovina",
@@ -210,6 +212,7 @@ export const products: Product[] = [
       storage: "Armário 2",
       shelf: "Prateleira 3",
     },
+    permission: false,
   },
   {
     name: "Carne Moída",
@@ -232,6 +235,7 @@ export const products: Product[] = [
       storage: "Armário 2",
       shelf: "Prateleira 4",
     },
+    permission: false,
   },
   {
     name: "Água Mineral",
@@ -253,6 +257,7 @@ export const products: Product[] = [
       storage: "Zona 1",
       shelf: "Prateleira 6",
     },
+    permission: true,
   },
   {
     name: "Sabão em Pó",
@@ -274,6 +279,7 @@ export const products: Product[] = [
       storage: "Zona 2",
       shelf: "Prateleira 7",
     },
+    permission: false,
   },
   {
     name: "Vinho Tinto",
@@ -295,5 +301,6 @@ export const products: Product[] = [
       storage: "Zona 3",
       shelf: "Prateleira 10",
     },
+    permission: true,
   },
 ];
