@@ -49,7 +49,7 @@ type TableComponentTableProps = {
 TableComponent.Table = function TableComponentTable(
   props: TableComponentTableProps,
 ) {
-  const style = cn("grid gap-[8px] overflow-x-auto", props.className);
+  const style = cn("grid overflow-x-auto", props.className);
   return <div className={style}>{props.children}</div>;
 };
 
@@ -132,7 +132,7 @@ type TableComponentButtonSpaceProps = {
 TableComponent.ButtonSpace = function TableComponentButtonSpace(
   props: TableComponentButtonSpaceProps,
 ) {
-  const style = cn("w-[110px]sm:w-[130px] place-self-end", props.className);
+  const style = cn("w-[110px] sm:w-[130px] place-self-end", props.className);
   return <div className={style}></div>;
 };
 

@@ -108,6 +108,7 @@ type FilterDatePickerProps = {
   setDate: (value: Date | undefined) => void;
   open: boolean;
   setOpen: (value: boolean) => void;
+  placeholder?: string;
 };
 
 Filter.DatePicker = function FilterDatePicker(props: FilterDatePickerProps) {
@@ -120,11 +121,11 @@ Filter.DatePicker = function FilterDatePicker(props: FilterDatePickerProps) {
       <Popover open={props.open} onOpenChange={props.setOpen}>
         <PopoverTrigger asChild>
           <button className={style}>
-            {props.date ? (
-              `${String(props.date.getDate()).padStart(2, "0")}/${String(props.date.getMonth() + 1).padStart(2, "0")}/${props.date.getFullYear()}`
-            ) : (
-              <span>Selecione uma data</span>
-            )}
+            {props.date
+              ? `${String(props.date.getDate()).padStart(2, "0")}/${String(props.date.getMonth() + 1).padStart(2, "0")}/${props.date.getFullYear()}`
+              : props.placeholder && props.placeholder.trim() !== ""
+                ? props.placeholder
+                : "Selecione uma data"}
           </button>
         </PopoverTrigger>
         <PopoverContent className="m-0 w-auto">

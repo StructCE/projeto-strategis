@@ -87,122 +87,6 @@ export const SectorsOfUse = [
   { description: "Sobremesa" },
 ];
 
-export type Shelf = {
-  description: string;
-};
-
-export type Storage = {
-  description: string;
-  shelves?: Shelf[];
-};
-
-export type Place = {
-  description: string;
-  storages?: Storage[];
-};
-
-export const Places: Place[] = [
-  {
-    description: "Local 1",
-    storages: [
-      {
-        description: "Armário 1",
-        shelves: [
-          { description: "Prateleira 1" },
-          { description: "Prateleira 2" },
-        ],
-      },
-      {
-        description: "Armário 2",
-        shelves: [
-          { description: "Prateleira 3" },
-          { description: "Prateleira 4" },
-          { description: "Prateleira 5" },
-        ],
-      },
-    ],
-  },
-  {
-    description: "Local 2",
-    storages: [
-      {
-        description: "Zona 1",
-        shelves: [{ description: "Prateleira 6" }],
-      },
-    ],
-  },
-  {
-    description: "Local 3",
-    storages: [
-      {
-        description: "Zona 2",
-        shelves: [
-          { description: "Prateleira 7" },
-          { description: "Prateleira 8" },
-          { description: "Prateleira 9" },
-        ],
-      },
-      {
-        description: "Zona 3",
-        shelves: [
-          { description: "Prateleira 10" },
-          { description: "Prateleira 11" },
-        ],
-      },
-      {
-        description: "Zona 4",
-        shelves: [
-          { description: "Prateleira 12" },
-          { description: "Prateleira 13" },
-          { description: "Prateleira 14" },
-          { description: "Prateleira 15" },
-        ],
-      },
-      {
-        description: "Armário 3",
-        shelves: [{ description: "Prateleira 15" }],
-      },
-      {
-        description: "Armário 4",
-        shelves: [
-          { description: "Prateleira 16" },
-          { description: "Prateleira 17" },
-          { description: "Prateleira 18" },
-        ],
-      },
-      {
-        description: "Armário 5",
-        shelves: [
-          { description: "Prateleira 19" },
-          { description: "Prateleira 20" },
-        ],
-      },
-      {
-        description: "Armário 6",
-        shelves: [
-          { description: "Prateleira 21" },
-          { description: "Prateleira 22" },
-          { description: "Prateleira 23" },
-          { description: "Prateleira 24" },
-        ],
-      },
-    ],
-  },
-];
-
-export type Status = {
-  description: string;
-};
-
-export const status: Status[] = [
-  {
-    description: "Ativo",
-  },
-  {
-    description: "Inativo",
-  },
-];
-
 export type Supplier = {
   name: string;
 };
@@ -240,70 +124,41 @@ export const suppliers: Supplier[] = [
   },
 ];
 
-export type WeekDay = {
-  day: string;
+export type Unit = {
+  description: string;
+  abbreviation: string;
+  unitsPerPack: number;
 };
 
-export const weekDays: WeekDay[] = [
-  {
-    day: "Segunda",
-  },
-  {
-    day: "Terça",
-  },
-  {
-    day: "Quarta",
-  },
-  {
-    day: "Quinta",
-  },
-  {
-    day: "Sexta",
-  },
-  {
-    day: "Sábado",
-  },
-  {
-    day: "Domingo",
-  },
-  {
-    day: "Qualquer dia",
-  },
-];
-
-export type ProductUnit = {
-  unit: string;
-};
-
-export const units: ProductUnit[] = [
-  { unit: "KG" },
-  { unit: "L" },
-  { unit: "G" },
-  { unit: "ML" },
-  { unit: "UN" },
-  { unit: "M" },
-  { unit: "CM" },
-  { unit: "MM" },
-  { unit: "PCT" },
-  { unit: "CX" },
+export const units: Unit[] = [
+  { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
+  { description: "Grama", abbreviation: "G", unitsPerPack: 1 },
+  { description: "Mililitro", abbreviation: "ML", unitsPerPack: 1 },
+  { description: "Unidade", abbreviation: "UN", unitsPerPack: 1 },
+  { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
+  { description: "Caixa", abbreviation: "CX", unitsPerPack: 24 },
+  { description: "Fardo", abbreviation: "FRD", unitsPerPack: 10 },
+  { description: "Saco", abbreviation: "SC", unitsPerPack: 20 },
+  { description: "Lata", abbreviation: "LT", unitsPerPack: 1 },
 ];
 
 // Verificar como vai ser estruturado o endereço com relação aos parâmetros gerais, não sei se essa é a melhor maneira
 export type Address = {
-  place: string;
+  stock: string;
   storage: string;
   shelf: string;
 };
 
 export type Product = {
   name: string;
-  code: number;
+  code: string;
   suppliers: Supplier[];
-  status: Status;
+  status: string;
   parent_product?: string;
-  buy_unit: ProductUnit;
+  buy_or_production: string;
+  buy_unit: Unit;
   buy_quantity: string;
-  buy_day: WeekDay;
+  buy_day: string;
   stock_current: string;
   stock_min: string;
   stock_max: string;
@@ -311,21 +166,19 @@ export type Product = {
   product_category: ProductCategory;
   sector_of_use: SectorOfUse;
   address: Address;
+  permission?: boolean;
 };
 
 export const products: Product[] = [
   {
     name: "Cerveja Pilsen",
-    code: 1001,
-    status: { description: "Ativo" },
-    suppliers: [
-      {
-        name: "Fornecedor A",
-      },
-    ],
-    buy_unit: { unit: "KG" },
+    code: "1001",
+    status: "Ativo",
+    suppliers: [{ name: "Fornecedor A" }, { name: "Fornecedor B" }],
+    buy_or_production: "Produto de Compra",
+    buy_unit: { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
     buy_quantity: "100",
-    buy_day: { day: "Segunda" },
+    buy_day: "Segunda",
     stock_current: "200",
     stock_min: "50",
     stock_max: "300",
@@ -333,23 +186,21 @@ export const products: Product[] = [
     product_category: { description: "Bebidas - Cervejas" },
     sector_of_use: { description: "Bar" },
     address: {
-      place: "Local 1",
+      stock: "Estoque Bar",
       storage: "Armário 1",
       shelf: "Prateleira 1",
     },
+    permission: true,
   },
   {
     name: "Carne Bovina",
-    code: 1002,
-    status: { description: "Ativo" },
-    suppliers: [
-      {
-        name: "Fornecedor B",
-      },
-    ],
-    buy_unit: { unit: "KG" },
+    code: "1002",
+    status: "Ativo",
+    suppliers: [{ name: "Fornecedor B" }],
+    buy_or_production: "Produto de Compra",
+    buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "50",
-    buy_day: { day: "Terça" },
+    buy_day: "Terça",
     stock_current: "120",
     stock_min: "30",
     stock_max: "200",
@@ -357,24 +208,22 @@ export const products: Product[] = [
     product_category: { description: "Carnes - In Natura" },
     sector_of_use: { description: "Cozinha" },
     address: {
-      place: "Local 2",
+      stock: "Estoque Cozinha",
       storage: "Armário 2",
-      shelf: "Prateleira 2",
+      shelf: "Prateleira 3",
     },
+    permission: false,
   },
   {
     name: "Carne Moída",
-    code: 1006,
-    status: { description: "Ativo" },
-    suppliers: [
-      {
-        name: "Fornecedor B",
-      },
-    ],
+    code: "1006",
+    status: "Ativo",
+    suppliers: [{ name: "Fornecedor B" }],
+    buy_or_production: "Produto de Produção",
     parent_product: "Carne Bovina",
-    buy_unit: { unit: "KG" },
+    buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "20",
-    buy_day: { day: "Quarta" },
+    buy_day: "Quarta",
     stock_current: "60",
     stock_min: "10",
     stock_max: "100",
@@ -382,23 +231,21 @@ export const products: Product[] = [
     product_category: { description: "Carnes - Processadas" },
     sector_of_use: { description: "Cozinha" },
     address: {
-      place: "Local 2",
+      stock: "Estoque Cozinha",
       storage: "Armário 2",
-      shelf: "Prateleira 2",
+      shelf: "Prateleira 4",
     },
+    permission: false,
   },
   {
     name: "Água Mineral",
-    code: 1003,
-    status: { description: "Ativo" },
-    suppliers: [
-      {
-        name: "Fornecedor C",
-      },
-    ],
-    buy_unit: { unit: "KG" },
+    code: "1003",
+    status: "Ativo",
+    suppliers: [{ name: "Fornecedor C" }],
+    buy_or_production: "Produto de Compra",
+    buy_unit: { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
     buy_quantity: "200",
-    buy_day: { day: "Quarta" },
+    buy_day: "Quarta",
     stock_current: "250",
     stock_min: "100",
     stock_max: "400",
@@ -406,23 +253,21 @@ export const products: Product[] = [
     product_category: { description: "Bebidas - Águas" },
     sector_of_use: { description: "Bar" },
     address: {
-      place: "Local 3",
-      storage: "Armário 3",
-      shelf: "Prateleira 3",
+      stock: "Estoque Salão",
+      storage: "Zona 1",
+      shelf: "Prateleira 6",
     },
+    permission: true,
   },
   {
     name: "Sabão em Pó",
-    code: 1004,
-    status: { description: "Ativo" },
-    suppliers: [
-      {
-        name: "Fornecedor D",
-      },
-    ],
-    buy_unit: { unit: "KG" },
+    code: "1004",
+    status: "Ativo",
+    suppliers: [{ name: "Fornecedor D" }],
+    buy_or_production: "Produto de Compra",
+    buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "30",
-    buy_day: { day: "Quinta" },
+    buy_day: "Quinta",
     stock_current: "80",
     stock_min: "20",
     stock_max: "100",
@@ -430,23 +275,21 @@ export const products: Product[] = [
     product_category: { description: "Produtos - Limpeza" },
     sector_of_use: { description: "Serviços Gerais" },
     address: {
-      place: "Local 4",
-      storage: "Armário 4",
-      shelf: "Prateleira 4",
+      stock: "Estoque Geral",
+      storage: "Zona 2",
+      shelf: "Prateleira 7",
     },
+    permission: false,
   },
   {
     name: "Vinho Tinto",
-    code: 1005,
-    status: { description: "Ativo" },
-    suppliers: [
-      {
-        name: "Fornecedor E",
-      },
-    ],
-    buy_unit: { unit: "KG" },
+    code: "1005",
+    status: "Ativo",
+    suppliers: [{ name: "Fornecedor E" }],
+    buy_or_production: "Produto de Compra",
+    buy_unit: { description: "Fardo", abbreviation: "FRD", unitsPerPack: 10 },
     buy_quantity: "120",
-    buy_day: { day: "Sexta" },
+    buy_day: "Sexta",
     stock_current: "150",
     stock_min: "50",
     stock_max: "250",
@@ -454,9 +297,10 @@ export const products: Product[] = [
     product_category: { description: "Bebidas - Vinho" },
     sector_of_use: { description: "Bar" },
     address: {
-      place: "Local 5",
-      storage: "Armário 5",
-      shelf: "Prateleira 5",
+      stock: "Estoque Padaria",
+      storage: "Zona 3",
+      shelf: "Prateleira 10",
     },
+    permission: true,
   },
 ];

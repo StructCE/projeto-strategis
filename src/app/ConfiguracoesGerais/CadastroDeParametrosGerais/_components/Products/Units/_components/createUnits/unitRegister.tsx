@@ -60,6 +60,26 @@ export default function UnitRegister(props: UnitRegisterProps) {
                 )}
               />
             </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>Unidades por Pacote/Fardo</FormComponent.Label>
+              <FormField
+                control={props.form.control}
+                name="unitsPerPack"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Unidades por pacote/fardo"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>

@@ -1,3 +1,13 @@
+import { Eraser, Search } from "lucide-react";
+import { useState } from "react";
+import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
+import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
+import {
+  ProductCategories,
+  SectorsOfUse,
+  TypesOfControl,
+} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
+import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
 import {
@@ -9,6 +19,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
+import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -16,11 +27,67 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { products, units } from "../productsData";
 import { ProductEdit } from "./editProducts/productEdit";
-import ManageProductsFilters from "./manageProductsFilters/manageProductsFilters";
 
 export default function ManageProductsTable() {
+  const [inputCode, setInputCode] = useState("");
+  const [inputProduct, setInputProduct] = useState("");
+  const [selectSuppliers, setSelectSuppliers] = useState<string[]>([]);
+  const [selectStock, setSelectStock] = useState("");
+  const [selectAddress, setSelectAddress] = useState("");
+  const [selectControlType, setSelectControlType] = useState("");
+  const [selectCategory, setSelectCategory] = useState("");
+  const [selectSector, setSelectSector] = useState("");
+
+  const filteredProducts = products.filter((product) => {
+    const matchesCode = inputCode === "" || product.code.includes(inputCode);
+    const matchesProduct =
+      inputProduct === "" ||
+      product.name.toLowerCase().includes(inputProduct.toLowerCase());
+    const matchesSupplier =
+      selectSuppliers.length === 0 ||
+      product.suppliers.some((supplier) =>
+        selectSuppliers.includes(supplier.name),
+      );
+    const matchesStock =
+      selectStock === "" ||
+      `${product.address.stock}`
+        .toLowerCase()
+        .includes(selectStock.toLowerCase());
+    const matchesAddress =
+      selectAddress === "" ||
+      `${product.address.storage}, ${product.address.shelf}`
+        .toLowerCase()
+        .includes(selectAddress.toLowerCase());
+    const matchesControlType =
+      selectControlType === "" ||
+      product.type_of_control?.description === selectControlType;
+    const matchesCategory =
+      selectCategory === "" ||
+      product.product_category?.description === selectCategory;
+    const matchesSector =
+      selectSector === "" ||
+      product.sector_of_use?.description === selectSector;
+
+    return (
+      matchesCode &&
+      matchesProduct &&
+      matchesSupplier &&
+      matchesStock &&
+      matchesAddress &&
+      matchesControlType &&
+      matchesCategory &&
+      matchesSector
+    );
+  });
+
   return (
     <TableComponent>
       <TableComponent.Title>Gerenciar Produtos</TableComponent.Title>
@@ -30,7 +97,203 @@ export default function ManageProductsTable() {
       </TableComponent.Subtitle>
 
       <TableComponent.FiltersLine>
-        <ManageProductsFilters />
+        <Filter className="lg:w-[130px]">
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Input
+            placeholder="Código"
+            state={inputCode}
+            setState={setInputCode}
+          />
+        </Filter>
+
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Input
+            placeholder="Produto"
+            state={inputProduct}
+            setState={setInputProduct}
+          />
+        </Filter>
+
+        <div className="font-inter font-regular m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
+          <MultiSelect
+            FilterIcon={Search}
+            options={suppliers.flatMap((supplier) => ({
+              label: supplier.name,
+              value: supplier.name,
+            }))}
+            onValueChange={setSelectSuppliers}
+            defaultValue={selectSuppliers}
+            placeholder="Fornecedores"
+            variant="inverted"
+            maxCount={2}
+            className="font-regular font-inter min-h-8 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+          />
+        </div>
+
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger className="flex h-full cursor-pointer self-center">
+              <Eraser
+                size={20}
+                onClick={() => {
+                  setInputCode("");
+                  setInputProduct("");
+                  setSelectSuppliers([]);
+                }}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Limpar filtros</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </TableComponent.FiltersLine>
+
+      <TableComponent.FiltersLine>
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Select
+            placeholder="Estoque"
+            state={selectStock}
+            setState={setSelectStock}
+          >
+            {stocks.map((stock, index) => (
+              <Filter.SelectItems
+                key={index}
+                value={stock.name}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
+
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Select
+            placeholder="Endereço"
+            state={selectAddress}
+            setState={setSelectAddress}
+            className={
+              selectStock === "" ? "cursor-not-allowed opacity-50" : ""
+            }
+          >
+            {selectStock === ""
+              ? [
+                  <Filter.SelectItems
+                    key="0"
+                    value="Selecione um estoque primeiro"
+                  ></Filter.SelectItems>,
+                ]
+              : stocks
+                  .filter((stock) => stock.name === selectStock)
+                  .flatMap((stock) =>
+                    stock.address.flatMap((address) =>
+                      address.shelves.map((shelf, index) => (
+                        <Filter.SelectItems
+                          key={index}
+                          value={`${address.description}, ${shelf.description}`}
+                        ></Filter.SelectItems>
+                      )),
+                    ),
+                  )}
+          </Filter.Select>
+        </Filter>
+
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Select
+            placeholder="Tipo de Controle"
+            state={selectControlType}
+            setState={setSelectControlType}
+          >
+            {TypesOfControl.map((type, index) => (
+              <Filter.SelectItems
+                key={index}
+                value={type.description}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
+
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Select
+            placeholder="Categoria"
+            state={selectCategory}
+            setState={setSelectCategory}
+          >
+            {ProductCategories.map((category, index) => (
+              <Filter.SelectItems
+                key={index}
+                value={category.description}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
+
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Select
+            placeholder="Setor de Uso"
+            state={selectSector}
+            setState={setSelectSector}
+          >
+            {SectorsOfUse.map((sector, index) => (
+              <Filter.SelectItems
+                key={index}
+                value={sector.description}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
+
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger className="flex h-full cursor-pointer self-center">
+              <Eraser
+                size={20}
+                onClick={() => {
+                  setSelectStock("");
+                  setSelectAddress("");
+                  setSelectControlType("");
+                  setSelectCategory("");
+                  setSelectSector("");
+                }}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Limpar filtros</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
@@ -53,7 +316,7 @@ export default function ManageProductsTable() {
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {products.map((product, index) => (
+        {filteredProducts.map((product, index) => (
           <TableComponent.Line
             className={`grid-cols-[70px_1fr_100px_100px_100px_100px_130px] gap-8 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -70,14 +333,14 @@ export default function ManageProductsTable() {
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
-              <Select defaultValue={product.buy_unit.unit}>
+              <Select defaultValue={product.buy_unit.description}>
                 <SelectTrigger className="h-7 bg-cinza_destaque text-center sm:h-8">
                   <SelectValue placeholder="Selecione a unidade de compra" />
                 </SelectTrigger>
                 <SelectContent>
                   {units.map((unit, index) => (
-                    <SelectItem value={unit.unit} key={index}>
-                      {unit.unit}
+                    <SelectItem value={unit.description} key={index}>
+                      {`${unit.description} (${unit.abbreviation})`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -107,7 +370,10 @@ export default function ManageProductsTable() {
                   Detalhes
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-7xl">
+              <DialogContent
+                aria-describedby={undefined}
+                className="sm:max-w-7xl"
+              >
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
                     Utilize os campos abaixo para editar os dados do produto ou

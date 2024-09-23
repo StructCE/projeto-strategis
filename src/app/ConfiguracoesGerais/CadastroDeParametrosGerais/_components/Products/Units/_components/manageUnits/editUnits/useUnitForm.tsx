@@ -13,6 +13,7 @@ export const useUnitForm = (unit: Unit) => {
     defaultValues: {
       description: unit.description,
       abbreviation: unit.abbreviation,
+      unitsPerPack: unit.unitsPerPack,
     },
   });
 

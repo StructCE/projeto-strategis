@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const addressSchema = z.object({
-  place: z
+  stock: z
     .string({
       required_error: "Selecione um local.",
     })
@@ -38,6 +38,12 @@ export const editProductFormSchema = z.object({
     .min(1, { message: "Selecione o status do produto." }),
 
   parent_product: z.string().optional(),
+
+  buy_or_production: z
+    .string({
+      required_error: "Selecione o tipo de produto.",
+    })
+    .min(1, { message: "Selecione o tipo de produto." }),
 
   buy_unit: z
     .string({

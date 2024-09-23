@@ -105,19 +105,41 @@ export const SectorsOfUse = [
 export type Unit = {
   description: string;
   abbreviation: string;
+  unitsPerPack: number;
 };
 
-export const units = [
-  { description: "Kilograma", abbreviation: "KG" },
-  { description: "Litro", abbreviation: "L" },
-  { description: "Grama", abbreviation: "G" },
-  { description: "Mililitro", abbreviation: "ML" },
-  { description: "Unidade", abbreviation: "UN" },
-  { description: "Pacote", abbreviation: "PCT" },
-  { description: "Caixa", abbreviation: "CX" },
-  { description: "Fardo", abbreviation: "FRD" },
-  { description: "Saco", abbreviation: "SC" },
-  { description: "Lata", abbreviation: "LT" },
+export const units: Unit[] = [
+  { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
+  { description: "Grama", abbreviation: "G", unitsPerPack: 1 },
+  { description: "Mililitro", abbreviation: "ML", unitsPerPack: 1 },
+  { description: "Unidade", abbreviation: "UN", unitsPerPack: 1 },
+  { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
+  { description: "Caixa", abbreviation: "CX", unitsPerPack: 24 },
+  { description: "Fardo", abbreviation: "FRD", unitsPerPack: 10 },
+  { description: "Saco", abbreviation: "SC", unitsPerPack: 20 },
+  { description: "Lata", abbreviation: "LT", unitsPerPack: 1 },
+];
+
+export type AdjustmentReason = {
+  description: string;
+};
+
+export const adjustment_reasons: AdjustmentReason[] = [
+  {
+    description: "Congelamento",
+  },
+  {
+    description: "Queima/desperdício",
+  },
+  {
+    description: "Quebra/extravio",
+  },
+  {
+    description: "Contagem anterior errada",
+  },
+  {
+    description: "Outro",
+  },
 ];
 
 // Stocks
@@ -130,96 +152,73 @@ export type Storage = {
   shelves: Shelf[];
 };
 
-export type Place = {
-  description: string;
-  storages: Storage[];
-};
-
-export const Places: Place[] = [
+export const storages: Storage[] = [
   {
-    description: "Local 1",
-    storages: [
-      {
-        description: "Armário 1",
-        shelves: [
-          { description: "Prateleira 1" },
-          { description: "Prateleira 2" },
-        ],
-      },
-      {
-        description: "Armário 2",
-        shelves: [
-          { description: "Prateleira 3" },
-          { description: "Prateleira 4" },
-          { description: "Prateleira 5" },
-        ],
-      },
+    description: "Armário 1",
+    shelves: [{ description: "Prateleira 1" }, { description: "Prateleira 2" }],
+  },
+  {
+    description: "Armário 2",
+    shelves: [
+      { description: "Prateleira 3" },
+      { description: "Prateleira 4" },
+      { description: "Prateleira 5" },
     ],
   },
   {
-    description: "Local 2",
-    storages: [
-      {
-        description: "Zona 1",
-        shelves: [{ description: "Prateleira 6" }],
-      },
+    description: "Zona 1",
+    shelves: [{ description: "Prateleira 6" }],
+  },
+  {
+    description: "Zona 2",
+    shelves: [
+      { description: "Prateleira 7" },
+      { description: "Prateleira 8" },
+      { description: "Prateleira 9" },
     ],
   },
   {
-    description: "Local 3",
-    storages: [
-      {
-        description: "Zona 2",
-        shelves: [
-          { description: "Prateleira 7" },
-          { description: "Prateleira 8" },
-          { description: "Prateleira 9" },
-        ],
-      },
-      {
-        description: "Zona 3",
-        shelves: [
-          { description: "Prateleira 10" },
-          { description: "Prateleira 11" },
-        ],
-      },
-      {
-        description: "Zona 4",
-        shelves: [
-          { description: "Prateleira 12" },
-          { description: "Prateleira 13" },
-          { description: "Prateleira 14" },
-          { description: "Prateleira 15" },
-        ],
-      },
-      {
-        description: "Armário 3",
-        shelves: [{ description: "Prateleira 15" }],
-      },
-      {
-        description: "Armário 4",
-        shelves: [
-          { description: "Prateleira 16" },
-          { description: "Prateleira 17" },
-          { description: "Prateleira 18" },
-        ],
-      },
-      {
-        description: "Armário 5",
-        shelves: [
-          { description: "Prateleira 19" },
-          { description: "Prateleira 20" },
-        ],
-      },
-      {
-        description: "Armário 6",
-        shelves: [
-          { description: "Prateleira 21" },
-          { description: "Prateleira 22" },
-          { description: "Prateleira 23" },
-          { description: "Prateleira 24" },
-        ],
-      },
+    description: "Zona 3",
+    shelves: [
+      { description: "Prateleira 10" },
+      { description: "Prateleira 11" },
+    ],
+  },
+  {
+    description: "Zona 4",
+    shelves: [
+      { description: "Prateleira 12" },
+      { description: "Prateleira 13" },
+      { description: "Prateleira 14" },
+      { description: "Prateleira 15" },
+    ],
+  },
+  {
+    description: "Armário 3",
+    shelves: [{ description: "Prateleira 15" }],
+  },
+  {
+    description: "Armário 4",
+    shelves: [
+      { description: "Prateleira 16" },
+      { description: "Prateleira 17" },
+      { description: "Prateleira 18" },
+    ],
+  },
+  {
+    description: "Armário 5",
+    shelves: [
+      { description: "Prateleira 19" },
+      { description: "Prateleira 20" },
+    ],
+  },
+  {
+    description: "Armário 6",
+    shelves: [
+      { description: "Prateleira 21" },
+      { description: "Prateleira 22" },
+      { description: "Prateleira 23" },
+      { description: "Prateleira 24" },
     ],
   },
 ];

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
+import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -18,15 +19,12 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import {
-  Places,
   ProductCategories,
   products,
   SectorsOfUse,
-  status,
   suppliers,
   TypesOfControl,
   units,
-  weekDays,
 } from "../productsData";
 import { type CreateProductFormValues } from "./productRegisterFormSchema";
 
@@ -36,15 +34,15 @@ type ProductRegisterProps = {
 };
 
 export const ProductRegister = (props: ProductRegisterProps) => {
-  // Filtra os armários/zona com base no local selecionado
-  const [selectedPlace, setSelectedPlace] = useState<string>("");
-  const filteredStorages = selectedPlace
-    ? (Places.find((place) => place.description === selectedPlace)?.storages ??
-      [])
+  const [selectedStock, setSelectedStock] = useState("");
+  const [selectedStorage, setSelectedStorage] = useState("");
+
+  // Filtra os armários/zona com base no estoque selecionado
+  const filteredStorages = selectedStock
+    ? (stocks.find((stock) => stock.name === selectedStock)?.address ?? [])
     : [];
 
   // Filtra as prateleiras com base no armário/zona selecionado
-  const [selectedStorage, setSelectedStorage] = useState<string>("");
   const filteredShelves = selectedStorage
     ? (filteredStorages.find(
         (storage) => storage.description === selectedStorage,
@@ -57,7 +55,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
         <FormComponent>
           <FormComponent.Title>Cadastro de Produto</FormComponent.Title>
 
-          <FormComponent.Line className="lg:grid lg:grid-cols-[2.5fr_2fr_1.5fr_1.5fr]">
+          <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Produto</FormComponent.Label>
               <FormField
@@ -101,7 +99,9 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                 )}
               />
             </FormComponent.Frame>
+          </FormComponent.Line>
 
+          <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Status</FormComponent.Label>
               <FormField
@@ -119,11 +119,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {status.map((status, index) => (
-                          <SelectItem value={status.description} key={index}>
-                            {status.description}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="Ativo">Ativo</SelectItem>
+                        <SelectItem value="Inativo">Inativo</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -161,6 +158,37 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                 )}
               />
             </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>Compra/Produção</FormComponent.Label>
+              <FormField
+                control={props.form.control}
+                name="buy_or_production"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                          <SelectValue placeholder="Selecione se o produto é de compra ou produção" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Produto de Compra">
+                          Produto de Compra
+                        </SelectItem>
+                        <SelectItem value="Produto de Produção">
+                          Produto de Produção
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
           </FormComponent.Line>
 
           <FormComponent.Line>
@@ -182,8 +210,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       </FormControl>
                       <SelectContent>
                         {units.map((unit, index) => (
-                          <SelectItem value={unit.unit} key={index}>
-                            {unit.unit}
+                          <SelectItem value={unit.description} key={index}>
+                            {unit.description} ({unit.abbreviation})
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -233,11 +261,16 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {weekDays.map((day_of_week, index) => (
-                          <SelectItem value={day_of_week.day} key={index}>
-                            {day_of_week.day}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="Segunda">Segunda</SelectItem>
+                        <SelectItem value="Terça">Terça</SelectItem>
+                        <SelectItem value="Quarta">Quarta</SelectItem>
+                        <SelectItem value="Quinta">Quinta</SelectItem>
+                        <SelectItem value="Sexta">Sexta</SelectItem>
+                        <SelectItem value="Sábado">Sábado</SelectItem>
+                        <SelectItem value="Domingo">Domingo</SelectItem>
+                        <SelectItem value="Qualquer dia">
+                          Qualquer dia
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -403,29 +436,29 @@ export const ProductRegister = (props: ProductRegisterProps) => {
 
           <FormComponent.Line>
             <FormComponent.Frame>
-              <FormComponent.Label>Local</FormComponent.Label>
+              <FormComponent.Label>Estoque</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="address.place"
+                name="address.stock"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={(value) => {
-                        field.onChange(value);
-                        setSelectedPlace(value);
+                        setSelectedStock(value);
                         setSelectedStorage("");
+                        field.onChange(value);
                       }}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione o local do produto" />
+                          <SelectValue placeholder="Selecione o estoque do produto" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Places.map((place, index) => (
-                          <SelectItem value={place.description} key={index}>
-                            {place.description}
+                        {stocks.map((stock, index) => (
+                          <SelectItem value={stock.name} key={index}>
+                            {stock.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -445,10 +478,11 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                   <FormItem>
                     <Select
                       onValueChange={(value) => {
-                        field.onChange(value);
                         setSelectedStorage(value);
+                        field.onChange(value);
                       }}
                       defaultValue={field.value}
+                      disabled={!selectedStock}
                     >
                       <FormControl>
                         <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
@@ -479,6 +513,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      disabled={!selectedStorage}
                     >
                       <FormControl>
                         <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">

@@ -12,6 +12,8 @@ export type SidebarButtonProps = {
 };
 
 export default function SidebarButton(props: SidebarButtonProps) {
+  const isActive = props.pathname.startsWith(props.refLink);
+
   return (
     <Link
       ref={props.buttonRef}
@@ -19,13 +21,13 @@ export default function SidebarButton(props: SidebarButtonProps) {
         props.disabled
           ? "opacity-40 hover:!bg-transparent"
           : "hover:!bg-vermelho_strategis"
-      } ${props.pathname === props.refLink ? "bg-vermelho_strategis" : ""}`}
+      } ${isActive ? "bg-vermelho_strategis" : ""}`}
       href={props.refLink}
     >
       <span>
         <props.icon size={20}></props.icon>
       </span>
-      <span className="text-semibold whitespace-normal text-left font-inter text-sm sm:text-base">
+      <span className="text-semibold font-inter whitespace-normal text-left text-sm sm:text-base">
         {props.name}
       </span>
     </Link>

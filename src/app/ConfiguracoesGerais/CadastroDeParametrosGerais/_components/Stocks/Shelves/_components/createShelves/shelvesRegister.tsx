@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { FormComponent } from "~/components/forms";
 import {
@@ -16,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Places } from "../../../../GeneralParametersData";
+import { storages } from "../../../../GeneralParametersData";
 import { type CreateShelfFormValues } from "./shelvesRegisterFormSchema";
 
 type ShelfRegisterProps = {
@@ -25,53 +24,11 @@ type ShelfRegisterProps = {
 };
 
 export default function ShelfRegister(props: ShelfRegisterProps) {
-  const [selectedPlace, setSelectedPlace] = useState<string | undefined>(
-    undefined,
-  );
-
-  const filteredStorages = selectedPlace
-    ? (Places.find((place) => place.description === selectedPlace)?.storages ??
-      [])
-    : [];
-
   return (
     <Form {...props.form}>
       <form onSubmit={props.form.handleSubmit(props.onSubmit)}>
         <FormComponent>
           <FormComponent.Line className="px-1">
-            <FormComponent.Frame>
-              <FormComponent.Label>Local</FormComponent.Label>
-              <FormField
-                control={props.form.control}
-                name="place"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        setSelectedPlace(value);
-                      }}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione um local" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {Places.map((place, index) => (
-                          <SelectItem value={place.description} key={index}>
-                            {place.description}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-
             <FormComponent.Frame>
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
@@ -89,7 +46,7 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {filteredStorages.map((storage, index) => (
+                        {storages.map((storage, index) => (
                           <SelectItem value={storage.description} key={index}>
                             {storage.description}
                           </SelectItem>

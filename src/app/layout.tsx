@@ -1,5 +1,5 @@
-import "~/styles/globals.css";
 import { Inter } from "next/font/google";
+import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 
@@ -25,18 +25,18 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body
-        className={`${inter.variable} min-h-screen w-screen flex overflow-x-hidden font-sans bg-fundo_branco`}
+        className={`${inter.variable} flex min-h-screen overflow-x-hidden bg-fundo_branco font-sans`}
       >
         <TRPCReactProvider>
           <SidebarContainer />
-          <div className="ml-0 flex min-h-screen w-full flex-col overflow-x-hidden sm:ml-[270px] lg:ml-[330px]">
-            <div className="hidden sm:block">
+          <div className="ml-0 flex min-h-screen w-full flex-col overflow-x-hidden xl:ml-[330px]">
+            <div className="hidden xl:block">
               <Navbar />
             </div>
-            <div className="block sm:hidden">
+            <div className="block xl:hidden">
               <ResponsiveNavbar />
             </div>
-            <div className="p-4 sm:p-6 lg:p-8">{children}</div>
+            <div className="w-full p-4 sm:p-6 lg:p-8">{children}</div>
           </div>
         </TRPCReactProvider>
       </body>
