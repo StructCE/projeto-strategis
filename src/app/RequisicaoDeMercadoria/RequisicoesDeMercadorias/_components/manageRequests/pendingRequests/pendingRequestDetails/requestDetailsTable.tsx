@@ -1,15 +1,21 @@
+import { CalendarIcon, Text, UserCog2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Input } from "~/components/ui/input";
 import { type Request } from "../../../requestsData";
 
-type PurchaseType = {
+type RequestType = {
   request: Request;
 };
 
-export default function PendingRequestDetails(props: PurchaseType) {
+export default function PendingRequestDetails(props: RequestType) {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [open, setOpen] = useState(false);
+  const [inputResponsible, setInputResponsible] = useState("");
   const [quantities, setQuantities] = useState<Record<string, string>>({});
+  const [statusDescription, setStatusDescription] = useState("");
 
   const handleQuantityChange = (productCode: string, value: string) => {
     setQuantities((prev) => ({
@@ -37,14 +43,19 @@ export default function PendingRequestDetails(props: PurchaseType) {
   };
 
   const handleConfirm = () => {
-    const requestData = props.request.products.map((product) => ({
-      code: product.code,
-      name: product.name,
-      stock_current: product.stock_current,
-      stock_min: product.stock_min,
-      requested_quantity: product.requested_quantity,
-      quantity_to_release: quantities[product.code] ?? 0,
-    }));
+    const requestData = {
+      // responsible: inputResponsible,
+      // date: date?.toISOString(),
+      status_description: statusDescription,
+      products: props.request.products.map((product) => ({
+        code: product.code,
+        name: product.name,
+        stock_current: product.stock_current,
+        stock_min: product.stock_min,
+        requested_quantity: product.requested_quantity,
+        quantity_to_release: quantities[product.code] ?? 0,
+      })),
+    };
 
     console.log(JSON.stringify(requestData, null, 2));
   };
@@ -107,6 +118,51 @@ export default function PendingRequestDetails(props: PurchaseType) {
             </TableComponent.Value>
           </TableComponent.Line>
         ))}
+
+        <div className="flex flex-col gap-1">
+          <p>
+            Preencha os campos abaixo para confirmar ou rejeitar a requisição
+          </p>
+          <div className="flex gap-4">
+            <Filter>
+              <Filter.Icon
+                icon={({ className }: { className: string }) => (
+                  <CalendarIcon className={className} />
+                )}
+              />
+              <Filter.DatePicker
+                date={date}
+                setDate={setDate}
+                open={open}
+                setOpen={setOpen}
+              ></Filter.DatePicker>
+            </Filter>
+            <Filter className="lg:w-[250px]">
+              <Filter.Icon
+                icon={({ className }: { className: string }) => (
+                  <UserCog2 className={className} />
+                )}
+              />
+              <Filter.Input
+                placeholder="Responsável"
+                state={inputResponsible}
+                setState={setInputResponsible}
+              />
+            </Filter>
+            <Filter className="lg:w-full">
+              <Filter.Icon
+                icon={({ className }: { className: string }) => (
+                  <Text className={className} />
+                )}
+              />
+              <Filter.Input
+                placeholder="Insira uma descrição como motivo da confirmação parcial ou do rejeite da requisição"
+                state={statusDescription}
+                setState={setStatusDescription}
+              />
+            </Filter>
+          </div>
+        </div>
 
         <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
           <TableButtonComponent.Button

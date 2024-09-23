@@ -3,7 +3,6 @@ import { Calendar, Eraser, UserCog2 } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
-import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -32,13 +31,13 @@ export default function ManageRejectedRequestsTable() {
 
     const matchesDate =
       !date ||
-      (request.date.getDate() === date.getDate() &&
-        request.date.getMonth() === date.getMonth() + 1 &&
-        request.date.getFullYear() === date.getFullYear());
+      (request.request_date.getDate() === date.getDate() &&
+        request.request_date.getMonth() === date.getMonth() + 1 &&
+        request.request_date.getFullYear() === date.getFullYear());
 
     const matchesResponsible =
       inputResponsible === "" ||
-      request.responsible
+      request.request_responsible
         .toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
@@ -92,7 +91,7 @@ export default function ManageRejectedRequestsTable() {
               />
             </TooltipTrigger>
             <TooltipContent side="right">
-              <p>Limpar filtros</p>
+              <div>Limpar filtros</div>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -121,13 +120,17 @@ export default function ManageRejectedRequestsTable() {
             key={index}
           >
             <TableComponent.Value>
-              {`${request.date.getDate()}/${request.date.getMonth()}/${request.date.getFullYear()}`}
+              {`${request.request_date.getDate()}/${request.request_date.getMonth()}/${request.request_date.getFullYear()}`}
             </TableComponent.Value>
-            <TableComponent.Value>{request.responsible}</TableComponent.Value>
+            <TableComponent.Value>
+              {request.request_responsible}
+            </TableComponent.Value>
             <TableComponent.Value className="text-center">
               {request.products.length}
             </TableComponent.Value>
-            <TableComponent.Value>{request.description}</TableComponent.Value>
+            <TableComponent.Value>
+              {request.request_description}
+            </TableComponent.Value>
 
             <Dialog>
               <DialogTrigger asChild>
@@ -135,36 +138,52 @@ export default function ManageRejectedRequestsTable() {
                   Detalhes
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6">
+              <DialogContent
+                className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
+                aria-describedby={undefined}
+              >
                 <DialogHeader>
                   <DialogTitle className="w-fit pb-1.5">
                     Informações da Requisição de Mercadorias
                   </DialogTitle>
                   <DialogDescription className="w-fit text-base text-black">
-                    <p className="w-fit">
+                    <div className="w-fit">
                       <span className="font-semibold">Data da Requisição:</span>{" "}
-                      {`${request.date.getDate()}/${request.date.getMonth()}/${request.date.getFullYear()}`}
-                    </p>
-                    <p className="w-fit">
+                      {`${request.request_date.getDate()}/${request.request_date.getMonth()}/${request.request_date.getFullYear()}`}
+                    </div>
+                    <div className="w-fit">
                       <span className="font-semibold">
                         Responsável pela Requisição:
                       </span>{" "}
-                      {request.responsible}
-                    </p>
-                    <p className="w-fit font-semibold">Produtos solicitados:</p>
+                      {request.request_responsible}
+                    </div>
+                    <div className="w-fit font-semibold">
+                      Produtos solicitados:
+                    </div>
                   </DialogDescription>
 
                   <RejectedRequestDetails request={request} />
 
-                  <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
-                    <TableButtonComponent.Button className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login max-[425px]:w-full">
-                      Rejeitar Requisição
-                    </TableButtonComponent.Button>
-
-                    <TableButtonComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao max-[425px]:w-full">
-                      Confirmar Requisição
-                    </TableButtonComponent.Button>
-                  </TableButtonComponent>
+                  <div className="mt-2 flex flex-col">
+                    <div className="w-fit">
+                      <span className="font-semibold">Data da Rejeição:</span>{" "}
+                      {`${request.status_date?.getDate()}/${request.status_date?.getMonth()}/${request.status_date?.getFullYear()}`}
+                    </div>
+                    <div className="w-fit">
+                      <span className="font-semibold">
+                        Responsável pela Rejeição:
+                      </span>{" "}
+                      {request.status_responsible}
+                    </div>
+                    {request.status_description != "" ? (
+                      <div>
+                        <span className="font-semibold">Descrição:</span>{" "}
+                        {request.status_description}
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </DialogHeader>
               </DialogContent>
             </Dialog>

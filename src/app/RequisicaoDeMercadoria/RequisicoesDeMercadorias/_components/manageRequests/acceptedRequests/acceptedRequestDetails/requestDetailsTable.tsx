@@ -5,11 +5,11 @@ type RequestType = {
   request: Request;
 };
 
-export default function RejectedRequestDetails(props: RequestType) {
+export default function AcceptedRequestDetails(props: RequestType) {
   return (
     <TableComponent className="gap-3 text-left">
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[0.5fr_2fr_1fr] gap-10">
+        <TableComponent.LineTitle className="grid-cols-[0.5fr_2fr_1fr_1fr] gap-10">
           <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
             Código
           </TableComponent.ValueTitle>
@@ -19,11 +19,14 @@ export default function RejectedRequestDetails(props: RequestType) {
           <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
             Quantidade Requisitada
           </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-center text-base leading-5 sm:text-[18px]">
+            Quantidade Entregue
+          </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
         {props.request.products.map((product, index) => (
           <TableComponent.Line
-            className={`grid-cols-[0.5fr_2fr_1fr] gap-10 ${
+            className={`grid-cols-[0.5fr_2fr_1fr_1fr] gap-10 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -36,6 +39,9 @@ export default function RejectedRequestDetails(props: RequestType) {
             </TableComponent.Value>
             <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
               {product.requested_quantity}
+            </TableComponent.Value>
+            <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
+              {product.released_quantity}
             </TableComponent.Value>
           </TableComponent.Line>
         ))}

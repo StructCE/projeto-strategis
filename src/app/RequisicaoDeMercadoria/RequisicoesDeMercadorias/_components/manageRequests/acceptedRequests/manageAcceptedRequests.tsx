@@ -3,7 +3,6 @@ import { Calendar, Eraser, UserCog2 } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
-import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -20,7 +19,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { requests } from "../../requestsData";
-import AcceptedRequestDetails from "./acceptedRequestDetails/purchaseDetailsTable";
+import AcceptedRequestDetails from "./acceptedRequestDetails/requestDetailsTable";
 
 export default function ManageAcceptedRequestsTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -32,13 +31,13 @@ export default function ManageAcceptedRequestsTable() {
 
     const matchesDate =
       !date ||
-      (request.date.getDate() === date.getDate() &&
-        request.date.getMonth() === date.getMonth() + 1 &&
-        request.date.getFullYear() === date.getFullYear());
+      (request.request_date.getDate() === date.getDate() &&
+        request.request_date.getMonth() === date.getMonth() + 1 &&
+        request.request_date.getFullYear() === date.getFullYear());
 
     const matchesResponsible =
       inputResponsible === "" ||
-      request.responsible
+      request.request_responsible
         .toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
@@ -48,7 +47,7 @@ export default function ManageAcceptedRequestsTable() {
   return (
     <TableComponent className="gap-3">
       <TableComponent.Subtitle>
-        Requisições de mercadoria esperando confirmação
+        Requisições de mercadoria confirmadas
       </TableComponent.Subtitle>
 
       <TableComponent.FiltersLine>
@@ -91,9 +90,7 @@ export default function ManageAcceptedRequestsTable() {
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
@@ -121,13 +118,17 @@ export default function ManageAcceptedRequestsTable() {
             key={index}
           >
             <TableComponent.Value>
-              {`${request.date.getDate()}/${request.date.getMonth()}/${request.date.getFullYear()}`}
+              {`${request.request_date.getDate()}/${request.request_date.getMonth()}/${request.request_date.getFullYear()}`}
             </TableComponent.Value>
-            <TableComponent.Value>{request.responsible}</TableComponent.Value>
+            <TableComponent.Value>
+              {request.request_responsible}
+            </TableComponent.Value>
             <TableComponent.Value className="text-center">
               {request.products.length}
             </TableComponent.Value>
-            <TableComponent.Value>{request.description}</TableComponent.Value>
+            <TableComponent.Value>
+              {request.request_description}
+            </TableComponent.Value>
 
             <Dialog>
               <DialogTrigger asChild>
@@ -135,7 +136,10 @@ export default function ManageAcceptedRequestsTable() {
                   Detalhes
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6">
+              <DialogContent
+                className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
+                aria-describedby={undefined}
+              >
                 <DialogHeader>
                   <DialogTitle className="w-fit pb-1.5">
                     Informações da Requisição de Mercadorias
@@ -143,28 +147,41 @@ export default function ManageAcceptedRequestsTable() {
                   <DialogDescription className="w-fit text-base text-black">
                     <p className="w-fit">
                       <span className="font-semibold">Data da Requisição:</span>{" "}
-                      {`${request.date.getDate()}/${request.date.getMonth()}/${request.date.getFullYear()}`}
+                      {`${request.request_date.getDate()}/${request.request_date.getMonth()}/${request.request_date.getFullYear()}`}
                     </p>
                     <p className="w-fit">
                       <span className="font-semibold">
                         Responsável pela Requisição:
                       </span>{" "}
-                      {request.responsible}
+                      {request.request_responsible}
                     </p>
                     <p className="w-fit font-semibold">Produtos solicitados:</p>
                   </DialogDescription>
 
                   <AcceptedRequestDetails request={request} />
 
-                  <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
-                    <TableButtonComponent.Button className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login max-[425px]:w-full">
-                      Rejeitar Requisição
-                    </TableButtonComponent.Button>
-
-                    <TableButtonComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao max-[425px]:w-full">
-                      Confirmar Requisição
-                    </TableButtonComponent.Button>
-                  </TableButtonComponent>
+                  <div className="mt-2 flex flex-col">
+                    <p className="w-fit">
+                      <span className="font-semibold">
+                        Data da Confirmação:
+                      </span>{" "}
+                      {`${request.status_date?.getDate()}/${request.status_date?.getMonth()}/${request.status_date?.getFullYear()}`}
+                    </p>
+                    <p className="w-fit">
+                      <span className="font-semibold">
+                        Responsável pela Confirmação:
+                      </span>{" "}
+                      {request.status_responsible}
+                    </p>
+                    {request.status_description != "" ? (
+                      <p>
+                        <span className="font-semibold">Descrição:</span>{" "}
+                        {request.status_description}
+                      </p>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </DialogHeader>
               </DialogContent>
             </Dialog>

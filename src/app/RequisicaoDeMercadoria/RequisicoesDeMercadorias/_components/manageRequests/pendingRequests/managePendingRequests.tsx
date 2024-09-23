@@ -31,13 +31,13 @@ export default function ManagePendingRequestsTable() {
 
     const matchesDate =
       !date ||
-      (request.date.getDate() === date.getDate() &&
-        request.date.getMonth() === date.getMonth() + 1 &&
-        request.date.getFullYear() === date.getFullYear());
+      (request.request_date.getDate() === date.getDate() &&
+        request.request_date.getMonth() === date.getMonth() + 1 &&
+        request.request_date.getFullYear() === date.getFullYear());
 
     const matchesResponsible =
       inputResponsible === "" ||
-      request.responsible
+      request.request_responsible
         .toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
@@ -90,9 +90,7 @@ export default function ManagePendingRequestsTable() {
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
@@ -120,13 +118,17 @@ export default function ManagePendingRequestsTable() {
             key={index}
           >
             <TableComponent.Value>
-              {`${request.date.getDate()}/${request.date.getMonth()}/${request.date.getFullYear()}`}
+              {`${request.request_date.getDate()}/${request.request_date.getMonth()}/${request.request_date.getFullYear()}`}
             </TableComponent.Value>
-            <TableComponent.Value>{request.responsible}</TableComponent.Value>
+            <TableComponent.Value>
+              {request.request_responsible}
+            </TableComponent.Value>
             <TableComponent.Value className="text-center">
               {request.products.length}
             </TableComponent.Value>
-            <TableComponent.Value>{request.description}</TableComponent.Value>
+            <TableComponent.Value>
+              {request.request_description}
+            </TableComponent.Value>
 
             <Dialog>
               <DialogTrigger asChild>
@@ -134,7 +136,10 @@ export default function ManagePendingRequestsTable() {
                   Detalhes
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6">
+              <DialogContent
+                className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
+                aria-describedby={undefined}
+              >
                 <DialogHeader>
                   <DialogTitle className="w-fit pb-1.5">
                     Informações da Requisição de Mercadorias
@@ -142,13 +147,13 @@ export default function ManagePendingRequestsTable() {
                   <DialogDescription className="w-fit text-base text-black">
                     <p className="w-fit">
                       <span className="font-semibold">Data da Requisição:</span>{" "}
-                      {`${request.date.getDate()}/${request.date.getMonth()}/${request.date.getFullYear()}`}
+                      {`${request.request_date.getDate()}/${request.request_date.getMonth()}/${request.request_date.getFullYear()}`}
                     </p>
                     <p className="w-fit">
                       <span className="font-semibold">
                         Responsável pela Requisição:
                       </span>{" "}
-                      {request.responsible}
+                      {request.request_responsible}
                     </p>
                     <p className="w-fit font-semibold">Produtos solicitados:</p>
                   </DialogDescription>

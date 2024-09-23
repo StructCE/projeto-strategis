@@ -13,6 +13,7 @@ export type Product = {
   buy_or_production: string;
   buy_unit: Unit;
   requested_quantity: string;
+  released_quantity: string;
   buy_day: string;
   stock_current: string;
   stock_min: string;
@@ -20,17 +21,20 @@ export type Product = {
 };
 
 export type Request = {
-  date: Date;
-  responsible: string;
+  request_date: Date;
+  request_responsible: string;
   products: Product[];
-  description: string;
+  request_description: string;
   status: "pending" | "accepted" | "rejected";
+  status_description?: string;
+  status_date?: Date;
+  status_responsible?: string;
 };
 
 export const requests: Request[] = [
   {
-    date: new Date(2024, 9, 22),
-    responsible: "Requisitante 1",
+    request_date: new Date(2024, 9, 22),
+    request_responsible: "Requisitante 1",
     products: [
       {
         name: "Cerveja Pilsen",
@@ -44,6 +48,7 @@ export const requests: Request[] = [
           unitsPerPack: 12,
         },
         requested_quantity: "3",
+        released_quantity: "3",
         buy_day: "Segunda",
         stock_current: "200",
         stock_min: "50",
@@ -61,18 +66,19 @@ export const requests: Request[] = [
           unitsPerPack: 12,
         },
         requested_quantity: "2",
+        released_quantity: "2",
         buy_day: "Quarta",
         stock_current: "250",
         stock_min: "100",
         stock_max: "400",
       },
     ],
-    description: "Descrição da requisição 1",
+    request_description: "Descrição da requisição 1",
     status: "pending",
   },
   {
-    date: new Date(2024, 9, 23),
-    responsible: "Requisitante 2",
+    request_date: new Date(2024, 9, 23),
+    request_responsible: "Requisitante 2",
     products: [
       {
         name: "Carne Bovina",
@@ -86,6 +92,7 @@ export const requests: Request[] = [
           unitsPerPack: 1,
         },
         requested_quantity: "10",
+        released_quantity: "10",
         buy_day: "Terça",
         stock_current: "120",
         stock_min: "30",
@@ -104,18 +111,22 @@ export const requests: Request[] = [
           unitsPerPack: 1,
         },
         requested_quantity: "20",
+        released_quantity: "19",
         buy_day: "Quarta",
         stock_current: "60",
         stock_min: "10",
         stock_max: "100",
       },
     ],
-    description: "Descrição da requisição 2",
+    request_description: "Descrição da requisição 2",
     status: "accepted",
+    status_description: "Confirmada parcialmente por motivo x",
+    status_date: new Date(2024, 9, 24),
+    status_responsible: "Estoquista 1",
   },
   {
-    date: new Date(2024, 9, 24),
-    responsible: "Requisitante 3",
+    request_date: new Date(2024, 9, 24),
+    request_responsible: "Requisitante 3",
     products: [
       {
         name: "Sabão em Pó",
@@ -129,6 +140,7 @@ export const requests: Request[] = [
           unitsPerPack: 1,
         },
         requested_quantity: "30",
+        released_quantity: "30",
         buy_day: "Quinta",
         stock_current: "80",
         stock_min: "20",
@@ -146,13 +158,17 @@ export const requests: Request[] = [
           unitsPerPack: 10,
         },
         requested_quantity: "4",
+        released_quantity: "3",
         buy_day: "Sexta",
         stock_current: "150",
         stock_min: "50",
         stock_max: "250",
       },
     ],
-    description: "Descrição da requisição 3",
+    request_description: "Descrição da requisição 3",
     status: "rejected",
+    status_description: "Rejeitada por motivo x",
+    status_date: new Date(2024, 9, 25),
+    status_responsible: "Estoquista 2",
   },
 ];
