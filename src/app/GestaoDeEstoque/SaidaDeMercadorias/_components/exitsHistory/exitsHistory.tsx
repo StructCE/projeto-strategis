@@ -52,10 +52,10 @@ export default function ExitsHistory() {
               </DialogTrigger>
               <DialogContent className="sm:max-w-[90rem]">
                 <DialogHeader>
-                  <DialogTitle className="pb-1.5">
+                  <h1 className="pb-1.5 text-2xl font-semibold">
                     Detalhes da Saída:
-                  </DialogTitle>
-                  <DetailExit exit={saida}/>
+                  </h1>
+                  <DetailExit exit={saida} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

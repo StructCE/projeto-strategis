@@ -46,10 +46,10 @@ export default function ManageExits() {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[90rem]">
                   <DialogHeader>
-                    <DialogTitle className="pb-1.5">
+                    <h1 className="pb-1.5 text-2xl font-semibold">
                       Detalhes da Requisição:
-                    </DialogTitle>
-                    <DetailRequisition requisition={req}  />
+                    </h1>
+                    <DetailRequisition requisition={req} />
                     <DialogDescription></DialogDescription>
                   </DialogHeader>
                 </DialogContent>
