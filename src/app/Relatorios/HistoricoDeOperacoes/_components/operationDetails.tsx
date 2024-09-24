@@ -27,7 +27,7 @@ export default function OperationDetails(props: OperationType) {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {props.operation.products.map((product, index) => (
+        {/* {props.operation.products.map((product, index) => (
           <TableComponent.Line
             className={`grid-cols-[70px_1.5fr_130px_90px_110px] gap-16 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -50,7 +50,7 @@ export default function OperationDetails(props: OperationType) {
               {product.status}
             </TableComponent.Value>
           </TableComponent.Line>
-        ))}
+        ))} */}
       </TableComponent.Table>
     </TableComponent>
   );

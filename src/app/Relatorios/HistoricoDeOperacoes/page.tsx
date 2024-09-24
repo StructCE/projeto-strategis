@@ -150,19 +150,18 @@ export default function ManageRequestsTable() {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1fr_1fr_1fr_2fr_130px] gap-8">
+        <TableComponent.LineTitle className="grid-cols-[1fr_1fr_1fr_2fr] gap-8">
           <TableComponent.ValueTitle>
             Data da Operação
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Empresa</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Operador</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Descrição</TableComponent.ValueTitle>
-          <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
         {filteredOperations.map((operation, index) => (
           <TableComponent.Line
-            className={`grid-cols-[1fr_1fr_1fr_2fr_130px] gap-8 ${
+            className={`grid-cols-[1fr_1fr_1fr_2fr] gap-8 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -178,6 +177,9 @@ export default function ManageRequestsTable() {
             </TableComponent.Value>
             <TableComponent.Value>{operation.operation}</TableComponent.Value>
 
+            {/* 
+            Não sei como fazer os detalhes da operação, cada operação teria q mostrar infromações diferentes
+            então não sei como seria estruturado o banco de dados para isso.
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
@@ -194,14 +196,20 @@ export default function ManageRequestsTable() {
                   </DialogTitle>
                   <DialogDescription className="w-fit text-base text-black">
                     <p className="w-fit">
-                      <span className="font-semibold">Data da Requisição:</span>{" "}
+                      <span className="font-semibold">Data da Operação:</span>{" "}
                       {`${operation.date.getDate()}/${operation.date.getMonth()}/${operation.date.getFullYear()}`}
                     </p>
                     <p className="w-fit">
-                      <span className="font-semibold">
-                        Responsável pela Requisição:
-                      </span>{" "}
+                      <span className="font-semibold">Esmpresa:</span>{" "}
+                      {operation.operator.company}
+                    </p>
+                    <p className="w-fit">
+                      <span className="font-semibold">Operador:</span>{" "}
                       {operation.operator.name}
+                    </p>
+                    <p className="w-fit">
+                      <span className="font-semibold">Operação:</span>{" "}
+                      {operation.operation}
                     </p>
                     <p className="w-fit font-semibold">Produtos solicitados:</p>
                   </DialogDescription>
@@ -209,7 +217,7 @@ export default function ManageRequestsTable() {
                   <OperationDetails operation={operation} />
                 </DialogHeader>
               </DialogContent>
-            </Dialog>
+            </Dialog> */}
           </TableComponent.Line>
         ))}
       </TableComponent.Table>
