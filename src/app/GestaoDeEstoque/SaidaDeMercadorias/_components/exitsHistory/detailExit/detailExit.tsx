@@ -1,6 +1,5 @@
 "use client";
 
-
 import { TableComponent } from "~/components/table";
 import { Separator } from "~/components/ui/separator";
 
@@ -27,59 +26,67 @@ export const DetailExit = (props: { exit: Saida }) => {
   return (
     <div>
       <TableComponent>
-        <TableComponent.Title className="text-[0.5rem]">
+        {/* <TableComponent.Title className="text-[0.5rem]">
           Histórico de Saídas
-        </TableComponent.Title>
+        </TableComponent.Title> */}
 
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[repeat(9,_1fr)]">
+          <TableComponent.LineTitle className="grid-cols-[repeat(5,_1fr)_10px_repeat(3,_1fr)]">
             <TableComponent.ValueTitle>Código</TableComponent.ValueTitle>
             <TableComponent.ValueTitle>Produto</TableComponent.ValueTitle>
-            <TableComponent.ValueTitle>Unidade</TableComponent.ValueTitle>
-            <TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-center">
+              Unidade
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-center">
               Estoque Atual (unidade)
             </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle>Estoque Mín.</TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-center">
+              Estoque Mín.
+            </TableComponent.ValueTitle>
 
             <Separator orientation="vertical" className="bg-black" />
 
-            <TableComponent.ValueTitle>
-              Quantidade Solicitada (unidade)
+            <TableComponent.ValueTitle className="text-center">
+              Qtd Solicitada (unidade)
             </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle>
-              Quantidade Solicitada (fardo)
+            <TableComponent.ValueTitle className="text-center">
+              Qtd Solicitada (fardo)
             </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle>
-              Quantidade Confirmada
+            <TableComponent.ValueTitle className="text-center">
+              Qtd <br /> Confirmada
             </TableComponent.ValueTitle>
           </TableComponent.LineTitle>
 
           {props.exit.produtos.map((produto, index) => (
             <TableComponent.Line
-              className={`grid-cols-[repeat(9,_1fr)] ${
+              className={`grid-cols-[repeat(5,_1fr)_10px_repeat(3,_1fr)] ${
                 index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
               }`}
               key={index}
             >
               <TableComponent.Value>{produto.codigo}</TableComponent.Value>
               <TableComponent.Value>{produto.nome}</TableComponent.Value>
-              <TableComponent.Value>{produto.unidade}</TableComponent.Value>
-              <TableComponent.Value>
+
+              <TableComponent.Value className="text-center">
+                {produto.unidade}
+              </TableComponent.Value>
+              <TableComponent.Value className="text-center">
                 {produto.estoque_atual}
               </TableComponent.Value>
-              {/* <TableComponent.Value>{produto.estoque_max}</TableComponent.Value> */}
-              <TableComponent.Value>{produto.estoque_min}</TableComponent.Value>
+              <TableComponent.Value className="text-center">
+                {produto.estoque_min}
+              </TableComponent.Value>
 
               <Separator orientation="vertical" className="bg-black" />
 
-              <TableComponent.Value>
+              <TableComponent.Value className="text-center">
                 {props.exit.quant_solicitada_unidade}
               </TableComponent.Value>
-              <TableComponent.Value>
+              <TableComponent.Value className="text-center">
                 {props.exit.quant_solicitada_fardo}
               </TableComponent.Value>
 
-              <TableComponent.Value>
+              <TableComponent.Value className="text-center">
                 {props.exit.quant_confirmada}
               </TableComponent.Value>
             </TableComponent.Line>

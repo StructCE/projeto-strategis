@@ -44,7 +44,7 @@ export default function ManageExits() {
                     Detalhes
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-7xl">
+                <DialogContent className="sm:max-w-[90rem]">
                   <DialogHeader>
                     <DialogTitle className="pb-1.5">
                       Detalhes da Requisição:

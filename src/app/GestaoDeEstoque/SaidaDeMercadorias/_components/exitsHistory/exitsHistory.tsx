@@ -12,7 +12,6 @@ import {
 
 import { saidas } from "../exitsData";
 import ExitsHistoryFilters from "./exitsHistoryFilters/exitsHistoryFilters";
-import { DetailRequisition } from "../manageExits/detailRequisition/detailRequisition";
 import { DetailExit } from "./detailExit/detailExit";
 
 export default function ExitsHistory() {
@@ -51,7 +50,7 @@ export default function ExitsHistory() {
                   Detalhes
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-7xl">
+              <DialogContent className="sm:max-w-[90rem]">
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
                     Detalhes da Saída:
