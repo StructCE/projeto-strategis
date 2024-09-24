@@ -71,9 +71,7 @@ export default function ManageRequestsTable() {
 
   return (
     <TableComponent className="gap-3">
-      <TableComponent.Subtitle>
-        Requisições de mercadoria esperando confirmação
-      </TableComponent.Subtitle>
+      <TableComponent.Title>Status de Requisições</TableComponent.Title>
 
       <TableComponent.FiltersLine>
         <Filter>
