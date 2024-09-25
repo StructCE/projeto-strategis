@@ -1,3 +1,5 @@
+import { type User } from "~/components/navbar/_components/userData";
+
 export type TypeOfControl = {
   description: string;
 };
@@ -166,7 +168,7 @@ export type Product = {
   product_category: ProductCategory;
   sector_of_use: SectorOfUse;
   address: Address;
-  permission?: boolean;
+  permission?: User[];
 };
 
 export const products: Product[] = [
@@ -174,7 +176,11 @@ export const products: Product[] = [
     name: "Cerveja Pilsen",
     code: "1001",
     status: "Ativo",
-    suppliers: [{ name: "Fornecedor A" }, { name: "Fornecedor B" }],
+    suppliers: [
+      { name: "Fornecedor A" },
+      { name: "Fornecedor B" },
+      { name: "Fornecedor C" },
+    ],
     buy_or_production: "Produto de Compra",
     buy_unit: { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
     buy_quantity: "100",
@@ -190,13 +196,26 @@ export const products: Product[] = [
       storage: "Armário 1",
       shelf: "Prateleira 1",
     },
-    permission: true,
+    permission: [
+      {
+        name: "Usuário 1",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+      {
+        name: "Usuário 3",
+        role: "Requisitante",
+        company: "TechNova Matriz",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
   {
     name: "Carne Bovina",
     code: "1002",
     status: "Ativo",
-    suppliers: [{ name: "Fornecedor B" }],
+    suppliers: [{ name: "Fornecedor B" }, { name: "Fornecedor C" }],
     buy_or_production: "Produto de Compra",
     buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "50",
@@ -212,7 +231,14 @@ export const products: Product[] = [
       storage: "Armário 2",
       shelf: "Prateleira 3",
     },
-    permission: false,
+    permission: [
+      {
+        name: "Usuário 2",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
   {
     name: "Carne Moída",
@@ -235,13 +261,20 @@ export const products: Product[] = [
       storage: "Armário 2",
       shelf: "Prateleira 4",
     },
-    permission: false,
+    permission: [
+      {
+        name: "Usuário 2",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
   {
     name: "Água Mineral",
     code: "1003",
     status: "Ativo",
-    suppliers: [{ name: "Fornecedor C" }],
+    suppliers: [{ name: "Fornecedor C" }, { name: "Fornecedor D" }],
     buy_or_production: "Produto de Compra",
     buy_unit: { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
     buy_quantity: "200",
@@ -257,7 +290,20 @@ export const products: Product[] = [
       storage: "Zona 1",
       shelf: "Prateleira 6",
     },
-    permission: true,
+    permission: [
+      {
+        name: "Usuário 1",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+      {
+        name: "Usuário 4",
+        role: "Requisitante",
+        company: "TechNova Filial",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
   {
     name: "Sabão em Pó",
@@ -279,7 +325,14 @@ export const products: Product[] = [
       storage: "Zona 2",
       shelf: "Prateleira 7",
     },
-    permission: false,
+    permission: [
+      {
+        name: "Usuário 2",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
   {
     name: "Vinho Tinto",
@@ -301,6 +354,13 @@ export const products: Product[] = [
       storage: "Zona 3",
       shelf: "Prateleira 10",
     },
-    permission: true,
+    permission: [
+      {
+        name: "Usuário 1",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
 ];

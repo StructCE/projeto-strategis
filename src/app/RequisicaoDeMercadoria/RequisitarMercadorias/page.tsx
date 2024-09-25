@@ -19,6 +19,7 @@ import {
   type Product,
 } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 import { Filter } from "~/components/filter";
+import { type User } from "~/components/navbar/_components/userData";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
@@ -129,6 +130,20 @@ export default function CreatePurchaseOrder() {
     // Exemplo de exportação da requisição como JSON (feito com gpt, verificar se ta tudo certo)
     console.log(JSON.stringify(requestData, null, 2));
   };
+
+  // Exemplo da lógica de permissão (Usuário 1 tem permissão pra produtos líquidos, e Usuário 2 outros produtos)
+  const LoggedUser: User = {
+    name: "Usuário 1",
+    role: "Requisitante",
+    company: "Alimentos WCW",
+    phone: "(61) 99999-9999",
+  };
+
+  function hasPermission(product: Product, user: User) {
+    return product.permission?.some(
+      (permittedUser) => permittedUser.name === user.name,
+    );
+  }
 
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
@@ -368,7 +383,7 @@ export default function CreatePurchaseOrder() {
                 </TableComponent.Value>
 
                 {/* Ver como vai funcionar essa lógica de permissão */}
-                {product.permission ? (
+                {hasPermission(product, LoggedUser) ? (
                   <Button
                     onClick={() => handleAddProduct(product)}
                     className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-[#181818] sm:text-[16px]"
