@@ -11,6 +11,7 @@ import {
 } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
+import { EntryDialogConfirm } from "./entryDatails";
 
 export default function ManageEntry() {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,6 +65,7 @@ export default function ManageEntry() {
                 Utilize os campos abaixo para editar os dados do fornecedor ou o
                 botão para remover
               </DialogTitle>
+              <EntryDialogConfirm />
               <DialogDescription></DialogDescription>
             </DialogHeader>
           </DialogContent>

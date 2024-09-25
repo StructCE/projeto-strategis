@@ -5,14 +5,6 @@ import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -21,7 +13,7 @@ import {
 import { entryData } from "../../entryData";
 //import { StockEdit } from "./editStocks/stockEdit";
 
-export const HistoryEntryTable = () => {
+export const EntryDialogConfirm = () => {
   const [inputInvoice, setInputInvoice] = useState("");
   const [inputDate, setInputDate] = useState("");
   const [inputManager, setInputManger] = useState("");
@@ -55,7 +47,7 @@ export const HistoryEntryTable = () => {
 
   return (
     <TableComponent>
-      <TableComponent.Title>Histórico de Entradas</TableComponent.Title>
+      <TableComponent.Title>Detalhes da Entrada:</TableComponent.Title>
       <TableComponent.FiltersLine>
         <Filter>
           <Filter.Icon
@@ -161,26 +153,6 @@ export const HistoryEntryTable = () => {
               {entry.suppliers.map((s) => s.name).join(", ")}
             </TableComponent.Value>
             <TableComponent.Value>{entry.manager}</TableComponent.Value>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="sm:max-w-7xl"
-              >
-                <DialogHeader>
-                  <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do estoque ou
-                    o botão para remover
-                  </DialogTitle>
-                  {/*<StockEdit entry={entry} />*/}
-                  <DialogDescription></DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
           </TableComponent.Line>
         ))}
       </TableComponent.Table>
