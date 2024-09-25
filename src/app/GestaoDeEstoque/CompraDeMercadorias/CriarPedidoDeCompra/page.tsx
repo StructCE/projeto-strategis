@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
+import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import {
   ProductCategories,
   SectorsOfUse,
@@ -23,6 +24,7 @@ import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -43,11 +45,15 @@ export default function CreatePurchaseOrder() {
   const [inputResponsible, setInputResponsible] = useState("");
 
   const [inputCode, setInputCode] = useState("");
-  const [inputName, setInputName] = useState("");
+  const [inputProduct, setInputProduct] = useState("");
+  const [selectSuppliers, setSelectSuppliers] = useState<string[]>([]);
+  const [selectStock, setSelectStock] = useState("");
   const [selectAddress, setSelectAddress] = useState("");
   const [selectControlType, setSelectControlType] = useState("");
   const [selectCategory, setSelectCategory] = useState("");
   const [selectSector, setSelectSector] = useState("");
+  const [selectStatus, setSelectStatus] = useState("");
+  const [selectBuyDay, setSelectBuyDay] = useState("");
 
   const [addedProducts, setAddedProducts] = useState<Product[]>([]);
   const [quantities, setQuantities] = useState<Record<string, string>>({});
@@ -57,11 +63,15 @@ export default function CreatePurchaseOrder() {
 
   const areAllFiltersEmpty =
     inputCode === "" &&
-    inputName === "" &&
+    inputProduct === "" &&
+    selectSuppliers.length === 0 &&
+    selectStock === "" &&
     selectAddress === "" &&
     selectControlType === "" &&
     selectCategory === "" &&
-    selectSector === "";
+    selectSector === "" &&
+    selectStatus === "" &&
+    selectBuyDay === "";
 
   // Função para filtrar produtos
   const filteredProducts = areAllFiltersEmpty
@@ -69,12 +79,22 @@ export default function CreatePurchaseOrder() {
     : products.filter((product) => {
         const matchesCode =
           inputCode === "" || product.code.includes(inputCode);
-        const matchesName =
-          inputName === "" ||
-          product.name.toLowerCase().includes(inputName.toLowerCase());
+        const matchesProduct =
+          inputProduct === "" ||
+          product.name.toLowerCase().includes(inputProduct.toLowerCase());
+        const matchesSupplier =
+          selectSuppliers.length === 0 ||
+          product.suppliers.some((supplier) =>
+            selectSuppliers.includes(supplier.name),
+          );
+        const matchesStock =
+          selectStock === "" ||
+          `${product.address.stock}`
+            .toLowerCase()
+            .includes(selectStock.toLowerCase());
         const matchesAddress =
           selectAddress === "" ||
-          `${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`
+          `${product.address.storage}, ${product.address.shelf}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
@@ -86,14 +106,22 @@ export default function CreatePurchaseOrder() {
         const matchesSector =
           selectSector === "" ||
           product.sector_of_use?.description === selectSector;
+        const matchesStatus =
+          selectStatus === "" || product.status === selectStatus;
+        const matchesBuyDay =
+          selectBuyDay === "" || product.buy_day === selectBuyDay;
 
         return (
           matchesCode &&
-          matchesName &&
+          matchesProduct &&
+          matchesSupplier &&
+          matchesStock &&
           matchesAddress &&
           matchesControlType &&
           matchesCategory &&
-          matchesSector
+          matchesSector &&
+          matchesStatus &&
+          matchesBuyDay
         );
       });
 
@@ -229,7 +257,7 @@ export default function CreatePurchaseOrder() {
             />
           </Filter>
 
-          <Filter className="lg:w-[250px]">
+          <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
@@ -237,9 +265,45 @@ export default function CreatePurchaseOrder() {
             />
             <Filter.Input
               placeholder="Produto"
-              state={inputName}
-              setState={setInputName}
+              state={inputProduct}
+              setState={setInputProduct}
             />
+          </Filter>
+
+          <div className="font-inter font-regular m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
+            <MultiSelect
+              FilterIcon={Search}
+              options={suppliers.flatMap((supplier) => ({
+                label: supplier.name,
+                value: supplier.name,
+              }))}
+              onValueChange={setSelectSuppliers}
+              defaultValue={selectSuppliers}
+              placeholder="Fornecedores"
+              variant="inverted"
+              maxCount={2}
+              className="font-regular font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+            />
+          </div>
+
+          <Filter>
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Search className={className} />
+              )}
+            />
+            <Filter.Select
+              placeholder="Estoque"
+              state={selectStock}
+              setState={setSelectStock}
+            >
+              {stocks.map((stock, index) => (
+                <Filter.SelectItems
+                  key={index}
+                  value={stock.name}
+                ></Filter.SelectItems>
+              ))}
+            </Filter.Select>
           </Filter>
 
           <Filter>
@@ -252,20 +316,34 @@ export default function CreatePurchaseOrder() {
               placeholder="Endereço"
               state={selectAddress}
               setState={setSelectAddress}
+              className={
+                selectStock === "" ? "cursor-not-allowed opacity-50" : ""
+              }
             >
-              {stocks.map((stock) =>
-                stock.address.map((address) =>
-                  address.shelves.map((shelf, index) => (
+              {selectStock === ""
+                ? [
                     <Filter.SelectItems
-                      key={index}
-                      value={`${stock.name}, ${address.description}, ${shelf.description}`}
-                    ></Filter.SelectItems>
-                  )),
-                ),
-              )}
+                      key="0"
+                      value="Selecione um estoque primeiro"
+                    ></Filter.SelectItems>,
+                  ]
+                : stocks
+                    .filter((stock) => stock.name === selectStock)
+                    .flatMap((stock) =>
+                      stock.address.flatMap((address) =>
+                        address.shelves.map((shelf, index) => (
+                          <Filter.SelectItems
+                            key={index}
+                            value={`${address.description}, ${shelf.description}`}
+                          ></Filter.SelectItems>
+                        )),
+                      ),
+                    )}
             </Filter.Select>
           </Filter>
+        </TableComponent.FiltersLine>
 
+        <TableComponent.FiltersLine>
           <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -326,6 +404,44 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
+          <Filter>
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Search className={className} />
+              )}
+            />
+            <Filter.Select
+              placeholder="Status"
+              state={selectStatus}
+              setState={setSelectStatus}
+            >
+              <Filter.SelectItems value="Ativo"></Filter.SelectItems>
+              <Filter.SelectItems value="Inativo"></Filter.SelectItems>
+            </Filter.Select>
+          </Filter>
+
+          <Filter>
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Search className={className} />
+              )}
+            />
+            <Filter.Select
+              placeholder="Dia de Compra"
+              state={selectBuyDay}
+              setState={setSelectBuyDay}
+            >
+              <Filter.SelectItems value="Segunda"></Filter.SelectItems>
+              <Filter.SelectItems value="Terça"></Filter.SelectItems>
+              <Filter.SelectItems value="Quarta"></Filter.SelectItems>
+              <Filter.SelectItems value="Quinta"></Filter.SelectItems>
+              <Filter.SelectItems value="Sexta"></Filter.SelectItems>
+              <Filter.SelectItems value="Sábado"></Filter.SelectItems>
+              <Filter.SelectItems value="Domingo"></Filter.SelectItems>
+              <Filter.SelectItems value="Qualquer dia"></Filter.SelectItems>
+            </Filter.Select>
+          </Filter>
+
           <TooltipProvider delayDuration={300}>
             <Tooltip>
               <TooltipTrigger className="flex h-full cursor-pointer self-center">
@@ -333,17 +449,19 @@ export default function CreatePurchaseOrder() {
                   size={20}
                   onClick={() => {
                     setInputCode("");
-                    setInputName("");
+                    setInputProduct("");
+                    setSelectSuppliers([]);
+                    setSelectStock("");
                     setSelectAddress("");
                     setSelectControlType("");
                     setSelectCategory("");
                     setSelectSector("");
+                    setSelectStatus("");
+                    setSelectBuyDay("");
                   }}
                 />
               </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Limpar filtros</p>
-              </TooltipContent>
+              <TooltipContent side="right">Limpar filtros</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </TableComponent.FiltersLine>

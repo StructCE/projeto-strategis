@@ -29,7 +29,8 @@ export default function CreateInventory() {
   const [inputResponsible, setInputResponsible] = useState("");
 
   const [inputCode, setInputCode] = useState("");
-  const [inputName, setInputName] = useState("");
+  const [inputProduct, setInputProduct] = useState("");
+  const [selectStock, setSelectStock] = useState("");
   const [selectAddress, setSelectAddress] = useState("");
   const [selectControlType, setSelectControlType] = useState("");
   const [selectCategory, setSelectCategory] = useState("");
@@ -40,7 +41,8 @@ export default function CreateInventory() {
 
   const areAllFiltersEmpty =
     inputCode === "" &&
-    inputName === "" &&
+    inputProduct === "" &&
+    selectStock === "" &&
     selectAddress === "" &&
     selectControlType === "" &&
     selectCategory === "" &&
@@ -52,12 +54,17 @@ export default function CreateInventory() {
     : products.filter((product) => {
         const matchesCode =
           inputCode === "" || product.code.includes(inputCode);
-        const matchesName =
-          inputName === "" ||
-          product.name.toLowerCase().includes(inputName.toLowerCase());
+        const matchesProduct =
+          inputProduct === "" ||
+          product.name.toLowerCase().includes(inputProduct.toLowerCase());
+        const matchesStock =
+          selectStock === "" ||
+          `${product.address.stock}`
+            .toLowerCase()
+            .includes(selectStock.toLowerCase());
         const matchesAddress =
           selectAddress === "" ||
-          `${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`
+          `${product.address.storage}, ${product.address.shelf}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
@@ -72,7 +79,8 @@ export default function CreateInventory() {
 
         return (
           matchesCode &&
-          matchesName &&
+          matchesProduct &&
+          matchesStock &&
           matchesAddress &&
           matchesControlType &&
           matchesCategory &&
@@ -210,7 +218,7 @@ export default function CreateInventory() {
             />
           </Filter>
 
-          <Filter className="lg:w-[250px]">
+          <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
@@ -218,9 +226,29 @@ export default function CreateInventory() {
             />
             <Filter.Input
               placeholder="Produto"
-              state={inputName}
-              setState={setInputName}
+              state={inputProduct}
+              setState={setInputProduct}
             />
+          </Filter>
+
+          <Filter>
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Search className={className} />
+              )}
+            />
+            <Filter.Select
+              placeholder="Estoque"
+              state={selectStock}
+              setState={setSelectStock}
+            >
+              {stocks.map((stock, index) => (
+                <Filter.SelectItems
+                  key={index}
+                  value={stock.name}
+                ></Filter.SelectItems>
+              ))}
+            </Filter.Select>
           </Filter>
 
           <Filter>
@@ -233,20 +261,34 @@ export default function CreateInventory() {
               placeholder="Endereço"
               state={selectAddress}
               setState={setSelectAddress}
+              className={
+                selectStock === "" ? "cursor-not-allowed opacity-50" : ""
+              }
             >
-              {stocks.map((stock) =>
-                stock.address.map((address) =>
-                  address.shelves.map((shelf, index) => (
+              {selectStock === ""
+                ? [
                     <Filter.SelectItems
-                      key={index}
-                      value={`${stock.name}, ${address.description}, ${shelf.description}`}
-                    ></Filter.SelectItems>
-                  )),
-                ),
-              )}
+                      key="0"
+                      value="Selecione um estoque primeiro"
+                    ></Filter.SelectItems>,
+                  ]
+                : stocks
+                    .filter((stock) => stock.name === selectStock)
+                    .flatMap((stock) =>
+                      stock.address.flatMap((address) =>
+                        address.shelves.map((shelf, index) => (
+                          <Filter.SelectItems
+                            key={index}
+                            value={`${address.description}, ${shelf.description}`}
+                          ></Filter.SelectItems>
+                        )),
+                      ),
+                    )}
             </Filter.Select>
           </Filter>
+        </TableComponent.FiltersLine>
 
+        <TableComponent.FiltersLine>
           <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -314,7 +356,8 @@ export default function CreateInventory() {
                   size={20}
                   onClick={() => {
                     setInputCode("");
-                    setInputName("");
+                    setInputProduct("");
+                    setSelectStock("");
                     setSelectAddress("");
                     setSelectControlType("");
                     setSelectCategory("");
@@ -322,9 +365,7 @@ export default function CreateInventory() {
                   }}
                 />
               </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Limpar filtros</p>
-              </TooltipContent>
+              <TooltipContent side="right">Limpar filtros</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </TableComponent.FiltersLine>

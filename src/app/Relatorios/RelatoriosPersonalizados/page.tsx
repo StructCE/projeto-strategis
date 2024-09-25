@@ -411,9 +411,7 @@ export default function CustomReports() {
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
