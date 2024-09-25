@@ -44,7 +44,11 @@ export default function CustomReports() {
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
 
+  const [lowStock, setLowStock] = useState(false);
+  const [noStock, setNoStock] = useState(false);
+
   const filteredProducts = products.filter((product) => {
+    // Filtros adicionais de código, produto, fornecedor, etc.
     const matchesCode = inputCode === "" || product.code.includes(inputCode);
     const matchesProduct =
       inputProduct === "" ||
@@ -78,18 +82,71 @@ export default function CustomReports() {
     const matchesBuyDay =
       selectBuyDay === "" || product.buy_day === selectBuyDay;
 
-    return (
-      matchesCode &&
-      matchesProduct &&
-      matchesSupplier &&
-      matchesStock &&
-      matchesAddress &&
-      matchesControlType &&
-      matchesCategory &&
-      matchesSector &&
-      matchesStatus &&
-      matchesBuyDay
-    );
+    // Filtro de estoque baseado no estado dos botões
+    const stockCurrent = Number(product.stock_current);
+    const stockMin = Number(product.stock_min);
+
+    const matchesLowStock =
+      stockCurrent > 0 && stockCurrent <= stockMin + stockMin * 0.1;
+    const matchesNoStock = stockCurrent === 0;
+
+    if (lowStock) {
+      return (
+        matchesLowStock &&
+        matchesCode &&
+        matchesProduct &&
+        matchesSupplier &&
+        matchesStock &&
+        matchesAddress &&
+        matchesControlType &&
+        matchesCategory &&
+        matchesSector &&
+        matchesStatus &&
+        matchesBuyDay
+      );
+    } else if (noStock) {
+      return (
+        matchesNoStock &&
+        matchesCode &&
+        matchesProduct &&
+        matchesSupplier &&
+        matchesStock &&
+        matchesAddress &&
+        matchesControlType &&
+        matchesCategory &&
+        matchesSector &&
+        matchesStatus &&
+        matchesBuyDay
+      );
+    } else {
+      return (
+        matchesCode &&
+        matchesProduct &&
+        matchesSupplier &&
+        matchesStock &&
+        matchesAddress &&
+        matchesControlType &&
+        matchesCategory &&
+        matchesSector &&
+        matchesStatus &&
+        matchesBuyDay
+      );
+    }
+  });
+
+  const lowStockProducts = products.filter((product) => {
+    const matchesLowStock =
+      Number(product.stock_current) > 0 &&
+      Number(product.stock_current) <=
+        Number(product.stock_min) + Number(product.stock_min) * 0.1;
+
+    return matchesLowStock;
+  });
+
+  const noStockProducts = products.filter((product) => {
+    const matchesNoStock = Number(product.stock_current) == 0;
+
+    return matchesNoStock;
   });
 
   function handleProductSelection(
@@ -175,30 +232,48 @@ export default function CustomReports() {
         </div>
 
         <div className="flex flex-wrap justify-end gap-3 lg:flex-nowrap">
-          <button className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]">
+          <button
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            onClick={() => {
+              setLowStock(false);
+              setNoStock(false);
+            }}
+          >
             <span className="w-full text-center text-[48px] font-normal leading-none md:text-[64px]">
               {products.length}
             </span>
             <span className="w-full text-center text-[12px] font-semibold md:text-[14px]">
-              Itens em estoque
+              Itens em Estoque
             </span>
           </button>
 
-          <button className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]">
+          <button
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            onClick={() => {
+              setLowStock(true);
+              setNoStock(false);
+            }}
+          >
             <span className="w-full text-center text-[48px] font-normal leading-none md:text-[64px]">
-              {products.length}
+              {lowStockProducts.length}
             </span>
             <span className="w-full text-center text-[12px] font-semibold md:text-[14px]">
-              Estoque baixo
+              Estoque Baixo
             </span>
           </button>
 
-          <button className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]">
+          <button
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            onClick={() => {
+              setLowStock(false);
+              setNoStock(true);
+            }}
+          >
             <span className="w-full text-center text-[48px] font-normal leading-none md:text-[64px]">
-              {products.length}
+              {noStockProducts.length}
             </span>
             <span className="w-full text-center text-[12px] font-semibold md:text-[14px]">
-              Sem estoque
+              Sem Estoque
             </span>
           </button>
         </div>
@@ -436,13 +511,13 @@ export default function CustomReports() {
             Código
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Produto</TableComponent.ValueTitle>
-          <TableComponent.ValueTitle className="text-center">
+          <TableComponent.ValueTitle className="text-center leading-tight">
             Unidade de Compra
           </TableComponent.ValueTitle>
-          <TableComponent.ValueTitle className="text-center">
+          <TableComponent.ValueTitle className="text-center leading-tight">
             Estoque Atual
           </TableComponent.ValueTitle>
-          <TableComponent.ValueTitle className="text-center">
+          <TableComponent.ValueTitle className="text-center leading-tight">
             Estoque Mínimo
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center">
