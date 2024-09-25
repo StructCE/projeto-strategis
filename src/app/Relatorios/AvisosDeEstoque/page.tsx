@@ -47,8 +47,12 @@ export default function CustomReports() {
   const [lowStock, setLowStock] = useState(false);
   const [noStock, setNoStock] = useState(false);
 
+  const [filterBuy, setFilterBuy] = useState(false);
+  const [filterDontBuy, setFilterDontBuy] = useState(false);
+  const [filterProduce, setFilterProduce] = useState(false);
+  const [filterDontProduce, setFilterDontProduce] = useState(false);
+
   const filteredProducts = products.filter((product) => {
-    // Filtros adicionais de código, produto, fornecedor, etc.
     const matchesCode = inputCode === "" || product.code.includes(inputCode);
     const matchesProduct =
       inputProduct === "" ||
@@ -82,44 +86,20 @@ export default function CustomReports() {
     const matchesBuyDay =
       selectBuyDay === "" || product.buy_day === selectBuyDay;
 
-    // Filtro de estoque baseado no estado dos botões
     const stockCurrent = Number(product.stock_current);
     const stockMin = Number(product.stock_min);
+    const stockThreshold = stockMin + stockMin * 0.1;
 
-    const matchesLowStock =
-      stockCurrent > 0 && stockCurrent <= stockMin + stockMin * 0.1;
-    const matchesNoStock = stockCurrent === 0;
+    const isLowStock = stockCurrent > 0 && stockCurrent <= stockThreshold;
+    const isNoStock = stockCurrent === 0;
+    const isAdequateStock = stockCurrent > stockThreshold;
+    const isProductionProduct =
+      product.type_of_control?.description === "Produtos de Produção";
 
+    // Lógica de filtragem baseada nos botões e checkboxes
     if (lowStock) {
       return (
-        matchesLowStock &&
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
-      );
-    } else if (noStock) {
-      return (
-        matchesNoStock &&
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
-      );
-    } else {
-      return (
+        isLowStock &&
         matchesCode &&
         matchesProduct &&
         matchesSupplier &&
@@ -132,6 +112,101 @@ export default function CustomReports() {
         matchesBuyDay
       );
     }
+
+    if (noStock) {
+      return (
+        isNoStock &&
+        matchesCode &&
+        matchesProduct &&
+        matchesSupplier &&
+        matchesStock &&
+        matchesAddress &&
+        matchesControlType &&
+        matchesCategory &&
+        matchesSector &&
+        matchesStatus &&
+        matchesBuyDay
+      );
+    }
+
+    if (filterBuy) {
+      return (
+        (isLowStock || isNoStock) &&
+        matchesCode &&
+        matchesProduct &&
+        matchesSupplier &&
+        matchesStock &&
+        matchesAddress &&
+        matchesControlType &&
+        matchesCategory &&
+        matchesSector &&
+        matchesStatus &&
+        matchesBuyDay
+      );
+    }
+
+    if (filterDontBuy) {
+      return (
+        isAdequateStock &&
+        matchesCode &&
+        matchesProduct &&
+        matchesSupplier &&
+        matchesStock &&
+        matchesAddress &&
+        matchesControlType &&
+        matchesCategory &&
+        matchesSector &&
+        matchesStatus &&
+        matchesBuyDay
+      );
+    }
+
+    if (filterProduce) {
+      return (
+        (isLowStock || isNoStock) &&
+        isProductionProduct &&
+        matchesCode &&
+        matchesProduct &&
+        matchesSupplier &&
+        matchesStock &&
+        matchesAddress &&
+        matchesControlType &&
+        matchesCategory &&
+        matchesSector &&
+        matchesStatus &&
+        matchesBuyDay
+      );
+    }
+
+    if (filterDontProduce) {
+      return (
+        isAdequateStock &&
+        isProductionProduct &&
+        matchesCode &&
+        matchesProduct &&
+        matchesSupplier &&
+        matchesStock &&
+        matchesAddress &&
+        matchesControlType &&
+        matchesCategory &&
+        matchesSector &&
+        matchesStatus &&
+        matchesBuyDay
+      );
+    }
+
+    return (
+      matchesCode &&
+      matchesProduct &&
+      matchesSupplier &&
+      matchesStock &&
+      matchesAddress &&
+      matchesControlType &&
+      matchesCategory &&
+      matchesSector &&
+      matchesStatus &&
+      matchesBuyDay
+    );
   });
 
   const lowStockProducts = products.filter((product) => {
@@ -217,16 +292,42 @@ export default function CustomReports() {
 
           <div className="flex flex-col flex-nowrap gap-2 sm:flex-row sm:flex-wrap md:gap-x-6">
             <div className="flex items-center gap-1.5 leading-tight">
-              <Checkbox /> Comprar
+              <Checkbox
+                onCheckedChange={(checked) => {
+                  setFilterBuy(checked === true);
+                }}
+              />{" "}
+              Comprar
             </div>
             <div className="flex items-center gap-1.5 leading-tight">
-              <Checkbox /> Não Comprar
+              <Checkbox
+                onCheckedChange={(checked) => {
+                  setFilterDontBuy(checked === true);
+                }}
+              />{" "}
+              Não Comprar
             </div>
             <div className="flex items-center gap-1.5 leading-tight">
-              <Checkbox /> Produzir
+              <Checkbox
+                onCheckedChange={(checked) => {
+                  setFilterProduce(checked === true);
+                  setSelectControlType(
+                    checked === true ? "Produtos de Produção" : "",
+                  );
+                }}
+              />{" "}
+              Produzir
             </div>
             <div className="flex items-center gap-1.5 leading-tight">
-              <Checkbox /> Não Produzir
+              <Checkbox
+                onCheckedChange={(checked) => {
+                  setFilterDontProduce(checked === true);
+                  setSelectControlType(
+                    checked === true ? "Produtos de Produção" : "",
+                  );
+                }}
+              />{" "}
+              Não Produzir
             </div>
           </div>
         </div>

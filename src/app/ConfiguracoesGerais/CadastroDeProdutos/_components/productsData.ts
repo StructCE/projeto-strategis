@@ -408,7 +408,7 @@ export const products: Product[] = [
     stock_current: "0",
     stock_min: "10",
     stock_max: "30",
-    type_of_control: { description: "Produtos de Bar" },
+    type_of_control: { description: "Produtos de Produção" },
     product_category: { description: "Bebidas - Vinho" },
     sector_of_use: { description: "Bar" },
     address: {
