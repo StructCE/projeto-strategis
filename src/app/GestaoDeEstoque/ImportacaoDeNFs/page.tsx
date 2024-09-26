@@ -15,17 +15,9 @@ import {
 
 export default function ImportacaoDeNFs() {
   return (
-    <div className="flex w-full flex-col gap-2 bg-fundo_branco text-[16px]">
+    <div className="flex w-full flex-col gap-2 bg-fundo_branco text-[16px] font-semibold">
       <h1 className="text-[32px]">Importação de Notas Fiscais</h1>
 
-      {/* <div className="flex items-center justify-between">
-        <h1 className="text-[32px] w-[70%]">Importação de Notas Fiscais</h1>
-        <div className="flex justify-end w-[30%]">
-          <Button className="w-full self-end px-8">
-            Adicionar Notas Fiscais
-          </Button>
-        </div>
-      </div> */}
       <div className="flex-col">
         <button className="flex items-center gap-2 py-1">
           <FolderCog />

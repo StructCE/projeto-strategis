@@ -27,17 +27,22 @@ import { Label } from "~/components/ui/label";
 import { useDetailNFsInputs } from "./useDetailNF";
 import SelectInput from "./select";
 import { Button } from "~/components/ui/button";
+import { Separator } from "~/components/ui/separator";
 
 type NotaFiscal = {
   numNF: number;
   date: string;
   quantity: string;
   company: string;
+  supplier: string;
   description: string;
 };
 
+// TODO: useStates para armazenar info de cada produto (e seus dados)
+// TODO: lógica botões de reporte e confirmação
+// TODO: lógica validação confirmação
+
 export default function DetailNF(props: { nf: NotaFiscal }) {
-  const restaurantPath = "";
   const supplierPath = "";
   const selects = useDetailNFsInputs();
   const valorTotal = 9999.99;
@@ -48,28 +53,36 @@ export default function DetailNF(props: { nf: NotaFiscal }) {
         Nota Fiscal <b>nº{props.nf.numNF}</b>
       </h1>
 
-      <div className="flex-col border-b-[1px]">
-        <a className="flex cursor-pointer items-center gap-2 py-1 hover:underline">
-          <ExternalLink className="h-4 w-4" /> Empresa: {restaurantPath}
-        </a>
-        <a className="flex cursor-pointer items-center gap-2 py-1 hover:underline">
-          <ExternalLink className="h-4 w-4" /> Fornecedor: {supplierPath}
-        </a>
+      <Separator />
+
+      <div className="flex-col">
+        <button className="flex items-center gap-2 py-1">
+          <ExternalLink />
+          <p className="font-bold">Empresa:</p>
+          <p className="hover:underline">{props.nf.company}</p>
+        </button>
+        <button className="flex items-center gap-2 py-1">
+          <ExternalLink />
+          <p className="font-bold">Fornecedor:</p>
+          <p className="hover:underline">{props.nf.supplier}</p>
+        </button>
       </div>
 
+      <Separator />
       <div>
         <h2 className="text-[1.5rem] font-medium">PRODUTOS</h2>
+        
         <Accordion type="single" collapsible className="w-full">
           {produtos.map((produto, index) => (
             <AccordionItem
               key={index}
               value={`item-${index}`}
-              className={`${index % 2 === 0 ? "bg-cinza_destaque" : "bg-fundo_tabela_destaque"}`}
+              className={`w-full p-0 ${index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""}`}
             >
               <AccordionTrigger className="text-[1.2rem] font-semibold">
                 #{index + 1} - {produto.nome}
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="w-full">
                 <Table className="">
                   <TableBody className="w-full">
                     <TableRow>
@@ -360,14 +373,23 @@ export default function DetailNF(props: { nf: NotaFiscal }) {
           ))}
         </Accordion>
 
-        <div className="flex justify-start text-xl font-semibold">
-          {/* TODO: colocar separação decimal com vírgula */}
-          VALOR TOTAL: {valorTotal}
+        <div className="flex justify-end p-2 text-xl font-semibold">
+          <p>
+            VALOR TOTAL: R$
+            {valorTotal.toLocaleString("pt-BR", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
         </div>
 
         <div className="m-6 flex items-center justify-center gap-4 font-bold">
-          <Button className="bg-vermelho_botao_1">REPORTAR ERRO</Button>
-          <Button className="bg-verde_botao">CONFIRMAR NF</Button>
+          <Button className="bg-vermelho_botao_1 px-4 text-lg font-semibold">
+            REPORTAR ERRO
+          </Button>
+          <Button className="bg-verde_botao px-4 text-lg font-semibold">
+            CONFIRMAR NF
+          </Button>
         </div>
       </div>
     </>

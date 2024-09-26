@@ -3,6 +3,7 @@ export type NotaFiscal = {
   date: string;
   quantity: string;
   company: string;
+  supplier: string;
   description: string;
 };
 
@@ -16,6 +17,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Tomate, Alface, Batata",
   },
   {
@@ -23,6 +25,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "50",
     company: "Empresa 2",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Sacos plásticos, Etiquetas adesivas",
   },
   {
@@ -30,6 +33,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Refrigerantes, Cervejas, Sucos, Água mineral",
   },
   {
@@ -37,6 +41,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "150",
     company: "Empresa 4",
+    supplier: "Fornecedor X",
     description: "Detergente, Sabão em pó, Água sanitária, Esponjas",
   },
   {
@@ -44,6 +49,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Arroz, Feijão, Macarrão, Óleo de cozinha",
   },
   {
@@ -51,6 +57,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "50",
     company: "Empresa 2",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Sacos plásticos, Etiquetas adesivas",
   },
   {
@@ -58,6 +65,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Refrigerantes, Cervejas, Sucos, Água mineral",
   },
   {
@@ -65,6 +73,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "150",
     company: "Empresa 4",
+    supplier: "Fornecedor X",
     description: "Detergente, Sabão em pó, Água sanitária, Esponjas",
   },
   {
@@ -72,6 +81,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Arroz, Feijão, Macarrão, Óleo de cozinha",
   },
   {
@@ -79,6 +89,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "50",
     company: "Empresa 2",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Sacos plásticos, Etiquetas adesivas",
   },
   {
@@ -86,6 +97,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Refrigerantes, Cervejas, Sucos, Água mineral",
   },
   {
@@ -93,6 +105,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "150",
     company: "Empresa 4",
+    supplier: "Fornecedor X",
     description: "Detergente, Sabão em pó, Água sanitária, Esponjas",
   },
   {
@@ -100,6 +113,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Arroz, Feijão, Macarrão, Óleo de cozinha",
   },
   {
@@ -107,6 +121,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "50",
     company: "Empresa 2",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Sacos plásticos, Etiquetas adesivas",
   },
   {
@@ -114,6 +129,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Refrigerantes, Cervejas, Sucos, Água mineral",
   },
   {
@@ -121,6 +137,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "150",
     company: "Empresa 4",
+    supplier: "Fornecedor X",
     description: "Detergente, Sabão em pó, Água sanitária, Esponjas",
   },
   {
@@ -128,6 +145,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Arroz, Feijão, Macarrão, Óleo de cozinha",
   },
   {
@@ -135,6 +153,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "50",
     company: "Empresa 2",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Sacos plásticos, Etiquetas adesivas",
   },
   {
@@ -142,6 +161,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Refrigerantes, Cervejas, Sucos, Água mineral",
   },
   {
@@ -149,6 +169,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "150",
     company: "Empresa 4",
+    supplier: "Fornecedor X",
     description: "Detergente, Sabão em pó, Água sanitária, Esponjas",
   },
   {
@@ -156,6 +177,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Arroz, Feijão, Macarrão, Óleo de cozinha",
   },
   {
@@ -163,6 +185,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "50",
     company: "Empresa 2",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Sacos plásticos, Etiquetas adesivas",
   },
   {
@@ -170,6 +193,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Refrigerantes, Cervejas, Sucos, Água mineral",
   },
   {
@@ -177,6 +201,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "150",
     company: "Empresa 4",
+    supplier: "Fornecedor X",
     description: "Detergente, Sabão em pó, Água sanitária, Esponjas",
   },
   {
@@ -184,6 +209,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Arroz, Feijão, Macarrão, Óleo de cozinha",
   },
   {
@@ -191,6 +217,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "50",
     company: "Empresa 2",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Sacos plásticos, Etiquetas adesivas",
   },
   {
@@ -198,6 +225,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Refrigerantes, Cervejas, Sucos, Água mineral",
   },
   {
@@ -205,6 +233,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "150",
     company: "Empresa 4",
+    supplier: "Fornecedor X",
     description: "Detergente, Sabão em pó, Água sanitária, Esponjas",
   },
   {
@@ -212,6 +241,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Arroz, Feijão, Macarrão, Óleo de cozinha",
   },
   {
@@ -219,6 +249,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "50",
     company: "Empresa 2",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Sacos plásticos, Etiquetas adesivas",
   },
   {
@@ -226,6 +257,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Refrigerantes, Cervejas, Sucos, Água mineral",
   },
   {
@@ -233,6 +265,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "150",
     company: "Empresa 4",
+    supplier: "Fornecedor X",
     description: "Detergente, Sabão em pó, Água sanitária, Esponjas",
   },
   {
@@ -240,6 +273,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Arroz, Feijão, Macarrão, Óleo de cozinha",
   },
   {
@@ -247,6 +281,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "50",
     company: "Empresa 2",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Sacos plásticos, Etiquetas adesivas",
   },
   {
@@ -254,6 +289,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Refrigerantes, Cervejas, Sucos, Água mineral",
   },
   {
@@ -261,6 +297,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "150",
     company: "Empresa 4",
+    supplier: "Fornecedor X",
     description: "Detergente, Sabão em pó, Água sanitária, Esponjas",
   },
   {
@@ -268,6 +305,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "100",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Arroz, Feijão, Macarrão, Óleo de cozinha",
   },
   {
@@ -275,6 +313,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "50",
     company: "Empresa 2",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Sacos plásticos, Etiquetas adesivas",
   },
   {
@@ -282,6 +321,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Refrigerantes, Cervejas, Sucos, Água mineral",
   },
   {
@@ -289,6 +329,7 @@ export const notasFiscaisPendentes: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "150",
     company: "Empresa 4",
+    supplier: "Fornecedor X",
     description: "Detergente, Sabão em pó, Água sanitária, Esponjas",
   },
 ];
@@ -299,6 +340,7 @@ export const notasFiscaisAceitas: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "200",
     company: "Empresa 3",
+    supplier: "Fornecedor X",
     description: "Água Mineral, Refrigerantes, Cervejas",
   },
   {
@@ -306,6 +348,7 @@ export const notasFiscaisAceitas: NotaFiscal[] = [
     date: "2024/09/09",
     quantity: "120",
     company: "Empresa 5",
+    supplier: "Fornecedor X",
     description: "Fogões industriais, Panelas de pressão, Freezer",
   },
   {
@@ -313,6 +356,7 @@ export const notasFiscaisAceitas: NotaFiscal[] = [
     date: "2024/09/10",
     quantity: "80",
     company: "Empresa 6",
+    supplier: "Fornecedor X",
     description: "Facas, Colheres de aço inox, Tábua de corte",
   },
   {
@@ -320,6 +364,7 @@ export const notasFiscaisAceitas: NotaFiscal[] = [
     date: "2024/09/11",
     quantity: "300",
     company: "Empresa 7",
+    supplier: "Fornecedor X",
     description: "Tomates, Alfaces, Pimentões, Cenouras",
   },
 ];
@@ -330,6 +375,7 @@ export const notasFiscaisRejeitadas: NotaFiscal[] = [
     date: "2024/09/05",
     quantity: "90",
     company: "Empresa 1",
+    supplier: "Fornecedor X",
     description: "Sabão em pó, Desinfetante, Água sanitária",
   },
   {
@@ -337,6 +383,7 @@ export const notasFiscaisRejeitadas: NotaFiscal[] = [
     date: "2024/09/06",
     quantity: "30",
     company: "Empresa 8",
+    supplier: "Fornecedor X",
     description: "Caixas de papelão, Fitas adesivas, Plásticos bolha",
   },
   {
@@ -344,6 +391,7 @@ export const notasFiscaisRejeitadas: NotaFiscal[] = [
     date: "2024/09/07",
     quantity: "180",
     company: "Empresa 9",
+    supplier: "Fornecedor X",
     description: "Cervejas vencidas, Refrigerantes vencidos",
   },
   {
@@ -351,6 +399,7 @@ export const notasFiscaisRejeitadas: NotaFiscal[] = [
     date: "2024/09/08",
     quantity: "50",
     company: "Empresa 10",
+    supplier: "Fornecedor X",
     description: "Papéis A4, Canetas, Clipes de papel",
   },
 ];

@@ -1,3 +1,5 @@
+"use client"
+
 import DetailNF from "../_components/DetailNF/detailNF";
 
 const nfExample = {
@@ -9,5 +11,6 @@ const nfExample = {
 };
 
 export default function DetailNFPage() {
+
   return <DetailNF nf={nfExample} />;
 }
