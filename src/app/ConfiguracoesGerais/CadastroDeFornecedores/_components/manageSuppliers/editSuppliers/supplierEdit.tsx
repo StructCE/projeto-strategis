@@ -363,7 +363,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               Editar Fornecedor
             </FormComponent.Button>
             <FormComponent.Button
-              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
+              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
               handlePress={form.form.handleSubmit(form.onSubmitRemove)}
             >
               Remover Fornecedor

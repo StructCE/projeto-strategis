@@ -71,9 +71,7 @@ export default function ManageRequestsTable() {
 
   return (
     <TableComponent className="gap-3">
-      <TableComponent.Subtitle>
-        Requisições de mercadoria esperando confirmação
-      </TableComponent.Subtitle>
+      <TableComponent.Title>Status de Requisições</TableComponent.Title>
 
       <TableComponent.FiltersLine>
         <Filter>
@@ -175,7 +173,7 @@ export default function ManageRequestsTable() {
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
                   Detalhes
                 </Button>
               </DialogTrigger>

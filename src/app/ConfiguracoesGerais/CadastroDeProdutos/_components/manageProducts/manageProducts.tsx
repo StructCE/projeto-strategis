@@ -45,6 +45,8 @@ export default function ManageProductsTable() {
   const [selectControlType, setSelectControlType] = useState("");
   const [selectCategory, setSelectCategory] = useState("");
   const [selectSector, setSelectSector] = useState("");
+  const [selectStatus, setSelectStatus] = useState("");
+  const [selectBuyDay, setSelectBuyDay] = useState("");
 
   const filteredProducts = products.filter((product) => {
     const matchesCode = inputCode === "" || product.code.includes(inputCode);
@@ -75,6 +77,10 @@ export default function ManageProductsTable() {
     const matchesSector =
       selectSector === "" ||
       product.sector_of_use?.description === selectSector;
+    const matchesStatus =
+      selectStatus === "" || product.status === selectStatus;
+    const matchesBuyDay =
+      selectBuyDay === "" || product.buy_day === selectBuyDay;
 
     return (
       matchesCode &&
@@ -84,13 +90,16 @@ export default function ManageProductsTable() {
       matchesAddress &&
       matchesControlType &&
       matchesCategory &&
-      matchesSector
+      matchesSector &&
+      matchesStatus &&
+      matchesBuyDay
     );
   });
 
   return (
     <TableComponent>
       <TableComponent.Title>Gerenciar Produtos</TableComponent.Title>
+
       <TableComponent.Subtitle>
         Selecione um prouduto para editar ou remover, ou edite nos campos da
         tabela abaixo
@@ -135,30 +144,10 @@ export default function ManageProductsTable() {
             placeholder="Fornecedores"
             variant="inverted"
             maxCount={2}
-            className="font-regular font-inter min-h-8 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+            className="font-regular font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
           />
         </div>
 
-        <TooltipProvider delayDuration={300}>
-          <Tooltip>
-            <TooltipTrigger className="flex h-full cursor-pointer self-center">
-              <Eraser
-                size={20}
-                onClick={() => {
-                  setInputCode("");
-                  setInputProduct("");
-                  setSelectSuppliers([]);
-                }}
-              />
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </TableComponent.FiltersLine>
-
-      <TableComponent.FiltersLine>
         <Filter>
           <Filter.Icon
             icon={({ className }: { className: string }) => (
@@ -214,7 +203,9 @@ export default function ManageProductsTable() {
                   )}
           </Filter.Select>
         </Filter>
+      </TableComponent.FiltersLine>
 
+      <TableComponent.FiltersLine>
         <Filter>
           <Filter.Icon
             icon={({ className }: { className: string }) => (
@@ -275,23 +266,64 @@ export default function ManageProductsTable() {
           </Filter.Select>
         </Filter>
 
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Select
+            placeholder="Status"
+            state={selectStatus}
+            setState={setSelectStatus}
+          >
+            <Filter.SelectItems value="Ativo"></Filter.SelectItems>
+            <Filter.SelectItems value="Inativo"></Filter.SelectItems>
+          </Filter.Select>
+        </Filter>
+
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Select
+            placeholder="Dia de Compra"
+            state={selectBuyDay}
+            setState={setSelectBuyDay}
+          >
+            <Filter.SelectItems value="Segunda"></Filter.SelectItems>
+            <Filter.SelectItems value="Terça"></Filter.SelectItems>
+            <Filter.SelectItems value="Quarta"></Filter.SelectItems>
+            <Filter.SelectItems value="Quinta"></Filter.SelectItems>
+            <Filter.SelectItems value="Sexta"></Filter.SelectItems>
+            <Filter.SelectItems value="Sábado"></Filter.SelectItems>
+            <Filter.SelectItems value="Domingo"></Filter.SelectItems>
+            <Filter.SelectItems value="Qualquer dia"></Filter.SelectItems>
+          </Filter.Select>
+        </Filter>
+
         <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger className="flex h-full cursor-pointer self-center">
               <Eraser
                 size={20}
                 onClick={() => {
+                  setInputCode("");
+                  setInputProduct("");
+                  setSelectSuppliers([]);
                   setSelectStock("");
                   setSelectAddress("");
                   setSelectControlType("");
                   setSelectCategory("");
                   setSelectSector("");
+                  setSelectStatus("");
+                  setSelectBuyDay("");
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
@@ -366,7 +398,7 @@ export default function ManageProductsTable() {
             </TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
                   Detalhes
                 </Button>
               </DialogTrigger>

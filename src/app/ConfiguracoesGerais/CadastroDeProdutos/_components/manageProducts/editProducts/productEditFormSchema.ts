@@ -39,11 +39,7 @@ export const editProductFormSchema = z.object({
 
   parent_product: z.string().optional(),
 
-  buy_or_production: z
-    .string({
-      required_error: "Selecione o tipo de produto.",
-    })
-    .min(1, { message: "Selecione o tipo de produto." }),
+  users_with_permission: z.array(z.string()).optional(),
 
   buy_unit: z
     .string({

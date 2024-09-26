@@ -258,7 +258,7 @@ export const MultiSelect = React.forwardRef<
                 {FilterIcon && (
                   <FilterIcon className="ml-3 size-[20px] stroke-[1.5px] lg:size-[18px]" />
                 )}
-                <span className="mx-3 w-full text-sm text-muted-foreground lg:w-auto">
+                <span className="font-inter mx-4 w-full text-left text-[16px] font-normal text-black text-opacity-40 placeholder:text-black placeholder:text-opacity-50 lg:w-auto">
                   {placeholder}
                 </span>
                 <ChevronDown className="mx-2 h-4 cursor-pointer text-muted-foreground" />
