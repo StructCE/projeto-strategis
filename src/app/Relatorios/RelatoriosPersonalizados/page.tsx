@@ -136,8 +136,6 @@ export default function CustomReports() {
         if (selectReportOptions.includes("Produto Pai"))
           selectedAttributes.parent_product =
             product.parent_product ?? "Não tem";
-        if (selectReportOptions.includes("Compra/Produção"))
-          selectedAttributes.buy_or_production = product.buy_or_production;
         if (selectReportOptions.includes("Unidade de Compra"))
           selectedAttributes.buy_unit = product.buy_unit;
         if (selectReportOptions.includes("Quantidade de Compra"))
@@ -454,7 +452,7 @@ export default function CustomReports() {
       </div>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[85px_70px_400px_400px_70px_300px_180px_120px_120px_150px_90px_90px_90px_200px_250px_200px_400px_300px] gap-4 md:gap-8">
+        <TableComponent.LineTitle className="grid-cols-[85px_70px_400px_400px_70px_300px_120px_120px_150px_90px_90px_90px_200px_250px_200px_400px_300px] gap-4 md:gap-8">
           <TableComponent.ValueTitle className="text-center">
             Exportar
           </TableComponent.ValueTitle>
@@ -465,7 +463,6 @@ export default function CustomReports() {
           <TableComponent.ValueTitle>Fornecedores</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Status</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Produto Pai</TableComponent.ValueTitle>
-          <TableComponent.ValueTitle>Compra/Produção</TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center">
             Unidade de Compra
           </TableComponent.ValueTitle>
@@ -501,7 +498,7 @@ export default function CustomReports() {
 
         {filteredProducts.map((product, index) => (
           <TableComponent.Line
-            className={`w-max grid-cols-[85px_70px_400px_400px_70px_300px_180px_120px_120px_150px_90px_90px_90px_200px_250px_200px_400px_300px] gap-4 md:gap-8 ${
+            className={`w-max grid-cols-[85px_70px_400px_400px_70px_300px_120px_120px_150px_90px_90px_90px_200px_250px_200px_400px_300px] gap-4 md:gap-8 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
@@ -524,9 +521,6 @@ export default function CustomReports() {
             <TableComponent.Value>{product.status}</TableComponent.Value>
             <TableComponent.Value>
               {product.parent_product ? product.parent_product : "Não tem"}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {product.buy_or_production}
             </TableComponent.Value>
             <TableComponent.Value>
               {product.buy_unit.description} ({product.buy_unit.abbreviation})

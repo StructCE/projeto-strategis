@@ -19,9 +19,6 @@ export const report_options: ReportOptions[] = [
     description: "Produto Pai",
   },
   {
-    description: "Compra/Produção",
-  },
-  {
     description: "Unidade de Compra",
   },
   {

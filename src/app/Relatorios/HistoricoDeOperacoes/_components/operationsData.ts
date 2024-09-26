@@ -24,7 +24,6 @@ export const operations: Operation[] = [
     //     code: "1001",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor A" }, { name: "Fornecedor B" }],
-    //     buy_or_production: "Produto de Compra",
     //     buy_unit: {
     //       description: "Pacote",
     //       abbreviation: "PCT",
@@ -43,14 +42,12 @@ export const operations: Operation[] = [
     //       storage: "Armário 1",
     //       shelf: "Prateleira 1",
     //     },
-    //     permission: true,
     //   },
     //   {
     //     name: "Carne Bovina",
     //     code: "1002",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor B" }],
-    //     buy_or_production: "Produto de Compra",
     //     buy_unit: {
     //       description: "Kilograma",
     //       abbreviation: "KG",
@@ -69,14 +66,12 @@ export const operations: Operation[] = [
     //       storage: "Armário 2",
     //       shelf: "Prateleira 3",
     //     },
-    //     permission: false,
     //   },
     //   {
     //     name: "Sabão em Pó",
     //     code: "1004",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor D" }],
-    //     buy_or_production: "Produto de Compra",
     //     buy_unit: {
     //       description: "Kilograma",
     //       abbreviation: "KG",
@@ -95,14 +90,12 @@ export const operations: Operation[] = [
     //       storage: "Zona 2",
     //       shelf: "Prateleira 7",
     //     },
-    //     permission: false,
     //   },
     //   {
     //     name: "Vinho Tinto",
     //     code: "1005",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor E" }],
-    //     buy_or_production: "Produto de Compra",
     //     buy_unit: {
     //       description: "Fardo",
     //       abbreviation: "FRD",
@@ -121,7 +114,6 @@ export const operations: Operation[] = [
     //       storage: "Zona 3",
     //       shelf: "Prateleira 10",
     //     },
-    //     permission: true,
     //   },
     // ],
   },
@@ -140,7 +132,6 @@ export const operations: Operation[] = [
     //     code: "1001",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor A" }, { name: "Fornecedor B" }],
-    //     buy_or_production: "Produto de Compra",
     //     buy_unit: {
     //       description: "Pacote",
     //       abbreviation: "PCT",
@@ -159,14 +150,12 @@ export const operations: Operation[] = [
     //       storage: "Armário 1",
     //       shelf: "Prateleira 1",
     //     },
-    //     permission: true,
     //   },
     //   {
     //     name: "Carne Bovina",
     //     code: "1002",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor B" }],
-    //     buy_or_production: "Produto de Compra",
     //     buy_unit: {
     //       description: "Kilograma",
     //       abbreviation: "KG",
@@ -185,14 +174,12 @@ export const operations: Operation[] = [
     //       storage: "Armário 2",
     //       shelf: "Prateleira 3",
     //     },
-    //     permission: false,
     //   },
     //   {
     //     name: "Carne Moída",
     //     code: "1006",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor B" }],
-    //     buy_or_production: "Produto de Produção",
     //     parent_product: "Carne Bovina",
     //     buy_unit: {
     //       description: "Kilograma",
@@ -212,14 +199,12 @@ export const operations: Operation[] = [
     //       storage: "Armário 2",
     //       shelf: "Prateleira 4",
     //     },
-    //     permission: false,
     //   },
     //   {
     //     name: "Água Mineral",
     //     code: "1003",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor C" }],
-    //     buy_or_production: "Produto de Compra",
     //     buy_unit: {
     //       description: "Pacote",
     //       abbreviation: "PCT",
@@ -238,7 +223,6 @@ export const operations: Operation[] = [
     //       storage: "Zona 1",
     //       shelf: "Prateleira 6",
     //     },
-    //     permission: true,
     //   },
     // ],
   },
@@ -257,7 +241,6 @@ export const operations: Operation[] = [
     //     code: "1006",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor B" }],
-    //     buy_or_production: "Produto de Produção",
     //     parent_product: "Carne Bovina",
     //     buy_unit: {
     //       description: "Kilograma",
@@ -277,14 +260,12 @@ export const operations: Operation[] = [
     //       storage: "Armário 2",
     //       shelf: "Prateleira 4",
     //     },
-    //     permission: false,
     //   },
     //   {
     //     name: "Água Mineral",
     //     code: "1003",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor C" }],
-    //     buy_or_production: "Produto de Compra",
     //     buy_unit: {
     //       description: "Pacote",
     //       abbreviation: "PCT",
@@ -303,14 +284,12 @@ export const operations: Operation[] = [
     //       storage: "Zona 1",
     //       shelf: "Prateleira 6",
     //     },
-    //     permission: true,
     //   },
     //   {
     //     name: "Sabão em Pó",
     //     code: "1004",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor D" }],
-    //     buy_or_production: "Produto de Compra",
     //     buy_unit: {
     //       description: "Kilograma",
     //       abbreviation: "KG",
@@ -329,14 +308,12 @@ export const operations: Operation[] = [
     //       storage: "Zona 2",
     //       shelf: "Prateleira 7",
     //     },
-    //     permission: false,
     //   },
     //   {
     //     name: "Vinho Tinto",
     //     code: "1005",
     //     status: "Ativo",
     //     suppliers: [{ name: "Fornecedor E" }],
-    //     buy_or_production: "Produto de Compra",
     //     buy_unit: {
     //       description: "Fardo",
     //       abbreviation: "FRD",
@@ -355,7 +332,6 @@ export const operations: Operation[] = [
     //       storage: "Zona 3",
     //       shelf: "Prateleira 10",
     //     },
-    //     permission: true,
     //   },
     // ],
   },

@@ -25,10 +25,6 @@ export default function ProductDetails(props: ProductType) {
         {props.product.parent_product ?? "Não tem"}{" "}
       </p>
       <p>
-        <span className="font-semibold">Compra/Produção:</span>{" "}
-        {props.product.buy_or_production}
-      </p>
-      <p>
         <span className="font-semibold">Unidade de Compra:</span>{" "}
         {props.product.buy_unit.description} (
         {props.product.buy_unit.abbreviation})

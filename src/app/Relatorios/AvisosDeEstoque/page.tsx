@@ -206,7 +206,6 @@ export default function CustomReports() {
         suppliers: product.suppliers,
         status: product.status,
         parent_product: product.parent_product ?? "Não tem",
-        buy_or_production: product.buy_or_production,
         buy_unit: product.buy_unit,
         buy_quantity: product.buy_quantity,
         buy_day: product.buy_day,

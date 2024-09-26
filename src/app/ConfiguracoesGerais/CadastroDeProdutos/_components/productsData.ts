@@ -157,7 +157,6 @@ export type Product = {
   suppliers: Supplier[];
   status: string;
   parent_product?: string;
-  buy_or_production: string;
   buy_unit: Unit;
   buy_quantity: string;
   buy_day: string;
@@ -181,7 +180,6 @@ export const products: Product[] = [
       { name: "Fornecedor B" },
       { name: "Fornecedor C" },
     ],
-    buy_or_production: "Produto de Compra",
     buy_unit: { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
     buy_quantity: "100",
     buy_day: "Segunda",
@@ -216,7 +214,6 @@ export const products: Product[] = [
     code: "1002",
     status: "Ativo",
     suppliers: [{ name: "Fornecedor B" }, { name: "Fornecedor C" }],
-    buy_or_production: "Produto de Compra",
     buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "50",
     buy_day: "Terça",
@@ -245,7 +242,6 @@ export const products: Product[] = [
     code: "1006",
     status: "Ativo",
     suppliers: [{ name: "Fornecedor B" }],
-    buy_or_production: "Produto de Produção",
     parent_product: "Carne Bovina",
     buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "20",
@@ -275,7 +271,6 @@ export const products: Product[] = [
     code: "1003",
     status: "Ativo",
     suppliers: [{ name: "Fornecedor C" }, { name: "Fornecedor D" }],
-    buy_or_production: "Produto de Compra",
     buy_unit: { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
     buy_quantity: "200",
     buy_day: "Quarta",
@@ -310,7 +305,6 @@ export const products: Product[] = [
     code: "1004",
     status: "Ativo",
     suppliers: [{ name: "Fornecedor D" }],
-    buy_or_production: "Produto de Compra",
     buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "30",
     buy_day: "Quinta",
@@ -339,7 +333,6 @@ export const products: Product[] = [
     code: "1005",
     status: "Ativo",
     suppliers: [{ name: "Fornecedor E" }],
-    buy_or_production: "Produto de Compra",
     buy_unit: { description: "Fardo", abbreviation: "FRD", unitsPerPack: 10 },
     buy_quantity: "120",
     buy_day: "Sexta",
@@ -368,7 +361,6 @@ export const products: Product[] = [
     code: "1007",
     status: "Ativo",
     suppliers: [{ name: "Fornecedor C" }, { name: "Fornecedor E" }],
-    buy_or_production: "Produto de Compra",
     buy_unit: { description: "Unidade", abbreviation: "UN", unitsPerPack: 1 },
     buy_quantity: "4",
     buy_day: "Sexta",
@@ -401,7 +393,6 @@ export const products: Product[] = [
       { name: "Fornecedor C" },
       { name: "Fornecedor D" },
     ],
-    buy_or_production: "Produto de Compra",
     buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "10",
     buy_day: "Sexta",
