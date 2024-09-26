@@ -1,5 +1,5 @@
 "use client";
-import { Download, Eraser, Search } from "lucide-react";
+import { Check, Download, Eraser, Search, X } from "lucide-react";
 import { useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
@@ -31,8 +31,10 @@ import {
 } from "~/components/ui/tooltip";
 
 export default function CustomReports() {
+  // Checkboxes dos produtos
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 
+  // Filtros
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
   const [selectSuppliers, setSelectSuppliers] = useState<string[]>([]);
@@ -44,15 +46,27 @@ export default function CustomReports() {
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
 
+  // Cards de contagem
   const [lowStock, setLowStock] = useState(false);
   const [noStock, setNoStock] = useState(false);
 
+  // Checkboxes de filtros
   const [filterBuy, setFilterBuy] = useState(false);
   const [filterDontBuy, setFilterDontBuy] = useState(false);
   const [filterProduce, setFilterProduce] = useState(false);
   const [filterDontProduce, setFilterDontProduce] = useState(false);
 
   const filteredProducts = products.filter((product) => {
+    const stockCurrent = Number(product.stock_current);
+    const stockMin = Number(product.stock_min);
+    const stockThreshold = stockMin + stockMin * 0.1; // 110% do estoque mínimo
+
+    // Verifica se o produto está com estoque baixo
+    const isLowStock = stockCurrent > 0 && stockCurrent <= stockThreshold;
+    const isNoStock = stockCurrent === 0;
+    const isAdequateStock = stockCurrent > stockThreshold;
+
+    // Filtros auxiliares
     const matchesCode = inputCode === "" || product.code.includes(inputCode);
     const matchesProduct =
       inputProduct === "" ||
@@ -86,116 +100,28 @@ export default function CustomReports() {
     const matchesBuyDay =
       selectBuyDay === "" || product.buy_day === selectBuyDay;
 
-    const stockCurrent = Number(product.stock_current);
-    const stockMin = Number(product.stock_min);
-    const stockThreshold = stockMin + stockMin * 0.1;
+    const filterConditions = []; // Filtros de estoque com base nos botões e checkboxes
 
-    const isLowStock = stockCurrent > 0 && stockCurrent <= stockThreshold;
-    const isNoStock = stockCurrent === 0;
-    const isAdequateStock = stockCurrent > stockThreshold;
-    const isProductionProduct =
-      product.type_of_control?.description === "Produtos de Produção";
-
-    // Lógica de filtragem baseada nos botões e checkboxes
-    if (lowStock) {
-      return (
-        isLowStock &&
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
-      );
-    }
-
-    if (noStock) {
-      return (
-        isNoStock &&
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
-      );
-    }
-
-    if (filterBuy) {
-      return (
+    if (lowStock) filterConditions.push(isLowStock);
+    if (noStock) filterConditions.push(isNoStock);
+    if (filterBuy) filterConditions.push(isLowStock || isNoStock);
+    if (filterDontBuy) filterConditions.push(isAdequateStock);
+    if (filterProduce)
+      filterConditions.push(
         (isLowStock || isNoStock) &&
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
+          product.type_of_control?.description === "Produtos de Produção",
       );
-    }
-
-    if (filterDontBuy) {
-      return (
+    if (filterDontProduce)
+      filterConditions.push(
         isAdequateStock &&
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
+          product.type_of_control?.description === "Produtos de Produção",
       );
-    }
 
-    if (filterProduce) {
-      return (
-        (isLowStock || isNoStock) &&
-        isProductionProduct &&
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
-      );
-    }
-
-    if (filterDontProduce) {
-      return (
-        isAdequateStock &&
-        isProductionProduct &&
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
-      );
-    }
+    const satisfiesStockFilters =
+      filterConditions.length === 0 || filterConditions.some(Boolean);
 
     return (
+      satisfiesStockFilters &&
       matchesCode &&
       matchesProduct &&
       matchesSupplier &&
@@ -209,6 +135,7 @@ export default function CustomReports() {
     );
   });
 
+  // Produtos com estoque baixo (para contagem)
   const lowStockProducts = products.filter((product) => {
     const matchesLowStock =
       Number(product.stock_current) > 0 &&
@@ -218,6 +145,7 @@ export default function CustomReports() {
     return matchesLowStock;
   });
 
+  // Produtos sem estoque (para contagem)
   const noStockProducts = products.filter((product) => {
     const matchesNoStock = Number(product.stock_current) == 0;
 
@@ -235,6 +163,17 @@ export default function CustomReports() {
         prevSelected.filter((code) => code !== productCode),
       );
     }
+  }
+
+  function handleSelectAll() {
+    const allFilteredProductCodes = filteredProducts.map(
+      (product) => product.code,
+    );
+    setSelectedProducts(allFilteredProductCodes);
+  }
+
+  function handleDeselectAll() {
+    setSelectedProducts([]);
   }
 
   function printSelectedProductData() {
@@ -311,9 +250,6 @@ export default function CustomReports() {
               <Checkbox
                 onCheckedChange={(checked) => {
                   setFilterProduce(checked === true);
-                  setSelectControlType(
-                    checked === true ? "Produtos de Produção" : "",
-                  );
                 }}
               />{" "}
               Produzir
@@ -322,9 +258,6 @@ export default function CustomReports() {
               <Checkbox
                 onCheckedChange={(checked) => {
                   setFilterDontProduce(checked === true);
-                  setSelectControlType(
-                    checked === true ? "Produtos de Produção" : "",
-                  );
                 }}
               />{" "}
               Não Produzir
@@ -334,7 +267,7 @@ export default function CustomReports() {
 
         <div className="flex flex-wrap justify-end gap-3 lg:flex-nowrap">
           <button
-            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-[#a13434] md:min-w-[150px]"
             onClick={() => {
               setLowStock(false);
               setNoStock(false);
@@ -349,7 +282,7 @@ export default function CustomReports() {
           </button>
 
           <button
-            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-[#a13434] md:min-w-[150px]"
             onClick={() => {
               setLowStock(true);
               setNoStock(false);
@@ -364,7 +297,7 @@ export default function CustomReports() {
           </button>
 
           <button
-            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-[#a13434] md:min-w-[150px]"
             onClick={() => {
               setLowStock(false);
               setNoStock(true);
@@ -377,6 +310,15 @@ export default function CustomReports() {
               Sem Estoque
             </span>
           </button>
+
+          {/* <div className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]">
+            <span className="w-full text-center text-[48px] font-normal leading-none md:text-[64px]">
+              {selectedProducts.length}
+            </span>
+            <span className="w-full text-center text-[12px] font-semibold md:text-[14px]">
+              Selecionados
+            </span>
+          </div> */}
         </div>
       </div>
 
@@ -603,6 +545,24 @@ export default function CustomReports() {
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
+      <div className="mt-2 flex items-center gap-3">
+        <Button
+          className="flex h-fit items-center gap-2 rounded-[8px] bg-cinza_destaque py-1.5 pl-3 pr-4 text-[14px] text-black hover:bg-hover_cinza_destaque_escuro"
+          onClick={handleSelectAll}
+        >
+          <Check size={18} className="flex items-center" />
+          Selecionar Todos
+        </Button>
+        <Button
+          className="flex h-fit items-center gap-2 rounded-[8px] bg-cinza_destaque py-1.5 pl-3 pr-4 text-[14px] text-black hover:bg-hover_cinza_destaque_escuro"
+          onClick={handleDeselectAll}
+        >
+          <X size={18} className="flex items-center" />
+          Remover Seleção
+        </Button>
+        <div>Produtos Selecionados: {selectedProducts.length}</div>
+      </div>
+
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[85px_70px_1fr_120px_90px_90px_90px_130px] gap-4 md:gap-8">
           <TableComponent.ValueTitle className="text-center">
@@ -636,6 +596,7 @@ export default function CustomReports() {
           >
             <TableComponent.Value className="text-center">
               <Checkbox
+                checked={selectedProducts.includes(product.code)}
                 onCheckedChange={(checked) =>
                   handleProductSelection(product.code, checked)
                 }
@@ -721,6 +682,5 @@ export default function CustomReports() {
 }
 
 /*
-- Filtrar pelos quadradinhos vermelhos
 - Select de qual estoque está trabalhando
 */

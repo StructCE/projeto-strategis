@@ -365,7 +365,7 @@ export const products: Product[] = [
   },
   {
     name: "Vodka Orloff",
-    code: "1006",
+    code: "1007",
     status: "Ativo",
     suppliers: [{ name: "Fornecedor C" }, { name: "Fornecedor E" }],
     buy_or_production: "Produto de Compra",
@@ -394,7 +394,7 @@ export const products: Product[] = [
   },
   {
     name: "Arroz Branco",
-    code: "1007",
+    code: "1008",
     status: "Ativo",
     suppliers: [
       { name: "Fornecedor A" },
