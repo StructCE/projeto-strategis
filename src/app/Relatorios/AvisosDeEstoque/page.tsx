@@ -59,6 +59,11 @@ export default function CustomReports() {
 
   const filteredProducts = products
     .filter((product) => {
+      // Se nenhum estoque for selecionado, não mostrar nenhum produto
+      if (selectStock === "") {
+        return false;
+      }
+
       const stockCurrent = Number(product.stock_current);
       const stockMin = Number(product.stock_min);
       const stockThreshold = stockMin + stockMin * 0.1; // 110% do estoque mínimo
@@ -78,11 +83,9 @@ export default function CustomReports() {
         product.suppliers.some((supplier) =>
           selectSuppliers.includes(supplier.name),
         );
-      const matchesStock =
-        selectStock === "" ||
-        `${product.address.stock}`
-          .toLowerCase()
-          .includes(selectStock.toLowerCase());
+      const matchesStock = `${product.address.stock}`
+        .toLowerCase()
+        .includes(selectStock.toLowerCase());
       const matchesAddress =
         selectAddress === "" ||
         `${product.address.storage}, ${product.address.shelf}`
@@ -139,20 +142,31 @@ export default function CustomReports() {
     .sort((a, b) => a.code.localeCompare(b.code));
 
   // Produtos com estoque baixo (para contagem)
+  const allProducts = products.filter((product) => {
+    const matchesStock = product.address.stock === selectStock;
+
+    return matchesStock;
+  });
+
+  // Produtos com estoque baixo (para contagem)
   const lowStockProducts = products.filter((product) => {
     const matchesLowStock =
       Number(product.stock_current) > 0 &&
       Number(product.stock_current) <=
         Number(product.stock_min) + Number(product.stock_min) * 0.1;
 
-    return matchesLowStock;
+    const matchesStock = product.address.stock === selectStock;
+
+    return matchesLowStock && matchesStock;
   });
 
   // Produtos sem estoque (para contagem)
   const noStockProducts = products.filter((product) => {
-    const matchesNoStock = Number(product.stock_current) == 0;
+    const matchesNoStock = Number(product.stock_current) === 0;
 
-    return matchesNoStock;
+    const matchesStock = product.address.stock === selectStock;
+
+    return matchesNoStock && matchesStock;
   });
 
   function handleProductSelection(
@@ -226,10 +240,32 @@ export default function CustomReports() {
           <div className="flex flex-col gap-2 lg:gap-1">
             <TableComponent.Title>Avisos de Estoque</TableComponent.Title>
 
-            <TableComponent.Subtitle className="w-9/12 text-[12px] leading-tight sm:text-[14px] md:w-11/12">
-              Selecione os dados nos filtros abaixo para exportar um relatório
-              com dados dos produtos selecionados
-            </TableComponent.Subtitle>
+            <div className="mb-6 mt-2 flex items-center gap-3">
+              <TableComponent.Subtitle className="w-1/2 leading-tight md:w-[45%]">
+                Selecione um estoque para ver avisos e selecionar produtos para
+                exportar um relatório:
+              </TableComponent.Subtitle>
+
+              <Filter>
+                <Filter.Icon
+                  icon={({ className }: { className: string }) => (
+                    <Search className={className} />
+                  )}
+                />
+                <Filter.Select
+                  placeholder="Estoque"
+                  state={selectStock}
+                  setState={setSelectStock}
+                >
+                  {stocks.map((stock, index) => (
+                    <Filter.SelectItems
+                      key={index}
+                      value={stock.name}
+                    ></Filter.SelectItems>
+                  ))}
+                </Filter.Select>
+              </Filter>
+            </div>
           </div>
 
           <div className="flex flex-col flex-nowrap gap-2 sm:flex-row sm:flex-wrap md:gap-x-6">
@@ -268,7 +304,7 @@ export default function CustomReports() {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-end gap-3 lg:flex-nowrap">
+        <div className="flex flex-wrap items-center justify-end gap-3 lg:flex-nowrap">
           <button
             className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-[#a13434] md:min-w-[150px]"
             onClick={() => {
@@ -277,7 +313,7 @@ export default function CustomReports() {
             }}
           >
             <span className="w-full text-center text-[48px] font-normal leading-none md:text-[64px]">
-              {products.length}
+              {allProducts.length}
             </span>
             <span className="w-full text-center text-[12px] font-semibold md:text-[14px]">
               Itens em Estoque
@@ -375,27 +411,7 @@ export default function CustomReports() {
             )}
           />
           <Filter.Select
-            placeholder="Estoque"
-            state={selectStock}
-            setState={setSelectStock}
-          >
-            {stocks.map((stock, index) => (
-              <Filter.SelectItems
-                key={index}
-                value={stock.name}
-              ></Filter.SelectItems>
-            ))}
-          </Filter.Select>
-        </Filter>
-
-        <Filter>
-          <Filter.Icon
-            icon={({ className }: { className: string }) => (
-              <Search className={className} />
-            )}
-          />
-          <Filter.Select
-            placeholder="Endereço"
+            placeholder="Endereço no estoque"
             state={selectAddress}
             setState={setSelectAddress}
             className={
@@ -533,7 +549,6 @@ export default function CustomReports() {
                   setInputCode("");
                   setInputProduct("");
                   setSelectSuppliers([]);
-                  setSelectStock("");
                   setSelectAddress("");
                   setSelectControlType("");
                   setSelectCategory("");
@@ -590,62 +605,70 @@ export default function CustomReports() {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {filteredProducts.map((product, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[85px_70px_1fr_120px_90px_90px_90px_130px] gap-4 md:gap-8 ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
-            <TableComponent.Value className="text-center">
-              <Checkbox
-                checked={selectedProducts.includes(product.code)}
-                onCheckedChange={(checked) =>
-                  handleProductSelection(product.code, checked)
-                }
-              />
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {product.code}
-            </TableComponent.Value>
-            <TableComponent.Value>{product.name}</TableComponent.Value>
+        {selectStock === "" ? (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
-              {product.buy_unit.description} ({product.buy_unit.abbreviation})
+              Selecione um estoque para ver seus produtos
             </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {product.stock_current}
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {product.stock_min}
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {Number(product.stock_current) - Number(product.stock_min) > 0
-                ? `+${Number(product.stock_current) - Number(product.stock_min)}`
-                : Number(product.stock_current) - Number(product.stock_min)}
-            </TableComponent.Value>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="sm:max-w-4xl"
-              >
-                <DialogHeader>
-                  <DialogTitle className="pb-1.5">
-                    Informações do Produto:
-                  </DialogTitle>
-
-                  <ProductDetails product={product} />
-                  <DialogDescription></DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
           </TableComponent.Line>
-        ))}
+        ) : (
+          filteredProducts.map((product, index) => (
+            <TableComponent.Line
+              className={`grid-cols-[85px_70px_1fr_120px_90px_90px_90px_130px] gap-4 md:gap-8 ${
+                index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+              }`}
+              key={index}
+            >
+              <TableComponent.Value className="text-center">
+                <Checkbox
+                  checked={selectedProducts.includes(product.code)}
+                  onCheckedChange={(checked) =>
+                    handleProductSelection(product.code, checked)
+                  }
+                />
+              </TableComponent.Value>
+              <TableComponent.Value className="text-center">
+                {product.code}
+              </TableComponent.Value>
+              <TableComponent.Value>{product.name}</TableComponent.Value>
+              <TableComponent.Value>
+                {product.buy_unit.description} ({product.buy_unit.abbreviation})
+              </TableComponent.Value>
+              <TableComponent.Value className="text-center">
+                {product.stock_current}
+              </TableComponent.Value>
+              <TableComponent.Value className="text-center">
+                {product.stock_min}
+              </TableComponent.Value>
+              <TableComponent.Value className="text-center">
+                {Number(product.stock_current) - Number(product.stock_min) > 0
+                  ? `+${Number(product.stock_current) - Number(product.stock_min)}`
+                  : Number(product.stock_current) - Number(product.stock_min)}
+              </TableComponent.Value>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                    Detalhes
+                  </Button>
+                </DialogTrigger>
+                <DialogContent
+                  aria-describedby={undefined}
+                  className="sm:max-w-4xl"
+                >
+                  <DialogHeader>
+                    <DialogTitle className="pb-1.5">
+                      Informações do Produto:
+                    </DialogTitle>
+
+                    <ProductDetails product={product} />
+                    <DialogDescription></DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            </TableComponent.Line>
+          ))
+        )}
       </TableComponent.Table>
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">
