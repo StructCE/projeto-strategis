@@ -429,12 +429,12 @@ export default function CreatePurchaseOrder() {
                 {hasPermission(product, LoggedUser) ? (
                   <Button
                     onClick={() => handleAddProduct(product)}
-                    className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-[#181818] sm:text-[16px]"
+                    className="hover:bg-hover_preto mb-0 h-8 bg-black text-[14px] font-medium text-white sm:text-[16px]"
                   >
                     Adicionar
                   </Button>
                 ) : (
-                  <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-[#181818] sm:text-[16px]">
+                  <Button className="hover:bg-hover_preto mb-0 h-8 bg-black text-[14px] font-medium text-white sm:text-[16px]">
                     Sem Permissão
                   </Button>
                 )}
@@ -511,7 +511,7 @@ export default function CreatePurchaseOrder() {
 
                 <Button
                   onClick={() => handleRemoveProduct(product.code)}
-                  className="mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent hover:text-[#181818] sm:text-[16px]"
+                  className="hover:text-hover_preto mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent sm:text-[16px]"
                 >
                   <Trash2 size={20} />
                 </Button>

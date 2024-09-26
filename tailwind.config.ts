@@ -43,6 +43,7 @@ const config = {
         cinza_borda_acordeao: "#696969",
         hover_cinza_escuro_botao: "#777777", // Talvez algum botão
         cinza_mais_escuro_botao: "#2D3648", // Talvez algum botão
+        hover_preto: "#181818",
 
         fundo_titulo_relatorio: "#ADB5BD",
         fundo_destaque_relatorio: "#DEDEDE",

@@ -308,7 +308,7 @@ export default function CustomReports() {
         {/* Cards com números dos produtos em estoque */}
         <div className="flex flex-wrap items-center justify-end gap-3 lg:flex-nowrap">
           <button
-            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-[#a13434] md:min-w-[150px]"
+            className="hover:bg-hover_vermelho_botao_2 flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
             onClick={() => {
               setLowStock(false);
               setNoStock(false);
@@ -323,7 +323,7 @@ export default function CustomReports() {
           </button>
 
           <button
-            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-[#a13434] md:min-w-[150px]"
+            className="hover:bg-hover_vermelho_botao_2 flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
             onClick={() => {
               setLowStock(true);
               setNoStock(false);
@@ -338,7 +338,7 @@ export default function CustomReports() {
           </button>
 
           <button
-            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-[#a13434] md:min-w-[150px]"
+            className="hover:bg-hover_vermelho_botao_2 flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
             onClick={() => {
               setLowStock(false);
               setNoStock(true);
