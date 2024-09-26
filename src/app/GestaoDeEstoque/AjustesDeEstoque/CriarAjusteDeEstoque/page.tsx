@@ -536,7 +536,7 @@ export default function CreateAdjustment() {
 
         <TableButtonComponent className="pt-2 sm:pt-4">
           <TableButtonComponent.Button
-            className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao"
+            className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1"
             handlePress={handleFinalizeAdjustment}
           >
             Finalizar Ajuste de Estoque

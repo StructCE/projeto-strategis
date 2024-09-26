@@ -52,8 +52,9 @@ const config = {
         vermelho_strategis: "#FF3228", // Logo, Destaque sidebar, etc
         vermelho_botao_1: "#D01F30", // Botões de forms (ex: remover usuário)
         vermelho_botao_2: "#C43D3D", // Botões de tabelas (ex: gerar relatório)
-        hover_vermelho_botao: "#C21828",
+        hover_vermelho_botao_1: "#C21828",
         hover_vermelho_login: "#772B39",
+        hover_vermelho_botao_2: "#A13434",
 
         azul_dashboard: "#007BFF",
         azul_botao: "#3F90EF", // Botões de forms e tabelas

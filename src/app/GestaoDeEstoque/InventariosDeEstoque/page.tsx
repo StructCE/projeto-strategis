@@ -9,7 +9,7 @@ export default function StockInventories() {
       <TableButtonComponent className="pt-2 sm:pt-4">
         <TableButtonComponent.Link
           link_ref="/GestaoDeEstoque/InventariosDeEstoque/CriarInventario"
-          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao"
+          className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1"
           placeholder="Criar Novo Inventário"
         >
           <ExternalLink

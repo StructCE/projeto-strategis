@@ -678,7 +678,7 @@ export default function CustomReports() {
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">
         <TableButtonComponent.Button
-          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao max-[425px]:w-full"
+          className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1 max-[425px]:w-full"
           icon={
             <Download
               className="flex h-full cursor-pointer self-center"
@@ -693,7 +693,7 @@ export default function CustomReports() {
         </TableButtonComponent.Button>
 
         <TableButtonComponent.Button
-          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao max-[425px]:w-full"
+          className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1 max-[425px]:w-full"
           icon={
             <Download
               className="flex h-full cursor-pointer self-center"

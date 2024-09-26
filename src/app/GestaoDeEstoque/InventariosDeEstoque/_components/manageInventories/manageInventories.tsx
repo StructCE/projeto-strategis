@@ -149,7 +149,7 @@ export default function ManageInventoriesTable() {
                   <InventoryDetails inventory={inventory} />
 
                   <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
-                    <TableButtonComponent.Button className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao max-[425px]:w-full">
+                    <TableButtonComponent.Button className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1 max-[425px]:w-full">
                       Realizar Ajuste de Estoque Automático
                     </TableButtonComponent.Button>
                   </TableButtonComponent>

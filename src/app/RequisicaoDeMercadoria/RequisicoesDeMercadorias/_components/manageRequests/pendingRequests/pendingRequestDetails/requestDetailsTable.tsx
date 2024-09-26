@@ -173,7 +173,7 @@ export default function PendingRequestDetails(props: RequestType) {
 
         <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
           <TableButtonComponent.Button
-            className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login max-[425px]:w-full"
+            className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2 max-[425px]:w-full"
             handlePress={handleReject}
           >
             Rejeitar Requisição
