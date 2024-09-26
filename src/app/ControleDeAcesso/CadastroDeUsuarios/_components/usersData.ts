@@ -4,74 +4,78 @@ export type User = {
   password: string;
   password_confirmation: string;
   phone: string;
-  roleId: number;
   role: string;
   company: string;
 };
 
-export const users = [
+export const users: User[] = [
   {
     name: "Nome do Usuário 1",
     email: "usuario1@gmail.com",
-    company: "Empresa 1",
+    company: "Alimentos WCW",
     role: "Administrador",
     password: "12345678",
     password_confirmation: "12345678",
     phone: "61999999999",
-    roleId: 1,
   },
   {
     name: "Nome do Usuário 2",
     email: "usuario2@gmail.com",
-    company: "Empresa 2",
+    company: "TechNova Filial",
     role: "Operador",
     password: "12345678",
     password_confirmation: "12345678",
     phone: "61999999999",
-    roleId: 2,
   },
   {
     name: "Nome do Usuário 3",
     email: "usuario3@gmail.com",
-    company: "Empresa 3",
+    company: "Quantum Dynamics",
     role: "Estoquista",
     password: "12345678",
     password_confirmation: "12345678",
     phone: "61999999999",
-    roleId: 3,
   },
   {
     name: "Nome do Usuário 4",
     email: "usuario4@gmail.com",
-    company: "Empresa 4",
+    company: "Apex Innovations Filial",
     role: "Requisitante",
     password: "12345678",
     password_confirmation: "12345678",
     phone: "61999999999",
-    roleId: 4,
+  },
+  {
+    name: "Nome do Usuário 5",
+    email: "usuario5@gmail.com",
+    company: "Alimentos WCW",
+    role: "Requisitante",
+    password: "12345678",
+    password_confirmation: "12345678",
+    phone: "61999999999",
   },
 ];
 
 export const companies = [
   {
-    name: "Empresa 1",
-    value: "Empresa 1",
+    name: "Alimentos WCW",
+    value: "Alimentos WCW",
   },
   {
-    name: "Empresa 2",
-    value: "Empresa 2",
+    name: "TechNova Filial",
+    value: "TechNova Filial",
   },
   {
-    name: "Empresa 3",
-    value: "Empresa 3",
+    name: "Quantum Dynamics",
+    value: "Quantum Dynamics",
   },
   {
-    name: "Empresa 4",
-    value: "Empresa 4",
+    name: "Apex Innovations Filial",
+    value: "Apex Innovations Filial",
   },
   {
-    name: "Empresa 5",
-    value: "Empresa 5",
+    name: "FusionWare",
+    value: "FusionWare",
   },
 ];
 

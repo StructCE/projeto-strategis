@@ -9,7 +9,7 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
-import { modules } from "./accessProfileData";
+import { modules } from "../accessProfileData";
 import { useAccessProfileForm } from "./useAccessProfileForm";
 
 export const AccessProfilesRegister = () => {
@@ -53,7 +53,7 @@ export const AccessProfilesRegister = () => {
               <FormField
                 control={accessProfileForm.form.control}
                 name="modules"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <MultiSelect
                       options={modules}

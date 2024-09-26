@@ -3,12 +3,12 @@ import {
   Building2,
   CircleDollarSign,
   ClipboardCheck,
+  ClipboardPaste,
   ClipboardPlus,
   FileInput,
   FileText,
   FolderCog,
   FolderSearch,
-  Home,
   Info,
   PackageMinus,
   PackageOpen,
@@ -31,7 +31,7 @@ type SidebarButton = {
 
 export const sidebarButtons: Record<string, SidebarButton[]> = {
   "Configurações Gerais": [
-    { name: "Dashboard", icon: (props) => <Home {...props} />, refLink: "/" },
+    // { name: "Dashboard", icon: (props) => <Home {...props} />, refLink: "/" },
     {
       name: "Cadastro de Empresas",
       icon: (props) => <Building2 {...props} />,
@@ -104,14 +104,19 @@ export const sidebarButtons: Record<string, SidebarButton[]> = {
   ],
   "Requisição de Mercadoria": [
     {
-      name: "Solicitação de Mercadorias",
-      icon: (props) => <ClipboardPlus {...props} />,
-      refLink: "/RequisicaoDeMercadoria/SolicitacaDeMercadorias",
+      name: "Requisições de Mercadorias",
+      icon: (props) => <ClipboardPaste {...props} />,
+      refLink: "/RequisicaoDeMercadoria/RequisicoesDeMercadorias",
     },
     {
-      name: "Status de Solicitações",
+      name: "Requisitar Mercadorias",
+      icon: (props) => <ClipboardPlus {...props} />,
+      refLink: "/RequisicaoDeMercadoria/RequisitarMercadorias",
+    },
+    {
+      name: "Status de Requisições",
       icon: (props) => <ClipboardCheck {...props} />,
-      refLink: "/RequisicaoDeMercadoria/StatusDeSolicitacoes",
+      refLink: "/RequisicaoDeMercadoria/StatusDeRequisicoes",
     },
   ],
   Relatórios: [

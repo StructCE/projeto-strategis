@@ -1,16 +1,17 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+"use client";
 import { FolderCog } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 import { TableNFs } from "./_components/tableNFs/tableNFs";
 
+import { TableButtonComponent } from "~/components/tableButton";
 import {
   inputPath,
-  outputPath,
   notasFiscaisAceitas,
   notasFiscaisPendentes,
   notasFiscaisRejeitadas,
+  outputPath,
 } from "./_components/notasFiscaisData";
-import { Button } from "~/components/ui/button";
 
 export default function ImportacaoDeNFs() {
   return (
@@ -51,9 +52,14 @@ export default function ImportacaoDeNFs() {
         </TabsList>
         <TabsContent value="pending">
           <TableNFs tableData={notasFiscaisPendentes} />
-          <div className="mt-8 flex justify-end">
-            <Button className="self-end px-8">Adicionar Notas Fiscais</Button>
-          </div>
+          <TableButtonComponent className="pt-2 sm:pt-4">
+            <TableButtonComponent.Button
+              className="bg-azul_botao hover:bg-hover_azul_botao"
+              handlePress={() => console.log("a")}
+            >
+              Adicionar Notas Fiscais
+            </TableButtonComponent.Button>
+          </TableButtonComponent>
         </TabsContent>
         <TabsContent value="accepted">
           <TableNFs tableData={notasFiscaisAceitas} />
