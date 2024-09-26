@@ -246,6 +246,7 @@ export default function CustomReports() {
                 exportar um relatório:
               </TableComponent.Subtitle>
 
+              {/* Select do estoque a visualizar */}
               <Filter>
                 <Filter.Icon
                   icon={({ className }: { className: string }) => (
@@ -268,6 +269,7 @@ export default function CustomReports() {
             </div>
           </div>
 
+          {/* Checkboxes de filtragem */}
           <div className="flex flex-col flex-nowrap gap-2 sm:flex-row sm:flex-wrap md:gap-x-6">
             <div className="flex items-center gap-1.5 leading-tight">
               <Checkbox
@@ -304,6 +306,7 @@ export default function CustomReports() {
           </div>
         </div>
 
+        {/* Cards com números dos produtos em estoque */}
         <div className="flex flex-wrap items-center justify-end gap-3 lg:flex-nowrap">
           <button
             className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-[#a13434] md:min-w-[150px]"
@@ -361,6 +364,7 @@ export default function CustomReports() {
         </div>
       </div>
 
+      {/* Filtros linha 1 */}
       <TableComponent.FiltersLine className="mt-1">
         <Filter className="lg:w-[130px]">
           <Filter.Icon
@@ -441,6 +445,7 @@ export default function CustomReports() {
         </Filter>
       </TableComponent.FiltersLine>
 
+      {/* Filtros linha 2 */}
       <TableComponent.FiltersLine className="mb-1">
         <Filter>
           <Filter.Icon
@@ -563,6 +568,7 @@ export default function CustomReports() {
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
+      {/* Botões de selecionar todos e remover todos */}
       <div className="mt-2 flex items-center gap-3">
         <Button
           className="flex h-fit items-center gap-2 rounded-[8px] bg-cinza_destaque py-1.5 pl-3 pr-4 text-[14px] text-black hover:bg-hover_cinza_destaque_escuro"
@@ -705,7 +711,3 @@ export default function CustomReports() {
     </TableComponent>
   );
 }
-
-/*
-- Select de qual estoque está trabalhando
-*/

@@ -1,5 +1,5 @@
 "use client";
-import { Download, Eraser, Search } from "lucide-react";
+import { Check, Download, Eraser, Search, X } from "lucide-react";
 import { useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
@@ -15,6 +15,7 @@ import {
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
+import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { MultiSelect } from "~/components/ui/multi-select";
 import {
@@ -40,53 +41,55 @@ export default function CustomReports() {
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
 
-  const filteredProducts = products.filter((product) => {
-    const matchesCode = inputCode === "" || product.code.includes(inputCode);
-    const matchesProduct =
-      inputProduct === "" ||
-      product.name.toLowerCase().includes(inputProduct.toLowerCase());
-    const matchesSupplier =
-      selectSuppliers.length === 0 ||
-      product.suppliers.some((supplier) =>
-        selectSuppliers.includes(supplier.name),
-      );
-    const matchesStock =
-      selectStock === "" ||
-      `${product.address.stock}`
-        .toLowerCase()
-        .includes(selectStock.toLowerCase());
-    const matchesAddress =
-      selectAddress === "" ||
-      `${product.address.storage}, ${product.address.shelf}`
-        .toLowerCase()
-        .includes(selectAddress.toLowerCase());
-    const matchesControlType =
-      selectControlType === "" ||
-      product.type_of_control?.description === selectControlType;
-    const matchesCategory =
-      selectCategory === "" ||
-      product.product_category?.description === selectCategory;
-    const matchesSector =
-      selectSector === "" ||
-      product.sector_of_use?.description === selectSector;
-    const matchesStatus =
-      selectStatus === "" || product.status === selectStatus;
-    const matchesBuyDay =
-      selectBuyDay === "" || product.buy_day === selectBuyDay;
+  const filteredProducts = products
+    .filter((product) => {
+      const matchesCode = inputCode === "" || product.code.includes(inputCode);
+      const matchesProduct =
+        inputProduct === "" ||
+        product.name.toLowerCase().includes(inputProduct.toLowerCase());
+      const matchesSupplier =
+        selectSuppliers.length === 0 ||
+        product.suppliers.some((supplier) =>
+          selectSuppliers.includes(supplier.name),
+        );
+      const matchesStock =
+        selectStock === "" ||
+        `${product.address.stock}`
+          .toLowerCase()
+          .includes(selectStock.toLowerCase());
+      const matchesAddress =
+        selectAddress === "" ||
+        `${product.address.storage}, ${product.address.shelf}`
+          .toLowerCase()
+          .includes(selectAddress.toLowerCase());
+      const matchesControlType =
+        selectControlType === "" ||
+        product.type_of_control?.description === selectControlType;
+      const matchesCategory =
+        selectCategory === "" ||
+        product.product_category?.description === selectCategory;
+      const matchesSector =
+        selectSector === "" ||
+        product.sector_of_use?.description === selectSector;
+      const matchesStatus =
+        selectStatus === "" || product.status === selectStatus;
+      const matchesBuyDay =
+        selectBuyDay === "" || product.buy_day === selectBuyDay;
 
-    return (
-      matchesCode &&
-      matchesProduct &&
-      matchesSupplier &&
-      matchesStock &&
-      matchesAddress &&
-      matchesControlType &&
-      matchesCategory &&
-      matchesSector &&
-      matchesStatus &&
-      matchesBuyDay
-    );
-  });
+      return (
+        matchesCode &&
+        matchesProduct &&
+        matchesSupplier &&
+        matchesStock &&
+        matchesAddress &&
+        matchesControlType &&
+        matchesCategory &&
+        matchesSector &&
+        matchesStatus &&
+        matchesBuyDay
+      );
+    })
+    .sort((a, b) => a.code.localeCompare(b.code));
 
   function handleProductSelection(
     productCode: string,
@@ -99,6 +102,17 @@ export default function CustomReports() {
         prevSelected.filter((code) => code !== productCode),
       );
     }
+  }
+
+  function handleSelectAll() {
+    const allFilteredProductCodes = filteredProducts.map(
+      (product) => product.code,
+    );
+    setSelectedProducts(allFilteredProductCodes);
+  }
+
+  function handleDeselectAll() {
+    setSelectedProducts([]);
   }
 
   function printSelectedProductData() {
@@ -167,6 +181,7 @@ export default function CustomReports() {
     <TableComponent>
       <TableComponent.Title>Gerar Relatório Personalizado</TableComponent.Title>
 
+      {/* Multiselect dos atributos a incluir no relatório */}
       <div className="my-2 flex flex-col items-center gap-1 md:flex-row md:gap-3">
         <p>
           Selecione um ou mais atributos do produto para incluir no relatório:{" "}
@@ -193,6 +208,7 @@ export default function CustomReports() {
         filtros abaixo para facilitar a busca
       </TableComponent.Subtitle>
 
+      {/* Filtros linha 1 */}
       <TableComponent.FiltersLine>
         <Filter className="lg:w-[130px]">
           <Filter.Icon
@@ -293,6 +309,7 @@ export default function CustomReports() {
         </Filter>
       </TableComponent.FiltersLine>
 
+      {/* Filtros linha 2 */}
       <TableComponent.FiltersLine>
         <Filter>
           <Filter.Icon
@@ -416,6 +433,25 @@ export default function CustomReports() {
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
+      {/* Botões de selecionar todos e remover todos */}
+      <div className="mt-2 flex items-center gap-3">
+        <Button
+          className="flex h-fit items-center gap-2 rounded-[8px] bg-cinza_destaque py-1.5 pl-3 pr-4 text-[14px] text-black hover:bg-hover_cinza_destaque_escuro"
+          onClick={handleSelectAll}
+        >
+          <Check size={18} className="flex items-center" />
+          Selecionar Todos
+        </Button>
+        <Button
+          className="flex h-fit items-center gap-2 rounded-[8px] bg-cinza_destaque py-1.5 pl-3 pr-4 text-[14px] text-black hover:bg-hover_cinza_destaque_escuro"
+          onClick={handleDeselectAll}
+        >
+          <X size={18} className="flex items-center" />
+          Remover Seleção
+        </Button>
+        <div>Produtos Selecionados: {selectedProducts.length}</div>
+      </div>
+
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[85px_70px_400px_400px_70px_300px_180px_120px_120px_150px_90px_90px_90px_200px_250px_200px_400px_300px] gap-4 md:gap-8">
           <TableComponent.ValueTitle className="text-center">
@@ -471,6 +507,7 @@ export default function CustomReports() {
           >
             <TableComponent.Value className="text-center">
               <Checkbox
+                checked={selectedProducts.includes(product.code)}
                 onCheckedChange={(checked) =>
                   handleProductSelection(product.code, checked)
                 }
