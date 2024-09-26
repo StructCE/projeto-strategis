@@ -159,7 +159,8 @@ export default function CustomReports() {
         if (selectReportOptions.includes("Endereço do Estoque"))
           selectedAttributes.address = product.address;
         if (selectReportOptions.includes("Usuários com Permissão"))
-          selectedAttributes.permission = product.permission;
+          selectedAttributes.users_with_permission =
+            product.users_with_permission;
 
         return selectedAttributes;
       }),
@@ -556,8 +557,10 @@ export default function CustomReports() {
               {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
             </TableComponent.Value>
             <TableComponent.Value>
-              {product.permission
-                ? product.permission.map((user) => user.name).join(", ")
+              {product.users_with_permission
+                ? product.users_with_permission
+                    .map((user) => user.name)
+                    .join(", ")
                 : "Sem usuários"}
             </TableComponent.Value>
           </TableComponent.Line>

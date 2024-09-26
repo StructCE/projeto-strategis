@@ -71,8 +71,10 @@ export default function ProductDetails(props: ProductType) {
       </p>
       <p>
         <span className="font-semibold">Usuários com Permissão:</span>{" "}
-        {props.product.permission
-          ? props.product.permission.map((user) => user.name).join(", ")
+        {props.product.users_with_permission
+          ? props.product.users_with_permission
+              .map((user) => user.name)
+              .join(", ")
           : "Sem usuários"}
       </p>
     </div>

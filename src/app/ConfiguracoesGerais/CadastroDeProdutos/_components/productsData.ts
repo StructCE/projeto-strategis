@@ -168,7 +168,7 @@ export type Product = {
   product_category: ProductCategory;
   sector_of_use: SectorOfUse;
   address: Address;
-  permission?: User[];
+  users_with_permission?: User[];
 };
 
 export const products: Product[] = [
@@ -196,15 +196,15 @@ export const products: Product[] = [
       storage: "Armário 1",
       shelf: "Prateleira 1",
     },
-    permission: [
+    users_with_permission: [
       {
-        name: "Usuário 1",
+        name: "Nome do Usuário 1",
         role: "Requisitante",
         company: "Alimentos WCW",
         phone: "(61) 99999-9999",
       },
       {
-        name: "Usuário 3",
+        name: "Nome do Usuário 3",
         role: "Requisitante",
         company: "TechNova Matriz",
         phone: "(61) 99999-9999",
@@ -231,9 +231,9 @@ export const products: Product[] = [
       storage: "Armário 2",
       shelf: "Prateleira 3",
     },
-    permission: [
+    users_with_permission: [
       {
-        name: "Usuário 2",
+        name: "Nome do Usuário 2",
         role: "Requisitante",
         company: "Alimentos WCW",
         phone: "(61) 99999-9999",
@@ -261,9 +261,9 @@ export const products: Product[] = [
       storage: "Armário 2",
       shelf: "Prateleira 4",
     },
-    permission: [
+    users_with_permission: [
       {
-        name: "Usuário 2",
+        name: "Nome do Usuário 2",
         role: "Requisitante",
         company: "Alimentos WCW",
         phone: "(61) 99999-9999",
@@ -290,15 +290,15 @@ export const products: Product[] = [
       storage: "Zona 1",
       shelf: "Prateleira 6",
     },
-    permission: [
+    users_with_permission: [
       {
-        name: "Usuário 1",
+        name: "Nome do Usuário 1",
         role: "Requisitante",
         company: "Alimentos WCW",
         phone: "(61) 99999-9999",
       },
       {
-        name: "Usuário 4",
+        name: "Nome do Usuário 4",
         role: "Requisitante",
         company: "TechNova Filial",
         phone: "(61) 99999-9999",
@@ -325,9 +325,9 @@ export const products: Product[] = [
       storage: "Zona 2",
       shelf: "Prateleira 7",
     },
-    permission: [
+    users_with_permission: [
       {
-        name: "Usuário 2",
+        name: "Nome do Usuário 2",
         role: "Requisitante",
         company: "Alimentos WCW",
         phone: "(61) 99999-9999",
@@ -354,9 +354,9 @@ export const products: Product[] = [
       storage: "Zona 3",
       shelf: "Prateleira 10",
     },
-    permission: [
+    users_with_permission: [
       {
-        name: "Usuário 1",
+        name: "Nome do Usuário 1",
         role: "Requisitante",
         company: "Alimentos WCW",
         phone: "(61) 99999-9999",
@@ -383,9 +383,9 @@ export const products: Product[] = [
       storage: "Armário 1",
       shelf: "Prateleira 2",
     },
-    permission: [
+    users_with_permission: [
       {
-        name: "Usuário 1",
+        name: "Nome do Usuário 1",
         role: "Requisitante",
         company: "Alimentos WCW",
         phone: "(61) 99999-9999",
@@ -416,9 +416,9 @@ export const products: Product[] = [
       storage: "Zona 3",
       shelf: "Prateleira 10",
     },
-    permission: [
+    users_with_permission: [
       {
-        name: "Usuário 2",
+        name: "Nome do Usuário 2",
         role: "Requisitante",
         company: "Alimentos WCW",
         phone: "(61) 99999-9999",

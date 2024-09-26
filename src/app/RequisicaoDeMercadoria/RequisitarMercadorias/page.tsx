@@ -141,14 +141,14 @@ export default function CreatePurchaseOrder() {
 
   // Exemplo da lógica de permissão (Usuário 1 tem permissão pra produtos líquidos, e Usuário 2 outros produtos)
   const LoggedUser: User = {
-    name: "Usuário 1",
+    name: "Nome do Usuário 1",
     role: "Requisitante",
     company: "Alimentos WCW",
     phone: "(61) 99999-9999",
   };
 
   function hasPermission(product: Product, user: User) {
-    return product.permission?.some(
+    return product.users_with_permission?.some(
       (permittedUser) => permittedUser.name === user.name,
     );
   }

@@ -217,7 +217,7 @@ export default function CustomReports() {
         product_category: product.product_category,
         sector_of_use: product.sector_of_use,
         address: product.address,
-        permission: product.permission,
+        users_with_permission: product.users_with_permission,
       })),
     };
 
