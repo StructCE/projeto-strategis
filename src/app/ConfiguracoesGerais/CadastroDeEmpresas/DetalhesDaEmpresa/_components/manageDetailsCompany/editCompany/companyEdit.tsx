@@ -449,6 +449,9 @@ export const CompanyEdit = (props: CompanyEditProps) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
+            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
+              Editar Empresa
+            </FormComponent.Button>
             <FormComponent.Button
               className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
               handlePress={editCompanyForm.form.handleSubmit(
@@ -456,9 +459,6 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               )}
             >
               Remover Empresa
-            </FormComponent.Button>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Empresa
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>
