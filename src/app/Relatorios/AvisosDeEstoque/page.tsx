@@ -29,6 +29,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import ProductDetails from "./_components/productDetails";
 
 export default function CustomReports() {
   // Checkboxes dos produtos
@@ -56,84 +57,86 @@ export default function CustomReports() {
   const [filterProduce, setFilterProduce] = useState(false);
   const [filterDontProduce, setFilterDontProduce] = useState(false);
 
-  const filteredProducts = products.filter((product) => {
-    const stockCurrent = Number(product.stock_current);
-    const stockMin = Number(product.stock_min);
-    const stockThreshold = stockMin + stockMin * 0.1; // 110% do estoque mínimo
+  const filteredProducts = products
+    .filter((product) => {
+      const stockCurrent = Number(product.stock_current);
+      const stockMin = Number(product.stock_min);
+      const stockThreshold = stockMin + stockMin * 0.1; // 110% do estoque mínimo
 
-    // Verifica se o produto está com estoque baixo
-    const isLowStock = stockCurrent > 0 && stockCurrent <= stockThreshold;
-    const isNoStock = stockCurrent === 0;
-    const isAdequateStock = stockCurrent > stockThreshold;
+      // Verifica se o produto está com estoque baixo
+      const isLowStock = stockCurrent > 0 && stockCurrent <= stockThreshold;
+      const isNoStock = stockCurrent === 0;
+      const isAdequateStock = stockCurrent > stockThreshold;
 
-    // Filtros auxiliares
-    const matchesCode = inputCode === "" || product.code.includes(inputCode);
-    const matchesProduct =
-      inputProduct === "" ||
-      product.name.toLowerCase().includes(inputProduct.toLowerCase());
-    const matchesSupplier =
-      selectSuppliers.length === 0 ||
-      product.suppliers.some((supplier) =>
-        selectSuppliers.includes(supplier.name),
+      // Filtros auxiliares
+      const matchesCode = inputCode === "" || product.code.includes(inputCode);
+      const matchesProduct =
+        inputProduct === "" ||
+        product.name.toLowerCase().includes(inputProduct.toLowerCase());
+      const matchesSupplier =
+        selectSuppliers.length === 0 ||
+        product.suppliers.some((supplier) =>
+          selectSuppliers.includes(supplier.name),
+        );
+      const matchesStock =
+        selectStock === "" ||
+        `${product.address.stock}`
+          .toLowerCase()
+          .includes(selectStock.toLowerCase());
+      const matchesAddress =
+        selectAddress === "" ||
+        `${product.address.storage}, ${product.address.shelf}`
+          .toLowerCase()
+          .includes(selectAddress.toLowerCase());
+      const matchesControlType =
+        selectControlType === "" ||
+        product.type_of_control?.description === selectControlType;
+      const matchesCategory =
+        selectCategory === "" ||
+        product.product_category?.description === selectCategory;
+      const matchesSector =
+        selectSector === "" ||
+        product.sector_of_use?.description === selectSector;
+      const matchesStatus =
+        selectStatus === "" || product.status === selectStatus;
+      const matchesBuyDay =
+        selectBuyDay === "" || product.buy_day === selectBuyDay;
+
+      const filterConditions = []; // Filtros de estoque com base nos botões e checkboxes
+
+      if (lowStock) filterConditions.push(isLowStock);
+      if (noStock) filterConditions.push(isNoStock);
+      if (filterBuy) filterConditions.push(isLowStock || isNoStock);
+      if (filterDontBuy) filterConditions.push(isAdequateStock);
+      if (filterProduce)
+        filterConditions.push(
+          (isLowStock || isNoStock) &&
+            product.type_of_control?.description === "Produtos de Produção",
+        );
+      if (filterDontProduce)
+        filterConditions.push(
+          isAdequateStock &&
+            product.type_of_control?.description === "Produtos de Produção",
+        );
+
+      const satisfiesStockFilters =
+        filterConditions.length === 0 || filterConditions.some(Boolean);
+
+      return (
+        satisfiesStockFilters &&
+        matchesCode &&
+        matchesProduct &&
+        matchesSupplier &&
+        matchesStock &&
+        matchesAddress &&
+        matchesControlType &&
+        matchesCategory &&
+        matchesSector &&
+        matchesStatus &&
+        matchesBuyDay
       );
-    const matchesStock =
-      selectStock === "" ||
-      `${product.address.stock}`
-        .toLowerCase()
-        .includes(selectStock.toLowerCase());
-    const matchesAddress =
-      selectAddress === "" ||
-      `${product.address.storage}, ${product.address.shelf}`
-        .toLowerCase()
-        .includes(selectAddress.toLowerCase());
-    const matchesControlType =
-      selectControlType === "" ||
-      product.type_of_control?.description === selectControlType;
-    const matchesCategory =
-      selectCategory === "" ||
-      product.product_category?.description === selectCategory;
-    const matchesSector =
-      selectSector === "" ||
-      product.sector_of_use?.description === selectSector;
-    const matchesStatus =
-      selectStatus === "" || product.status === selectStatus;
-    const matchesBuyDay =
-      selectBuyDay === "" || product.buy_day === selectBuyDay;
-
-    const filterConditions = []; // Filtros de estoque com base nos botões e checkboxes
-
-    if (lowStock) filterConditions.push(isLowStock);
-    if (noStock) filterConditions.push(isNoStock);
-    if (filterBuy) filterConditions.push(isLowStock || isNoStock);
-    if (filterDontBuy) filterConditions.push(isAdequateStock);
-    if (filterProduce)
-      filterConditions.push(
-        (isLowStock || isNoStock) &&
-          product.type_of_control?.description === "Produtos de Produção",
-      );
-    if (filterDontProduce)
-      filterConditions.push(
-        isAdequateStock &&
-          product.type_of_control?.description === "Produtos de Produção",
-      );
-
-    const satisfiesStockFilters =
-      filterConditions.length === 0 || filterConditions.some(Boolean);
-
-    return (
-      satisfiesStockFilters &&
-      matchesCode &&
-      matchesProduct &&
-      matchesSupplier &&
-      matchesStock &&
-      matchesAddress &&
-      matchesControlType &&
-      matchesCategory &&
-      matchesSector &&
-      matchesStatus &&
-      matchesBuyDay
-    );
-  });
+    })
+    .sort((a, b) => a.code.localeCompare(b.code));
 
   // Produtos com estoque baixo (para contagem)
   const lowStockProducts = products.filter((product) => {
@@ -623,21 +626,20 @@ export default function CustomReports() {
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
                   Detalhes
                 </Button>
               </DialogTrigger>
               <DialogContent
                 aria-describedby={undefined}
-                className="sm:max-w-7xl"
+                className="sm:max-w-4xl"
               >
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do produto ou
-                    o botão para remover
+                    Informações do Produto:
                   </DialogTitle>
 
-                  {/* <ProductEdit product={product} /> */}
+                  <ProductDetails product={product} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>
