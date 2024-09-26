@@ -1,6 +1,9 @@
 "use client";
 import { storages } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
-import { companies } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
+import {
+  companies,
+  users,
+} from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -18,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { roles } from "../../../../CadastroDeFornecedores/_components/supplierData";
 import { stocks, type Stock } from "../../stockData";
 import { useStockForm } from "./useStockForm";
 
@@ -82,101 +84,39 @@ export const StockEdit = (props: StockEditProps) => {
                 )}
               />
             </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>
+                Responsável pelo Estoque
+              </FormComponent.Label>
+              <FormField
+                control={stockForm.form.control}
+                name="stock_manager"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                          <SelectValue placeholder="Selecione um usuário" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {users.map((user, index) => (
+                          <SelectItem value={user.name} key={index}>
+                            {user.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
           </FormComponent.Line>
-
-          <FormComponent.BoxSpecify boxName="Responsável pelo Estoque">
-            <FormComponent.Line>
-              <FormComponent.Frame>
-                <FormComponent.Label>Nome</FormComponent.Label>
-                <FormField
-                  control={stockForm.form.control}
-                  name={`stock_manager.name`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                          placeholder="Nome do contato"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Cargo</FormComponent.Label>
-                <FormField
-                  control={stockForm.form.control}
-                  name={`stock_manager.role`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                            <SelectValue placeholder="Selecione um cargo" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {roles.map((role, i) => (
-                            <SelectItem value={role.value} key={i}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Email</FormComponent.Label>
-                <FormField
-                  control={stockForm.form.control}
-                  name={`stock_manager.email`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                          placeholder="Endereço de email do responsável"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Telefone</FormComponent.Label>
-                <FormField
-                  control={stockForm.form.control}
-                  name={`stock_manager.phone`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                          placeholder="(XX) XXXXX-XXXX"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-            </FormComponent.Line>
-          </FormComponent.BoxSpecify>
 
           <FormComponent.BoxSpecify boxName="Endereços">
             {stockForm.fieldsArray.map((address, index) => (

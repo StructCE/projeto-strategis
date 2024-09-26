@@ -1,43 +1,5 @@
 import { z } from "zod";
 
-const legalRepresentativeSchema = {
-  name: z
-    .string({
-      required_error: "Por favor digite o nome do resposável.",
-    })
-    .min(2, {
-      message: "O nome do responsável deve ter pelo menos 3 caracteres.",
-    }),
-
-  role: z
-    .string({
-      required_error: "Por favor selecione o cargo.",
-    })
-    .min(1, {
-      message: "Por favor selecione o cargo.",
-    }),
-
-  email: z
-    .string({
-      required_error: "Por favor digite o email do responsável.",
-    })
-    .email({
-      message: "Email inválido.",
-    }),
-
-  phone: z
-    .string()
-    .min(8, {
-      message:
-        "Número de telefone inválido. O formato correto é (XX) XXXXX-XXXX.",
-    })
-    .max(16, {
-      message:
-        "Número de telefone inválido. O formato correto é (XX) XXXXX-XXXX.",
-    })
-    .optional(),
-};
-
 export const editCompanyFormSchema = z.object({
   name: z
     .string({ required_error: "Por favor digite o nome." })
@@ -116,11 +78,17 @@ export const editCompanyFormSchema = z.object({
     .string({ required_error: "CEP deve ser obrigatório." })
     .min(8, { message: "São necessarios 8 dígitos" }),
 
-  address_file_XML: z.string({
-    required_error: "Coloque o endereço local dos arquivos XML",
-  }),
+  address_file_XML: z
+    .string({
+      required_error: "Selecione o endereço local dos arquivos XML",
+    })
+    .optional(),
 
-  legal_representative: z.object(legalRepresentativeSchema).optional(),
+  legal_representative: z
+    .string({
+      required_error: "Selecione o representante legal da empresa",
+    })
+    .optional(),
 });
 
 export type EditCompanyFormValues = z.infer<typeof editCompanyFormSchema>;
