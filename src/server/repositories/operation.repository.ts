@@ -11,6 +11,7 @@ async function countOperations(props: OperationRepositoryInterfaces["CountOperat
 			}
 		}
 	})
+	return operations
 }
 
 export const operationRepository = {
