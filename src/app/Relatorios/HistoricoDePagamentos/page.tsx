@@ -4,6 +4,7 @@ import {
   Calendar,
   Check,
   Clock,
+  Download,
   Eraser,
   Landmark,
   Search,
@@ -15,6 +16,7 @@ import { companies } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_compone
 import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
+import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import {
@@ -31,6 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import PaymentDetails from "./_components/paymentDetails";
 import {
   account_plans,
   banks,
@@ -170,6 +173,22 @@ export default function PaymentHistory() {
     setSelectedPayments([]);
   }
 
+  function calculateTotalValue() {
+    const selectedPaymentObjects = filteredPayments.filter((payment) =>
+      selectedPayments.includes(payment.document_number),
+    );
+
+    const totalValue = selectedPaymentObjects.reduce(
+      (total, payment) => total + payment.value_payed,
+      0,
+    );
+
+    return totalValue.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  }
+
   function capitalizeFirstLetter(str: string): string {
     return str
       .toLowerCase()
@@ -190,7 +209,56 @@ export default function PaymentHistory() {
       .map((product) => capitalizeFirstLetter(product.name))
       .join(", ");
 
-    return `NF:${nota_fiscal}-VG:R$${valor.toFixed(2)}-[${productsString}]`;
+    return `NF:${nota_fiscal}-VG:${valor
+      .toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      })
+      .replace(/\s/g, "")}-[${productsString}]`;
+  }
+
+  function printSelectedPaymentsData() {
+    const paymentsToPrint = payments.filter((payment) =>
+      selectedPayments.includes(payment.document_number),
+    );
+
+    const stockWarningsData = {
+      report_date: new Date()?.toISOString(),
+      products: paymentsToPrint.map((payment) => ({
+        document_number: payment.document_number,
+        company: payment.company,
+        date_document: payment.date_document,
+        document: payment.document,
+        account_plan: payment.account_plan,
+        project: payment.project,
+        account: payment.account,
+        expense_type: payment.expense_type,
+        recurrence: payment.recurrence,
+        supplier: payment.supplier,
+        // Descrição -> padrão com nº da nota, valor global e nomes dos produtos
+        bank: payment.bank,
+        value: payment.value,
+        installment: payment.installment, // Parcela (Pode ser 'única' ou o numero da parcela incluindo a data ou não)
+        value_payed: payment.value_payed,
+        date_deadline: payment.date_deadline,
+        date_payment: payment.date_payment,
+        type_of_status: payment.type_of_status,
+        // Lista -> é a abreviação do AccountPlan
+        group: payment.group,
+        products: payment.products,
+      })),
+    };
+
+    console.log(JSON.stringify(stockWarningsData, null, 2));
+
+    // Exemplo de exportação do pedido como JSON (feito com gpt, verificar se ta tudo certo)
+    // const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+    //   JSON.stringify(stockWarningsData),
+    // )}`;
+    // const link = document.createElement("a");
+    // link.href = jsonString;
+    // link.download = `RelatorioPersonalizado`;
+    // link.click();
   }
 
   return (
@@ -507,7 +575,14 @@ export default function PaymentHistory() {
           <X size={18} className="flex items-center" />
           Remover Seleção
         </Button>
-        <div>Pagamento Selecionados: {selectedPayments.length}</div>
+        <div className="mx-2">
+          <span className="font-medium">Pagamento Selecionados:</span>{" "}
+          {selectedPayments.length}
+        </div>
+        <div>
+          <span className="font-medium">Valor Total:</span>{" "}
+          {calculateTotalValue()}
+        </div>
       </div>
 
       <TableComponent.Table className="mt-1">
@@ -598,14 +673,15 @@ export default function PaymentHistory() {
               </DialogTrigger>
               <DialogContent
                 aria-describedby={undefined}
-                className="sm:max-w-4xl"
+                className="max-h-[90vh] overflow-y-auto sm:max-w-4xl"
               >
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
                     Informações do Pagamento:
                   </DialogTitle>
 
-                  {/* <ProductDetails product={product} /> */}
+                  <PaymentDetails payment={payment} />
+
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>
@@ -613,6 +689,23 @@ export default function PaymentHistory() {
           </TableComponent.Line>
         ))}
       </TableComponent.Table>
+
+      <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">
+        <TableButtonComponent.Button
+          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
+          icon={
+            <Download
+              className="flex h-full cursor-pointer self-center"
+              size={20}
+              strokeWidth={2.2}
+              color="white"
+            />
+          }
+          handlePress={printSelectedPaymentsData}
+        >
+          Exportar Dados em CSV
+        </TableButtonComponent.Button>
+      </TableButtonComponent>
     </TableComponent>
   );
 }
