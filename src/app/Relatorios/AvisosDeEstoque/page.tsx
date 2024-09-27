@@ -308,7 +308,7 @@ export default function CustomReports() {
         {/* Cards com números dos produtos em estoque */}
         <div className="flex flex-wrap items-center justify-end gap-3 lg:flex-nowrap">
           <button
-            className="hover:bg-hover_vermelho_botao_2 flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-hover_vermelho_botao_2 md:min-w-[150px]"
             onClick={() => {
               setLowStock(false);
               setNoStock(false);
@@ -323,7 +323,7 @@ export default function CustomReports() {
           </button>
 
           <button
-            className="hover:bg-hover_vermelho_botao_2 flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-hover_vermelho_botao_2 md:min-w-[150px]"
             onClick={() => {
               setLowStock(true);
               setNoStock(false);
@@ -338,7 +338,7 @@ export default function CustomReports() {
           </button>
 
           <button
-            className="hover:bg-hover_vermelho_botao_2 flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-hover_vermelho_botao_2 md:min-w-[150px]"
             onClick={() => {
               setLowStock(false);
               setNoStock(true);
@@ -678,7 +678,7 @@ export default function CustomReports() {
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">
         <TableButtonComponent.Button
-          className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1 max-[425px]:w-full"
+          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
           icon={
             <Download
               className="flex h-full cursor-pointer self-center"
@@ -693,7 +693,7 @@ export default function CustomReports() {
         </TableButtonComponent.Button>
 
         <TableButtonComponent.Button
-          className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1 max-[425px]:w-full"
+          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
           icon={
             <Download
               className="flex h-full cursor-pointer self-center"
