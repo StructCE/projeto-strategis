@@ -1,254 +1,249 @@
-type Produto = {
-  codigo: number;
-  nome: string;
-  unidade: string;
-  estoque_atual: number;
-  estoque_min: number;
-  estoque_max: number;
+export type Product = {
+  code: string;
+  name: string;
+  buy_unit: string;
+  stock_current: number;
+  stock_min: number;
+  stock_max: number;
+  requested_quantity: number;
+  released_quantity?: number;
 };
 
-type Requisicao = {
-  data: string;
-  requisitante: string;
-  descricao: string;
-  produtos: Produto[];
-  quant_solicitada_unidade: number;
-  quant_solicitada_fardo: 1;
+export type Request = {
+  date: Date;
+  request_responsible: string;
+  description?: string;
+  products: Product[];
 };
 
-
-
-export const requisicoes: Requisicao[] = [
+export const requests: Request[] = [
   {
-    data: "01/02/2024",
-    requisitante: "Pedro Silva",
-    descricao: "Alcatra, Picanha, Limão...",
-    produtos: [
+    date: new Date(2024, 9, 28),
+    request_responsible: "Pedro Silva",
+    description: "Produtos com estoque baixo no bar",
+    products: [
       {
-        codigo: 101,
-        nome: "Alcatra",
-        unidade: "kg",
-        estoque_atual: 50,
-        estoque_min: 10,
-        estoque_max: 100,
+        code: "101",
+        name: "Alcatra",
+        buy_unit: "kg",
+        stock_current: 50,
+        stock_min: 10,
+        stock_max: 100,
+        requested_quantity: 15,
       },
       {
-        codigo: 102,
-        nome: "Picanha",
-        unidade: "kg",
-        estoque_atual: 30,
-        estoque_min: 5,
-        estoque_max: 50,
+        code: "102",
+        name: "Picanha",
+        buy_unit: "kg",
+        stock_current: 30,
+        stock_min: 5,
+        stock_max: 50,
+        requested_quantity: 15,
       },
       {
-        codigo: 103,
-        nome: "Limão",
-        unidade: "unidade",
-        estoque_atual: 200,
-        estoque_min: 50,
-        estoque_max: 500,
+        code: "103",
+        name: "Limão",
+        buy_unit: "unidade",
+        stock_current: 200,
+        stock_min: 50,
+        stock_max: 500,
+        requested_quantity: 15,
       },
     ],
-    quant_solicitada_unidade: 15,
-    quant_solicitada_fardo: 1,
   },
   {
-    data: "02/02/2024",
-    requisitante: "Thiago Santos",
-    descricao: "Alface, Abóbora, Tomate...",
-    produtos: [
+    date: new Date(2024, 9, 29),
+    request_responsible: "Thiago Santos",
+    products: [
       {
-        codigo: 201,
-        nome: "Alface",
-        unidade: "unidade",
-        estoque_atual: 100,
-        estoque_min: 20,
-        estoque_max: 200,
+        code: "201",
+        name: "Alface",
+        buy_unit: "unidade",
+        stock_current: 100,
+        stock_min: 20,
+        stock_max: 200,
+        requested_quantity: 15,
       },
       {
-        codigo: 202,
-        nome: "Abóbora",
-        unidade: "kg",
-        estoque_atual: 60,
-        estoque_min: 10,
-        estoque_max: 80,
+        code: "202",
+        name: "Abóbora",
+        buy_unit: "kg",
+        stock_current: 60,
+        stock_min: 10,
+        stock_max: 80,
+        requested_quantity: 15,
       },
       {
-        codigo: 203,
-        nome: "Tomate",
-        unidade: "kg",
-        estoque_atual: 150,
-        estoque_min: 30,
-        estoque_max: 300,
+        code: "203",
+        name: "Tomate",
+        buy_unit: "kg",
+        stock_current: 150,
+        stock_min: 30,
+        stock_max: 300,
+        requested_quantity: 15,
       },
     ],
-    quant_solicitada_unidade: 25,
-    quant_solicitada_fardo: 1,
   },
   {
-    data: "03/02/2024",
-    requisitante: "Pedro Silva",
-    descricao: "Cerveja, Vodka, Catuaba...",
-    produtos: [
+    date: new Date(2024, 9, 30),
+    request_responsible: "Pedro Silva",
+    description: "Produtos para funcionários",
+    products: [
       {
-        codigo: 301,
-        nome: "Cerveja",
-        unidade: "L",
-        estoque_atual: 500,
-        estoque_min: 100,
-        estoque_max: 1000,
+        code: "301",
+        name: "Cerveja",
+        buy_unit: "L",
+        stock_current: 500,
+        stock_min: 100,
+        stock_max: 1000,
+        requested_quantity: 15,
       },
       {
-        codigo: 302,
-        nome: "Vodka",
-        unidade: "L",
-        estoque_atual: 200,
-        estoque_min: 50,
-        estoque_max: 400,
+        code: "302",
+        name: "Vodka",
+        buy_unit: "L",
+        stock_current: 200,
+        stock_min: 50,
+        stock_max: 400,
+        requested_quantity: 15,
       },
       {
-        codigo: 303,
-        nome: "Catuaba",
-        unidade: "L",
-        estoque_atual: 300,
-        estoque_min: 80,
-        estoque_max: 600,
+        code: "303",
+        name: "Catuaba",
+        buy_unit: "L",
+        stock_current: 300,
+        stock_min: 80,
+        stock_max: 600,
+        requested_quantity: 15,
       },
     ],
-    quant_solicitada_unidade: 12,
-    quant_solicitada_fardo: 1,
   },
 ];
 
-
-type Saida = {
+export type Exit = {
   numero: number;
-  data: string;
-  responsavel: string;
-  requisitante: string;
-  descricao: string;
-  produtos: Produto[];
-  quant_solicitada_unidade: number;
-  quant_solicitada_fardo: number;
-  quant_confirmada: number | null;
-  area: string;
+  date: Date;
+  exit_responsible: string;
+  request_responsible: string;
+  description: string;
+  products: Product[];
 };
 
-export const saidas: Saida[] = [
+export const exits: Exit[] = [
   {
     numero: 1,
-    data: "01/01/2024",
-    responsavel: "João Pedro",
-    requisitante: "Pedro Silva",
-    descricao: "Solicitação de carnes",
-    produtos: [
+    date: new Date(2024, 9, 25),
+    exit_responsible: "João Pedro",
+    request_responsible: "Pedro Silva",
+    description: "Solicitação de carnes",
+    products: [
       {
-        codigo: 101,
-        nome: "Alcatra",
-        unidade: "kg",
-        estoque_atual: 50,
-        estoque_min: 10,
-        estoque_max: 100,
+        code: "101",
+        name: "Alcatra",
+        buy_unit: "kg",
+        stock_current: 50,
+        stock_min: 10,
+        stock_max: 100,
+        requested_quantity: 15,
+        released_quantity: 15,
       },
       {
-        codigo: 102,
-        nome: "Picanha",
-        unidade: "kg",
-        estoque_atual: 30,
-        estoque_min: 5,
-        estoque_max: 50,
+        code: "102",
+        name: "Picanha",
+        buy_unit: "kg",
+        stock_current: 30,
+        stock_min: 5,
+        stock_max: 50,
+        requested_quantity: 15,
+        released_quantity: 15,
       },
     ],
-    quant_solicitada_unidade: 15,
-    quant_solicitada_fardo: 1,
-    quant_confirmada: 15,
-    area: "Área x",
   },
   {
     numero: 2,
-    data: "02/01/2024",
-    responsavel: "João Pedro",
-    requisitante: "Thiago Santos",
-    descricao: "Solicitação de vegetais",
-    produtos: [
+    date: new Date(2024, 9, 26),
+    exit_responsible: "João Pedro",
+    request_responsible: "Thiago Santos",
+    description: "Solicitação de vegetais",
+    products: [
       {
-        codigo: 201,
-        nome: "Alface",
-        unidade: "unidade",
-        estoque_atual: 100,
-        estoque_min: 20,
-        estoque_max: 200,
+        code: "201",
+        name: "Alface",
+        buy_unit: "buy_unit",
+        stock_current: 100,
+        stock_min: 20,
+        stock_max: 200,
+        requested_quantity: 15,
+        released_quantity: 15,
       },
       {
-        codigo: 202,
-        nome: "Abóbora",
-        unidade: "kg",
-        estoque_atual: 60,
-        estoque_min: 10,
-        estoque_max: 80,
+        code: "202",
+        name: "Abóbora",
+        buy_unit: "kg",
+        stock_current: 60,
+        stock_min: 10,
+        stock_max: 80,
+        requested_quantity: 15,
+        released_quantity: 15,
       },
     ],
-    quant_solicitada_unidade: 20,
-    quant_solicitada_fardo: 1,
-    quant_confirmada: 20,
-    area: "Área x",
   },
   {
     numero: 3,
-    data: "03/01/2024",
-    responsavel: "João Pedro",
-    requisitante: "Pedro Silva",
-    descricao: "Solicitação de bebidas",
-    produtos: [
+    date: new Date(2024, 9, 27),
+    exit_responsible: "João Pedro",
+    request_responsible: "Pedro Silva",
+    description: "Solicitação de bebidas",
+    products: [
       {
-        codigo: 301,
-        nome: "Cerveja",
-        unidade: "litro",
-        estoque_atual: 500,
-        estoque_min: 100,
-        estoque_max: 1000,
+        code: "301",
+        name: "Cerveja",
+        buy_unit: "litro",
+        stock_current: 500,
+        stock_min: 100,
+        stock_max: 1000,
+        requested_quantity: 15,
+        released_quantity: 15,
       },
       {
-        codigo: 302,
-        nome: "Vodka",
-        unidade: "litro",
-        estoque_atual: 200,
-        estoque_min: 50,
-        estoque_max: 400,
+        code: "302",
+        name: "Vodka",
+        buy_unit: "litro",
+        stock_current: 200,
+        stock_min: 50,
+        stock_max: 400,
+        requested_quantity: 15,
+        released_quantity: 15,
       },
     ],
-    quant_solicitada_unidade: 12,
-    quant_solicitada_fardo: 1,
-    quant_confirmada: 12,
-    area: "Área x",
   },
   {
     numero: 4,
-    data: "04/01/2024",
-    responsavel: "João Pedro",
-    requisitante: "Pedro Silva",
-    descricao: "Solicitação de carnes adicionais",
-    produtos: [
+    date: new Date(2024, 9, 28),
+    exit_responsible: "João Pedro",
+    request_responsible: "Pedro Silva",
+    description: "Solicitação de carnes adicionais",
+    products: [
       {
-        codigo: 101,
-        nome: "Alcatra",
-        unidade: "kg",
-        estoque_atual: 50,
-        estoque_min: 10,
-        estoque_max: 100,
+        code: "101",
+        name: "Alcatra",
+        buy_unit: "kg",
+        stock_current: 50,
+        stock_min: 10,
+        stock_max: 100,
+        requested_quantity: 15,
+        released_quantity: 15,
       },
       {
-        codigo: 103,
-        nome: "Limão",
-        unidade: "unidade",
-        estoque_atual: 200,
-        estoque_min: 50,
-        estoque_max: 500,
+        code: "103",
+        name: "Limão",
+        buy_unit: "buy_unit",
+        stock_current: 200,
+        stock_min: 50,
+        stock_max: 500,
+        requested_quantity: 15,
+        released_quantity: 15,
       },
     ],
-    quant_solicitada_unidade: 10,
-    quant_solicitada_fardo: 1,
-    quant_confirmada: 10,
-    area: "Área x",
   },
 ];

@@ -6,7 +6,7 @@ export default function TelaSaidas() {
   return (
     <>
       <ManageExits />
-      <Separator className="my-6"/>
+      <Separator className="my-4" />
       <ExitsHistory />
     </>
   );

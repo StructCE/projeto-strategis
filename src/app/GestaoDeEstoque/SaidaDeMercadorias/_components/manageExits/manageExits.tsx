@@ -1,5 +1,6 @@
+import { RequestComponent } from "~/components/card-request/cardRequest";
+import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
-import { requisicoes } from "../exitsData";
 import {
   Dialog,
   DialogContent,
@@ -8,56 +9,96 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { DetailRequisition } from "./detailRequisition/detailRequisition";
+import { requests } from "../exitsData";
+import { RequestDetail } from "./requestDetails/requestDetails";
 
 export default function ManageExits() {
   return (
-    <>
-      <div>
-        <h1 className="text-4xl">Gerenciar Saídas</h1>
-        <h2 className="text-xl">Requisições pendentes</h2>
-        {requisicoes.map((req, index) => (
-          <div
-            key={index}
-            className="m-2 grid w-full grid-cols-[1fr_2fr_3fr_1fr] rounded-lg border border-cinza_destaque px-4 py-2"
-          >
-            <div className="flex-col">
-              <p className="font-bold">Data</p>{" "}
-              <p className="opacity-75">{req.data}</p>
-            </div>
-            <div className="">
-              <p className="font-bold">Requisitante</p>{" "}
-              <p className="opacity-75">{req.requisitante}</p>
-            </div>
-            <div className="">
-              <p className="font-bold">Descricao</p>{" "}
-              <p className="opacity-75">{req.descricao}</p>
-            </div>
-            <div className="flex items-center justify-end">
-              {/* <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
-                Gerenciar
-              </Button> */}
+    <TableComponent>
+      <TableComponent.Title>Gerenciar Saídas</TableComponent.Title>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
-                    Detalhes
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[90rem]">
-                  <DialogHeader>
-                    <h1 className="pb-1.5 text-2xl font-semibold">
-                      Detalhes da Requisição:
-                    </h1>
-                    <DetailRequisition requisition={req} />
-                    <DialogDescription></DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
-        ))}
-      </div>
-    </>
+      <TableComponent.Subtitle>Requisições pendentes:</TableComponent.Subtitle>
+
+      <TableComponent.Table>
+        {requests
+          .sort((a, b) => a.date.getTime() - b.date.getTime())
+          .map((request, index) => (
+            <RequestComponent classname="mx-[2px] my-1.5" key={index}>
+              <RequestComponent.Grid className="md:grid-cols-[0.7fr_1.5fr_2fr_2fr_130px]">
+                <RequestComponent.ColumnItem
+                  title="Data"
+                  description={`${request.date.getDate()}/${request.date.getMonth()}/${request.date.getFullYear()}`}
+                />
+
+                <RequestComponent.ColumnItem
+                  title="Requisitante"
+                  description={request.request_responsible}
+                />
+
+                <RequestComponent.ColumnItem
+                  title="Produtos"
+                  description={
+                    request.products.length > 3
+                      ? `${request.products
+                          .slice(0, 3)
+                          .map((product) => product.name)
+                          .join(", ")}...`
+                      : request.products
+                          .map((product) => product.name)
+                          .join(", ")
+                  }
+                />
+
+                <RequestComponent.ColumnItem
+                  title="Descrição"
+                  description={
+                    request.description ? request.description : "Sem descrição"
+                  }
+                />
+
+                <div className="flex items-center justify-end">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque px-5 text-[16px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[18px]">
+                        Gerenciar
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="overflow-x-auto sm:max-w-[80rem]"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="pb-1 text-xl">
+                          Detalhes da Requisição:
+                        </DialogTitle>
+
+                        <DialogDescription className="w-fit text-base text-black">
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Data do Requisição:
+                            </span>{" "}
+                            {`${request.date.getDate()}/${request.date.getMonth()}/${request.date.getFullYear()}`}
+                          </p>
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Responsável pelo Requisição:
+                            </span>{" "}
+                            {request.request_responsible}
+                          </p>
+                          <p className="w-fit font-semibold">
+                            Produtos Solicitados:
+                          </p>
+                        </DialogDescription>
+
+                        <RequestDetail request={request} />
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </RequestComponent.Grid>
+            </RequestComponent>
+          ))}
+      </TableComponent.Table>
+    </TableComponent>
   );
 }
