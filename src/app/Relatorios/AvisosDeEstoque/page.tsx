@@ -308,7 +308,7 @@ export default function CustomReports() {
         {/* Cards com números dos produtos em estoque */}
         <div className="flex flex-wrap items-center justify-end gap-3 lg:flex-nowrap">
           <button
-            className="hover:bg-hover_vermelho_botao_2 flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-hover_vermelho_botao_2 md:min-w-[150px]"
             onClick={() => {
               setLowStock(false);
               setNoStock(false);
@@ -323,7 +323,7 @@ export default function CustomReports() {
           </button>
 
           <button
-            className="hover:bg-hover_vermelho_botao_2 flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-hover_vermelho_botao_2 md:min-w-[150px]"
             onClick={() => {
               setLowStock(true);
               setNoStock(false);
@@ -338,7 +338,7 @@ export default function CustomReports() {
           </button>
 
           <button
-            className="hover:bg-hover_vermelho_botao_2 flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white md:min-w-[150px]"
+            className="flex h-fit min-w-[130px] flex-col rounded-[10px] bg-vermelho_botao_2 px-4 py-2 text-white hover:bg-hover_vermelho_botao_2 md:min-w-[150px]"
             onClick={() => {
               setLowStock(false);
               setNoStock(true);
@@ -391,7 +391,7 @@ export default function CustomReports() {
           />
         </Filter>
 
-        <div className="font-inter font-regular m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
+        <div className="font-inter m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] font-normal text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
           <MultiSelect
             FilterIcon={Search}
             options={suppliers.flatMap((supplier) => ({
@@ -403,7 +403,7 @@ export default function CustomReports() {
             placeholder="Fornecedores"
             variant="inverted"
             maxCount={2}
-            className="font-regular font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+            className="font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] font-normal text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
           />
         </div>
 
@@ -678,7 +678,7 @@ export default function CustomReports() {
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">
         <TableButtonComponent.Button
-          className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1 max-[425px]:w-full"
+          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
           icon={
             <Download
               className="flex h-full cursor-pointer self-center"
@@ -693,7 +693,7 @@ export default function CustomReports() {
         </TableButtonComponent.Button>
 
         <TableButtonComponent.Button
-          className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1 max-[425px]:w-full"
+          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
           icon={
             <Download
               className="flex h-full cursor-pointer self-center"

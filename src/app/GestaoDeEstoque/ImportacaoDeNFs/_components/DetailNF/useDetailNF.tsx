@@ -6,6 +6,5 @@ export const useDetailNFsInputs = () => {
   return {
     selectedValue,
     setSelectedValue,
-
   };
 };

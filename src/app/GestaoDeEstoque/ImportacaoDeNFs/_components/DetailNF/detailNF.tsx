@@ -8,41 +8,37 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 import {
+  armarios,
+  categorias_produto,
   estoques,
   grupos_despesa,
+  locais,
+  prateleiras,
   produtos,
   setores_produto,
   tipos_despesa,
   tipos_produto,
-  locais,
-  armarios,
-  prateleiras,
-  categorias_produto,
 } from "../produtosData";
-import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
 
-import { useDetailNFsInputs } from "./useDetailNF";
-import SelectInput from "./select";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
+import { type NotaFiscal } from "../notasFiscaisData";
+import SelectInput from "./select";
+import { useDetailNFsInputs } from "./useDetailNF";
 
-type NotaFiscal = {
-  numNF: number;
-  date: string;
-  quantity: string;
-  company: string;
-  supplier: string;
-  description: string;
+type NotaFiscalType = {
+  nf: NotaFiscal;
 };
 
 // TODO: useStates para armazenar info de cada produto (e seus dados)
 // TODO: lógica botões de reporte e confirmação
 // TODO: lógica validação confirmação
 
-export default function DetailNF(props: { nf: NotaFiscal }) {
+export default function DetailNF(props: NotaFiscalType) {
   const supplierPath = "";
   const selects = useDetailNFsInputs();
   const valorTotal = 9999.99;
@@ -71,7 +67,7 @@ export default function DetailNF(props: { nf: NotaFiscal }) {
       <Separator />
       <div>
         <h2 className="text-[1.5rem] font-medium">PRODUTOS</h2>
-        
+
         <Accordion type="single" collapsible className="w-full">
           {produtos.map((produto, index) => (
             <AccordionItem
@@ -385,10 +381,10 @@ export default function DetailNF(props: { nf: NotaFiscal }) {
 
         <div className="m-6 flex items-center justify-center gap-4 font-bold">
           <Button className="bg-vermelho_botao_1 px-4 text-lg font-semibold">
-            REPORTAR ERRO
+            Reportar Erro
           </Button>
           <Button className="bg-verde_botao px-4 text-lg font-semibold">
-            CONFIRMAR NF
+            Confirmar NF
           </Button>
         </div>
       </div>

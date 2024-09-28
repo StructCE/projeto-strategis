@@ -270,7 +270,7 @@ export default function CreatePurchaseOrder() {
             />
           </Filter>
 
-          <div className="font-inter font-regular m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
+          <div className="font-inter m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] font-normal text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
             <MultiSelect
               FilterIcon={Search}
               options={suppliers.flatMap((supplier) => ({
@@ -282,7 +282,7 @@ export default function CreatePurchaseOrder() {
               placeholder="Fornecedores"
               variant="inverted"
               maxCount={2}
-              className="font-regular font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+              className="font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] font-normal text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
             />
           </div>
 
@@ -528,7 +528,7 @@ export default function CreatePurchaseOrder() {
                 </TableComponent.Value>
                 <Button
                   onClick={() => handleAddProduct(product)}
-                  className="hover:bg-hover_preto mb-0 h-8 bg-black text-[14px] font-medium text-white sm:text-[16px]"
+                  className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
                 >
                   Adicionar
                 </Button>
@@ -636,7 +636,7 @@ export default function CreatePurchaseOrder() {
 
                 <Button
                   onClick={() => handleRemoveProduct(product.code)}
-                  className="hover:text-hover_preto mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent sm:text-[16px]"
+                  className="mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent hover:text-hover_preto sm:text-[16px]"
                 >
                   <Trash2 size={20} />
                 </Button>
@@ -647,7 +647,7 @@ export default function CreatePurchaseOrder() {
 
         <TableButtonComponent className="pt-2 sm:pt-4">
           <TableButtonComponent.Button
-            className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1"
+            className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1"
             handlePress={handleFinalizePurchase}
             icon={
               <Download
