@@ -103,11 +103,10 @@ export default function PaymentHistory() {
       selectCompany === "" || payment.company.name === selectCompany;
 
     const matchesTypeOfStatus =
-      selectTypeOfStatus === "" ||
-      payment.type_of_status === selectTypeOfStatus;
+      selectTypeOfStatus === "" || payment.payed_status === selectTypeOfStatus;
 
     const matchesStatus =
-      selectStatus === "" || payment.type_of_status === selectStatus;
+      selectStatus === "" || payment.payed_status === selectStatus;
 
     const matchesAccountPlan =
       selectAccountPlan === "" ||
@@ -242,7 +241,8 @@ export default function PaymentHistory() {
         value_payed: payment.value_payed,
         date_deadline: payment.date_deadline,
         date_payment: payment.date_payment,
-        type_of_status: payment.type_of_status,
+        confirmed_status: payment.confirmed_status,
+        payed_status: payment.payed_status,
         // Lista -> é a abreviação do AccountPlan
         group: payment.group,
         products: payment.products,
@@ -633,16 +633,16 @@ export default function PaymentHistory() {
             <TableComponent.Value className="text-center">
               <span
                 className={`${
-                  payment.type_of_status === "Pago"
+                  payment.payed_status === "Pago"
                     ? "text-verde_botao"
-                    : payment.type_of_status === "Em Aberto"
+                    : payment.payed_status === "Em Aberto"
                       ? "text-amarelo_botao"
-                      : payment.type_of_status === "Cancelado"
+                      : payment.payed_status === "Cancelado"
                         ? "text-vermelho_botao_2"
                         : ""
                 }`}
               >
-                {payment.type_of_status}
+                {payment.payed_status}
               </span>
               {" - "}
               <span

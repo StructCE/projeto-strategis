@@ -1,4 +1,13 @@
-import { type Supplier } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
+import {
+  type ProductCategory,
+  type SectorOfUse,
+  type TypeOfControl,
+  type Unit,
+} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
+import {
+  type Address,
+  type Supplier,
+} from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 
 type Company = {
   name: string;
@@ -112,8 +121,19 @@ export type Group = {
     | "TR transferência entre Contas";
 };
 
-type Product = {
+export type Product = {
   name: string;
+  ncm: number;
+  cfop: number;
+  code: string;
+  status: string;
+  buy_unit: Unit;
+  buy_quantity: number;
+  value_unit: number;
+  type_of_control: TypeOfControl;
+  product_category: ProductCategory;
+  sector_of_use: SectorOfUse;
+  address: Address;
 };
 
 export type Invoice = {
@@ -129,7 +149,6 @@ export type Invoice = {
   supplier: Supplier;
   // Descrição -> padrão com nº da nota, valor global e nomes dos produtos
   bank: Bank | undefined;
-  value: number;
   installment: string; // Parcela (Pode ser 'única' ou o numero da parcela incluindo a data ou não)
   value_payed: number | undefined;
   date_deadline: Date;
@@ -154,7 +173,6 @@ export const invoices: Invoice[] = [
     recurrence: undefined,
     supplier: { name: "Fornecedor A" },
     bank: undefined,
-    value: 1500,
     installment: "Única",
     value_payed: undefined,
     date_deadline: new Date("2024-09-10"),
@@ -162,7 +180,74 @@ export const invoices: Invoice[] = [
     confirmed_status: "Pendente",
     payed_status: "Em Aberto",
     group: undefined,
-    products: [{ name: "Produto 1" }, { name: "Produto 2" }],
+    products: [
+      {
+        name: "Cerveja Pilsen",
+        ncm: 7031020,
+        cfop: 5102,
+        code: "1001",
+        status: "Ativo",
+        buy_unit: {
+          description: "Pacote",
+          abbreviation: "PCT",
+          unitsPerPack: 12,
+        },
+        buy_quantity: 36,
+        value_unit: 2.49,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Cervejas" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 1",
+        },
+      },
+      {
+        name: "Vinho Tinto",
+        ncm: 7049020,
+        cfop: 5104,
+        code: "1005",
+        status: "Ativo",
+        buy_unit: {
+          description: "Fardo",
+          abbreviation: "FRD",
+          unitsPerPack: 10,
+        },
+        buy_quantity: 10,
+        value_unit: 34.9,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Vinho" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Padaria",
+          storage: "Zona 3",
+          shelf: "Prateleira 10",
+        },
+      },
+      {
+        name: "Vodka Orloff",
+        ncm: 7070000,
+        cfop: 5103,
+        code: "1007",
+        status: "Ativo",
+        buy_unit: {
+          description: "Unidade",
+          abbreviation: "UN",
+          unitsPerPack: 1,
+        },
+        buy_quantity: 2,
+        value_unit: 39.9,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Destilados" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 2",
+        },
+      },
+    ],
   },
   {
     document_number: "000124798",
@@ -176,7 +261,6 @@ export const invoices: Invoice[] = [
     recurrence: undefined,
     supplier: { name: "Fornecedor B" },
     bank: undefined,
-    value: 5000,
     installment: "Única",
     value_payed: undefined,
     date_deadline: new Date("2024-09-10"),
@@ -185,9 +269,50 @@ export const invoices: Invoice[] = [
     payed_status: "Em Aberto",
     group: undefined,
     products: [
-      { name: "Produto 1" },
-      { name: "Produto 2" },
-      { name: "Produto 3" },
+      {
+        name: "Vinho Tinto",
+        ncm: 7049020,
+        cfop: 5104,
+        code: "1005",
+        status: "Ativo",
+        buy_unit: {
+          description: "Fardo",
+          abbreviation: "FRD",
+          unitsPerPack: 10,
+        },
+        buy_quantity: 10,
+        value_unit: 34.9,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Vinho" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Padaria",
+          storage: "Zona 3",
+          shelf: "Prateleira 10",
+        },
+      },
+      {
+        name: "Vodka Orloff",
+        ncm: 7070000,
+        cfop: 5103,
+        code: "1007",
+        status: "Ativo",
+        buy_unit: {
+          description: "Unidade",
+          abbreviation: "UN",
+          unitsPerPack: 1,
+        },
+        buy_quantity: 2,
+        value_unit: 39.9,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Destilados" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 2",
+        },
+      },
     ],
   },
   {
@@ -202,7 +327,6 @@ export const invoices: Invoice[] = [
     recurrence: undefined,
     supplier: { name: "Fornecedor C" },
     bank: undefined,
-    value: 1750,
     installment: "Única",
     value_payed: undefined,
     date_deadline: new Date("2024-09-11"),
@@ -210,7 +334,30 @@ export const invoices: Invoice[] = [
     confirmed_status: "Pendente",
     payed_status: "Em Aberto",
     group: undefined,
-    products: [{ name: "Produto 2" }, { name: "Produto 3" }],
+    products: [
+      {
+        name: "Cerveja Pilsen",
+        ncm: 7031020,
+        cfop: 5102,
+        code: "1001",
+        status: "Ativo",
+        buy_unit: {
+          description: "Pacote",
+          abbreviation: "PCT",
+          unitsPerPack: 12,
+        },
+        buy_quantity: 72,
+        value_unit: 2.49,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Cervejas" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 1",
+        },
+      },
+    ],
   },
   {
     document_number: "000691459",
@@ -224,7 +371,6 @@ export const invoices: Invoice[] = [
     recurrence: undefined,
     supplier: { name: "Fornecedor C" },
     bank: undefined,
-    value: 2000,
     installment: "Única",
     value_payed: undefined,
     date_deadline: new Date("2024-09-15"),
@@ -232,7 +378,74 @@ export const invoices: Invoice[] = [
     confirmed_status: "Confirmada",
     payed_status: "Em Aberto",
     group: undefined,
-    products: [{ name: "Produto 2" }, { name: "Produto 4" }],
+    products: [
+      {
+        name: "Cerveja Pilsen",
+        ncm: 7031020,
+        cfop: 5102,
+        code: "1001",
+        status: "Ativo",
+        buy_unit: {
+          description: "Pacote",
+          abbreviation: "PCT",
+          unitsPerPack: 12,
+        },
+        buy_quantity: 36,
+        value_unit: 2.49,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Cervejas" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 1",
+        },
+      },
+      {
+        name: "Vinho Tinto",
+        ncm: 7049020,
+        cfop: 5104,
+        code: "1005",
+        status: "Ativo",
+        buy_unit: {
+          description: "Fardo",
+          abbreviation: "FRD",
+          unitsPerPack: 10,
+        },
+        buy_quantity: 10,
+        value_unit: 34.9,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Vinho" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Padaria",
+          storage: "Zona 3",
+          shelf: "Prateleira 10",
+        },
+      },
+      {
+        name: "Vodka Orloff",
+        ncm: 7070000,
+        cfop: 5103,
+        code: "1007",
+        status: "Ativo",
+        buy_unit: {
+          description: "Unidade",
+          abbreviation: "UN",
+          unitsPerPack: 1,
+        },
+        buy_quantity: 2,
+        value_unit: 39.9,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Destilados" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 2",
+        },
+      },
+    ],
   },
   {
     document_number: "000543731",
@@ -246,7 +459,6 @@ export const invoices: Invoice[] = [
     recurrence: undefined,
     supplier: { name: "Fornecedor C" },
     bank: undefined,
-    value: 3000,
     installment: "Única",
     value_payed: undefined,
     date_deadline: new Date("2024-09-15"),
@@ -254,7 +466,74 @@ export const invoices: Invoice[] = [
     confirmed_status: "Rejeitada",
     payed_status: "Em Aberto",
     group: undefined,
-    products: [{ name: "Produto 2" }],
+    products: [
+      {
+        name: "Cerveja Pilsen",
+        ncm: 7031020,
+        cfop: 5102,
+        code: "1001",
+        status: "Ativo",
+        buy_unit: {
+          description: "Pacote",
+          abbreviation: "PCT",
+          unitsPerPack: 12,
+        },
+        buy_quantity: 36,
+        value_unit: 2.49,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Cervejas" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 1",
+        },
+      },
+      {
+        name: "Vinho Tinto",
+        ncm: 7049020,
+        cfop: 5104,
+        code: "1005",
+        status: "Ativo",
+        buy_unit: {
+          description: "Fardo",
+          abbreviation: "FRD",
+          unitsPerPack: 10,
+        },
+        buy_quantity: 10,
+        value_unit: 34.9,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Vinho" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Padaria",
+          storage: "Zona 3",
+          shelf: "Prateleira 10",
+        },
+      },
+      {
+        name: "Vodka Orloff",
+        ncm: 7070000,
+        cfop: 5103,
+        code: "1007",
+        status: "Ativo",
+        buy_unit: {
+          description: "Unidade",
+          abbreviation: "UN",
+          unitsPerPack: 1,
+        },
+        buy_quantity: 2,
+        value_unit: 39.9,
+        type_of_control: { description: "Produtos de Bar" },
+        product_category: { description: "Bebidas - Destilados" },
+        sector_of_use: { description: "Bar" },
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 2",
+        },
+      },
+    ],
   },
 ];
 

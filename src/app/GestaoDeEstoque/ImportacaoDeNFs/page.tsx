@@ -1,4 +1,5 @@
 "use client";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import {
   ArrowRight,
   Building2,
@@ -23,7 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import DetailNF from "./_components/DetailNF/detailNF";
+import { default as InvoiceDetails } from "./_components/invoiceDetails/invoiceDetails";
 import { type Invoice, invoices } from "./_components/invoicesData";
 import { inputPath, outputPath } from "./_components/notasFiscaisData";
 
@@ -73,10 +74,6 @@ export default function ImportacaoDeNFs() {
       !inputDescription ||
       invoice.document_number
         .toLowerCase()
-        .includes(inputDescription.toLowerCase()) ||
-      invoice.value
-        .toString()
-        .toLowerCase()
         .includes(inputDescription.toLowerCase());
 
     const matchesSupplier =
@@ -94,11 +91,20 @@ export default function ImportacaoDeNFs() {
     );
   });
 
+  const calculateInvoiceTotal = (invoice: Invoice): number => {
+    return invoice.products.reduce((total, product) => {
+      const productTotal = product.buy_quantity * product.value_unit;
+      return total + productTotal;
+    }, 0);
+  };
+
   function capitalizeFirstLetter(str: string): string {
     return str
-      .toLowerCase()
-      .replace(/\s+/g, "") // Remove espaços em branco
-      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitaliza a primeira letra
+      .trim() // Remove espaços em branco no início e no final
+      .split(" ") // Divide a string em palavras usando espaço como delimitador
+      .filter((word) => word !== "") // Remove quaisquer espaços extras entre as palavras
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitaliza a primeira letra de cada palavra
+      .join(""); // Junta as palavras sem espaços
   }
 
   function InvoiceDescription(invoice: Invoice): string {
@@ -106,7 +112,7 @@ export default function ImportacaoDeNFs() {
       .map((product) => capitalizeFirstLetter(product.name))
       .join(",");
 
-    return `VG:${invoice.value
+    return `VG:${calculateInvoiceTotal(invoice)
       .toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
@@ -231,7 +237,7 @@ export default function ImportacaoDeNFs() {
               )}
             />
             <Filter.Input
-              placeholder="Nº ou Valor da NF "
+              placeholder="Nº da Nota Fiscal"
               state={inputDescription}
               setState={setInputDescription}
             />
@@ -305,9 +311,13 @@ export default function ImportacaoDeNFs() {
                     </DialogTrigger>
                     <DialogContent
                       aria-describedby={undefined}
-                      className="scroll-hidden max-h-[90vh] overflow-auto sm:max-w-[90rem]"
+                      className="max-h-[90vh] gap-0 overflow-y-auto sm:max-w-[90rem]"
                     >
-                      <DetailNF invoice={invoice} />;
+                      <DialogTitle className="text-[1.5rem]">
+                        Nota Fiscal <b>nº{invoice.document_number}</b>
+                      </DialogTitle>
+
+                      <InvoiceDetails invoice={invoice} />
                     </DialogContent>
                   </Dialog>
                 </TableComponent.Line>

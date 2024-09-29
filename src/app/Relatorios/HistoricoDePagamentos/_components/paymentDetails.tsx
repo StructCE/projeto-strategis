@@ -166,7 +166,7 @@ export default function PaymentDetails(props: PaymentType) {
             Status
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.type_of_status}
+            {props.payment.payed_status}
           </TableCell>
         </TableRow>
 

@@ -134,7 +134,8 @@ export type Payment = {
   value_payed: number;
   date_deadline: Date;
   date_payment: Date | undefined;
-  type_of_status: "Pago" | "Em Aberto" | "Cancelado";
+  confirmed_status: "Pendente" | "Confirmada" | "Rejeitada";
+  payed_status: "Pago" | "Em Aberto" | "Cancelado";
   // Lista -> é a abreviação do AccountPlan
   group: Group;
   products: Product[];
@@ -161,7 +162,8 @@ export const payments: Payment[] = [
     value_payed: 1500,
     date_deadline: new Date("2024-09-10"),
     date_payment: new Date("2024-09-09"),
-    type_of_status: "Pago",
+    confirmed_status: "Confirmada",
+    payed_status: "Pago",
     group: { name: "Despesas com Produção/Serviço" },
     products: [{ name: "Produto 1" }, { name: "Produto 2" }],
   },
@@ -185,7 +187,9 @@ export const payments: Payment[] = [
     value_payed: 300,
     date_deadline: new Date("2024-09-15"),
     date_payment: undefined,
-    type_of_status: "Em Aberto",
+
+    confirmed_status: "Confirmada",
+    payed_status: "Em Aberto",
     group: { name: "Despesas com Pessoal" },
     products: [{ name: "Produto 1" }, { name: "Produto 2" }],
   },
@@ -209,7 +213,9 @@ export const payments: Payment[] = [
     value_payed: 1200,
     date_deadline: new Date("2024-09-05"),
     date_payment: new Date("2024-09-03"),
-    type_of_status: "Pago",
+
+    confirmed_status: "Confirmada",
+    payed_status: "Pago",
     group: { name: "Receitas de Vendas (Loja)" },
     products: [{ name: "Produto 1" }, { name: "Produto 2" }],
   },
@@ -230,7 +236,9 @@ export const payments: Payment[] = [
     value_payed: 3000,
     date_deadline: new Date("2024-09-10"),
     date_payment: new Date("2024-09-08"),
-    type_of_status: "Pago",
+
+    confirmed_status: "Confirmada",
+    payed_status: "Pago",
     group: { name: "Despesas com Pessoal" },
     products: [{ name: "Produto 3" }, { name: "Produto 4" }],
   },
@@ -254,7 +262,9 @@ export const payments: Payment[] = [
     value_payed: 1500,
     date_deadline: new Date("2024-09-15"),
     date_payment: new Date("2024-09-14"),
-    type_of_status: "Pago",
+
+    confirmed_status: "Confirmada",
+    payed_status: "Pago",
     group: { name: "Despesas com Produção/Serviço" },
     products: [{ name: "Produto 1" }, { name: "Produto 3" }],
   },
@@ -278,7 +288,9 @@ export const payments: Payment[] = [
     value_payed: 7500,
     date_deadline: new Date("2024-09-01"),
     date_payment: undefined, // Pagamento em aberto
-    type_of_status: "Em Aberto",
+
+    confirmed_status: "Confirmada",
+    payed_status: "Em Aberto",
     group: { name: "Receita de Venads (Delivery)" },
     products: [{ name: "Produto 2" }, { name: "Produto 4" }],
   },
@@ -299,7 +311,9 @@ export const payments: Payment[] = [
     value_payed: 15000,
     date_deadline: new Date("2024-09-25"),
     date_payment: new Date("2024-09-24"),
-    type_of_status: "Pago",
+
+    confirmed_status: "Confirmada",
+    payed_status: "Pago",
     group: { name: "Investimentos e Retiradas" },
     products: [
       { name: "Produto 1" },
