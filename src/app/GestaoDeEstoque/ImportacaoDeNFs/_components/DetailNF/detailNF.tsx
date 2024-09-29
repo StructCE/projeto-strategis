@@ -26,12 +26,12 @@ import {
 
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
-import { type NotaFiscal } from "../notasFiscaisData";
+import { type Invoice } from "../invoicesData";
 import SelectInput from "./select";
 import { useDetailNFsInputs } from "./useDetailNF";
 
 type NotaFiscalType = {
-  nf: NotaFiscal;
+  invoice: Invoice;
 };
 
 // TODO: useStates para armazenar info de cada produto (e seus dados)
@@ -39,28 +39,25 @@ type NotaFiscalType = {
 // TODO: lógica validação confirmação
 
 export default function DetailNF(props: NotaFiscalType) {
-  const supplierPath = "";
   const selects = useDetailNFsInputs();
   const valorTotal = 9999.99;
 
   return (
     <>
-      <h1 className="text-[2rem]">
-        Nota Fiscal <b>nº{props.nf.numNF}</b>
+      <h1 className="text-[1.5rem]">
+        Nota Fiscal <b>nº{props.invoice.document_number}</b>
       </h1>
-
-      <Separator />
 
       <div className="flex-col">
         <button className="flex items-center gap-2 py-1">
           <ExternalLink />
           <p className="font-bold">Empresa:</p>
-          <p className="hover:underline">{props.nf.company}</p>
+          <p className="hover:underline">{props.invoice.company.name}</p>
         </button>
         <button className="flex items-center gap-2 py-1">
           <ExternalLink />
           <p className="font-bold">Fornecedor:</p>
-          <p className="hover:underline">{props.nf.supplier}</p>
+          <p className="hover:underline">{props.invoice.supplier.name}</p>
         </button>
       </div>
 

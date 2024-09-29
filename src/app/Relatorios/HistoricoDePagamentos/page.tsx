@@ -74,20 +74,20 @@ export default function PaymentHistory() {
     const matchesDateDocument =
       !dateDocument ||
       (payment.date_document.getDate() === dateDocument.getDate() &&
-        payment.date_document.getMonth() === dateDocument.getMonth() &&
+        payment.date_document.getMonth() === dateDocument.getMonth() + 1 &&
         payment.date_document.getFullYear() === dateDocument.getFullYear());
 
     const matchesDateDeadline =
       !dateDeadline ||
       (payment.date_deadline.getDate() === dateDeadline.getDate() &&
-        payment.date_deadline.getMonth() === dateDeadline.getMonth() &&
+        payment.date_deadline.getMonth() === dateDeadline.getMonth() + 1 &&
         payment.date_deadline.getFullYear() === dateDeadline.getFullYear());
 
     const matchesDatePayment =
       !datePayment ||
       (payment.date_payment &&
         payment.date_payment.getDate() === datePayment.getDate() &&
-        payment.date_payment.getMonth() === datePayment.getMonth() &&
+        payment.date_payment.getMonth() === datePayment.getMonth() + 1 &&
         payment.date_payment.getFullYear() === datePayment.getFullYear());
 
     const matchesDescription =

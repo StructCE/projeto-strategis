@@ -1,36 +1,118 @@
 "use client";
-import { ArrowRight, Building2, FolderCog, Search } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  Calendar,
+  Eraser,
+  FolderCog,
+  Search,
+  Truck,
+} from "lucide-react";
 import { useState } from "react";
 import { companies } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/companiesData";
+import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import DetailNF from "./_components/DetailNF/detailNF";
 import {
-  inputPath,
-  notasFiscais,
-  outputPath,
-} from "./_components/notasFiscaisData";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import DetailNF from "./_components/DetailNF/detailNF";
+import { type Invoice, invoices } from "./_components/invoicesData";
+import { inputPath, outputPath } from "./_components/notasFiscaisData";
 
 export default function ImportacaoDeNFs() {
-  const [inputName, setInputName] = useState("");
-  const [selectCompany, setSelectCompany] = useState("");
+  const [selectedTab, setSelectedTab] = useState("pending");
+
+  // Filtros
   const [dateBegin, setDateBegin] = useState<Date | undefined>(undefined);
   const [openDatePickerBegin, setOpenDatePickerBegin] = useState(false);
   const [dateEnd, setDateEnd] = useState<Date | undefined>(undefined);
   const [openDatePickerEnd, setOpenDatePickerEnd] = useState(false);
+  const [inputDescription, setInputDescription] = useState("");
+  const [selectSupplier, setSelectSupplier] = useState("");
+  const [selectCompany, setSelectCompany] = useState("");
 
-  const [selectedTab, setSelectedTab] = useState("pending");
+  const filteredInvoices = invoices.filter((invoice) => {
+    // Filtro de status com base na aba selecionada
+    const matchesStatus =
+      (selectedTab === "pending" && invoice.confirmed_status === "Pendente") ||
+      (selectedTab === "confirmed" &&
+        invoice.confirmed_status === "Confirmada") ||
+      (selectedTab === "denied" && invoice.confirmed_status === "Rejeitada");
 
-  const filteredNotasFiscais = notasFiscais.filter((notaFiscal) => {
-    if (selectedTab === "pending") return notaFiscal.status === "Pendente";
-    if (selectedTab === "accepted") return notaFiscal.status === "Confirmada";
-    if (selectedTab === "denied") return notaFiscal.status === "Rejeitada";
-    return true;
+    const adjustedDateBegin = dateBegin
+      ? new Date(
+          dateBegin.getFullYear(),
+          dateBegin.getMonth() + 1,
+          dateBegin.getDate(),
+        )
+      : undefined;
+    const adjustedDateEnd = dateEnd
+      ? new Date(
+          dateEnd.getFullYear(),
+          dateEnd.getMonth() + 1,
+          dateEnd.getDate(),
+          23,
+          59,
+          59,
+        )
+      : undefined;
+
+    const matchesDates =
+      (!adjustedDateBegin || invoice.date_document >= adjustedDateBegin) &&
+      (!adjustedDateEnd || invoice.date_document <= adjustedDateEnd);
+
+    const matchesDescription =
+      !inputDescription ||
+      invoice.document_number
+        .toLowerCase()
+        .includes(inputDescription.toLowerCase()) ||
+      invoice.value
+        .toString()
+        .toLowerCase()
+        .includes(inputDescription.toLowerCase());
+
+    const matchesSupplier =
+      !selectSupplier || invoice.supplier.name === selectSupplier;
+
+    const matchesCompany =
+      !selectCompany || invoice.company.name === selectCompany;
+
+    return (
+      matchesStatus &&
+      matchesDates &&
+      matchesDescription &&
+      matchesSupplier &&
+      matchesCompany
+    );
   });
+
+  function capitalizeFirstLetter(str: string): string {
+    return str
+      .toLowerCase()
+      .replace(/\s+/g, "") // Remove espaços em branco
+      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitaliza a primeira letra
+  }
+
+  function InvoiceDescription(invoice: Invoice): string {
+    const productsString = invoice.products
+      .map((product) => capitalizeFirstLetter(product.name))
+      .join(",");
+
+    return `VG:${invoice.value
+      .toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      })
+      .replace(/\s/g, "")}-[${productsString}]`;
+  }
 
   return (
     <div className="flex w-full flex-col gap-2 bg-fundo_branco text-[16px] font-semibold">
@@ -60,25 +142,37 @@ export default function ImportacaoDeNFs() {
           <TabsTrigger className="py-1 text-[16px]" value="pending">
             Pendentes
           </TabsTrigger>
-          <TabsTrigger className="py-1 text-[16px]" value="accepted">
-            Aceitas
+          <TabsTrigger className="py-1 text-[16px]" value="confirmed">
+            Confirmadas
           </TabsTrigger>
           <TabsTrigger className="py-1 text-[16px]" value="denied">
             Rejeitadas
           </TabsTrigger>
         </TabsList>
 
-        <TableComponent.FiltersLine className="mt-0">
-          <Filter>
+        <TableComponent.FiltersLine className="my-1">
+          <Filter className="gap-1.5">
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Calendar className={className} />
+              )}
+            />
             <Filter.DatePicker
               date={dateBegin}
               setDate={setDateBegin}
               open={openDatePickerBegin}
               setOpen={setOpenDatePickerBegin}
+              placeholder="Data Inicial"
+            />
+            <Filter.Icon
+              className="mx-2.5"
+              icon={({ className }: { className: string }) => (
+                <ArrowRight className={className} />
+              )}
             />
             <Filter.Icon
               icon={({ className }: { className: string }) => (
-                <ArrowRight className={className} />
+                <Calendar className={className} />
               )}
             />
             <Filter.DatePicker
@@ -86,8 +180,10 @@ export default function ImportacaoDeNFs() {
               setDate={setDateEnd}
               open={openDatePickerEnd}
               setOpen={setOpenDatePickerEnd}
+              placeholder="Data Final"
             />
           </Filter>
+
           <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -95,7 +191,7 @@ export default function ImportacaoDeNFs() {
               )}
             />
             <Filter.Select
-              placeholder="Fornecedor"
+              placeholder="Empresa"
               state={selectCompany}
               setState={setSelectCompany}
             >
@@ -107,6 +203,27 @@ export default function ImportacaoDeNFs() {
               ))}
             </Filter.Select>
           </Filter>
+
+          <Filter>
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Truck className={className} />
+              )}
+            />
+            <Filter.Select
+              placeholder="Fornecedor"
+              state={selectSupplier}
+              setState={setSelectSupplier}
+            >
+              {suppliers.map((supplier, index) => (
+                <Filter.SelectItems
+                  value={supplier.name}
+                  key={index}
+                ></Filter.SelectItems>
+              ))}
+            </Filter.Select>
+          </Filter>
+
           <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
@@ -114,20 +231,42 @@ export default function ImportacaoDeNFs() {
               )}
             />
             <Filter.Input
-              placeholder="Nº NF, Fornecedor, Produto..."
-              state={inputName}
-              setState={setInputName}
+              placeholder="Nº ou Valor da NF "
+              state={inputDescription}
+              setState={setInputDescription}
             />
           </Filter>
+
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger className="flex h-full cursor-pointer self-center">
+                <Eraser
+                  size={20}
+                  onClick={() => {
+                    setDateBegin(undefined);
+                    setDateEnd(undefined);
+                    setInputDescription("");
+                    setSelectSupplier("");
+                    setSelectCompany("");
+                  }}
+                />
+              </TooltipTrigger>
+              <TooltipContent side="right">Limpar filtros</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </TableComponent.FiltersLine>
 
         <TabsContent value={selectedTab}>
           <TableComponent>
             <TableComponent.Table>
-              <TableComponent.LineTitle className="grid-cols-[repeat(3,_1fr)_2fr_3fr_130px]">
-                <TableComponent.ValueTitle>Nº da NF</TableComponent.ValueTitle>
-                <TableComponent.ValueTitle>Emissão</TableComponent.ValueTitle>
-                <TableComponent.ValueTitle>Quant</TableComponent.ValueTitle>
+              <TableComponent.LineTitle className="grid-cols-[130px_100px_2fr_2fr_3fr_130px] gap-8">
+                <TableComponent.ValueTitle className="text-center">
+                  Nº da NF
+                </TableComponent.ValueTitle>
+                <TableComponent.ValueTitle className="text-center">
+                  Data de <br /> Emissão
+                </TableComponent.ValueTitle>
+                <TableComponent.ValueTitle>Empresa</TableComponent.ValueTitle>
                 <TableComponent.ValueTitle>
                   Fornecedor
                 </TableComponent.ValueTitle>
@@ -135,27 +274,27 @@ export default function ImportacaoDeNFs() {
                 <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
               </TableComponent.LineTitle>
 
-              {filteredNotasFiscais.map((notaFiscal, index) => (
+              {filteredInvoices.map((invoice, index) => (
                 <TableComponent.Line
-                  className={`grid-cols-[repeat(3,_1fr)_2fr_3fr_130px] ${
+                  className={`grid-cols-[130px_100px_2fr_2fr_3fr_130px] gap-8 ${
                     index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                   }`}
                   key={index}
                 >
-                  <TableComponent.Value>
-                    nº {notaFiscal.numNF}
+                  <TableComponent.Value className="text-center">
+                    nº {invoice.document_number}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {`${invoice.date_document.getDate()}/${invoice.date_document.getMonth()}/${invoice.date_document.getFullYear()}`}
                   </TableComponent.Value>
                   <TableComponent.Value>
-                    {`${notaFiscal.date.getDate()}/${notaFiscal.date.getMonth()}/${notaFiscal.date.getFullYear()}`}
+                    {invoice.company.name}
                   </TableComponent.Value>
                   <TableComponent.Value>
-                    {notaFiscal.quantity}
+                    {invoice.supplier.name}
                   </TableComponent.Value>
                   <TableComponent.Value>
-                    {notaFiscal.company}
-                  </TableComponent.Value>
-                  <TableComponent.Value>
-                    {notaFiscal.description}
+                    {InvoiceDescription(invoice)}
                   </TableComponent.Value>
 
                   <Dialog>
@@ -168,7 +307,7 @@ export default function ImportacaoDeNFs() {
                       aria-describedby={undefined}
                       className="scroll-hidden max-h-[90vh] overflow-auto sm:max-w-[90rem]"
                     >
-                      <DetailNF nf={notaFiscal} />;
+                      <DetailNF invoice={invoice} />;
                     </DialogContent>
                   </Dialog>
                 </TableComponent.Line>
