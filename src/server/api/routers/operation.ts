@@ -1,7 +1,7 @@
-import { operationRepositorySchema } from "~/server/interfaces/operation.repository.interfaces";
+import { operationRepositorySchema } from "~/server/interfaces/operation/operation.repository.interfaces";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { operationRepository } from "~/server/repositories/operation.repository";
-import type { OperationsRouteInterfaces } from "~/server/interfaces/operation.route.interfaces";
+import type { OperationsRouteInterfaces } from "~/server/interfaces/operation/operation.route.interfaces";
 
 export const operationRouter = createTRPCRouter({
   countOperations: protectedProcedure
