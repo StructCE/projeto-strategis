@@ -156,7 +156,7 @@ export type Product = {
   code: string;
   suppliers: Supplier[];
   status: string;
-  parent_product?: Product;
+  parent_product?: string;
   buy_unit: Unit;
   buy_quantity: string;
   buy_day: string;
