@@ -9,8 +9,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
 } from "~/components/ui/dialog";
 import {
   Tooltip,
@@ -20,12 +18,21 @@ import {
 } from "~/components/ui/tooltip";
 import { entryData } from "../../entryData";
 //import { StockEdit } from "./editStocks/stockEdit";
+import { EntryDialogDatails } from "./entryDialogDatails";
 
 export const HistoryEntryTable = () => {
   const [inputInvoice, setInputInvoice] = useState("");
   const [inputDate, setInputDate] = useState("");
   const [inputManager, setInputManger] = useState("");
   const [inputSupplier, setInputSupplier] = useState("");
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const handleClose = () => setIsOpen(false);
+
+  const handleOpen = (entry) => {
+    setSelectedEntry(entry); // Definir a entrada selecionada
+    setIsOpen(true);
+  };
 
   const filteredEntrys = entryData.filter((entry) => {
     const entryInvoiceMatches = entry.invoice
@@ -161,26 +168,27 @@ export const HistoryEntryTable = () => {
               {entry.suppliers.map((s) => s.name).join(", ")}
             </TableComponent.Value>
             <TableComponent.Value>{entry.manager}</TableComponent.Value>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="sm:max-w-7xl"
-              >
-                <DialogHeader>
-                  <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do estoque ou
-                    o botão para remover
-                  </DialogTitle>
-                  {/*<StockEdit entry={entry} />*/}
-                  <DialogDescription></DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+            <Button
+              onClick={() => handleOpen(entry)}
+              className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]"
+            >
+              Detalhes
+            </Button>
+            <div>
+              {selectedEntry && (
+                <Dialog open={isOpen} onOpenChange={handleClose}>
+                  <DialogContent
+                    aria-describedby={undefined}
+                    className="sm:max-w-7xl"
+                  >
+                    <DialogHeader>
+                      <EntryDialogDatails datails={selectedEntry} />
+                      <DialogDescription></DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
           </TableComponent.Line>
         ))}
       </TableComponent.Table>

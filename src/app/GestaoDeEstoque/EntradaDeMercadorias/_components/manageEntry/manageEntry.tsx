@@ -7,16 +7,19 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
 } from "~/components/ui/dialog";
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
-import { EntryDialogConfirm } from "./entryDatails";
+import { EntryDialogConfirm } from "./entryDialogDatailsConfirm";
 
 export default function ManageEntry() {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState(null); // Estado para armazenar a entrada selecionada
 
-  const handleOpen = () => setIsOpen(true);
+  const handleOpen = (entry) => {
+    setSelectedEntry(entry); // Definir a entrada selecionada
+    setIsOpen(true);
+  };
   const handleClose = () => setIsOpen(false);
 
   return (
@@ -52,24 +55,27 @@ export default function ManageEntry() {
                   title="Fornecedor(es)"
                   description={entry.suppliers.map((s) => s.name).join(", ")}
                 />
-                <RequestComponent.ColumnButtonManage onOpen={handleOpen} />
+                <RequestComponent.ColumnButtonManage
+                  onOpen={() => handleOpen(entry)} // Passar a entrada clicada
+                />
               </RequestComponent.Grid>
             </RequestComponent>
           ))}
       </div>
       <div>
-        <Dialog open={isOpen} onOpenChange={handleClose}>
-          <DialogContent aria-describedby={undefined} className="sm:max-w-7xl">
-            <DialogHeader>
-              <DialogTitle className="pb-1.5">
-                Utilize os campos abaixo para editar os dados do fornecedor ou o
-                botão para remover
-              </DialogTitle>
-              <EntryDialogConfirm />
-              <DialogDescription></DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+        {selectedEntry && (
+          <Dialog open={isOpen} onOpenChange={handleClose}>
+            <DialogContent
+              aria-describedby={undefined}
+              className="sm:max-w-7xl"
+            >
+              <DialogHeader>
+                <EntryDialogConfirm requisitionConfirmEntry={selectedEntry} />
+                <DialogDescription></DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
       <div className="mb-8 mt-2 flex justify-end border-b-2 border-t-2 border-[#BFBFBF]">
         <Button className="my-3.5 h-10 bg-vermelho_botao_1 text-[14px] font-medium text-white hover:bg-hover_vermelho_botao sm:text-[16px]">
