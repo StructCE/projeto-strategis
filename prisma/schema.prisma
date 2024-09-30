@@ -266,6 +266,8 @@ model Entry {
     date          DateTime
     responsibleId String
     operationId   String
+    type          String   @default("Em Aberto")
+    status        String   @default("Em Dia")
 
     responsible  User           @relation(fields: [responsibleId], references: [id])
     operation    Operation      @relation(fields: [operationId], references: [id])
