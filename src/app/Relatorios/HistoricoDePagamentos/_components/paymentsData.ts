@@ -128,10 +128,10 @@ export type Payment = {
   recurrence: "Recorrente" | "Avulsa" | "Parcelas";
   supplier: Supplier;
   // Descrição -> padrão com nº da nota, valor global e nomes dos produtos
-  bank: Bank;
+  bank: Bank | undefined;
   value: number;
   installment: string; // Parcela (Pode ser 'única' ou o numero da parcela incluindo a data ou não)
-  value_payed: number;
+  value_payed: number | undefined;
   date_deadline: Date;
   date_payment: Date | undefined;
   confirmed_status: "Pendente" | "Confirmada" | "Rejeitada";
@@ -181,13 +181,12 @@ export const payments: Payment[] = [
     expense_type: "Despesa Variável",
     recurrence: "Avulsa",
     supplier: { name: "Fornecedor B" },
-    bank: { name: "CC Santander" },
+    bank: undefined,
     value: 300,
     installment: "Única",
-    value_payed: 300,
+    value_payed: undefined,
     date_deadline: new Date("2024-09-15"),
     date_payment: undefined,
-
     confirmed_status: "Confirmada",
     payed_status: "Em Aberto",
     group: { name: "Despesas com Pessoal" },
@@ -213,7 +212,6 @@ export const payments: Payment[] = [
     value_payed: 1200,
     date_deadline: new Date("2024-09-05"),
     date_payment: new Date("2024-09-03"),
-
     confirmed_status: "Confirmada",
     payed_status: "Pago",
     group: { name: "Receitas de Vendas (Loja)" },
@@ -229,14 +227,13 @@ export const payments: Payment[] = [
     account: { name: "Conta de Pessoal" },
     expense_type: "Despesa Fixa",
     recurrence: "Recorrente",
-    supplier: { name: "Fornecedor A" }, // Exemplo de objeto Supplier
+    supplier: { name: "Fornecedor A" },
     bank: { name: "CC Itaú" },
     value: 3000,
     installment: "Única",
     value_payed: 3000,
     date_deadline: new Date("2024-09-10"),
     date_payment: new Date("2024-09-08"),
-
     confirmed_status: "Confirmada",
     payed_status: "Pago",
     group: { name: "Despesas com Pessoal" },
@@ -262,7 +259,6 @@ export const payments: Payment[] = [
     value_payed: 1500,
     date_deadline: new Date("2024-09-15"),
     date_payment: new Date("2024-09-14"),
-
     confirmed_status: "Confirmada",
     payed_status: "Pago",
     group: { name: "Despesas com Produção/Serviço" },
@@ -282,13 +278,12 @@ export const payments: Payment[] = [
     expense_type: "Receita",
     recurrence: "Avulsa",
     supplier: { name: "Fornecedor C" },
-    bank: { name: "PagSeguro (Loja)" },
+    bank: undefined,
     value: 7500,
     installment: "Única",
-    value_payed: 7500,
+    value_payed: undefined,
     date_deadline: new Date("2024-09-01"),
-    date_payment: undefined, // Pagamento em aberto
-
+    date_payment: undefined,
     confirmed_status: "Confirmada",
     payed_status: "Em Aberto",
     group: { name: "Receita de Venads (Delivery)" },
@@ -311,7 +306,6 @@ export const payments: Payment[] = [
     value_payed: 15000,
     date_deadline: new Date("2024-09-25"),
     date_payment: new Date("2024-09-24"),
-
     confirmed_status: "Confirmada",
     payed_status: "Pago",
     group: { name: "Investimentos e Retiradas" },
