@@ -9,6 +9,7 @@ import {
 } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
+import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -419,6 +420,13 @@ export default function ManageProductsTable() {
           </TableComponent.Line>
         ))}
       </TableComponent.Table>
+
+      {/* Ver, durante a integração, se é possível fazer essa atualizações na tabela mesmo */}
+      <TableButtonComponent className="pt-0.5 sm:pt-1">
+        <TableButtonComponent.Button className="min-w-0 rounded-md bg-cinza_borda_acordeao px-5 py-1 hover:bg-[#606060]">
+          Salvar Alterações
+        </TableButtonComponent.Button>
+      </TableButtonComponent>
     </TableComponent>
   );
 }

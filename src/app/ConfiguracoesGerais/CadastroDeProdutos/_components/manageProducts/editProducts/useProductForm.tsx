@@ -11,6 +11,7 @@ export const useProductForm = (product: Product) => {
     resolver: zodResolver(editProductFormSchema),
     mode: "onChange",
     defaultValues: {
+      code: product.code,
       name: product.name,
       suppliers: product.suppliers.map((supplier) => supplier.name),
       status: product.status,
