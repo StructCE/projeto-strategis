@@ -1,5 +1,7 @@
 import { Accordion } from "~/components/ui/accordion";
+import Banks from "./_components/Payments/Banks";
 import DocumentTypes from "./_components/Payments/DocumentTypes";
+import Groups from "./_components/Payments/Groups";
 import ProductCategories from "./_components/Products/ProductCategories";
 import Reasons from "./_components/Products/Reasons";
 import SectorsOfUse from "./_components/Products/SectorsOfUse";
@@ -29,11 +31,10 @@ export default function GeneralParametersRegister() {
           Parâmetros Gerais de Pagamentos
         </h1>
         <DocumentTypes />
-        {/* - Tipos de Documento     -> Document Types (Document Type)
-        - Planos de Conta        -> Account Plans  (Account Plan)
-        - Projeto                -> Projects       (Project)
-        - Banco                  -> Banks          (Bank)
-        - Grupo                  -> Groups         (Group) */}
+        {/* <AccountPlans /> */}
+        {/* <Projects /> */}
+        <Banks />
+        <Groups />
       </Accordion>
     </div>
   );

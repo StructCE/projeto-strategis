@@ -8,28 +8,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { document_types } from "../../../../GeneralParametersData";
-import { DocumentTypeEdit } from "./editDocumentType/documentTypeEdit";
+import { banks } from "../../../../GeneralParametersData";
+import { BankEdit } from "./editBank/bankEdit";
 
-export const ManageDocumentTypesTable = () => {
+export const ManageBanksTable = () => {
   return (
     <TableComponent>
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[1fr_130px]">
-          <TableComponent.ValueTitle>
-            Tipo de Documento
-          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle>Banco</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {document_types.map((doc_type, index) => (
+        {banks.map((bank, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value>{doc_type.name}</TableComponent.Value>
+            <TableComponent.Value>{bank.name}</TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
@@ -42,10 +40,11 @@ export const ManageDocumentTypesTable = () => {
               >
                 <DialogHeader>
                   <DialogTitle className="pb-1.5">
-                    Utilize o campo abaixo para editar o tipo de documento ou o
-                    botão para remover
+                    Utilize o campo abaixo para editar o banco ou o botão para
+                    remover
                   </DialogTitle>
-                  <DocumentTypeEdit documentType={doc_type} />
+
+                  <BankEdit bank={bank} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>
