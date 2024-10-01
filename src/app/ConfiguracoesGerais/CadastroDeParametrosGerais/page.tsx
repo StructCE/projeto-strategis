@@ -1,4 +1,5 @@
 import { Accordion } from "~/components/ui/accordion";
+import DocumentTypes from "./_components/Payments/DocumentTypes";
 import ProductCategories from "./_components/Products/ProductCategories";
 import Reasons from "./_components/Products/Reasons";
 import SectorsOfUse from "./_components/Products/SectorsOfUse";
@@ -17,12 +18,22 @@ export default function GeneralParametersRegister() {
         <SectorsOfUse />
         <Units />
         <Reasons />
+
         <h1 className="mt-8 text-[32px] font-medium">
           Parâmetros Gerais de Estoques
         </h1>
-        {/* <Places /> */}
         <Storages />
         <Shelves />
+
+        <h1 className="mt-8 text-[32px] font-medium">
+          Parâmetros Gerais de Pagamentos
+        </h1>
+        <DocumentTypes />
+        {/* - Tipos de Documento     -> Document Types (Document Type)
+        - Planos de Conta        -> Account Plans  (Account Plan)
+        - Projeto                -> Projects       (Project)
+        - Banco                  -> Banks          (Bank)
+        - Grupo                  -> Groups         (Group) */}
       </Accordion>
     </div>
   );
