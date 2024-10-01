@@ -2,6 +2,7 @@ import { Accordion } from "~/components/ui/accordion";
 import Banks from "./_components/Payments/Banks";
 import DocumentTypes from "./_components/Payments/DocumentTypes";
 import Groups from "./_components/Payments/Groups";
+import Projects from "./_components/Payments/Projects";
 import ProductCategories from "./_components/Products/ProductCategories";
 import Reasons from "./_components/Products/Reasons";
 import SectorsOfUse from "./_components/Products/SectorsOfUse";
@@ -32,7 +33,7 @@ export default function GeneralParametersRegister() {
         </h1>
         <DocumentTypes />
         {/* <AccountPlans /> */}
-        {/* <Projects /> */}
+        <Projects />
         <Banks />
         <Groups />
       </Accordion>
