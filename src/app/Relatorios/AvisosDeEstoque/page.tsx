@@ -250,7 +250,7 @@ export default function CustomReports() {
         name: product.name,
         suppliers: product.suppliers,
         status: product.status,
-        parent_product: product.parent_product ?? "Não tem",
+        parent_product: product.parent_product,
         buy_unit: product.buy_unit,
         buy_quantity: product.buy_quantity,
         buy_day: product.buy_day,
@@ -329,8 +329,8 @@ export default function CustomReports() {
       "Endereço Estoque",
       "Estoque Maximo Finalização", //??
       "Produto Pai",
-      "Nome Pai",
-      "Cod Pai",
+      // "Nome",
+      // "Cod",
     ];
 
     // Convert products to CSV rows
@@ -344,21 +344,21 @@ export default function CustomReports() {
       product.type_of_control.description,
       product.product_category.description,
       product.sector_of_use.description,
-      null, //ultimo inventario
+      "", //ultimo inventario
       product.stock_current,
-      null, //estoque atual (fardo)
+      "", //estoque atual (fardo)
       product.stock_min,
       product.stock_max,
-      null, // VAI COMPRAR
+      "", // VAI COMPRAR
       product.buy_quantity,
-      null, // Quantida a comprar (fardo)
+      "", // Quantida a comprar (fardo)
       product.sector_of_use.description,
       product.buy_day,
       `"${
         product.users_with_permission
           ?.filter((user) => user.role === "Requisitante")
           .map((user) => user.name)
-          .join(", ") ?? null
+          .join(", ") ?? ""
       }"`,
       product.address.stock,
       product.address.storage,
@@ -368,26 +368,27 @@ export default function CustomReports() {
         product.address.storage,
         product.address.shelf,
       ].join(" - "),
-      null,
-      product.parent_product ?? "Não tem pai",
-      product.parent_product?.name ?? null,
-      product.parent_product?.code ?? null, 
+      "",
+      product.parent_product ?? "Não tem pai"
+      // product.name,
+      // product.code,
     ]);
 
-    console.log(csvRows);
+    console.log([headers, ...csvRows].map((row) => row.join(",")));
     // Combine headers and rows into a single CSV string
     const csvContent = [headers, ...csvRows]
       .map((row) => row.join(","))
       .join("\n");
 
     // Create a Blob from the CSV string
+    console.log(csvContent);
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
 
     // Create a link element and trigger a download
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", "products_data.csv");
+    link.setAttribute("download", `${selectStock.replaceAll(" ", "_")}.csv`);
     link.style.visibility = "hidden";
     document.body.appendChild(link);
     link.click();
