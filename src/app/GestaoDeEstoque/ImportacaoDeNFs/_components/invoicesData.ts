@@ -15,16 +15,7 @@ type Company = {
 };
 
 export type Bank = {
-  name:
-    | "Caixa (Escritório)"
-    | "Caixa (Suprimento Loja)"
-    | "CC GetNet"
-    | "CC Ifood"
-    | "CC Itaú"
-    | "CC ParceleJá"
-    | "CC Santander"
-    | "CRT Itaú Master"
-    | "PagSeguro (Loja)";
+  name: string;
 };
 
 export type Account = {
@@ -38,56 +29,15 @@ export type AccountPlan = {
 };
 
 export type DocumentType = {
-  name:
-    | "A Classificar"
-    | "Boleto"
-    | "Cupom Fiscal"
-    | "Débito Automático"
-    | "Fatura"
-    | "Fechamento Caixa"
-    | "NF"
-    | "Recibo"
-    | "Transf/PIX/TED/DOC"
-    | "Crédito Automático"
-    | "Cartão Crédito"
-    | "Cartão Débito"
-    | "Sem Comprovante"
-    | "Boleto e NF";
+  name: string;
 };
 
 export type Project = {
-  name:
-    | "Strategis - Assessoria"
-    | "Strategis - BPO Financeiro"
-    | "Strategis - Compartilhado"
-    | "Strategis - FidelizClub"
-    | "Strategis - Geral";
+  name: string;
 };
 
 export type Group = {
-  name:
-    | "A Categorizar | Diversos Empresa"
-    | "Deduções sobre Vendas"
-    | "Despesas Comerciais/Vendas"
-    | "Despesas com Impostos Diretos"
-    | "Despesas com Ocupação"
-    | "Despesas com Pessoal"
-    | "Despesas com Produção/Serviço"
-    | "Despesas com Tecnologia"
-    | "Despesas com Terceiros"
-    | "Despesas com Transporte"
-    | "Despesas Financeiras"
-    | "Estornos Diversos"
-    | "Excluir (DDA ou Agrupado)"
-    | "Investimentos e Retiradas"
-    | "Receita de Venads (Delivery)"
-    | "Receita de Vendas (Delivery)"
-    | "Receita de Vendas (Eventos)"
-    | "Receitas de Reembolsos"
-    | "Receitas de Vendas (Loja)"
-    | "Receitas Diversas"
-    | "Receitas Financeiras"
-    | "TR transferência entre Contas";
+  name: string;
 };
 
 export type Product = {
@@ -111,11 +61,9 @@ export type Invoice = {
   document: DocumentType | undefined;
   account_plan: AccountPlan | undefined;
   project: Project | undefined;
-  account: Account | undefined;
   expense_type: "Despesa Fixa" | "Despesa Variável" | "Receita" | undefined;
   recurrence: "Recorrente" | "Avulsa" | "Parcelas" | undefined;
   supplier: Supplier;
-  // Descrição -> padrão com nº da nota, valor global e nomes dos produtos
   bank: Bank | undefined;
   installment: string; // Parcela (Pode ser 'única' ou o numero da parcela incluindo a data ou não)
   value_payed: number | undefined;
@@ -123,7 +71,6 @@ export type Invoice = {
   date_payment: Date | undefined;
   confirmed_status: "Pendente" | "Confirmada" | "Rejeitada";
   payed_status: "Pago" | "Em Aberto" | "Cancelado";
-  // Lista -> é a abreviação do AccountPlan
   group: Group | undefined;
   products: Product[];
 };
@@ -136,7 +83,6 @@ export const invoices: Invoice[] = [
     document: undefined,
     account_plan: undefined,
     project: undefined,
-    account: undefined,
     expense_type: undefined,
     recurrence: undefined,
     supplier: { name: "Fornecedor A" },
@@ -221,7 +167,6 @@ export const invoices: Invoice[] = [
     document: undefined,
     account_plan: undefined,
     project: undefined,
-    account: undefined,
     expense_type: undefined,
     recurrence: undefined,
     supplier: { name: "Fornecedor B" },
@@ -285,7 +230,6 @@ export const invoices: Invoice[] = [
     document: undefined,
     account_plan: undefined,
     project: undefined,
-    account: undefined,
     expense_type: undefined,
     recurrence: undefined,
     supplier: { name: "Fornecedor C" },
@@ -328,7 +272,6 @@ export const invoices: Invoice[] = [
     document: undefined,
     account_plan: undefined,
     project: undefined,
-    account: undefined,
     expense_type: undefined,
     recurrence: undefined,
     supplier: { name: "Fornecedor C" },
@@ -413,7 +356,6 @@ export const invoices: Invoice[] = [
     document: undefined,
     account_plan: undefined,
     project: undefined,
-    account: undefined,
     expense_type: undefined,
     recurrence: undefined,
     supplier: { name: "Fornecedor C" },

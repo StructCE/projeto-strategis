@@ -5,6 +5,7 @@ import {
   Building2,
   Calendar,
   Eraser,
+  ExternalLink,
   FolderCog,
   Search,
   Truck,
@@ -148,12 +149,18 @@ export default function ImportacaoDeNFs() {
           </button>
         </div>
 
-        <TableButtonComponent.Button
+        <TableButtonComponent.Link
+          link_ref="/GestaoDeEstoque/ImportacaoDeNFs/ImportarNF"
           className="h-fit bg-azul_botao hover:bg-hover_azul_botao"
-          handlePress={() => console.log("a")}
+          placeholder="Adicionar Nota Fiscal Manualmente"
         >
-          Adicionar Nota Fiscal Manualmente
-        </TableButtonComponent.Button>
+          <ExternalLink
+            className="flex h-full cursor-pointer self-center"
+            size={20}
+            strokeWidth={2.2}
+            color="white"
+          />
+        </TableButtonComponent.Link>
       </div>
 
       <Tabs
