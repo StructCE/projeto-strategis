@@ -2,12 +2,14 @@
 import {
   CalendarIcon,
   Eraser,
+  FilePenLine,
+  Info,
   Search,
   Text,
   Trash2,
   UserCog2,
 } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import {
   ProductCategories,
@@ -23,6 +25,14 @@ import { type User } from "~/components/navbar/_components/userData";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import {
   Tooltip,
@@ -167,26 +177,29 @@ export default function CreatePurchaseOrder() {
 
         {/* Inputs da data e do responsável pela requisição */}
         <TableComponent.FiltersLine>
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <CalendarIcon className={className} />
               )}
             />
             <Filter.DatePicker
+              className="text-sm sm:text-base"
               date={date}
               setDate={setDate}
               open={open}
               setOpen={setOpen}
             ></Filter.DatePicker>
           </Filter>
-          <Filter className="lg:w-[250px]">
+
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[250px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <UserCog2 className={className} />
               )}
             />
             <Filter.Input
+              className="text-sm sm:text-base"
               placeholder="Responsável"
               state={inputResponsible}
               setState={setInputResponsible}
@@ -199,39 +212,42 @@ export default function CreatePurchaseOrder() {
         </TableComponent.Subtitle>
 
         <TableComponent.FiltersLine>
-          <Filter className="lg:w-[130px]">
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[130px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Input
+              className="text-sm sm:text-base"
               placeholder="Código"
               state={inputCode}
               setState={setInputCode}
             />
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Input
+              className="placeholder:text-sm sm:placeholder:text-base"
               placeholder="Produto"
               state={inputProduct}
               setState={setInputProduct}
             />
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Select
+              className="text-sm sm:text-base"
               placeholder="Estoque"
               state={selectStock}
               setState={setSelectStock}
@@ -245,7 +261,7 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
@@ -256,7 +272,9 @@ export default function CreatePurchaseOrder() {
               state={selectAddress}
               setState={setSelectAddress}
               className={
-                selectStock === "" ? "cursor-not-allowed opacity-50" : ""
+                selectStock === ""
+                  ? "cursor-not-allowed text-sm opacity-50 sm:text-base"
+                  : "text-sm sm:text-base"
               }
             >
               {selectStock === ""
@@ -283,13 +301,14 @@ export default function CreatePurchaseOrder() {
         </TableComponent.FiltersLine>
 
         <TableComponent.FiltersLine>
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Select
+              className="text-sm sm:text-base"
               placeholder="Tipo de Controle"
               state={selectControlType}
               setState={setSelectControlType}
@@ -303,13 +322,14 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Select
+              className="text-sm sm:text-base"
               placeholder="Categoria"
               state={selectCategory}
               setState={setSelectCategory}
@@ -323,13 +343,14 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Select
+              className="text-sm sm:text-base"
               placeholder="Setor de Uso"
               state={selectSector}
               setState={setSelectSector}
@@ -364,7 +385,8 @@ export default function CreatePurchaseOrder() {
           </TooltipProvider>
         </TableComponent.FiltersLine>
 
-        <TableComponent.Table>
+        {/*  TELAS GRANDES */}
+        <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8">
             <TableComponent.ValueTitle className="text-center">
               Código
@@ -429,15 +451,134 @@ export default function CreatePurchaseOrder() {
                 {hasPermission(product, LoggedUser) ? (
                   <Button
                     onClick={() => handleAddProduct(product)}
-                    className="hover:bg-hover_preto mb-0 h-8 bg-black text-[14px] font-medium text-white sm:text-[16px]"
+                    className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
                   >
                     Adicionar
                   </Button>
                 ) : (
-                  <Button className="hover:bg-hover_preto mb-0 h-8 bg-black text-[14px] font-medium text-white sm:text-[16px]">
+                  <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]">
                     Sem Permissão
                   </Button>
                 )}
+              </TableComponent.Line>
+            ))}
+        </TableComponent.Table>
+
+        {/*  TELAS PEQUENAS */}
+        <TableComponent.Table className="block sm:hidden">
+          <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3">
+            <TableComponent.ValueTitle className="text-center text-[15px]">
+              Cód.
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-[15px]">
+              Produto
+            </TableComponent.ValueTitle>
+            <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
+          </TableComponent.LineTitle>
+
+          {areAllFiltersEmpty && (
+            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Utilize os filtros acima para encontrar produtos cadastrados no
+                estoque
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
+          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
+            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum produto encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
+          {!areAllFiltersEmpty &&
+            filteredProducts.map((product, index) => (
+              <TableComponent.Line
+                className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
+                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                }`}
+                key={index}
+              >
+                <TableComponent.Value className="text-center text-[14px]">
+                  {product.code}
+                </TableComponent.Value>
+                <TableComponent.Value className="text-[14px]">
+                  {product.name}
+                </TableComponent.Value>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
+                      Detalhes
+                    </Button> */}
+                    <Info size={24} />
+                  </DialogTrigger>
+                  <DialogContent
+                    aria-describedby={undefined}
+                    className="w-full gap-2 p-5"
+                  >
+                    <DialogHeader>
+                      <DialogTitle className="text-left text-xl">
+                        Requisitar Produto
+                      </DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription className="flex flex-col gap-1 text-left text-black">
+                      <p className="text-base">
+                        <span className="font-semibold">Código: </span>{" "}
+                        {product.code}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Produto: </span>{" "}
+                        {product.name}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Atual: </span>
+                        {product.stock_current}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Mínimo: </span>
+                        {product.stock_min}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Máximo: </span>
+                        {product.stock_max}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">
+                          Endereço de Estoque:
+                        </span>{" "}
+                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                      </p>
+                      <div className="text-base">
+                        <span className="font-semibold">
+                          Quantidade a Solicitar:{" "}
+                        </span>
+                        <Input
+                          type="number"
+                          value={quantities[product.code] ?? ""}
+                          onChange={(e) =>
+                            handleQuantityChange(product.code, e.target.value)
+                          }
+                          className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                        ></Input>
+                      </div>
+                      <div className="mt-3 flex w-full justify-end">
+                        {hasPermission(product, LoggedUser) ? (
+                          <Button
+                            onClick={() => handleAddProduct(product)}
+                            className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                          >
+                            Adicionar
+                          </Button>
+                        ) : (
+                          <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]">
+                            Sem Permissão
+                          </Button>
+                        )}
+                      </div>
+                    </DialogDescription>
+                  </DialogContent>
+                </Dialog>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
@@ -449,7 +590,8 @@ export default function CreatePurchaseOrder() {
           relatório.
         </TableComponent.Subtitle>
 
-        <TableComponent.Table>
+        {/*  TELAS GRANDES */}
+        <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[100px_1fr_110px_110px_110px_86px] gap-16 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Código
@@ -511,7 +653,7 @@ export default function CreatePurchaseOrder() {
 
                 <Button
                   onClick={() => handleRemoveProduct(product.code)}
-                  className="hover:text-hover_preto mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent sm:text-[16px]"
+                  className="mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent hover:text-hover_preto sm:text-[16px]"
                 >
                   <Trash2 size={20} />
                 </Button>
@@ -520,14 +662,131 @@ export default function CreatePurchaseOrder() {
           )}
         </TableComponent.Table>
 
+        {/*  TELAS PEQUENAS */}
+        <TableComponent.Table className="block sm:hidden">
+          <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px_24px] gap-3 px-3">
+            <TableComponent.ValueTitle className="text-center text-[15px]">
+              Cód.
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-[15px]">
+              Produto
+            </TableComponent.ValueTitle>
+            <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
+            <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
+          </TableComponent.LineTitle>
+
+          {addedProducts.length === 0 ? (
+            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Adicione produtos para criar uma requisição de mercadorias do
+                estoque
+              </TableComponent.Value>
+            </TableComponent.Line>
+          ) : (
+            addedProducts.map((product, index) => (
+              <TableComponent.Line
+                className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px_24px] gap-3 px-3 ${
+                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                }`}
+                key={index}
+              >
+                <TableComponent.Value className="text-center text-[14px]">
+                  {product.code}
+                </TableComponent.Value>
+                <TableComponent.Value className="text-[14px]">
+                  {product.name}
+                </TableComponent.Value>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <FilePenLine size={24} />
+                  </DialogTrigger>
+                  <DialogContent
+                    aria-describedby={undefined}
+                    className="w-full gap-2 p-5"
+                  >
+                    <DialogHeader>
+                      <DialogTitle className="text-left text-xl">
+                        Requisitar Produto
+                      </DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription className="flex flex-col gap-1 text-left text-black">
+                      <p className="text-base">
+                        <span className="font-semibold">Código: </span>{" "}
+                        {product.code}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Produto: </span>{" "}
+                        {product.name}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Atual: </span>
+                        {product.stock_current}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Mínimo: </span>
+                        {product.stock_min}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Máximo: </span>
+                        {product.stock_max}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">
+                          Endereço de Estoque:
+                        </span>{" "}
+                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                      </p>
+                      <div className="text-base">
+                        <span className="font-semibold">
+                          Quantidade a Solicitar:{" "}
+                        </span>
+                        <Input
+                          type="number"
+                          value={quantities[product.code] ?? ""}
+                          onChange={(e) =>
+                            handleQuantityChange(product.code, e.target.value)
+                          }
+                          className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                        ></Input>
+                      </div>
+                      <div className="mt-3 flex w-full justify-end">
+                        {hasPermission(product, LoggedUser) ? (
+                          <Button
+                            onClick={() => handleAddProduct(product)}
+                            className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                          >
+                            Adicionar
+                          </Button>
+                        ) : (
+                          <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]">
+                            Sem Permissão
+                          </Button>
+                        )}
+                      </div>
+                    </DialogDescription>
+                  </DialogContent>
+                </Dialog>
+
+                <Button
+                  onClick={() => handleRemoveProduct(product.code)}
+                  className="mb-0 h-fit w-fit bg-transparent px-0 py-0 text-[14px] font-medium text-black hover:bg-transparent hover:text-hover_preto sm:text-[16px]"
+                >
+                  <Trash2 size={24} />
+                </Button>
+              </TableComponent.Line>
+            ))
+          )}
+        </TableComponent.Table>
+
         <div className="pt-1 sm:pt-2">
-          <Filter className="lg:w-full">
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-full">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Text className={className} />
               )}
             />
             <Filter.Input
+              className="text-sm sm:text-base"
               placeholder="Insira uma descrição para requisição"
               state={requestDescription}
               setState={setRequestDescription}
@@ -537,7 +796,7 @@ export default function CreatePurchaseOrder() {
 
         <TableButtonComponent className="pt-1 sm:pt-2">
           <TableButtonComponent.Button
-            className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1"
+            className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1"
             handlePress={handleFinalizePurchase}
           >
             Requisitar Mercadorias
