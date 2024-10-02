@@ -31,13 +31,8 @@ async function getCompanyUsers(
       },
     },
   });
-  const serializedCompany = companyUsers?.UserRole.map((companyUser) => ({
-    name: companyUser.user.name,
-    email: companyUser.user.email,
-    role: companyUser.role.name,
-    company: companyUsers.name,
-  }));
-  return serializedCompany;
+
+  return companyUsers;
 }
 
 async function getCompanySuppliers(
@@ -60,25 +55,19 @@ async function getCompanySuppliers(
       },
     },
   });
-  const serializedSuppliers = companySuppliers.map((supplier) => ({
-    cnpj: supplier.cnpj,
-    name: supplier.name,
-    address: supplier.address,
-    phone: supplier.phone,
-    stateRegistration: supplier.stateRegistration,
-    neighborhood: supplier.neighborhood,
-    city: supplier.city,
-    federativeUnit: supplier.federativeUnit,
-    cep: supplier.cep,
-    contacts: supplier.UserRole.map((userRole) => ({
-      id: userRole.user.id,
-      name: userRole.user.name,
-      email: userRole.user.email,
-      phone: userRole.user.phone,
-      cargo: userRole.role.name,
-    })),
-  }));
-  return serializedSuppliers;
+
+  return companySuppliers;
+}
+
+async function getCompanyStocks(
+  props: CompanyRepositoryInterfaces["GetCompanyStocksProps"],
+) {
+  const companyStocks = await db.stock.findMany({
+    where: {
+      companyId: props.id,
+    },
+  });
+  return companyStocks;
 }
 
 async function register(props: CompanyRepositoryInterfaces["RegisterProps"]) {
@@ -120,4 +109,5 @@ export const CompanyRepository = {
   edit,
   getCompanyUsers,
   getCompanySuppliers,
+  getCompanyStocks,
 };

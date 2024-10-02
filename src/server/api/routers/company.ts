@@ -20,6 +20,66 @@ export const companyRouter = createTRPCRouter({
     },
   ),
 
+  getCompanySuppliers: protectedProcedure
+    .input(companyRepositorySchema.getCompanySuppliersProps)
+    .query(
+      async ({
+        input,
+      }): Promise<CompanyRouteInterfaces["CompanySuppliers"]> => {
+        const companySuppliers =
+          await CompanyRepository.getCompanySuppliers(input);
+        const serializedSuppliers = companySuppliers.map((supplier) => ({
+          cnpj: supplier.cnpj,
+          name: supplier.name,
+          address: supplier.address,
+          phone: supplier.phone,
+          stateRegistration: supplier.stateRegistration,
+          neighborhood: supplier.neighborhood,
+          city: supplier.city,
+          federativeUnit: supplier.federativeUnit,
+          cep: supplier.cep,
+          contacts: supplier.UserRole.map((userRole) => ({
+            id: userRole.user.id,
+            name: userRole.user.name,
+            email: userRole.user.email,
+            phone: userRole.user.phone,
+            cargo: userRole.role.name,
+          })),
+        }));
+        return serializedSuppliers;
+      },
+    ),
+
+  getCompanyUsers: protectedProcedure
+    .input(companyRepositorySchema.getCompanyUsersProps)
+    .query(
+      async ({ input }): Promise<CompanyRouteInterfaces["CompanyUsers"]> => {
+        const companyUsers = await CompanyRepository.getCompanyUsers(input);
+        const serializedCompanyUsers = companyUsers?.UserRole.map(
+          (companyUser) => ({
+            name: companyUser.user.name,
+            email: companyUser.user.email,
+            role: companyUser.role.name,
+            company: companyUsers.name,
+          }),
+        );
+        return serializedCompanyUsers;
+      },
+    ),
+
+  getCompanyStocks: protectedProcedure
+    .input(companyRepositorySchema.getCompanyStocksProps)
+    .query(
+      async ({ input }): Promise<CompanyRouteInterfaces["CompanyStocks"][]> => {
+        const companyStocks = await CompanyRepository.getCompanyStocks(input);
+        const serializedCompanyStocks = companyStocks.map((stock) => ({
+          id: stock.id,
+          name: stock.name,
+        }));
+        return serializedCompanyStocks;
+      },
+    ),
+
   registerCompany: protectedProcedure
     .input(companyRepositorySchema.registerProps)
     .query(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
