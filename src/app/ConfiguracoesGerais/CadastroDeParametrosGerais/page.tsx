@@ -1,4 +1,5 @@
 import { Accordion } from "~/components/ui/accordion";
+import AccountPlans from "./_components/Payments/AccountPlans";
 import Banks from "./_components/Payments/Banks";
 import DocumentTypes from "./_components/Payments/DocumentTypes";
 import Groups from "./_components/Payments/Groups";
@@ -32,7 +33,7 @@ export default function GeneralParametersRegister() {
           Parâmetros Gerais de Pagamentos
         </h1>
         <DocumentTypes />
-        {/* <AccountPlans /> */}
+        <AccountPlans />
         <Projects />
         <Banks />
         <Groups />
