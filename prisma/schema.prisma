@@ -47,7 +47,7 @@ model Session {
 
 model User {
     id                         String      @id @default(cuid())
-    nome                       String?
+    name                       String?
     email                      String?     @unique
     phone                      String?
     accounts                   Account[]
@@ -141,7 +141,7 @@ model Supplier {
     phone             String
     stateRegistration String
     address           String
-    negighborhood     String
+    neighborhood      String
     city              String
     federativeUnit    String
     cep               String
