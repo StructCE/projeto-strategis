@@ -21,7 +21,7 @@ type entryData = {
   invoice: string;
   date_issue: string;
   quantity_products: number;
-  isConfirmed?: boolean; // se for true vai aparecer no histórico de entradas
+  isConfirmed: boolean; // se for true vai aparecer no histórico de entradas
   suppliers: suppliers[];
   details_entry: detailsEntry[];
   manager: string;

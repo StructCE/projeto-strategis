@@ -17,7 +17,6 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { entryData } from "../../entryData";
-//import { StockEdit } from "./editStocks/stockEdit";
 import { EntryDialogDatails } from "./entryDialogDatails";
 
 export const HistoryEntryTable = () => {
@@ -29,8 +28,8 @@ export const HistoryEntryTable = () => {
   const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => setIsOpen(false);
 
-  const handleOpen = (entry) => {
-    setSelectedEntry(entry); // Definir a entrada selecionada
+  const handleOpen = (entry: never) => {
+    setSelectedEntry(entry);
     setIsOpen(true);
   };
 
@@ -169,7 +168,7 @@ export const HistoryEntryTable = () => {
             </TableComponent.Value>
             <TableComponent.Value>{entry.manager}</TableComponent.Value>
             <Button
-              onClick={() => handleOpen(entry)}
+              onClick={() => handleOpen(entry as never)}
               className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]"
             >
               Detalhes

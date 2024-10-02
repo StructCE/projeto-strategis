@@ -15,12 +15,13 @@ import { useRouter } from "next/navigation";
 
 export default function ManageEntry() {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState(null); // Estado para armazenar a entrada selecionada
+  const [selectedEntry, setSelectedEntry] = useState(null);
 
-  const handleOpen = (entry) => {
-    setSelectedEntry(entry); // Definir a entrada selecionada
+  const handleOpen = (entry: never) => {
+    setSelectedEntry(entry);
     setIsOpen(true);
   };
+
   const handleClose = () => setIsOpen(false);
   const router = useRouter();
 
@@ -58,7 +59,7 @@ export default function ManageEntry() {
                   description={entry.suppliers.map((s) => s.name).join(", ")}
                 />
                 <RequestComponent.ColumnButtonManage
-                  onOpen={() => handleOpen(entry)} // Passar a entrada clicada
+                  onOpen={() => handleOpen(entry as never)}
                 />
               </RequestComponent.Grid>
             </RequestComponent>

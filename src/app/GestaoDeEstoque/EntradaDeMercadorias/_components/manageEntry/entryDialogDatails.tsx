@@ -1,5 +1,3 @@
-"use client";
-
 import { TableComponent } from "~/components/table";
 
 import { type entryData } from "../../entryData";
@@ -41,8 +39,7 @@ type entryData = {
 export const EntryDialogDatails = (props: { datails: entryData }) => {
   const { datails } = props;
 
-  // Variável para contar o número de linhas renderizadas
-  let rowIndex = 0;
+  let rowIndex = 0; // Conta o número de linhas renderizadas de uma tabela
 
   const handleRequisition = (req: entryData) => {
     // TODO
@@ -76,10 +73,9 @@ export const EntryDialogDatails = (props: { datails: entryData }) => {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {/* Mapear cada produto individualmente */}
         {datails.details_entry.map((detail) =>
           detail.product.map((product) => {
-            rowIndex++; // Incrementa a cada linha renderizada
+            rowIndex++;
             return (
               <TableComponent.Line
                 className={`grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_130px] ${

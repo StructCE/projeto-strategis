@@ -1,5 +1,3 @@
-"use client";
-
 import { TableComponent } from "~/components/table";
 
 import { TableButtonComponent } from "~/components/tableButton";
@@ -44,8 +42,7 @@ export const EntryDialogConfirm = (props: {
 }) => {
   const { requisitionConfirmEntry } = props;
 
-  // Variável para contar o número de linhas renderizadas
-  let rowIndex = 0;
+  let rowIndex = 0; // Conta o número de linhas renderizadas de uma tabela
 
   const handleApproveRequisition = (req: entryData) => {
     // TODO
@@ -79,10 +76,9 @@ export const EntryDialogConfirm = (props: {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {/* Mapear cada produto individualmente */}
         {requisitionConfirmEntry.details_entry.map((detail) =>
           detail.product.map((product) => {
-            rowIndex++; // Incrementa a cada linha renderizada
+            rowIndex++;
             return (
               <TableComponent.Line
                 className={`grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr_1fr_130px] ${

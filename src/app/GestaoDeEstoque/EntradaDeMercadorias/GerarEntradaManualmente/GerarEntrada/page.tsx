@@ -21,7 +21,6 @@ import {
 
 export default function CreateEntry() {
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
 
   const [inputCode, setInputCode] = useState("");
@@ -33,7 +32,15 @@ export default function CreateEntry() {
   const [selectSector, setSelectSector] = useState("");
 
   const [addedProducts, setAddedProducts] = useState<Product[]>([]);
-  const [quantities, setQuantities] = useState<Record<string, string>>({});
+  const [unit, setUnit] = useState<Record<string, string>>({});
+  const [quantitiesUnit, setQuantitiesUnit] = useState<Record<string, string>>(
+    {},
+  );
+  const [quantitiesBale, setQuantitiesBale] = useState<Record<string, string>>(
+    {},
+  );
+  const [priceUnit, setPriceUnit] = useState<Record<string, string>>({});
+  const [priceTotal, setPriceTotal] = useState<Record<string, string>>({});
 
   const areAllFiltersEmpty =
     inputCode === "" &&
@@ -84,40 +91,59 @@ export default function CreateEntry() {
         );
       });
 
-  // Função para adicionar produtos ao inventário
+  // Função para adicionar produto na entrada manualmente
   const handleAddProduct = (product: Product) => {
     setAddedProducts((prev) => [...prev, product]);
   };
 
-  // Função para remover produtos do inventário
+  // Função para remover produtos da entrada
   const handleRemoveProduct = (productCode: string) => {
     setAddedProducts((prev) =>
       prev.filter((product) => product.code !== productCode),
     );
-    setQuantities((prev) => {
+    setQuantitiesUnit((prev) => {
       const newQuantities = { ...prev };
       delete newQuantities[productCode];
       return newQuantities;
     });
   };
 
-  // Função para atualizar a quantidade de um produto específico
-  const handleQuantityChange = (productCode: string, value: string) => {
-    setQuantities((prev) => ({
+  // Funções para atualizar a quantidade de um produto específico
+
+  const handleUnitChange = (productCode: string, value: string) => {
+    setUnit((prev) => ({
       ...prev,
       [productCode]: value,
     }));
   };
 
-  // Função para lógica de descrição da relação estoque/inventário
-  function handleProductDescription(stock: number, inventory: number) {
-    const difference = inventory - stock;
-    if (difference == 0) {
-      return "Estoque bateu, não é necessário ajuste.";
-    } else {
-      return "Ajuste de estoque necessário.";
-    }
-  }
+  const handleQuantityChange = (productCode: string, value: string) => {
+    setQuantitiesUnit((prev) => ({
+      ...prev,
+      [productCode]: value,
+    }));
+  };
+
+  const handleQuantityBaleChange = (productCode: string, value: string) => {
+    setQuantitiesBale((prev) => ({
+      ...prev,
+      [productCode]: value,
+    }));
+  };
+
+  const handlePriceUnitChange = (productCode: string, value: string) => {
+    setPriceUnit((prev) => ({
+      ...prev,
+      [productCode]: value,
+    }));
+  };
+
+  const handlePriceTotalChange = (productCode: string, value: string) => {
+    setPriceTotal((prev) => ({
+      ...prev,
+      [productCode]: value,
+    }));
+  };
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
@@ -134,22 +160,26 @@ export default function CreateEntry() {
     return formattedName;
   };
 
-  // Função para finalizar o inventário
-  const handleFinalizeInventory = () => {
-    const inventoryData = {
+  // Função para finalizar a entrada manual
+  const handleFinalizeEntry = () => {
+    const entryManualData = {
       responsible: inputResponsible,
       date: date?.toISOString(),
       products: addedProducts.map((product) => ({
         code: product.code,
         name: product.name,
         stock_current: product.stock_current,
-        quantity_in_inventory: quantities[product.code] ?? 0,
+        unit_in_entry_manual: [product.code] ?? 0,
+        quantity_in_inventory: quantitiesUnit[product.code] ?? 0,
+        quantity_bale_in_inventory: quantitiesBale[product.code] ?? 0,
+        price_unit_in_manual_entry: priceUnit[product.code] ?? 0,
+        price_total_in_manual_entry: priceTotal[product.code] ?? 0,
       })),
     };
 
-    // Exemplo de exportação do inventário como JSON (feito com gpt, verificar se ta tudo certo)
+    // Exemplo de exportação da entrada como JSON (feito com gpt, verificar se ta tudo certo)
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(inventoryData),
+      JSON.stringify(entryManualData),
     )}`;
     const link = document.createElement("a");
     link.href = jsonString;
@@ -299,7 +329,7 @@ export default function CreateEntry() {
             <TableComponent.ValueTitle className="text-center">
               Fornecedor
             </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-center">
               Adicionar a Entrada
             </TableComponent.ValueTitle>
           </TableComponent.LineTitle>
@@ -350,7 +380,7 @@ export default function CreateEntry() {
         </TableComponent.Title>
 
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_130px_1fr_1fr_1fr_1fr_86px] gap-8 sm:px-[16px]">
+          <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_86px] gap-8 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Código
             </TableComponent.ValueTitle>
@@ -368,17 +398,17 @@ export default function CreateEntry() {
               <br />
               (unidade)
             </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-base sm:text-[18px]">
+            <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Quantidade
               <br />
               (fardo)
             </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-base sm:text-[18px]">
+            <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Valor
               <br />
               (unidade)
             </TableComponent.ValueTitle>
-            <TableComponent.ValueTitle className="text-base sm:text-[18px]">
+            <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Valor
               <br />
               (total)
@@ -391,13 +421,13 @@ export default function CreateEntry() {
           {addedProducts.length === 0 ? (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Adicione produtos para criar um inventário
+                Adicione produtos para criar uma entrada manual
               </TableComponent.Value>
             </TableComponent.Line>
           ) : (
             addedProducts.map((product, index) => (
               <TableComponent.Line
-                className={`grid-cols-[70px_1.5fr_130px_130px_1fr_1fr_1fr_1fr_86px] gap-8 sm:px-[16px] ${
+                className={`grid-cols-[70px_1.5fr_1fr_1fr_1fr_1fr_1fr_1fr_86px] gap-8 sm:px-[16px] ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
@@ -414,22 +444,52 @@ export default function CreateEntry() {
                 <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
                   <Input
                     type="number"
-                    value={quantities[product.code] ?? ""}
+                    value={unit[product.code] ?? ""}
+                    onChange={(e) =>
+                      handleUnitChange(product.code, e.target.value)
+                    }
+                    className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                  ></Input>
+                </TableComponent.Value>
+                <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
+                  <Input
+                    type="number"
+                    value={quantitiesUnit[product.code] ?? ""}
                     onChange={(e) =>
                       handleQuantityChange(product.code, e.target.value)
                     }
                     className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
                   ></Input>
                 </TableComponent.Value>
-                <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {Number(quantities[product.code] ?? 0) -
-                    Number(product.stock_current)}
+                <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
+                  <Input
+                    type="number"
+                    value={quantitiesBale[product.code] ?? ""}
+                    onChange={(e) =>
+                      handleQuantityBaleChange(product.code, e.target.value)
+                    }
+                    className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                  ></Input>
                 </TableComponent.Value>
-                <TableComponent.Value className="text-[13px] sm:text-[15px]">
-                  {handleProductDescription(
-                    Number(product.stock_current),
-                    Number(quantities[product.code]),
-                  )}
+                <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
+                  <Input
+                    type="number"
+                    value={priceUnit[product.code] ?? ""}
+                    onChange={(e) =>
+                      handlePriceUnitChange(product.code, e.target.value)
+                    }
+                    className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                  ></Input>
+                </TableComponent.Value>
+                <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
+                  <Input
+                    type="number"
+                    value={priceTotal[product.code] ?? ""}
+                    onChange={(e) =>
+                      handlePriceTotalChange(product.code, e.target.value)
+                    }
+                    className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                  ></Input>
                 </TableComponent.Value>
                 <Button
                   onClick={() => handleRemoveProduct(product.code)}
@@ -445,9 +505,9 @@ export default function CreateEntry() {
         <TableButtonComponent className="pt-2 sm:pt-4">
           <TableButtonComponent.Button
             className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1"
-            handlePress={handleFinalizeInventory}
+            handlePress={handleFinalizeEntry}
           >
-            Finalizar Inventário
+            Finalizar Entrada
           </TableButtonComponent.Button>
         </TableButtonComponent>
       </TableComponent>
