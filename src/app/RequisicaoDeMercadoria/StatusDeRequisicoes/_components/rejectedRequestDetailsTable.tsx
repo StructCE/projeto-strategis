@@ -1,3 +1,4 @@
+import React from "react";
 import { TableComponent } from "~/components/table";
 import { type Request } from "../../RequisicoesDeMercadorias/_components/requestsData";
 

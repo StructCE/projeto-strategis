@@ -276,19 +276,21 @@ export default function PaymentDetails(props: PaymentType) {
 
             <TableRow className="bg-[#fbfbfb]">
               <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-                Projeto
+                Conta
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.project.name}
+                {props.payment.account_plan.accounts.map(
+                  (account) => account.name,
+                )}
               </TableCell>
             </TableRow>
 
             <TableRow>
               <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-                Conta
+                Projeto
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.account.name}
+                {props.payment.project.name}
               </TableCell>
             </TableRow>
 

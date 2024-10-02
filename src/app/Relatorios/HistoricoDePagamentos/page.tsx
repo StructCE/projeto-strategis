@@ -116,9 +116,6 @@ export default function PaymentHistory() {
     const matchesGroup =
       selectGroup === "" || payment.group.name === selectGroup;
 
-    const matchesAccount =
-      selectAccount === "" || payment.account.name === selectAccount;
-
     const matchesProject =
       selectProject === "" || payment.project.name === selectProject;
 
@@ -137,7 +134,6 @@ export default function PaymentHistory() {
       matchesStatus &&
       matchesAccountPlan &&
       matchesGroup &&
-      matchesAccount &&
       matchesProject &&
       matchesExpenseType
     );
@@ -232,7 +228,6 @@ export default function PaymentHistory() {
         document: payment.document,
         account_plan: payment.account_plan,
         project: payment.project,
-        account: payment.account,
         expense_type: payment.expense_type,
         recurrence: payment.recurrence,
         supplier: payment.supplier,

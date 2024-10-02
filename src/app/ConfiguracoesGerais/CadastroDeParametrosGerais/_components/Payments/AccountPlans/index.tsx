@@ -12,7 +12,7 @@ export default function AccountPlans() {
   const { form, onSubmit } = useAccountPlanForm();
 
   return (
-    <AccordionItem value="item-10" className="border-vinho_strategis px-0">
+    <AccordionItem value="item-13" className="border-vinho_strategis px-0">
       <AccordionTrigger className="mx-0 pb-1 text-[24px] font-medium">
         Planos de Contas
       </AccordionTrigger>
