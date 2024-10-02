@@ -749,20 +749,6 @@ export default function CreatePurchaseOrder() {
                           className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
                         ></Input>
                       </div>
-                      <div className="mt-3 flex w-full justify-end">
-                        {hasPermission(product, LoggedUser) ? (
-                          <Button
-                            onClick={() => handleAddProduct(product)}
-                            className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
-                          >
-                            Adicionar
-                          </Button>
-                        ) : (
-                          <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]">
-                            Sem Permissão
-                          </Button>
-                        )}
-                      </div>
                     </DialogDescription>
                   </DialogContent>
                 </Dialog>
