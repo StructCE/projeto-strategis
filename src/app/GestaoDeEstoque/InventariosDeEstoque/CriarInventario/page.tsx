@@ -513,7 +513,7 @@ export default function CreateInventory() {
                   >
                     <DialogHeader>
                       <DialogTitle className="text-left text-xl">
-                        Requisitar Produto
+                        Inventário do Produto
                       </DialogTitle>
                     </DialogHeader>
                     <DialogDescription className="flex flex-col gap-1 text-left text-black">
@@ -524,6 +524,12 @@ export default function CreateInventory() {
                       <p className="text-base">
                         <span className="font-semibold">Produto: </span>{" "}
                         {product.name}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">
+                          Endereço de Estoque:
+                        </span>{" "}
+                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">
@@ -711,6 +717,12 @@ export default function CreateInventory() {
                       <p className="text-base">
                         <span className="font-semibold">Produto: </span>{" "}
                         {product.name}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">
+                          Endereço de Estoque:
+                        </span>{" "}
+                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">
