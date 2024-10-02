@@ -573,6 +573,7 @@ export default function CreateAdjustment() {
                           onValueChange={(value) =>
                             handleAdjustmentReasonChange(product.code, value)
                           }
+                          defaultValue={adjustmentReasons[product.code] ?? ""}
                         >
                           <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
                             <SelectValue placeholder="Motivo do ajuste" />
@@ -793,10 +794,10 @@ export default function CreateAdjustment() {
                       <div className="my-1 text-base">
                         <span className="font-semibold">Descrição: </span>
                         <Select
-                          value={adjustmentReasons[product.code] ?? ""}
                           onValueChange={(value) =>
                             handleAdjustmentReasonChange(product.code, value)
                           }
+                          defaultValue={adjustmentReasons[product.code] ?? ""}
                         >
                           <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
                             <SelectValue placeholder="Motivo do ajuste" />
