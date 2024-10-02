@@ -11,6 +11,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { EntryDialogConfirm } from "./entryDialogDatailsConfirm";
+import { useRouter } from "next/navigation";
 
 export default function ManageEntry() {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +22,7 @@ export default function ManageEntry() {
     setIsOpen(true);
   };
   const handleClose = () => setIsOpen(false);
+  const router = useRouter();
 
   return (
     <>
@@ -78,7 +80,14 @@ export default function ManageEntry() {
         )}
       </div>
       <div className="mb-8 mt-2 flex justify-end border-b-2 border-t-2 border-[#BFBFBF]">
-        <Button className="my-3.5 h-10 bg-vermelho_botao_1 text-[14px] font-medium text-white hover:bg-hover_vermelho_botao sm:text-[16px]">
+        <Button
+          onClick={() =>
+            router.push(
+              "/GestaoDeEstoque/EntradaDeMercadorias/GerarEntradaManualmente",
+            )
+          }
+          className="my-3.5 h-10 bg-vermelho_botao_1 text-[14px] font-medium text-white hover:bg-hover_vermelho_botao sm:text-[16px]"
+        >
           Gerar Entrada Manualmente
         </Button>
       </div>
