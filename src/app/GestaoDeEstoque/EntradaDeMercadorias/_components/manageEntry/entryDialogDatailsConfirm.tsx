@@ -69,10 +69,14 @@ export const EntryDialogConfirm = (props: {
             Quantidade (fardo)
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center">
-            Valor (unidade)
+            Valor
+            <br />
+            (unidade)
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center">
-            Valor (total)
+            Valor
+            <br />
+            (total)
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 

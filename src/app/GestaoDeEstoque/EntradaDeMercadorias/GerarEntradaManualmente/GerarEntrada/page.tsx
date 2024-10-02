@@ -321,7 +321,7 @@ export default function CreateEntry() {
         </TableComponent.FiltersLine>
 
         <TableComponent.Table>
-          <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_130px] gap-16">
+          <TableComponent.LineTitle className="grid-cols-[70px_1fr_5fr_130px] gap-16">
             <TableComponent.ValueTitle className="text-center">
               Código
             </TableComponent.ValueTitle>
@@ -352,7 +352,7 @@ export default function CreateEntry() {
           {!areAllFiltersEmpty &&
             filteredProducts.map((product, index) => (
               <TableComponent.Line
-                className={`grid-cols-[70px_1.5fr_130px_130px] gap-16 ${
+                className={`grid-cols-[70px_1fr_5fr_130px] gap-16 ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
