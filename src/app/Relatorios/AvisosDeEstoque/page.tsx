@@ -59,89 +59,104 @@ export default function CustomReports() {
   const [filterProduce, setFilterProduce] = useState(false);
   const [filterDontProduce, setFilterDontProduce] = useState(false);
 
-  const filteredProducts = products
-    .filter((product) => {
-      // Se nenhum estoque for selecionado, não mostrar nenhum produto
-      if (selectStock === "") {
-        return false;
-      }
+  const areAllFiltersEmpty =
+    inputCode === "" &&
+    inputProduct === "" &&
+    selectSuppliers.length === 0 &&
+    selectStock === "" &&
+    selectAddress === "" &&
+    selectControlType === "" &&
+    selectCategory === "" &&
+    selectSector === "" &&
+    selectStatus === "" &&
+    selectBuyDay === "";
 
-      const stockCurrent = Number(product.stock_current);
-      const stockMin = Number(product.stock_min);
-      const stockThreshold = stockMin + stockMin * 0.1; // 110% do estoque mínimo
+  const filteredProducts = areAllFiltersEmpty
+    ? []
+    : products
+        .filter((product) => {
+          // Se nenhum estoque for selecionado, não mostrar nenhum produto
+          if (selectStock === "") {
+            return false;
+          }
 
-      // Verifica se o produto está com estoque baixo
-      const isLowStock = stockCurrent > 0 && stockCurrent <= stockThreshold;
-      const isNoStock = stockCurrent === 0;
-      const isAdequateStock = stockCurrent > stockThreshold;
+          const stockCurrent = Number(product.stock_current);
+          const stockMin = Number(product.stock_min);
+          const stockThreshold = stockMin + stockMin * 0.1; // 110% do estoque mínimo
 
-      // Filtros auxiliares
-      const matchesCode = inputCode === "" || product.code.includes(inputCode);
-      const matchesProduct =
-        inputProduct === "" ||
-        product.name.toLowerCase().includes(inputProduct.toLowerCase());
-      const matchesSupplier =
-        selectSuppliers.length === 0 ||
-        product.suppliers.some((supplier) =>
-          selectSuppliers.includes(supplier.name),
-        );
-      const matchesStock = `${product.address.stock}`
-        .toLowerCase()
-        .includes(selectStock.toLowerCase());
-      const matchesAddress =
-        selectAddress === "" ||
-        `${product.address.storage}, ${product.address.shelf}`
-          .toLowerCase()
-          .includes(selectAddress.toLowerCase());
-      const matchesControlType =
-        selectControlType === "" ||
-        product.type_of_control?.description === selectControlType;
-      const matchesCategory =
-        selectCategory === "" ||
-        product.product_category?.description === selectCategory;
-      const matchesSector =
-        selectSector === "" ||
-        product.sector_of_use?.description === selectSector;
-      const matchesStatus =
-        selectStatus === "" || product.status === selectStatus;
-      const matchesBuyDay =
-        selectBuyDay === "" || product.buy_day === selectBuyDay;
+          // Verifica se o produto está com estoque baixo
+          const isLowStock = stockCurrent > 0 && stockCurrent <= stockThreshold;
+          const isNoStock = stockCurrent === 0;
+          const isAdequateStock = stockCurrent > stockThreshold;
 
-      const filterConditions = []; // Filtros de estoque com base nos botões e checkboxes
+          // Filtros auxiliares
+          const matchesCode =
+            inputCode === "" || product.code.includes(inputCode);
+          const matchesProduct =
+            inputProduct === "" ||
+            product.name.toLowerCase().includes(inputProduct.toLowerCase());
+          const matchesSupplier =
+            selectSuppliers.length === 0 ||
+            product.suppliers.some((supplier) =>
+              selectSuppliers.includes(supplier.name),
+            );
+          const matchesStock = `${product.address.stock}`
+            .toLowerCase()
+            .includes(selectStock.toLowerCase());
+          const matchesAddress =
+            selectAddress === "" ||
+            `${product.address.storage}, ${product.address.shelf}`
+              .toLowerCase()
+              .includes(selectAddress.toLowerCase());
+          const matchesControlType =
+            selectControlType === "" ||
+            product.type_of_control?.description === selectControlType;
+          const matchesCategory =
+            selectCategory === "" ||
+            product.product_category?.description === selectCategory;
+          const matchesSector =
+            selectSector === "" ||
+            product.sector_of_use?.description === selectSector;
+          const matchesStatus =
+            selectStatus === "" || product.status === selectStatus;
+          const matchesBuyDay =
+            selectBuyDay === "" || product.buy_day === selectBuyDay;
 
-      if (lowStock) filterConditions.push(isLowStock);
-      if (noStock) filterConditions.push(isNoStock);
-      if (filterBuy) filterConditions.push(isLowStock || isNoStock);
-      if (filterDontBuy) filterConditions.push(isAdequateStock);
-      if (filterProduce)
-        filterConditions.push(
-          (isLowStock || isNoStock) &&
-            product.type_of_control?.description === "Produtos de Produção",
-        );
-      if (filterDontProduce)
-        filterConditions.push(
-          isAdequateStock &&
-            product.type_of_control?.description === "Produtos de Produção",
-        );
+          const filterConditions = []; // Filtros de estoque com base nos botões e checkboxes
 
-      const satisfiesStockFilters =
-        filterConditions.length === 0 || filterConditions.some(Boolean);
+          if (lowStock) filterConditions.push(isLowStock);
+          if (noStock) filterConditions.push(isNoStock);
+          if (filterBuy) filterConditions.push(isLowStock || isNoStock);
+          if (filterDontBuy) filterConditions.push(isAdequateStock);
+          if (filterProduce)
+            filterConditions.push(
+              (isLowStock || isNoStock) &&
+                product.type_of_control?.description === "Produtos de Produção",
+            );
+          if (filterDontProduce)
+            filterConditions.push(
+              isAdequateStock &&
+                product.type_of_control?.description === "Produtos de Produção",
+            );
 
-      return (
-        satisfiesStockFilters &&
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
-      );
-    })
-    .sort((a, b) => a.code.localeCompare(b.code));
+          const satisfiesStockFilters =
+            filterConditions.length === 0 || filterConditions.some(Boolean);
+
+          return (
+            satisfiesStockFilters &&
+            matchesCode &&
+            matchesProduct &&
+            matchesSupplier &&
+            matchesStock &&
+            matchesAddress &&
+            matchesControlType &&
+            matchesCategory &&
+            matchesSector &&
+            matchesStatus &&
+            matchesBuyDay
+          );
+        })
+        .sort((a, b) => a.code.localeCompare(b.code));
 
   // Produtos com estoque baixo (para contagem)
   const allProducts = products.filter((product) => {
@@ -258,7 +273,7 @@ export default function CustomReports() {
   }
 
   function exportToPDF(stockWarningsData: StockWarningsData) {
-    return;
+    return console.log(JSON.stringify(stockWarningsData, null, 2));
   }
 
   function exportToCSV(stockWarningsData: StockWarningsData) {
@@ -695,13 +710,21 @@ export default function CustomReports() {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {selectStock === "" ? (
+        {selectStock === "" && (
           <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
               Selecione um estoque para ver seus produtos
             </TableComponent.Value>
           </TableComponent.Line>
-        ) : (
+        )}
+        {!areAllFiltersEmpty && filteredProducts.length === 0 && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Nenhum produto encontrado com os filtros aplicados
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {!areAllFiltersEmpty &&
           filteredProducts.map((product, index) => (
             <TableComponent.Line
               className={`grid-cols-[85px_70px_1fr_120px_90px_90px_90px_130px] gap-4 md:gap-8 ${
@@ -747,18 +770,16 @@ export default function CustomReports() {
                   className="sm:max-w-4xl"
                 >
                   <DialogHeader>
-                    <DialogTitle className="pb-1.5">
-                      Informações do Produto:
-                    </DialogTitle>
-
-                    <ProductDetails product={product} />
-                    <DialogDescription></DialogDescription>
+                    <DialogTitle>Informações do Produto:</DialogTitle>
                   </DialogHeader>
+
+                  <DialogDescription className="text-black">
+                    <ProductDetails product={product} />
+                  </DialogDescription>
                 </DialogContent>
               </Dialog>
             </TableComponent.Line>
-          ))
-        )}
+          ))}
       </TableComponent.Table>
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">
