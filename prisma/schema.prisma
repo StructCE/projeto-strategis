@@ -46,18 +46,24 @@ model Session {
 }
 
 model User {
-    id               String    @id @default(cuid())
-    nome             String?
-    email            String?   @unique
-    emailConfirmacao DateTime? @map("email_verified")
-    senha            String
-    senhaConfirmacao String
-    telefone         String?
-    image            String?
-    accounts         Account[]
-    sessions         Session[]
-    cargo            Cargo     @relation(fields: [cargoId], references: [id])
-    cargoId          Int
+    id                         String      @id @default(cuid())
+    name                       String?
+    email                      String?     @unique
+    phone                      String?
+    accounts                   Account[]
+    sessions                   Session[]
+    cargoId                    Int
+    Company                    Company[]
+    UserRole                   UserRole[]
+    Stock                      Stock[]
+    Entry                      Entry[]
+    OutputResponsible          Output[]    @relation("ResponsibleUser")
+    OutputApplicant            Output[]    @relation("ApplicantUser")
+    Adjust                     Adjust[]
+    Order                      Order[]
+    RequestResponsible         Request[]   @relation("Responsible")
+    RequestDeliveryResponsible Request[]   @relation("DeliveryResponsible")
+    Operation                  Operation[]
 
     @@map("users")
 }
@@ -70,24 +76,340 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-model Cargo {
-    id      Int           @id @default(autoincrement())
-    nome    String
-    modulos ModuloCargo[]
-    users   User[]
+model Company {
+    id                 String @id @default(cuid())
+    name               String
+    cnpj               String
+    type               String
+    headquarters       String
+    phone              String
+    stateRegistration  String
+    taxRegime          String
+    address            String
+    neighborhood       String
+    federativeUnit     String
+    cep                String
+    legalResponsibleId String
+    filesAddress       String
+
+    legaResponsible User        @relation(fields: [legalResponsibleId], references: [id])
+    UserRole        UserRole[]
+    Stock           Stock[]
+    Operation       Operation[]
 }
 
-model Modulo {
-    id       Int           @id @default(autoincrement())
-    operacao String
-    cargos   ModuloCargo[]
+model UserRole {
+    id         String  @id @default(cuid())
+    userId     String
+    supplierId String?
+    companyId  String
+    roleId     String
+
+    user     User      @relation(fields: [userId], references: [id])
+    supplier Supplier? @relation(fields: [supplierId], references: [id])
+    company  Company   @relation(fields: [companyId], references: [id])
+    role     Role      @relation(fields: [roleId], references: [id])
 }
 
-model ModuloCargo {
-    cargoId  Int
-    moduloId Int
-    cargo    Cargo  @relation(fields: [cargoId], references: [id])
-    modulo   Modulo @relation(fields: [moduloId], references: [id])
+model Role {
+    id         String       @id @default(cuid())
+    name       String
+    UserRole   UserRole[]
+    RoleModule RoleModule[]
+}
 
-    @@id([cargoId, moduloId]) // Chave composta
+model RoleModule {
+    id       String @id @default(cuid())
+    moduleId String
+    roleId   String
+
+    module Module @relation(fields: [moduleId], references: [id])
+    role   Role   @relation(fields: [roleId], references: [id])
+}
+
+model Module {
+    id         String       @id @default(cuid())
+    operation  String
+    RoleModule RoleModule[]
+}
+
+model Supplier {
+    id                String            @id @default(cuid())
+    name              String
+    cnpj              String
+    email             String
+    phone             String
+    stateRegistration String
+    address           String
+    neighborhood      String
+    city              String
+    federativeUnit    String
+    cep               String
+    UserRole          UserRole[]
+    ProductSupplier   ProductSupplier[]
+    ProductEntry      ProductEntry[]
+    ProductOutput     ProductOutput[]
+    Inventory         Inventory[]
+    OrderProduct      OrderProduct[]
+}
+
+model Product {
+    id               String   @id @default(cuid())
+    status           String
+    buyQuantity      Float
+    buyUnit          String
+    buyDate          DateTime
+    currentStock     Int
+    currentInventory Int
+    minimunStock     Int
+    maximumStock     Int
+    controlTypeId    String
+    categoryId       String
+    sectorOfUseId    String
+    stockId          String
+    shelfId          String
+    cabinetId        String
+
+    controlType     ControlType       @relation(fields: [controlTypeId], references: [id])
+    category        ProductCategory   @relation(fields: [categoryId], references: [id])
+    sectorOfUse     SectorOfUse       @relation(fields: [sectorOfUseId], references: [id])
+    stock           Stock             @relation(fields: [stockId], references: [id])
+    shelf           Shelf             @relation(fields: [shelfId], references: [id])
+    cabinet         Cabinet           @relation(fields: [cabinetId], references: [id])
+    ProductSupplier ProductSupplier[]
+    ProductEntry    ProductEntry[]
+    ProductOutput   ProductOutput[]
+    Inventory       Inventory[]
+    ProductAdjust   ProductAdjust[]
+    RequestProduct  RequestProduct[]
+}
+
+model ProductSupplier {
+    id         String @id @default(cuid())
+    productId  String
+    supplierId String
+
+    product  Product  @relation(fields: [productId], references: [id])
+    supplier Supplier @relation(fields: [supplierId], references: [id])
+}
+
+model Stock {
+    id                 String @id @default(cuid())
+    code               String
+    name               String
+    companyId          String
+    legalResponsibleId String
+
+    company          Company        @relation(fields: [companyId], references: [id])
+    legalResponsible User           @relation(fields: [legalResponsibleId], references: [id])
+    Product          Product[]
+    StockCabinet     StockCabinet[]
+    StockShelf       StockShelf[]
+    Adjust           Adjust[]
+    Order            Order[]
+}
+
+model Cabinet {
+    id           String         @id @default(cuid())
+    name         String
+    Product      Product[]
+    StockCabinet StockCabinet[]
+}
+
+model StockCabinet {
+    id        String @id @default(cuid())
+    cabinetId String
+    stockId   String
+
+    cabinet Cabinet @relation(fields: [cabinetId], references: [id])
+    stock   Stock   @relation(fields: [stockId], references: [id])
+}
+
+model Shelf {
+    id         String       @id @default(cuid())
+    name       String
+    Product    Product[]
+    StockShelf StockShelf[]
+}
+
+model StockShelf {
+    id      String @id @default(cuid())
+    shelfId String
+    stockId String
+
+    shelf Shelf @relation(fields: [shelfId], references: [id])
+    stock Stock @relation(fields: [stockId], references: [id])
+}
+
+model ControlType {
+    id      String    @id @default(cuid())
+    name    String
+    Product Product[]
+}
+
+model ProductCategory {
+    id      String    @id @default(cuid())
+    name    String
+    Product Product[]
+}
+
+model SectorOfUse {
+    id   String @id @default(cuid())
+    name String
+
+    Product Product[]
+}
+
+model Entry {
+    id            String   @id @default(cuid())
+    invoice       String
+    date          DateTime
+    responsibleId String
+    operationId   String
+    type          String   @default("Em Aberto")
+    status        String   @default("Em Dia")
+
+    responsible  User           @relation(fields: [responsibleId], references: [id])
+    operation    Operation      @relation(fields: [operationId], references: [id])
+    ProductEntry ProductEntry[]
+}
+
+model Output {
+    id            String   @id @default(cuid())
+    number        Int
+    date          DateTime
+    responsibleId String
+    applicantId   String
+    requestArea   String
+    operationId   String
+
+    responsible User      @relation("ResponsibleUser", fields: [responsibleId], references: [id])
+    applicant   User      @relation("ApplicantUser", fields: [applicantId], references: [id])
+    operation   Operation @relation(fields: [operationId], references: [id])
+
+    ProductOutput ProductOutput[]
+    Inventory     Inventory[]
+}
+
+model ProductEntry {
+    id         String @id @default(cuid())
+    entryId    String
+    productId  String
+    supplierId String
+    quantity   Int
+
+    entry    Entry    @relation(fields: [entryId], references: [id])
+    product  Product  @relation(fields: [productId], references: [id])
+    supplier Supplier @relation(fields: [supplierId], references: [id])
+}
+
+model ProductOutput {
+    id         String @id @default(cuid())
+    outputId   String
+    productId  String
+    supplierId String
+    quantity   Int
+
+    output   Output   @relation(fields: [outputId], references: [id])
+    product  Product  @relation(fields: [productId], references: [id])
+    supplier Supplier @relation(fields: [supplierId], references: [id])
+}
+
+model Inventory {
+    id          String @id @default(cuid())
+    outputId    String
+    productId   String
+    supplierId  String
+    quantity    Int
+    operationId String
+
+    output    Output    @relation(fields: [outputId], references: [id])
+    product   Product   @relation(fields: [productId], references: [id])
+    supplier  Supplier  @relation(fields: [supplierId], references: [id])
+    operation Operation @relation(fields: [operationId], references: [id])
+}
+
+model Adjust {
+    id            String @id @default(cuid())
+    stockId       String
+    name          String
+    responsibleId String
+    type          String
+    operationId   String
+
+    stock       Stock     @relation(fields: [stockId], references: [id])
+    responsible User      @relation(fields: [responsibleId], references: [id])
+    operation   Operation @relation(fields: [operationId], references: [id])
+}
+
+model ProductAdjust {
+    id            String @id @default(cuid())
+    oldStock      Int
+    adjustedStock Int
+    description   String
+    productId     String
+
+    product Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+    id            String   @id @default(cuid())
+    date          DateTime
+    responsibleId String
+    stockId       String
+
+    responsible  User           @relation(fields: [responsibleId], references: [id])
+    stock        Stock          @relation(fields: [stockId], references: [id])
+    OrderProduct OrderProduct[]
+}
+
+model OrderProduct {
+    id          String @id @default(cuid())
+    orderId     String
+    unitType    String
+    buyQuantity Int
+    supplierId  String
+
+    order    Order    @relation(fields: [orderId], references: [id])
+    supplier Supplier @relation(fields: [supplierId], references: [id])
+}
+
+model Request {
+    id                    String   @id @default(cuid())
+    requestDate           DateTime
+    responsibleId         String
+    deliveryDate          DateTime
+    deliveryResponsibleId String
+    status                String
+    stockId               String
+
+    responsible         User             @relation(name: "Responsible", fields: [responsibleId], references: [id])
+    deliveryResponsible User             @relation(name: "DeliveryResponsible", fields: [deliveryResponsibleId], references: [id])
+    RequestProduct      RequestProduct[]
+}
+
+model RequestProduct {
+    id        String @id @default(cuid())
+    requestId String
+    productId String
+    unitType  String
+    quantity  Int
+
+    request Request @relation(fields: [requestId], references: [id])
+    product Product @relation(fields: [productId], references: [id])
+}
+
+model Operation {
+    id          String   @id @default(cuid())
+    date        DateTime
+    companyId   String
+    operatorId  String
+    description String
+
+    company   Company     @relation(fields: [companyId], references: [id])
+    operator  User        @relation(fields: [operatorId], references: [id])
+    Entry     Entry[]
+    Output    Output[]
+    Inventory Inventory[]
+    Adjust    Adjust[]
 }
