@@ -1,6 +1,8 @@
 "use client";
-import { Eraser, Search, Calendar, UserCog } from "lucide-react";
+import { Calendar, Eraser, Search, Truck, UserCog } from "lucide-react";
 import { useState } from "react";
+import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
+import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
@@ -9,6 +11,8 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "~/components/ui/dialog";
 import {
   Tooltip,
@@ -16,52 +20,49 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { entryData } from "../../entryData";
-import { EntryDialogDatails } from "./entryDialogDatails";
+import { entries } from "../../entryData";
+import { EntryDialogDetails } from "./entryDialogDetails";
 
 export const HistoryEntryTable = () => {
   const [inputInvoice, setInputInvoice] = useState("");
-  const [inputDate, setInputDate] = useState("");
-  const [inputManager, setInputManger] = useState("");
-  const [inputSupplier, setInputSupplier] = useState("");
-  const [selectedEntry, setSelectedEntry] = useState(null);
-  const [isOpen, setIsOpen] = useState(false);
-  const handleClose = () => setIsOpen(false);
+  const [dateEntry, setDateEntry] = useState<Date | undefined>(undefined);
+  const [openDateEntry, setOpenDateEntry] = useState(false);
+  const [selectSupplier, setSelectSupplier] = useState("");
+  const [selectResponsible, setSelectResponsible] = useState("");
 
-  const handleOpen = (entry: never) => {
-    setSelectedEntry(entry);
-    setIsOpen(true);
-  };
-
-  const filteredEntrys = entryData.filter((entry) => {
+  const filteredEntrys = entries.filter((entry) => {
     const entryInvoiceMatches = entry.invoice
       .toLowerCase()
       .includes(inputInvoice.toLowerCase());
 
-    const DateMatches = entry.date_issue
-      .toLowerCase()
-      .includes(inputDate.toLowerCase());
+    const matchesDateEntry =
+      !dateEntry ||
+      (entry.date_issue.getDate() === dateEntry.getDate() &&
+        entry.date_issue.getMonth() === dateEntry.getMonth() + 1 &&
+        entry.date_issue.getFullYear() === dateEntry.getFullYear());
 
-    const ManagerMatches = entry.manager
-      .toLowerCase()
-      .includes(inputManager.toLowerCase());
+    const matchesResponsible =
+      selectResponsible === "" || entry.manager === selectResponsible;
 
-    const SupplierMatches = entry.suppliers.some((supplier) =>
-      supplier.name.toLowerCase().includes(inputSupplier.toLowerCase()),
-    );
+    const matchesSupplier =
+      selectSupplier === "" ||
+      entry.suppliers.some((supplier) => supplier.name === selectSupplier);
+
+    const matchesStatus = entry.status === "Confirmada";
 
     return (
       entryInvoiceMatches &&
-      ManagerMatches &&
-      DateMatches &&
-      SupplierMatches &&
-      entry.isConfirmed
+      matchesDateEntry &&
+      matchesSupplier &&
+      matchesResponsible &&
+      matchesStatus
     );
   });
 
   return (
     <TableComponent>
       <TableComponent.Title>Histórico de Entradas</TableComponent.Title>
+
       <TableComponent.FiltersLine>
         <Filter>
           <Filter.Icon
@@ -82,24 +83,33 @@ export const HistoryEntryTable = () => {
               <Calendar className={className} />
             )}
           />
-          <Filter.Input
-            placeholder="XX/XX/XXXX"
-            state={inputDate}
-            setState={setInputDate}
+          <Filter.DatePicker
+            date={dateEntry}
+            setDate={setDateEntry}
+            open={openDateEntry}
+            setOpen={setOpenDateEntry}
+            placeholder="Data"
           />
         </Filter>
 
         <Filter>
           <Filter.Icon
             icon={({ className }: { className: string }) => (
-              <UserCog className={className} />
+              <Truck className={className} />
             )}
           />
-          <Filter.Input
+          <Filter.Select
             placeholder="Fornecedor"
-            state={inputSupplier}
-            setState={setInputSupplier}
-          />
+            state={selectSupplier}
+            setState={setSelectSupplier}
+          >
+            {suppliers.map((supplier, index) => (
+              <Filter.SelectItems
+                value={supplier.name}
+                key={index}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
         </Filter>
 
         <Filter>
@@ -108,11 +118,18 @@ export const HistoryEntryTable = () => {
               <UserCog className={className} />
             )}
           />
-          <Filter.Input
-            placeholder="Responsável"
-            state={inputManager}
-            setState={setInputManger}
-          />
+          <Filter.Select
+            placeholder="Fornecedor"
+            state={selectResponsible}
+            setState={setSelectResponsible}
+          >
+            {users.map((user, index) => (
+              <Filter.SelectItems
+                value={user.name}
+                key={index}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
         </Filter>
 
         <TooltipProvider delayDuration={300}>
@@ -122,15 +139,13 @@ export const HistoryEntryTable = () => {
                 size={20}
                 onClick={() => {
                   setInputInvoice("");
-                  setInputDate("");
-                  setInputManger("");
-                  setInputSupplier("");
+                  setDateEntry(undefined);
+                  setSelectSupplier("");
+                  setSelectResponsible("");
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
@@ -159,7 +174,7 @@ export const HistoryEntryTable = () => {
             key={index}
           >
             <TableComponent.Value>{entry.invoice}</TableComponent.Value>
-            <TableComponent.Value>{entry.date_issue}</TableComponent.Value>
+            <TableComponent.Value>{`${entry.date_issue.getDate()}/${entry.date_issue.getMonth()}/${entry.date_issue.getFullYear()}`}</TableComponent.Value>
             <TableComponent.Value className="text-center">
               {entry.quantity_products}
             </TableComponent.Value>
@@ -167,27 +182,26 @@ export const HistoryEntryTable = () => {
               {entry.suppliers.map((s) => s.name).join(", ")}
             </TableComponent.Value>
             <TableComponent.Value>{entry.manager}</TableComponent.Value>
-            <Button
-              onClick={() => handleOpen(entry as never)}
-              className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]"
-            >
-              Detalhes
-            </Button>
-            <div>
-              {selectedEntry && (
-                <Dialog open={isOpen} onOpenChange={handleClose}>
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="sm:max-w-7xl"
-                  >
-                    <DialogHeader>
-                      <EntryDialogDatails datails={selectedEntry} />
-                      <DialogDescription></DialogDescription>
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
-              )}
-            </div>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                  Detalhes
+                </Button>
+              </DialogTrigger>
+              <DialogContent
+                aria-describedby={undefined}
+                className="sm:max-w-7xl"
+              >
+                <DialogHeader>
+                  <DialogTitle>Detalhes da Entrada</DialogTitle>
+                </DialogHeader>
+
+                <DialogDescription className="text-black">
+                  <EntryDialogDetails entry={entry} />
+                </DialogDescription>
+              </DialogContent>
+            </Dialog>
           </TableComponent.Line>
         ))}
       </TableComponent.Table>

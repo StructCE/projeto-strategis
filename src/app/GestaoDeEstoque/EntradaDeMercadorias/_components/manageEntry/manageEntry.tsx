@@ -1,17 +1,16 @@
 "use client";
-
+import React, { useState } from "react";
 import { RequestComponent } from "~/components/card-request/cardRequest";
-import { entryData } from "../../entryData";
+import { TableComponent } from "~/components/table";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
 } from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
-import { useState } from "react";
-import { EntryDialogConfirm } from "./entryDialogDatailsConfirm";
-import { useRouter } from "next/navigation";
+import { entries } from "../../entryData";
+import { EntryDialogConfirm } from "./entryDialogDetailsConfirm";
 
 export default function ManageEntry() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,23 +22,17 @@ export default function ManageEntry() {
   };
 
   const handleClose = () => setIsOpen(false);
-  const router = useRouter();
 
   return (
-    <>
-      <div>
-        <h1 className="font-inter mb-1 text-[24px] font-medium leading-none sm:text-[32px]">
-          Gerenciar Entradas
-        </h1>
-        <p className="font-inter font-regular text-[14px] sm:text-[16px]">
-          Esperando confirmação:
-        </p>
-      </div>
-      <div>
-        {entryData
-          .filter((entry) => entry.isConfirmed === false)
+    <TableComponent>
+      <TableComponent.Title>Gerenciar Entradas</TableComponent.Title>
+      <TableComponent.Subtitle>Esperando confirmação:</TableComponent.Subtitle>
+
+      <TableComponent.Table>
+        {entries
+          .filter((entry) => entry.status === "Em Aberto")
           .map((entry, index) => (
-            <RequestComponent key={index}>
+            <RequestComponent key={index} classname="mx-[2px] my-1.5">
               <RequestComponent.Grid>
                 <RequestComponent.ColumnItem
                   isnº={true}
@@ -48,7 +41,7 @@ export default function ManageEntry() {
                 />
                 <RequestComponent.ColumnItem
                   title="Data de Emissão"
-                  description={entry.date_issue}
+                  description={`${entry.date_issue.getDate()}/${entry.date_issue.getMonth()}/${entry.date_issue.getFullYear()}`}
                 />
                 <RequestComponent.ColumnItem
                   title="Quantidade de Produtos"
@@ -64,7 +57,7 @@ export default function ManageEntry() {
               </RequestComponent.Grid>
             </RequestComponent>
           ))}
-      </div>
+      </TableComponent.Table>
       <div>
         {selectedEntry && (
           <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -73,25 +66,16 @@ export default function ManageEntry() {
               className="sm:max-w-7xl"
             >
               <DialogHeader>
-                <EntryDialogConfirm requisitionConfirmEntry={selectedEntry} />
-                <DialogDescription></DialogDescription>
+                <DialogTitle>Detalhes da Entrada</DialogTitle>
               </DialogHeader>
+
+              <DialogDescription className="text-black">
+                <EntryDialogConfirm entry={selectedEntry} />
+              </DialogDescription>
             </DialogContent>
           </Dialog>
         )}
       </div>
-      <div className="mb-8 mt-2 flex justify-end border-b-2 border-t-2 border-[#BFBFBF]">
-        <Button
-          onClick={() =>
-            router.push(
-              "/GestaoDeEstoque/EntradaDeMercadorias/GerarEntradaManualmente",
-            )
-          }
-          className="my-3.5 h-10 bg-vermelho_botao_1 text-[14px] font-medium text-white hover:bg-hover_vermelho_botao sm:text-[16px]"
-        >
-          Gerar Entrada Manualmente
-        </Button>
-      </div>
-    </>
+    </TableComponent>
   );
 }
