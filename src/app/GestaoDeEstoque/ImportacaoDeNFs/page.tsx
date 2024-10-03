@@ -5,6 +5,7 @@ import {
   Building2,
   Calendar,
   Eraser,
+  ExternalLink,
   FolderCog,
   Search,
   Truck,
@@ -25,8 +26,12 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { default as InvoiceDetails } from "./_components/invoiceDetails/invoiceDetails";
-import { type Invoice, invoices } from "./_components/invoicesData";
-import { inputPath, outputPath } from "./_components/notasFiscaisData";
+import {
+  inputPath,
+  type Invoice,
+  invoices,
+  outputPath,
+} from "./_components/invoicesData";
 
 export default function ImportacaoDeNFs() {
   const [selectedTab, setSelectedTab] = useState("pending");
@@ -93,7 +98,7 @@ export default function ImportacaoDeNFs() {
 
   const calculateInvoiceTotal = (invoice: Invoice): number => {
     return invoice.products.reduce((total, product) => {
-      const productTotal = product.buy_quantity * product.value_unit;
+      const productTotal = product.purchase_quantity * product.value_unit;
       return total + productTotal;
     }, 0);
   };
@@ -126,17 +131,36 @@ export default function ImportacaoDeNFs() {
         <TableComponent.Title>Importação de Notas Fiscais</TableComponent.Title>
       </TableComponent>
 
-      <div className="flex-col">
-        <button className="flex items-center gap-2 py-1">
-          <FolderCog />
-          <p className="font-bold">Origem:</p>
-          <p className="font-normal hover:underline">{inputPath}</p>
-        </button>
-        <button className="flex items-center gap-2 py-1">
-          <FolderCog />
-          <p className="font-bold">Destino:</p>
-          <p className="font-normal hover:underline">{outputPath}</p>
-        </button>
+      <div className="my-2 flex flex-col items-center justify-between sm:my-1 md:flex-row">
+        <div className="flex-col">
+          <button className="flex flex-col items-center gap-2 py-1 sm:flex-row">
+            <div className="flex gap-1">
+              <FolderCog />
+              <p className="font-bold">Origem:</p>
+            </div>
+            <p className="font-normal hover:underline">{inputPath}</p>
+          </button>
+          <button className="flex flex-col items-center gap-2 py-1 sm:flex-row">
+            <div className="flex gap-1">
+              <FolderCog />
+              <p className="font-bold">Destino:</p>
+            </div>
+            <p className="font-normal hover:underline">{outputPath}</p>
+          </button>
+        </div>
+
+        <TableButtonComponent.Link
+          link_ref="/GestaoDeEstoque/ImportacaoDeNFs/ImportarNF"
+          className="h-fit bg-azul_botao hover:bg-hover_azul_botao"
+          placeholder="Adicionar Nota Fiscal Manualmente"
+        >
+          <ExternalLink
+            className="flex h-full cursor-pointer self-center"
+            size={20}
+            strokeWidth={2.2}
+            color="white"
+          />
+        </TableButtonComponent.Link>
       </div>
 
       <Tabs
@@ -144,14 +168,23 @@ export default function ImportacaoDeNFs() {
         onValueChange={setSelectedTab}
         className="w-fill h-fill"
       >
-        <TabsList className="mb-3 flex h-fit w-full justify-start gap-4 bg-[#DBDBDB] p-2">
-          <TabsTrigger className="py-1 text-[16px]" value="pending">
+        <TabsList className="mb-3 flex h-fit w-full justify-start gap-1 bg-[#DBDBDB] p-2 sm:gap-4">
+          <TabsTrigger
+            className="px-1 py-1 text-[14px] sm:px-3 sm:text-[16px]"
+            value="pending"
+          >
             Pendentes
           </TabsTrigger>
-          <TabsTrigger className="py-1 text-[16px]" value="confirmed">
+          <TabsTrigger
+            className="px-1 py-1 text-[14px] sm:px-3 sm:text-[16px]"
+            value="confirmed"
+          >
             Confirmadas
           </TabsTrigger>
-          <TabsTrigger className="py-1 text-[16px]" value="denied">
+          <TabsTrigger
+            className="px-1 py-1 text-[14px] sm:px-3 sm:text-[16px]"
+            value="denied"
+          >
             Rejeitadas
           </TabsTrigger>
         </TabsList>
@@ -314,7 +347,18 @@ export default function ImportacaoDeNFs() {
                       className="max-h-[90vh] gap-0 overflow-y-auto sm:max-w-[90rem]"
                     >
                       <DialogTitle className="text-[1.5rem]">
-                        Nota Fiscal <b>nº{invoice.document_number}</b>
+                        Nota Fiscal <b>nº{invoice.document_number}</b> <br />
+                        Valor Total:{" "}
+                        <b>
+                          R$
+                          {calculateInvoiceTotal(invoice).toLocaleString(
+                            "pt-BR",
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            },
+                          )}
+                        </b>
                       </DialogTitle>
 
                       <InvoiceDetails invoice={invoice} />
@@ -324,19 +368,6 @@ export default function ImportacaoDeNFs() {
               ))}
             </TableComponent.Table>
           </TableComponent>
-
-          {selectedTab === "pending" ? (
-            <TableButtonComponent className="pt-2 sm:pt-4">
-              <TableButtonComponent.Button
-                className="bg-azul_botao hover:bg-hover_azul_botao"
-                handlePress={() => console.log("a")}
-              >
-                Adicionar Notas Fiscais
-              </TableButtonComponent.Button>
-            </TableButtonComponent>
-          ) : (
-            <></>
-          )}
         </TabsContent>
       </Tabs>
     </div>

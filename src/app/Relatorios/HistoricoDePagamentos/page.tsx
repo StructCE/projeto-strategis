@@ -33,6 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import PaymentCompleteDetails from "./_components/paymentCompleteDetails";
 import PaymentDetails from "./_components/paymentDetails";
 import {
   account_plans,
@@ -94,7 +95,7 @@ export default function PaymentHistory() {
       inputDescription === "" ||
       payment.document_number.includes(inputDescription);
 
-    const matchesBank = selectBank === "" || payment.bank.name === selectBank;
+    const matchesBank = selectBank === "" || payment.bank?.name === selectBank;
 
     const matchesSupplier =
       selectSupplier === "" || payment.supplier.name === selectSupplier;
@@ -115,9 +116,6 @@ export default function PaymentHistory() {
     const matchesGroup =
       selectGroup === "" || payment.group.name === selectGroup;
 
-    const matchesAccount =
-      selectAccount === "" || payment.account.name === selectAccount;
-
     const matchesProject =
       selectProject === "" || payment.project.name === selectProject;
 
@@ -136,7 +134,6 @@ export default function PaymentHistory() {
       matchesStatus &&
       matchesAccountPlan &&
       matchesGroup &&
-      matchesAccount &&
       matchesProject &&
       matchesExpenseType
     );
@@ -178,7 +175,8 @@ export default function PaymentHistory() {
     );
 
     const totalValue = selectedPaymentObjects.reduce(
-      (total, payment) => total + payment.value_payed,
+      (total, payment) =>
+        total + (payment.value_payed ? payment.value_payed : 0),
       0,
     );
 
@@ -230,7 +228,6 @@ export default function PaymentHistory() {
         document: payment.document,
         account_plan: payment.account_plan,
         project: payment.project,
-        account: payment.account,
         expense_type: payment.expense_type,
         recurrence: payment.recurrence,
         supplier: payment.supplier,
@@ -605,89 +602,96 @@ export default function PaymentHistory() {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {filteredPayments.map((payment, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[85px_1fr_170px_120px_120px_0.6fr_130px] gap-4 md:gap-8 ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
-            <TableComponent.Value className="text-center">
-              <Checkbox
-                checked={selectedPayments.includes(payment.document_number)}
-                onCheckedChange={(checked) =>
-                  handleProductSelection(payment.document_number, checked)
-                }
-              />
-            </TableComponent.Value>
-            <TableComponent.Value className="tracking-tight">
-              {paymentDescription(
-                parseInt(
-                  payment.document_number.replace(/\./g, ""),
-                  10,
-                ).toString(),
-                payment.value,
-                payment.products,
-              )}
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              <span
-                className={`${
-                  payment.payed_status === "Pago"
-                    ? "text-verde_botao"
-                    : payment.payed_status === "Em Aberto"
-                      ? "text-amarelo_botao"
-                      : payment.payed_status === "Cancelado"
-                        ? "text-vermelho_botao_2"
-                        : ""
-                }`}
-              >
-                {payment.payed_status}
-              </span>
-              {" - "}
-              <span
-                className={`${
-                  payment.date_payment &&
+        {filteredPayments
+          .sort((a, b) => a.date_document.getTime() - b.date_document.getTime())
+          .map((payment, index) => (
+            <TableComponent.Line
+              className={`grid-cols-[85px_1fr_170px_120px_120px_0.6fr_130px] gap-4 md:gap-8 ${
+                index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+              }`}
+              key={index}
+            >
+              <TableComponent.Value className="text-center">
+                <Checkbox
+                  checked={selectedPayments.includes(payment.document_number)}
+                  onCheckedChange={(checked) =>
+                    handleProductSelection(payment.document_number, checked)
+                  }
+                />
+              </TableComponent.Value>
+              <TableComponent.Value className="tracking-tight">
+                {paymentDescription(
+                  parseInt(
+                    payment.document_number.replace(/\./g, ""),
+                    10,
+                  ).toString(),
+                  payment.value,
+                  payment.products,
+                )}
+              </TableComponent.Value>
+              <TableComponent.Value className="text-center">
+                <span
+                  className={`${
+                    payment.payed_status === "Pago"
+                      ? "text-verde_botao"
+                      : payment.payed_status === "Em Aberto"
+                        ? "text-amarelo_botao"
+                        : payment.payed_status === "Cancelado"
+                          ? "text-vermelho_botao_2"
+                          : ""
+                  }`}
+                >
+                  {payment.payed_status}
+                </span>
+                {" - "}
+                <span
+                  className={`${
+                    payment.date_payment &&
+                    payment.date_payment <= payment.date_deadline
+                      ? "text-verde_botao"
+                      : "text-vermelho_botao_2"
+                  }`}
+                >
+                  {payment.date_payment &&
                   payment.date_payment <= payment.date_deadline
-                    ? "text-verde_botao"
-                    : "text-vermelho_botao_2"
-                }`}
-              >
-                {payment.date_payment &&
-                payment.date_payment <= payment.date_deadline
-                  ? "Em Dia"
-                  : "Atrasado"}
-              </span>
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {`${payment.date_document.getDate()}/${payment.date_document.getMonth()}/${payment.date_document.getFullYear()}`}
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">{`${payment.date_deadline.getDate()}/${payment.date_deadline.getMonth()}/${payment.date_deadline.getFullYear()}`}</TableComponent.Value>
-            <TableComponent.Value>{payment.company.name}</TableComponent.Value>
+                    ? "Em Dia"
+                    : "Atrasado"}
+                </span>
+              </TableComponent.Value>
+              <TableComponent.Value className="text-center">
+                {`${payment.date_document.getDate()}/${payment.date_document.getMonth()}/${payment.date_document.getFullYear()}`}
+              </TableComponent.Value>
+              <TableComponent.Value className="text-center">{`${payment.date_deadline.getDate()}/${payment.date_deadline.getMonth()}/${payment.date_deadline.getFullYear()}`}</TableComponent.Value>
+              <TableComponent.Value>
+                {payment.company.name}
+              </TableComponent.Value>
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="max-h-[90vh] overflow-y-auto sm:max-w-4xl"
-              >
-                <DialogHeader>
-                  <DialogTitle className="pb-1.5">
-                    Informações do Pagamento:
-                  </DialogTitle>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                    Detalhes
+                  </Button>
+                </DialogTrigger>
+                <DialogContent
+                  aria-describedby={undefined}
+                  className="max-h-[90vh] overflow-y-auto sm:max-w-4xl"
+                >
+                  <DialogHeader>
+                    <DialogTitle className="pb-1.5">
+                      Informações do Pagamento:
+                    </DialogTitle>
+                    <DialogDescription></DialogDescription>
 
-                  <PaymentDetails payment={payment} />
-
-                  <DialogDescription></DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          </TableComponent.Line>
-        ))}
+                    {payment.payed_status === "Pago" ? (
+                      <PaymentCompleteDetails payment={payment} />
+                    ) : (
+                      <PaymentDetails payment={payment} />
+                    )}
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            </TableComponent.Line>
+          ))}
       </TableComponent.Table>
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">

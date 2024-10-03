@@ -65,6 +65,26 @@ export const ProductEdit = (props: ProductEditForm) => {
         <FormComponent>
           <FormComponent.Line>
             <FormComponent.Frame>
+              <FormComponent.Label>Código</FormComponent.Label>
+              <FormField
+                control={productEditForm.form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Código do produto"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
               <FormComponent.Label>Produto</FormComponent.Label>
               <FormField
                 control={productEditForm.form.control}
@@ -100,7 +120,7 @@ export const ProductEdit = (props: ProductEditForm) => {
                       defaultValue={field.value ?? []}
                       placeholder="Selecione o(s) fornecedor(es) do produto"
                       variant="inverted"
-                      maxCount={2}
+                      maxCount={1}
                     />
                     <FormMessage />
                   </FormItem>
@@ -541,7 +561,7 @@ export const ProductEdit = (props: ProductEditForm) => {
               Editar Produto
             </FormComponent.Button>
             <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
+              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
               handlePress={productEditForm.form.handleSubmit(
                 productEditForm.onSubmitRemove,
               )}

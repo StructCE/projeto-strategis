@@ -3,6 +3,8 @@ import {
   CalendarIcon,
   Download,
   Eraser,
+  FilePenLine,
+  Info,
   Search,
   Trash2,
   UserCog2,
@@ -23,6 +25,14 @@ import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
 import {
@@ -188,14 +198,16 @@ export default function CreatePurchaseOrder() {
       })),
     };
 
+    console.log(JSON.stringify(purchaseData, null, 2));
+
     // Exemplo de exportação do pedido como JSON (feito com gpt, verificar se ta tudo certo)
-    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(purchaseData),
-    )}`;
-    const link = document.createElement("a");
-    link.href = jsonString;
-    link.download = `PedidoDeCompra_${formatDate(date ?? new Date())}_${formatResponsibleName(inputResponsible)}`;
-    link.click();
+    // const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+    //   JSON.stringify(purchaseData),
+    // )}`;
+    // const link = document.createElement("a");
+    // link.href = jsonString;
+    // link.download = `PedidoDeCompra_${formatDate(date ?? new Date())}_${formatResponsibleName(inputResponsible)}`;
+    // link.click();
   };
 
   return (
@@ -212,26 +224,29 @@ export default function CreatePurchaseOrder() {
 
         {/* Inputs da data e do responsável pelo pedido */}
         <TableComponent.FiltersLine>
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <CalendarIcon className={className} />
               )}
             />
             <Filter.DatePicker
+              className="text-sm sm:text-base"
               date={date}
               setDate={setDate}
               open={open}
               setOpen={setOpen}
             ></Filter.DatePicker>
           </Filter>
-          <Filter className="lg:w-[250px]">
+
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[250px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <UserCog2 className={className} />
               )}
             />
             <Filter.Input
+              className="text-sm sm:text-base"
               placeholder="Responsável"
               state={inputResponsible}
               setState={setInputResponsible}
@@ -244,26 +259,28 @@ export default function CreatePurchaseOrder() {
         </TableComponent.Subtitle>
 
         <TableComponent.FiltersLine>
-          <Filter className="lg:w-[130px]">
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[130px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Input
+              className="text-sm sm:text-base"
               placeholder="Código"
               state={inputCode}
               setState={setInputCode}
             />
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Input
+              className="text-sm sm:text-base"
               placeholder="Produto"
               state={inputProduct}
               setState={setInputProduct}
@@ -282,17 +299,18 @@ export default function CreatePurchaseOrder() {
               placeholder="Fornecedores"
               variant="inverted"
               maxCount={2}
-              className="font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] font-normal text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+              className="font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-sm font-normal text-black ring-0 placeholder:text-sm hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:text-base placeholder:sm:text-base lg:text-center"
             />
           </div>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Select
+              className="text-sm sm:text-base"
               placeholder="Estoque"
               state={selectStock}
               setState={setSelectStock}
@@ -306,7 +324,7 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
@@ -317,7 +335,9 @@ export default function CreatePurchaseOrder() {
               state={selectAddress}
               setState={setSelectAddress}
               className={
-                selectStock === "" ? "cursor-not-allowed opacity-50" : ""
+                selectStock === ""
+                  ? "cursor-not-allowed text-sm opacity-50 sm:text-base"
+                  : "text-sm sm:text-base"
               }
             >
               {selectStock === ""
@@ -344,13 +364,14 @@ export default function CreatePurchaseOrder() {
         </TableComponent.FiltersLine>
 
         <TableComponent.FiltersLine>
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Select
+              className="text-sm sm:text-base"
               placeholder="Tipo de Controle"
               state={selectControlType}
               setState={setSelectControlType}
@@ -364,13 +385,14 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Select
+              className="text-sm sm:text-base"
               placeholder="Categoria"
               state={selectCategory}
               setState={setSelectCategory}
@@ -384,13 +406,14 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Select
+              className="text-sm sm:text-base"
               placeholder="Setor de Uso"
               state={selectSector}
               setState={setSelectSector}
@@ -404,13 +427,14 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Select
+              className="text-sm sm:text-base"
               placeholder="Status"
               state={selectStatus}
               setState={setSelectStatus}
@@ -420,13 +444,14 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
               )}
             />
             <Filter.Select
+              className="text-sm sm:text-base"
               placeholder="Dia de Compra"
               state={selectBuyDay}
               setState={setSelectBuyDay}
@@ -466,7 +491,8 @@ export default function CreatePurchaseOrder() {
           </TooltipProvider>
         </TableComponent.FiltersLine>
 
-        <TableComponent.Table>
+        {/* TELAS GRANDES */}
+        <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8">
             <TableComponent.ValueTitle className="text-center">
               Código
@@ -536,11 +562,159 @@ export default function CreatePurchaseOrder() {
             ))}
         </TableComponent.Table>
 
+        {/*  TELAS PEQUENAS */}
+        <TableComponent.Table className="block sm:hidden">
+          <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3">
+            <TableComponent.ValueTitle className="text-center text-[15px]">
+              Cód.
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-[15px]">
+              Produto
+            </TableComponent.ValueTitle>
+            <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
+          </TableComponent.LineTitle>
+
+          {areAllFiltersEmpty && (
+            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Utilize os filtros acima para encontrar produtos cadastrados no
+                estoque
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
+          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
+            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum produto encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
+          {!areAllFiltersEmpty &&
+            filteredProducts.map((product, index) => (
+              <TableComponent.Line
+                className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
+                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                }`}
+                key={index}
+              >
+                <TableComponent.Value className="text-center text-[14px]">
+                  {product.code}
+                </TableComponent.Value>
+                <TableComponent.Value className="text-[14px]">
+                  {product.name}
+                </TableComponent.Value>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
+              Detalhes
+            </Button> */}
+                    <Info size={24} />
+                  </DialogTrigger>
+                  <DialogContent
+                    aria-describedby={undefined}
+                    className="w-full gap-2 p-5"
+                  >
+                    <DialogHeader>
+                      <DialogTitle className="text-left text-xl">
+                        Comprar Produto
+                      </DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription className="flex flex-col gap-1 text-left text-black">
+                      <p className="text-base">
+                        <span className="font-semibold">Código: </span>{" "}
+                        {product.code}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Produto: </span>{" "}
+                        {product.name}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">
+                          Endereço de Estoque:
+                        </span>{" "}
+                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Atual: </span>
+                        {product.stock_current}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Mínimo: </span>
+                        {product.stock_min}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Máximo: </span>
+                        {product.stock_max}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">
+                          Unidade de Compra (quantidade):{" "}
+                        </span>
+                        {product.buy_unit.description} (
+                        {product.buy_unit.unitsPerPack})
+                      </p>
+                      <div className="text-base">
+                        <span className="font-semibold">
+                          Quantidade a Comprar (fardo):{" "}
+                        </span>
+                        <Input
+                          type="number"
+                          value={quantities[product.code] ?? ""}
+                          onChange={(e) =>
+                            handleQuantityChange(product.code, e.target.value)
+                          }
+                          className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                        ></Input>
+                      </div>
+                      <p className="text-base">
+                        <span className="font-semibold">
+                          Quantidade a Comprar (unidade):{" "}
+                        </span>
+                        {Number(quantities[product.code] ?? 0) *
+                          product.buy_unit.unitsPerPack}
+                      </p>
+                      <div className="text-base">
+                        <span className="font-semibold">Fornecedor: </span>
+                        <Select
+                          onValueChange={(value) =>
+                            handleSupplierChange(product.code, value)
+                          }
+                          defaultValue={selectedSuppliers[product.code] ?? ""}
+                        >
+                          <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
+                            <SelectValue placeholder="Selecione um fornecedor" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {product.suppliers.map((supplier, i) => (
+                              <SelectItem value={supplier.name} key={i}>
+                                {supplier.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="mt-3 flex w-full justify-end">
+                        <Button
+                          onClick={() => handleAddProduct(product)}
+                          className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                        >
+                          Adicionar
+                        </Button>
+                      </div>
+                    </DialogDescription>
+                  </DialogContent>
+                </Dialog>
+              </TableComponent.Line>
+            ))}
+        </TableComponent.Table>
+
         <TableComponent.Title className="mt-2">
           Pedido de Compra
         </TableComponent.Title>
 
-        <TableComponent.Table>
+        {/* TELAS GRANDES */}
+        <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_90px_120px_110px_110px_1fr_86px] gap-6 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
               Código
@@ -639,6 +813,145 @@ export default function CreatePurchaseOrder() {
                   className="mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent hover:text-hover_preto sm:text-[16px]"
                 >
                   <Trash2 size={20} />
+                </Button>
+              </TableComponent.Line>
+            ))
+          )}
+        </TableComponent.Table>
+
+        {/* TELAS PEQUENAS */}
+        <TableComponent.Table className="block sm:hidden">
+          <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px_24px] gap-3 px-3">
+            <TableComponent.ValueTitle className="text-center text-[15px]">
+              Cód.
+            </TableComponent.ValueTitle>
+            <TableComponent.ValueTitle className="text-[15px]">
+              Produto
+            </TableComponent.ValueTitle>
+            <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
+            <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
+          </TableComponent.LineTitle>
+
+          {addedProducts.length === 0 ? (
+            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Adicione produtos para criar uma pedido de compra de mercadorias
+              </TableComponent.Value>
+            </TableComponent.Line>
+          ) : (
+            addedProducts.map((product, index) => (
+              <TableComponent.Line
+                className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px_24px] gap-3 px-3 ${
+                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                }`}
+                key={index}
+              >
+                <TableComponent.Value className="text-center text-[14px]">
+                  {product.code}
+                </TableComponent.Value>
+                <TableComponent.Value className="text-[14px]">
+                  {product.name}
+                </TableComponent.Value>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
+              Detalhes
+            </Button> */}
+                    <FilePenLine size={24} />
+                  </DialogTrigger>
+                  <DialogContent
+                    aria-describedby={undefined}
+                    className="w-full gap-2 p-5"
+                  >
+                    <DialogHeader>
+                      <DialogTitle className="text-left text-xl">
+                        Comprar Produto
+                      </DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription className="flex flex-col gap-1 text-left text-black">
+                      <p className="text-base">
+                        <span className="font-semibold">Código: </span>{" "}
+                        {product.code}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Produto: </span>{" "}
+                        {product.name}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">
+                          Endereço de Estoque:
+                        </span>{" "}
+                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Atual: </span>
+                        {product.stock_current}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Mínimo: </span>
+                        {product.stock_min}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">Estoque Máximo: </span>
+                        {product.stock_max}
+                      </p>
+                      <p className="text-base">
+                        <span className="font-semibold">
+                          Unidade de Compra (quantidade):{" "}
+                        </span>
+                        {product.buy_unit.description} (
+                        {product.buy_unit.unitsPerPack})
+                      </p>
+                      <div className="text-base">
+                        <span className="font-semibold">
+                          Quantidade a Comprar (fardo):{" "}
+                        </span>
+                        <Input
+                          type="number"
+                          value={quantities[product.code] ?? ""}
+                          onChange={(e) =>
+                            handleQuantityChange(product.code, e.target.value)
+                          }
+                          className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                        ></Input>
+                      </div>
+                      <p className="text-base">
+                        <span className="font-semibold">
+                          Quantidade a Comprar (unidade):{" "}
+                        </span>
+                        {Number(quantities[product.code] ?? 0) *
+                          product.buy_unit.unitsPerPack}
+                      </p>
+                      <div className="text-base">
+                        <span className="font-semibold">Fornecedor: </span>
+                        <Select
+                          onValueChange={(value) =>
+                            handleSupplierChange(product.code, value)
+                          }
+                          defaultValue={selectedSuppliers[product.code] ?? ""}
+                        >
+                          <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
+                            <SelectValue placeholder="Selecione um fornecedor" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {product.suppliers.map((supplier, i) => (
+                              <SelectItem value={supplier.name} key={i}>
+                                {supplier.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </DialogDescription>
+                  </DialogContent>
+                </Dialog>
+
+                <Button
+                  onClick={() => handleRemoveProduct(product.code)}
+                  className="mb-0 h-fit w-fit bg-transparent px-0 py-0 text-[14px] font-medium text-black hover:bg-transparent hover:text-hover_preto sm:text-[16px]"
+                >
+                  <Trash2 size={24} />
                 </Button>
               </TableComponent.Line>
             ))

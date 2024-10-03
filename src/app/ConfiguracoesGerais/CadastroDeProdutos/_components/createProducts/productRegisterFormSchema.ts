@@ -21,6 +21,8 @@ export const addressSchema = z.object({
 });
 
 export const createProductFormSchema = z.object({
+  code: z.string({ required_error: "O código do produto é obrigatório." }),
+
   name: z
     .string({
       required_error: "Digite o nome do produto.",

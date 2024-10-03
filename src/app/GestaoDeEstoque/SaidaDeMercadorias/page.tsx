@@ -1,3 +1,4 @@
+import React from "react";
 import { Separator } from "~/components/ui/separator";
 import ExitsHistory from "./_components/exitsHistory/exitsHistory";
 import ManageExits from "./_components/manageExits/manageExits";
