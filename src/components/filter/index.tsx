@@ -43,7 +43,7 @@ type FilterInputProps = {
 
 Filter.Input = function FilterInput(props: FilterInputProps) {
   const style = cn(
-    "border-none bg-transparent font-inter font-regular text-[16px] placeholder:text-black opacity-100 placeholder:text-opacity-50 outline-none focus:outline-none w-full",
+    "border-none bg-transparent font-inter font-normal text-[16px] placeholder:text-black opacity-100 placeholder:text-opacity-50 outline-none focus:outline-none w-full",
     props.className,
   );
   return (
@@ -67,7 +67,7 @@ type FilterSelectProps = {
 
 Filter.Select = function FilterSelect(props: FilterSelectProps) {
   const style = cn(
-    "h-auto gap-[14px] bg-transparent font-inter text-[16px] font-regular text-black opacity-100 data-[placeholder]:opacity-50 m-0 p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0",
+    "h-auto gap-[14px] bg-transparent font-inter text-[16px] font-normal text-black opacity-100 data-[placeholder]:opacity-50 m-0 p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0",
     props.className,
   );
   return (
@@ -92,7 +92,7 @@ type FilterSelectItemsProps = {
 
 Filter.SelectItems = function FilterSelectItems(props: FilterSelectItemsProps) {
   const style = cn(
-    "font-regular font-inter text-[16px] text-black mr-6 border-none focus:outline-none focus:ring-0 focus:border-transparent ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0",
+    "font-normal font-inter text-[16px] text-black mr-6 border-none focus:outline-none focus:ring-0 focus:border-transparent ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0",
     props.className,
   );
   return (
@@ -113,7 +113,7 @@ type FilterDatePickerProps = {
 
 Filter.DatePicker = function FilterDatePicker(props: FilterDatePickerProps) {
   const style = cn(
-    "rounded-0 font-regular m-0 mr-[4px] justify-start bg-transparent p-0 font-inter text-[16px] opacity-60",
+    "rounded-0 font-normal m-0 mr-[4px] justify-start bg-transparent p-0 font-inter text-[16px] opacity-60",
     props.className,
   );
   return (

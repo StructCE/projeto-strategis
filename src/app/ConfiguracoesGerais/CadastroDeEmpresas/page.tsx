@@ -1,5 +1,5 @@
 import { CompanyRegister } from "./_components/createCompany/companyRegister";
-import { ManageCompaniesTable } from "./_components/manageCompany/manageCompanies";
+import { ManageCompaniesTable } from "./_components/manageCompanies/manageCompanies";
 
 export default function CompanyRegistration() {
   return (

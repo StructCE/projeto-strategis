@@ -8,7 +8,7 @@ export default function ButtonsExamples() {
       <TableButtonComponent className="pt-2 sm:pt-4">
         <TableButtonComponent.Link
           link_ref="/GestaoDeEstoque/AjustesDeEstoque/CriarAjusteDeEstoque"
-          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao"
+          className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1"
           placeholder="Criar Novo Ajuste de Estoque"
         >
           <ExternalLink
@@ -23,7 +23,7 @@ export default function ButtonsExamples() {
       {/* Botão que faz uma ação/operação */}
       <TableButtonComponent className="pt-2 sm:pt-4">
         <TableButtonComponent.Button
-          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao"
+          className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1"
           handlePress={() => console.log("a")}
         >
           Finalizar Ajuste de Estoque
@@ -33,7 +33,7 @@ export default function ButtonsExamples() {
       {/* Botão que faz uma ação/operação com icone */}
       <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
         <TableButtonComponent.Button
-          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao max-[425px]:w-full"
+          className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1 max-[425px]:w-full"
           icon={
             <Download
               className="flex h-full cursor-pointer self-center"

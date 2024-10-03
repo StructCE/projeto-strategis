@@ -1,6 +1,6 @@
 "use client";
 import { Calendar, Eraser, UserCog2 } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
@@ -27,7 +27,7 @@ export default function ManageRejectedRequestsTable() {
   const [inputResponsible, setInputResponsible] = useState("");
 
   const filteredRequests = requests.filter((request) => {
-    const matchesStatus = request.status == "rejected";
+    const matchesStatus = request.status == "Rejeitada";
 
     const matchesDate =
       !date ||
@@ -134,7 +134,7 @@ export default function ManageRejectedRequestsTable() {
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
                   Detalhes
                 </Button>
               </DialogTrigger>
