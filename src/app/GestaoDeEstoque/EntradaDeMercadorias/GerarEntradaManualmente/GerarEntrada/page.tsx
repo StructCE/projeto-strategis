@@ -169,7 +169,7 @@ export default function CreateEntry() {
         code: product.code,
         name: product.name,
         stock_current: product.stock_current,
-        unit_in_entry_manual: [product.code] ?? 0,
+        unit_in_entry_manual: [product.code],
         quantity_in_inventory: quantitiesUnit[product.code] ?? 0,
         quantity_bale_in_inventory: quantitiesBale[product.code] ?? 0,
         price_unit_in_manual_entry: priceUnit[product.code] ?? 0,
@@ -367,7 +367,7 @@ export default function CreateEntry() {
 
                 <Button
                   onClick={() => handleAddProduct(product)}
-                  className="hover:bg-hover_preto mb-0 h-8 bg-black text-[14px] font-medium text-white sm:text-[16px]"
+                  className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
                 >
                   Adicionar
                 </Button>
@@ -493,7 +493,7 @@ export default function CreateEntry() {
                 </TableComponent.Value>
                 <Button
                   onClick={() => handleRemoveProduct(product.code)}
-                  className="hover:text-hover_preto mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent sm:text-[16px]"
+                  className="mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent hover:text-hover_preto sm:text-[16px]"
                 >
                   <Trash2 size={20} />
                 </Button>
@@ -504,7 +504,7 @@ export default function CreateEntry() {
 
         <TableButtonComponent className="pt-2 sm:pt-4">
           <TableButtonComponent.Button
-            className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1"
+            className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1"
             handlePress={handleFinalizeEntry}
           >
             Finalizar Entrada
