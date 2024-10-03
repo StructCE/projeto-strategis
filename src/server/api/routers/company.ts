@@ -86,4 +86,18 @@ export const companyRouter = createTRPCRouter({
       const registeredCompany = await CompanyRepository.register(input);
       return registeredCompany;
     }),
+
+  editCompany: protectedProcedure
+    .input(companyRepositorySchema.editProps)
+    .query(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
+      const editedCompany = await CompanyRepository.edit(input);
+      return editedCompany;
+    }),
+
+  deleteCompany: protectedProcedure
+    .input(companyRepositorySchema.deleteProps)
+    .query(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
+      const deletedCompany = await CompanyRepository.remove(input);
+      return deletedCompany;
+    }),
 });
