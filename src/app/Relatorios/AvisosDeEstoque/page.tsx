@@ -1,6 +1,7 @@
 "use client";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
 import { useState } from "react";
+import * as XLSX from "xlsx";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import {
@@ -194,19 +195,24 @@ export default function CustomReports() {
     setSelectedProducts([]);
   }
 
-  function printSelectedProductData() {
+  interface StockWarningsData {
+    date: string; // or Date if you're using Date objects directly
+    products: Product[];
+  }
+
+  function exportSelectedProductData(fileType: string) {
     const productsToPrint = products.filter((product) =>
       selectedProducts.includes(product.code),
     );
 
     const stockWarningsData = {
-      date: new Date(2024, 9, 24)?.toISOString(),
+      date: new Date()?.toISOString(),
       products: productsToPrint.map((product) => ({
         code: product.code,
         name: product.name,
         suppliers: product.suppliers,
         status: product.status,
-        parent_product: product.parent_product ?? "Não tem",
+        parent_product: product.parent_product,
         buy_unit: product.buy_unit,
         buy_quantity: product.buy_quantity,
         buy_day: product.buy_day,
@@ -221,178 +227,95 @@ export default function CustomReports() {
       })),
     };
 
-    console.log(JSON.stringify(stockWarningsData, null, 2));
+    // console.log(JSON.stringify(stockWarningsData, null, 2));
 
-    // // Exemplo de exportação do pedido como JSON (feito com gpt, verificar se ta tudo certo)
-    // const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-    //   JSON.stringify(stockWarningsData),
-    // )}`;
-    // const link = document.createElement("a");
-    // link.href = jsonString;
-    // link.download = `RelatorioPersonalizado.json  `;
-    // link.click();
+    switch (fileType) {
+      case "csv":
+        exportToCSV(stockWarningsData);
+        break;
+
+      case "json":
+        exportToJson(stockWarningsData);
+        break;
+
+      case "pdf":
+        exportToPDF(stockWarningsData);
+        break;
+
+      default:
+        break;
+    }
   }
 
-  // interface StockWarningsData {
-  //   date: string; // or Date if you're using Date objects directly
-  //   products: Product[];
-  // }
+  function exportToJson(stockWarningsData: StockWarningsData) {
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(stockWarningsData),
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = `Avisos_Estoque_${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+  }
 
-  // function exportSelectedProductData(fileType: string) {
-  //   const productsToPrint = products.filter((product) =>
-  //     selectedProducts.includes(product.code),
-  //   );
+  function exportToPDF(stockWarningsData: StockWarningsData) {
+    return;
+  }
 
-  //   const stockWarningsData = {
-  //     date: new Date()?.toISOString(),
-  //     products: productsToPrint.map((product) => ({
-  //       code: product.code,
-  //       name: product.name,
-  //       suppliers: product.suppliers,
-  //       status: product.status,
-  //       parent_product: product.parent_product ?? "Não tem",
-  //       buy_unit: product.buy_unit,
-  //       buy_quantity: product.buy_quantity,
-  //       buy_day: product.buy_day,
-  //       stock_current: product.stock_current,
-  //       stock_min: product.stock_min,
-  //       stock_max: product.stock_max,
-  //       type_of_control: product.type_of_control,
-  //       product_category: product.product_category,
-  //       sector_of_use: product.sector_of_use,
-  //       address: product.address,
-  //       users_with_permission: product.users_with_permission,
-  //     })),
-  //   };
+  function exportToCSV(stockWarningsData: StockWarningsData) {
+    const headers = [
+      "Codigo",
+      "Status",
+      "Produto",
+      "Und de Compra (Sigla) - Qtd",
+      "Fornecedores",
+      "Tipo de Controle",
+      "Categoria do Produto",
+      "Setor de Utilizacao",
+      "Estoque",
+      "Endereço de Estoque",
+      "Estoque Atual",
+      "Estoque Mínimo",
+      "Estoque Máximo",
+      "Qtd de Compra",
+      "Dia de Compra",
+      "Quem Pode Requisitar o Produto",
+      "Produto Pai",
+    ];
 
-  //   console.log(JSON.stringify(stockWarningsData, null, 2));
+    const worksheetData = [
+      headers,
+      ...stockWarningsData.products.map((product: Product) => [
+        product.code,
+        product.status,
+        product.name,
+        `${product.buy_unit.description} (${product.buy_unit.abbreviation}) - ${product.buy_unit.unitsPerPack}`,
+        product.suppliers.map((supplier) => supplier.name).join(", "), // Fornecedores como string
+        product.type_of_control.description,
+        product.product_category.description,
+        product.sector_of_use.description,
+        product.address?.stock,
+        `${product.address?.storage}, ${product.address?.shelf}`,
+        product.stock_current,
+        product.stock_min,
+        product.stock_max,
+        product.buy_quantity,
+        product.buy_day,
+        product.users_with_permission
+          ?.filter((user) => user.role === "Requisitante")
+          .map((user) => user.name)
+          .join(", "),
+        product.parent_product ? product.parent_product : "Não tem Produto Pai",
+      ]),
+    ];
 
-  //   switch (fileType) {
-  //     case "csv":
-  //       exportToCSV(stockWarningsData);
-  //       break;
-
-  //     case "json":
-  //       exportToJson(stockWarningsData);
-  //       break;
-
-  //     case "pdf":
-  //       exportToPDF(stockWarningsData);
-  //       break;
-
-  //     default:
-  //       break;
-  //   }
-  // }
-
-  // function exportToJson(stockWarningsData: StockWarningsData) {
-  //   // Exemplo de exportação do pedido como JSON (feito com gpt, verificar se ta tudo certo)
-  //   const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-  //     JSON.stringify(stockWarningsData),
-  //   )}`;
-  //   const link = document.createElement("a");
-  //   link.href = jsonString;
-  //   link.download = `RelatorioPersonalizado.json  `;
-  //   link.click();
-  // }
-
-  // function exportToPDF(stockWarningsData: StockWarningsData) {
-  //   return;
-  // }
-
-  // function exportToCSV(stockWarningsData: StockWarningsData) {
-  //   // Create CSV headers
-  //   const headers = [
-  //     "COD",
-  //     "STATUS",
-  //     "DESCRIÇÃO", // Nome
-  //     "Qtd Compra",
-  //     "Compra Unid",
-  //     "FORNECEDORES",
-  //     "TIPO DE CONTROLE",
-  //     "Categoria",
-  //     "Local Estoque",
-  //     "Ultimo Inventário",
-  //     "Estoque Atual",
-  //     "Estoque Atual (fardo)",
-  //     "Estoque Mínimo (Unidade)",
-  //     "Estoque Máximo",
-  //     "Vai Comprar",
-  //     "Qtd a Comprar (Unidade)",
-  //     "Qtd_Pedido_Fardo",
-  //     "Setor de Utiliza",
-  //     "Dia de Compra",
-  //     "Quem Requisita o Produto",
-  //     "Estoque",
-  //     "Local",
-  //     "Prateleira",
-  //     "Endereço Estoque",
-  //     "Estoque Maximo Finalização", //??
-  //     "Produto Pai",
-  //     "Nome Pai",
-  //     "Cod Pai",
-  //   ];
-
-  //   // Convert products to CSV rows
-  //   const csvRows = stockWarningsData.products.map((product) => {
-  //     product.code,
-  //     product.status,
-  //     product.name,
-  //     product.buy_unit.unitsPerPack,
-  //     product.buy_unit.abbreviation,
-  //     `"${product.suppliers.map((supplier) => supplier.name).join(", ")}"`,
-  //     product.type_of_control.description,
-  //     product.product_category.description,
-  //     product.sector_of_use.description,
-  //     null, //ultimo inventario
-  //     product.stock_current,
-  //     null, //estoque atual (fardo)
-  //     product.stock_min,
-  //     product.stock_max,
-  //     null, // VAI COMPRAR
-  //     product.buy_quantity,
-  //     null, // Quantida a comprar (fardo)
-  //     product.sector_of_use.description,
-  //     product.buy_day,
-  //     `"${
-  //       product.users_with_permission
-  //         ?.filter((user) => user.role === "Requisitante")
-  //         .map((user) => user.name)
-  //         .join(", ") ?? null
-  //     }"`,
-  //     product.address.stock,
-  //     product.address.storage,
-  //     product.address.shelf,
-  //     [
-  //       product.address.stock,
-  //       product.address.storage,
-  //       product.address.shelf,
-  //     ].join(" - "),
-  //     null,
-  //     product.parent_product ?? "Não tem pai",
-  //     // product.parent_product?.name ?? null,
-  //     // product.parent_product?.code ?? null,
-  //   });
-
-  //   console.log(csvRows);
-  //   // Combine headers and rows into a single CSV string
-  //   const csvContent = [headers, ...csvRows]
-  //     .map((row) => row.join(","))
-  //     .join("\n");
-
-  //   // Create a Blob from the CSV string
-  //   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-
-  //   // Create a link element and trigger a download
-  //   const link = document.createElement("a");
-  //   const url = URL.createObjectURL(blob);
-  //   link.setAttribute("href", url);
-  //   link.setAttribute("download", "products_data.csv");
-  //   link.style.visibility = "hidden";
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // }
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Avisos de Estoque");
+    XLSX.writeFile(
+      workbook,
+      `Avisos_Estoque_${new Date().toISOString().slice(0, 10)}.xlsx`,
+    );
+  }
 
   return (
     <TableComponent>
@@ -849,7 +772,7 @@ export default function CustomReports() {
               color="white"
             />
           }
-          handlePress={printSelectedProductData}
+          handlePress={() => exportSelectedProductData("pdf")}
         >
           Exportar Dados em PDF
         </TableButtonComponent.Button>
@@ -864,7 +787,7 @@ export default function CustomReports() {
               color="white"
             />
           }
-          // handlePress={() => exportSelectedProductData("csv")}
+          handlePress={() => exportSelectedProductData("csv")}
         >
           Exportar Dados em CSV
         </TableButtonComponent.Button>
