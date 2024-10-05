@@ -14,19 +14,29 @@ async function getAll(props: ProductRepositoryInterfaces["GetAllProps"]) {
   const { filters } = props;
   const products = await db.product.findMany({
     where: {
-      name: filters.name,
-      controlType: {
-        name: filters.controlType,
-      },
-      category: {
-        name: filters.productCategory,
-      },
-      stock: {
-        name: filters.stock,
-      },
-      sectorOfUse: {
-        name: filters.sectorOfUse,
-      },
+      AND: [
+        { name: filters.name },
+        {
+          controlType: {
+            name: filters.controlType,
+          },
+        },
+        {
+          category: {
+            name: filters.productCategory,
+          },
+        },
+        {
+          stock: {
+            name: filters.stock,
+          },
+        },
+        {
+          sectorOfUse: {
+            name: filters.sectorOfUse,
+          },
+        },
+      ],
     },
   });
   return products;
