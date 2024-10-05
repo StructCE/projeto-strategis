@@ -1,11 +1,7 @@
-import { Inter } from "next/font/google";
-import "~/styles/globals.css";
-
 import { type Metadata } from "next";
-
-import Navbar from "~/components/navbar/navbar";
-import ResponsiveNavbar from "~/components/navbar/responsiveNavbar";
-import SidebarContainer from "~/components/sidebar";
+import { Inter } from "next/font/google";
+import LayoutSelector from "~/components/layout/layoutSelector";
+import "~/styles/globals.css";
 import { TRPCReactProvider } from "~/trpc/react";
 
 const inter = Inter({
@@ -28,16 +24,8 @@ export default function RootLayout({
         className={`${inter.variable} flex min-h-screen overflow-x-hidden bg-fundo_branco font-sans`}
       >
         <TRPCReactProvider>
-          <SidebarContainer />
-          <div className="ml-0 flex min-h-screen w-full flex-col overflow-x-hidden xl:ml-[330px]">
-            <div className="hidden xl:block">
-              <Navbar />
-            </div>
-            <div className="block xl:hidden">
-              <ResponsiveNavbar />
-            </div>
-            <div className="w-full p-4 sm:p-6 lg:p-8">{children}</div>
-          </div>
+          {/* Use LayoutSelector para alternar entre layouts */}
+          <LayoutSelector>{children}</LayoutSelector>
         </TRPCReactProvider>
       </body>
     </html>
