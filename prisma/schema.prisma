@@ -155,6 +155,7 @@ model Supplier {
 
 model Product {
     id               String   @id @default(cuid())
+    name             String
     status           String
     buyQuantity      Float
     buyUnit          String

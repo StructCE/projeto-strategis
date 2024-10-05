@@ -4,13 +4,15 @@ type ProductsCount = {
 
 type Product = {
   id: string;
+  name: string;
   status: string;
-  buyQuantity: string;
+  buyQuantity: number;
   buyUnit: string;
   buyDate: Date;
   currentStock: number;
   minimunStock: number;
   maximumStock: number;
+  currentInventory: number;
   controlTypeId: string;
   categoryId: string;
   sectorOfUseId: string;
