@@ -15,15 +15,19 @@ export const supplierRouter = createTRPCRouter({
 
   createSupplier: protectedProcedure
     .input(supplierRepositorySchema.createProps)
-    .query(async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
-      const createdSupplier = await SupplierRepository.create(input);
-      return createdSupplier;
-    }),
+    .mutation(
+      async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
+        const createdSupplier = await SupplierRepository.create(input);
+        return createdSupplier;
+      },
+    ),
 
   editSupplier: protectedProcedure
     .input(supplierRepositorySchema.editProps)
-    .query(async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
-      const editedSupplier = await SupplierRepository.edit(input);
-      return editedSupplier;
-    }),
+    .mutation(
+      async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
+        const editedSupplier = await SupplierRepository.edit(input);
+        return editedSupplier;
+      },
+    ),
 });
