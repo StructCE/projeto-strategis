@@ -46,24 +46,13 @@ model Session {
 }
 
 model User {
-    id                         String      @id @default(cuid())
-    name                       String?
-    email                      String?     @unique
-    phone                      String?
-    accounts                   Account[]
-    sessions                   Session[]
-    cargoId                    Int
-    Company                    Company[]
-    UserRole                   UserRole[]
-    Stock                      Stock[]
-    Entry                      Entry[]
-    OutputResponsible          Output[]    @relation("ResponsibleUser")
-    OutputApplicant            Output[]    @relation("ApplicantUser")
-    Adjust                     Adjust[]
-    Order                      Order[]
-    RequestResponsible         Request[]   @relation("Responsible")
-    RequestDeliveryResponsible Request[]   @relation("DeliveryResponsible")
-    Operation                  Operation[]
+    id       String     @id @default(cuid())
+    name     String?
+    email    String?    @unique
+    phone    String?
+    accounts Account[]
+    sessions Session[]
+    UserRole UserRole[]
 
     @@map("users")
 }
@@ -92,10 +81,11 @@ model Company {
     legalResponsibleId String
     filesAddress       String
 
-    legaResponsible User        @relation(fields: [legalResponsibleId], references: [id])
-    UserRole        UserRole[]
+    legaResponsible UserRole    @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
+    UserRole        UserRole[]  @relation("CompanyEmployees")
     Stock           Stock[]
     Operation       Operation[]
+    userId          String?
 }
 
 model UserRole {
@@ -105,10 +95,20 @@ model UserRole {
     companyId  String
     roleId     String
 
-    user     User      @relation(fields: [userId], references: [id])
-    supplier Supplier? @relation(fields: [supplierId], references: [id])
-    company  Company   @relation(fields: [companyId], references: [id])
-    role     Role      @relation(fields: [roleId], references: [id])
+    user                       User        @relation(fields: [userId], references: [id])
+    supplier                   Supplier?   @relation(fields: [supplierId], references: [id])
+    company                    Company     @relation("CompanyEmployees", fields: [companyId], references: [id])
+    role                       Role        @relation(fields: [roleId], references: [id])
+    CompanyResponsible         Company[]   @relation("CompanyResponsible")
+    StockResponsible           Stock[]     @relation("StockResponsible")
+    EntryResponsible           Entry[]     @relation("EntryResponsible")
+    OutputResponsible          Output[]    @relation("OutputResponsible")
+    OutputApplicant            Output[]    @relation("OutputApplicant")
+    AdjustResponsible          Adjust[]    @relation("AdjustResponsible")
+    OrderResponsible           Order[]     @relation("OrderResponsible")
+    RequestResponsible         Request[]   @relation("RequestResponsible")
+    RequestDeliveryResponsible Request[]   @relation("RequestDeliveryResponsible")
+    OperationResponsible       Operation[] @relation("OperationOperator")
 }
 
 model Role {
@@ -196,18 +196,18 @@ model ProductSupplier {
 
 model Stock {
     id                 String @id @default(cuid())
-    code               String
     name               String
     companyId          String
     legalResponsibleId String
 
     company          Company        @relation(fields: [companyId], references: [id])
-    legalResponsible User           @relation(fields: [legalResponsibleId], references: [id])
+    legalResponsible UserRole       @relation("StockResponsible", fields: [legalResponsibleId], references: [id])
     Product          Product[]
     StockCabinet     StockCabinet[]
     StockShelf       StockShelf[]
     Adjust           Adjust[]
     Order            Order[]
+    userId           String?
 }
 
 model Cabinet {
@@ -270,7 +270,7 @@ model Entry {
     type          String   @default("Em Aberto")
     status        String   @default("Em Dia")
 
-    responsible  User           @relation(fields: [responsibleId], references: [id])
+    responsible  UserRole       @relation("EntryResponsible", fields: [responsibleId], references: [id])
     operation    Operation      @relation(fields: [operationId], references: [id])
     ProductEntry ProductEntry[]
 }
@@ -284,8 +284,8 @@ model Output {
     requestArea   String
     operationId   String
 
-    responsible User      @relation("ResponsibleUser", fields: [responsibleId], references: [id])
-    applicant   User      @relation("ApplicantUser", fields: [applicantId], references: [id])
+    responsible UserRole  @relation("OutputResponsible", fields: [responsibleId], references: [id])
+    applicant   UserRole  @relation("OutputApplicant", fields: [applicantId], references: [id])
     operation   Operation @relation(fields: [operationId], references: [id])
 
     ProductOutput ProductOutput[]
@@ -339,7 +339,7 @@ model Adjust {
     operationId   String
 
     stock       Stock     @relation(fields: [stockId], references: [id])
-    responsible User      @relation(fields: [responsibleId], references: [id])
+    responsible UserRole  @relation("AdjustResponsible", fields: [responsibleId], references: [id])
     operation   Operation @relation(fields: [operationId], references: [id])
 }
 
@@ -359,7 +359,7 @@ model Order {
     responsibleId String
     stockId       String
 
-    responsible  User           @relation(fields: [responsibleId], references: [id])
+    responsible  UserRole       @relation("OrderResponsible", fields: [responsibleId], references: [id])
     stock        Stock          @relation(fields: [stockId], references: [id])
     OrderProduct OrderProduct[]
 }
@@ -384,8 +384,8 @@ model Request {
     status                String
     stockId               String
 
-    responsible         User             @relation(name: "Responsible", fields: [responsibleId], references: [id])
-    deliveryResponsible User             @relation(name: "DeliveryResponsible", fields: [deliveryResponsibleId], references: [id])
+    responsible         UserRole         @relation("RequestResponsible", fields: [responsibleId], references: [id])
+    deliveryResponsible UserRole         @relation("RequestDeliveryResponsible", fields: [deliveryResponsibleId], references: [id])
     RequestProduct      RequestProduct[]
 }
 
@@ -408,7 +408,7 @@ model Operation {
     description String
 
     company   Company     @relation(fields: [companyId], references: [id])
-    operator  User        @relation(fields: [operatorId], references: [id])
+    operator  UserRole    @relation("OperationOperator", fields: [operatorId], references: [id])
     Entry     Entry[]
     Output    Output[]
     Inventory Inventory[]
