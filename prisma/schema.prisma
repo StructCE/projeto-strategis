@@ -173,7 +173,7 @@ model Product {
 
     controlType     ControlType       @relation(fields: [controlTypeId], references: [id])
     category        ProductCategory   @relation(fields: [categoryId], references: [id])
-    sectorOfUse     SectorOfUse       @relation(fields: [sectorOfUseId], references: [id])
+    sectorOfUse     UseSector         @relation(fields: [sectorOfUseId], references: [id])
     stock           Stock             @relation(fields: [stockId], references: [id])
     shelf           Shelf             @relation(fields: [shelfId], references: [id])
     cabinet         Cabinet           @relation(fields: [cabinetId], references: [id])
@@ -254,7 +254,7 @@ model ProductCategory {
     Product Product[]
 }
 
-model SectorOfUse {
+model UseSector {
     id   String @id @default(cuid())
     name String
 
