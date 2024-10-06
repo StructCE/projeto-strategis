@@ -10,6 +10,13 @@ import GoogleProvider from "next-auth/providers/google";
 import { env } from "~/env";
 import { db } from "~/server/db";
 
+function customPrismaAdapter(p: typeof db) {
+  return {
+    ...PrismaAdapter(p),
+    createUser: undefined,
+  };
+}
+
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -49,7 +56,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  adapter: PrismaAdapter(db) as Adapter,
+  adapter: customPrismaAdapter(db) as Adapter,
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
