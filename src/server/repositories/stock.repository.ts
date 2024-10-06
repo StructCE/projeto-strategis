@@ -18,8 +18,12 @@ async function getAll(props: StockRepositoryInterfaces["GetAllProps"]) {
     },
     include: {
       legalResponsible: {
-        include: {},
+        include: {
+          user: true,
+          role: true,
+        },
       },
+
       StockShelf: {
         include: {
           shelf: true,
