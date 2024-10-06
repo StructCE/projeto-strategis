@@ -30,7 +30,7 @@ export const stockRouter = createTRPCRouter({
 
   registerStock: protectedProcedure
     .input(stockRepositorySchema.registerProps)
-    .query(async ({ input }): Promise<StockRouteInterfaces["Stock"]> => {
+    .mutation(async ({ input }): Promise<StockRouteInterfaces["Stock"]> => {
       const registeredStock = await StockRepository.register(input);
       return registeredStock;
     }),
