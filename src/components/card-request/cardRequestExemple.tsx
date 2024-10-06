@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { RequestComponent } from "~/components/card-request/cardRequest";
 
 export default function CardRequest() {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <div>
       <RequestComponent>
@@ -22,7 +24,7 @@ export default function CardRequest() {
             title="Fornecedor(es)"
             description="Brasal, Ambev, etc"
           />
-          <RequestComponent.ColumnButtonManage />
+          <RequestComponent.ColumnButtonManage onOpen={() => setIsOpen(true)} />
         </RequestComponent.Grid>
       </RequestComponent>
     </div>
