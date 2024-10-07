@@ -18,24 +18,26 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { states, suppliers } from "../supplierData";
+import { states } from "../supplierData";
 import { SupplierEdit } from "./editSuppliers/supplierEdit";
+import { api } from "~/trpc/react";
 
 export const ManageSuppliersTable = () => {
-  const [inputName, setInputName] = useState("");
+  const [inputCompany, setinputCompany] = useState("");
   const [inputEmail, setInputEmail] = useState("");
   const [selectState, setSelectState] = useState("");
 
-  const filteredSuppliers = suppliers.filter((supplier) => {
-    const matchesName =
-      inputName === "" ||
-      supplier.name.toLowerCase().includes(inputName.toLowerCase());
-    const matchesEmail =
-      inputEmail === "" ||
-      supplier.email.toLowerCase().includes(inputEmail.toLowerCase());
-    const matchesSector = selectState === "" || supplier.state === selectState;
-
-    return matchesName && matchesEmail && matchesSector;
+  const {
+    data: suppliers = [],
+    error,
+    isLoading,
+  } = api.supplier.getAll.useQuery({
+    filters: {
+      address: selectState,
+      cnpj: undefined,
+      company: inputCompany,
+      email: inputEmail,
+    },
   });
 
   return (
@@ -54,8 +56,8 @@ export const ManageSuppliersTable = () => {
           />
           <Filter.Input
             placeholder="Nome"
-            state={inputName}
-            setState={setInputName}
+            state={inputCompany}
+            setState={setinputCompany}
           />
         </Filter>
 
@@ -98,7 +100,7 @@ export const ManageSuppliersTable = () => {
               <Eraser
                 size={20}
                 onClick={() => {
-                  setInputName("");
+                  setinputCompany("");
                   setInputEmail("");
                   setSelectState("");
                 }}
@@ -119,7 +121,7 @@ export const ManageSuppliersTable = () => {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {filteredSuppliers.map((supplier, index) => (
+        {suppliers.map((supplier, index) => (
           <TableComponent.Line
             className={`grid-cols-[2fr_4fr_3fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
