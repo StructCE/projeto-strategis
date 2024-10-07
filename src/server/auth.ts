@@ -14,6 +14,13 @@ function customPrismaAdapter(p: typeof db) {
   return {
     ...PrismaAdapter(p),
     createUser: undefined,
+    getUser: (id: string) =>
+      p.user.findUnique({
+        where: { id },
+        include: {
+          UserRole: { include: { role: { include: { RoleModule: true } } } },
+        },
+      }),
   };
 }
 
@@ -27,17 +34,37 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      name: string;
+      email: string;
+      phone: string;
+      allowedPaths: string[];
       // ...other properties
-      // role: UserRole;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User {
+    name: string;
+    email: string;
+    phone: string;
+    UserRole: {
+      role: {
+        RoleModule: {
+          id: string;
+          functionalityName: string;
+          backendPath: string;
+          frontendPath: string;
+          moduleId: string;
+          roleId: string;
+        }[];
+      } & {
+        id: string;
+        name: string;
+      };
+      // ...other properties
+      // role: UserRole;
+    }[];
+  }
 }
-
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -51,8 +78,17 @@ export const authOptions: NextAuthOptions = {
     session: ({ session, user }) => ({
       ...session,
       user: {
-        ...session.user,
         id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        allowedPaths: [
+          ...new Set(
+            user.UserRole.flatMap((userRole) =>
+              userRole.role.RoleModule.map((module) => module.frontendPath),
+            ),
+          ),
+        ],
       },
     }),
   },
@@ -61,6 +97,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
     /**
      * ...add more providers here.

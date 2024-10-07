@@ -119,9 +119,12 @@ model Role {
 }
 
 model RoleModule {
-    id       String @id @default(cuid())
-    moduleId String
-    roleId   String
+    id                String @id @default(cuid())
+    functionalityName String
+    backendPath       String
+    frontendPath      String
+    moduleId          String
+    roleId            String
 
     module Module @relation(fields: [moduleId], references: [id])
     role   Role   @relation(fields: [roleId], references: [id])
