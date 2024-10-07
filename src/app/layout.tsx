@@ -1,12 +1,12 @@
 import { Inter } from "next/font/google";
 import "~/styles/globals.css";
-
 import { type Metadata } from "next";
-
 import Navbar from "~/components/navbar/navbar";
 import ResponsiveNavbar from "~/components/navbar/responsiveNavbar";
 import SidebarContainer from "~/components/sidebar";
 import { TRPCReactProvider } from "~/trpc/react";
+import { RolePermissionsWrapper } from "~/lib/rolePermissionsWrapper";
+import { AuthProvider } from "~/lib/authProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/logo-circ.png" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -28,16 +28,20 @@ export default function RootLayout({
         className={`${inter.variable} flex min-h-screen overflow-x-hidden bg-fundo_branco font-sans`}
       >
         <TRPCReactProvider>
-          <SidebarContainer />
-          <div className="ml-0 flex min-h-screen w-full flex-col overflow-x-hidden xl:ml-[330px]">
-            <div className="hidden xl:block">
-              <Navbar />
-            </div>
-            <div className="block xl:hidden">
-              <ResponsiveNavbar />
-            </div>
-            <div className="w-full p-4 sm:p-6 lg:p-8">{children}</div>
-          </div>
+          <AuthProvider>
+            <RolePermissionsWrapper>
+              <SidebarContainer />
+              <div className="ml-0 flex min-h-screen w-full flex-col overflow-x-hidden xl:ml-[330px]">
+                <div className="hidden xl:block">
+                  <Navbar />
+                </div>
+                <div className="block xl:hidden">
+                  <ResponsiveNavbar />
+                </div>
+                <div className="w-full p-4 sm:p-6 lg:p-8">{children}</div>
+              </div>
+            </RolePermissionsWrapper>
+          </AuthProvider>
         </TRPCReactProvider>
       </body>
     </html>

@@ -143,15 +143,16 @@ export const publicProcedure = errorHandledProcedure;
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = errorHandledProcedure.use(({ ctx, next }) => {
-  // if (!ctx.session || !ctx.session.user) {
-  //   throw new TRPCError({ code: "UNAUTHORIZED" });
-  // }
-  // TODO: FAZER LOGICA DE PERMISSAO DE CARGOS
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session?.user },
-    },
-  });
-});
+export const protectedProcedure = errorHandledProcedure.use(
+  ({ ctx, next, path }) => {
+    if (!ctx.session?.user.allowedBackendPaths.includes(path)) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: { ...ctx.session, user: ctx.session?.user },
+      },
+    });
+  },
+);

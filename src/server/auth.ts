@@ -37,7 +37,8 @@ declare module "next-auth" {
       name: string;
       email: string;
       phone: string;
-      allowedPaths: string[];
+      allowedFrontendPaths: string[];
+      allowedBackendPaths: string[];
       // ...other properties
     } & DefaultSession["user"];
   }
@@ -82,7 +83,14 @@ export const authOptions: NextAuthOptions = {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        allowedPaths: [
+        allowedFrontendPaths: [
+          ...new Set(
+            user.UserRole.flatMap((userRole) =>
+              userRole.role.RoleModule.map((module) => module.frontendPath),
+            ),
+          ),
+        ],
+        allowedBackendPaths: [
           ...new Set(
             user.UserRole.flatMap((userRole) =>
               userRole.role.RoleModule.map((module) => module.frontendPath),
