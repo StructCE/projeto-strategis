@@ -1,4 +1,6 @@
 "use client";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
 import { useState } from "react";
 import * as XLSX from "xlsx";
@@ -203,7 +205,10 @@ export default function CustomReports() {
     const allFilteredProductCodes = filteredProducts.map(
       (product) => product.code,
     );
-    setSelectedProducts(allFilteredProductCodes);
+
+    setSelectedProducts((prevSelectedProducts) => [
+      ...new Set([...prevSelectedProducts, ...allFilteredProductCodes]),
+    ]);
   }
 
   function handleDeselectAll() {
@@ -211,7 +216,7 @@ export default function CustomReports() {
   }
 
   interface StockWarningsData {
-    date: string; // or Date if you're using Date objects directly
+    date: string;
     products: Product[];
   }
 
@@ -242,8 +247,6 @@ export default function CustomReports() {
       })),
     };
 
-    // console.log(JSON.stringify(stockWarningsData, null, 2));
-
     switch (fileType) {
       case "csv":
         exportToCSV(stockWarningsData);
@@ -273,7 +276,166 @@ export default function CustomReports() {
   }
 
   function exportToPDF(stockWarningsData: StockWarningsData) {
-    return console.log(JSON.stringify(stockWarningsData, null, 2));
+    const doc = new jsPDF();
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text(
+      `Relatório de Avisos de Estoque - ${new Date(stockWarningsData.date).toLocaleDateString()}`,
+      14,
+      20,
+    );
+
+    doc.setFontSize(12);
+    let yPosition = 25;
+    const lineHeight = 5.5; // Altura entre as linhas de texto
+    const pageHeight = 280; // Limite de altura da página
+
+    function addKeyValuePair(
+      key: string,
+      value: string | number,
+      x1: number,
+      x2: number,
+      y: number,
+    ) {
+      doc.setFont("helvetica", "bold");
+      doc.text(`${key}:`, x1, y); // Chave
+      doc.setFont("helvetica", "normal");
+
+      const splitText: string[] = doc.splitTextToSize(
+        `${value}`,
+        120,
+      ) as string[];
+      doc.text(splitText, x2, y);
+
+      return splitText.length * lineHeight;
+    }
+
+    stockWarningsData.products.forEach((product) => {
+      const productHeight = 12 * lineHeight + 14;
+
+      if (yPosition + productHeight > pageHeight) {
+        doc.addPage();
+        yPosition = 14;
+      }
+
+      yPosition += addKeyValuePair(
+        "Código",
+        product.code,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Nome",
+        product.name,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Fornecedores",
+        product.suppliers.map((s) => s.name).join(", "),
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Status",
+        product.status,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Produto Pai",
+        product.parent_product ?? "N/A",
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Unidade de Compra",
+        `${product.buy_unit.description} (${product.buy_unit.abbreviation}) - ${product.buy_unit.unitsPerPack}`,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Quantidade de Compra",
+        product.buy_quantity,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Dia de Compra",
+        product.buy_day,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Estoque Atual",
+        product.stock_current,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Estoque Mínimo",
+        product.stock_min,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Estoque Máximo",
+        product.stock_max,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Tipo de Controle",
+        product.type_of_control.description,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Categoria do Produto",
+        product.product_category.description,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Setor de Uso",
+        product.sector_of_use.description,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Endereço de Estoque",
+        `${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Usuários com Permissão",
+        product.users_with_permission?.map((u) => u.name).join(", ") ?? "N/A",
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+
+      yPosition += 10;
+    });
+
+    doc.save(`Avisos_Estoque_${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
   function exportToCSV(stockWarningsData: StockWarningsData) {
