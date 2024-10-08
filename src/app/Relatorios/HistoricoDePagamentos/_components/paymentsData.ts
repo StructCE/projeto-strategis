@@ -8,14 +8,14 @@ export type Bank = {
   name: string;
 };
 
-export type accounts = {
+export type Account = {
   name: string;
 };
 
 export type AccountPlan = {
   name: string;
   abbreviation: string;
-  accounts: accounts[];
+  accounts: Account[];
 };
 
 export type DocumentType = {
@@ -39,7 +39,11 @@ export type Payment = {
   company: Company;
   date_document: Date;
   document: DocumentType;
-  account_plan: AccountPlan;
+  account_plan: {
+    name: string;
+    abbreviation: string;
+    account: Account;
+  };
   project: Project;
   expense_type: "Despesa Fixa" | "Despesa Variável" | "Receita";
   recurrence: "Recorrente" | "Avulsa" | "Parcelas";
@@ -65,7 +69,7 @@ export const payments: Payment[] = [
     account_plan: {
       name: "Despesas com Produção/Serviço",
       abbreviation: "DPS",
-      accounts: [{ name: "Bebidas (Diversos)" }],
+      account: { name: "Bebidas (Diversos)" },
     },
     project: { name: "Strategis - BPO Financeiro" },
     expense_type: "Despesa Fixa",
@@ -90,7 +94,7 @@ export const payments: Payment[] = [
     account_plan: {
       name: "Despesas Administrativas Outras",
       abbreviation: "DOA",
-      accounts: [{ name: "Uber (Outros)" }],
+      account: { name: "Uber (Outros)" },
     },
     project: { name: "Strategis - FidelizClub" },
     expense_type: "Despesa Variável",
@@ -115,7 +119,7 @@ export const payments: Payment[] = [
     account_plan: {
       name: "Receitas de Vendas (Delivery)",
       abbreviation: "RVD",
-      accounts: [{ name: "Vendas - Delivery Ifood" }],
+      account: { name: "Vendas - Delivery Ifood" },
     },
     project: { name: "Strategis - Geral" },
     expense_type: "Receita",
@@ -140,7 +144,7 @@ export const payments: Payment[] = [
     account_plan: {
       name: "Despesas com Pessoal",
       abbreviation: "DPE",
-      accounts: [{ name: "Alimentação (Diversas)" }],
+      account: { name: "Alimentação (Diversas)" },
     },
     project: { name: "Strategis - Geral" },
     expense_type: "Despesa Fixa",
@@ -165,7 +169,7 @@ export const payments: Payment[] = [
     account_plan: {
       name: "Despesas com Produção/Serviço",
       abbreviation: "DPS",
-      accounts: [{ name: "Bebidas (Diversos)" }],
+      account: { name: "Bebidas (Diversos)" },
     },
     project: { name: "Strategis - FidelizClub" },
     expense_type: "Despesa Variável",
@@ -190,7 +194,7 @@ export const payments: Payment[] = [
     account_plan: {
       name: "Receitas de Vendas (Delivery)",
       abbreviation: "DPS",
-      accounts: [{ name: "Vendas - Delivery Próprio" }],
+      account: { name: "Vendas - Delivery Próprio" },
     },
     project: { name: "Strategis - Geral" },
     expense_type: "Receita",
@@ -215,7 +219,7 @@ export const payments: Payment[] = [
     account_plan: {
       name: "Investimentos e Retiradas",
       abbreviation: "DIR",
-      accounts: [{ name: "Utensílios (I)" }],
+      account: { name: "Utensílios (I)" },
     },
     project: { name: "Strategis - BPO Financeiro" },
     expense_type: "Despesa Fixa",
