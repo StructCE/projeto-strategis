@@ -5,7 +5,6 @@ export type Role = {
 
 export type Contact = {
   name: string;
-  role: Role;
   email: string;
   phone: string;
 };
@@ -39,13 +38,11 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Maria Silva",
-        role: { name: "Estoquista", value: "Estoquista" },
         email: "maria.silva@fornecedora.com",
         phone: "(11) 91234-5678",
       },
       {
         name: "João Souza",
-        role: { name: "Estoquista", value: "Estoquista" },
         email: "joao.souza@fornecedora.com",
         phone: "(11) 98765-4321",
       },
@@ -65,13 +62,11 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Ana Oliveira",
-        role: { name: "Estoquista", value: "Estoquista" },
         email: "ana.oliveira@fornecedorb.com",
         phone: "(21) 91234-5678",
       },
       {
         name: "Carlos Pereira",
-        role: { name: "Estoquista", value: "Estoquista" },
         email: "carlos.pereira@fornecedorb.com",
         phone: "(21) 98765-4321",
       },
@@ -91,7 +86,6 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Paula Costa",
-        role: { name: "Estoquista", value: "Estoquista" },
         email: "paula.costa@fornecedorc.com",
         phone: "(31) 91234-5678",
       },
@@ -111,19 +105,16 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Roberto Lima",
-        role: { name: "Estoquista", value: "Estoquista" },
         email: "roberto.lima@fornecedord.com",
         phone: "(41) 98765-4321",
       },
       {
         name: "Fernanda Souza",
-        role: { name: "Estoquista", value: "Estoquista" },
         email: "fernanda.souza@fornecedord.com",
         phone: "(41) 91234-5678",
       },
       {
         name: "Pedro Martins",
-        role: { name: "Estoquista", value: "Estoquista" },
         email: "pedro.martins@fornecedord.com",
         phone: "(41) 99876-5432",
       },
@@ -143,7 +134,6 @@ export const suppliers: Supplier[] = [
     contacts: [
       {
         name: "Ricardo Almeida",
-        role: { name: "Estoquista", value: "Estoquista" },
         email: "ricardo.almeida@fornecedore.com",
         phone: "(51) 98765-4321",
       },
