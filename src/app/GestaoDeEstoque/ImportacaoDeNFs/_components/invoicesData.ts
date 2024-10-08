@@ -7,9 +7,6 @@ import {
   type TypeOfControl,
 } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 
-export const inputPath = "Documentos/Strategis/Restaurante1/NFs-pendentes";
-export const outputPath = "Documentos/Strategis/Restaurante1/NFs-aceitas";
-
 type Company = {
   name: string;
 };

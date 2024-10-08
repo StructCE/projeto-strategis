@@ -1,5 +1,5 @@
 "use client";
-import { Upload } from "lucide-react";
+// import { Upload } from "lucide-react";
 import { useState } from "react";
 import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms";
@@ -405,7 +405,7 @@ export const CompanyRegister = () => {
             </FormComponent.Frame>
           </FormComponent.Line>
 
-          <FormComponent.Line>
+          {/* <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>
                 Endereço Local dos Arquivos XML
@@ -431,7 +431,7 @@ export const CompanyRegister = () => {
                 )}
               />
             </FormComponent.Frame>
-          </FormComponent.Line>
+          </FormComponent.Line> */}
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button

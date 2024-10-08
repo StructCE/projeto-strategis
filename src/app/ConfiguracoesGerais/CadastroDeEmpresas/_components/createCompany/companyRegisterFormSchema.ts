@@ -78,11 +78,11 @@ export const createCompanyFormSchema = z.object({
     .string({ required_error: "CEP deve ser obrigatório." })
     .length(8, { message: "São necessarios 8 dígitos" }),
 
-  address_file_XML: z
-    .string({
-      required_error: "Selecione o endereço local dos arquivos XML",
-    })
-    .optional(),
+  // address_file_XML: z
+  //   .string({
+  //     required_error: "Selecione o endereço local dos arquivos XML",
+  //   })
+  //   .optional(),
 
   legal_representative: z
     .string({
