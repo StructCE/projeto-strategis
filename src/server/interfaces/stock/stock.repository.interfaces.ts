@@ -13,8 +13,6 @@ const registerProps = z.object({
   name: z.string(),
   companyId: z.string(),
   legalResponsibleId: z.string(),
-  cabinetsId: z.array(z.string()),
-  shelfsId: z.array(z.string()),
 });
 
 type RegisterProps = z.infer<typeof registerProps>;

@@ -7,12 +7,12 @@ type Product = {
   name: string;
   status: string;
   buyQuantity: number;
-  buyUnit: string;
   buyDate: Date;
   currentStock: number;
   minimunStock: number;
   maximumStock: number;
   currentInventory: number;
+  unitId: string;
   controlTypeId: string;
   categoryId: string;
   sectorOfUseId: string;

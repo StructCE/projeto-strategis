@@ -40,19 +40,14 @@ async function getCompanySuppliers(
 ) {
   const companySuppliers = await db.supplier.findMany({
     where: {
-      UserRole: {
+      Contact: {
         every: {
           companyId: props.id,
         },
       },
     },
     include: {
-      UserRole: {
-        include: {
-          user: true,
-          role: true,
-        },
-      },
+      Contact: true,
     },
   });
 

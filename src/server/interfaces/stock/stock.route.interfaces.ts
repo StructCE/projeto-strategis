@@ -9,8 +9,7 @@ type SerializedStock = {
   id: string;
   name: string;
   company: string;
-  cabinets: string[];
-  shelfs: string[];
+  cabinets: { name: string; shelfs: string[] }[];
   legalResponsible: {
     name: string;
     email: string;

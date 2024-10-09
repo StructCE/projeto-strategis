@@ -3,7 +3,6 @@ type UserRole = {
   userId: string;
   roleId: string;
   companyId: string;
-  supplierId: string | null;
 };
 
 export type UserRoleRouteInterfaces = {

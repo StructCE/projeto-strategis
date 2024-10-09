@@ -13,10 +13,12 @@ export const stockRouter = createTRPCRouter({
           id: stock.id,
           name: stock.name,
           company: stock.company.name,
-          cabinets: stock.StockCabinet.map(
-            (stockCabinets) => stockCabinets.cabinet.name,
-          ),
-          shelfs: stock.StockShelf.map((stockShelfs) => stockShelfs.shelf.name),
+          cabinets: stock.StockCabinet.map((stockCabinet) => ({
+            name: stockCabinet.cabinet.name,
+            shelfs: stockCabinet.CabinetShelf.map(
+              (cabinetShelf) => cabinetShelf.shelf.name,
+            ),
+          })),
           legalResponsible: {
             name: stock.legalResponsible.user.name,
             email: stock.legalResponsible.user.email,
