@@ -1,3 +1,5 @@
+import { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
+
 export type Role = {
   name: string;
   value: string;
@@ -10,19 +12,6 @@ export type Contact = {
   phone: string;
 };
 
-export type Supplier = {
-  name: string;
-  cnpj: string;
-  email: string;
-  phone: string;
-  state_registration: string;
-  address: string;
-  neighborhood: string;
-  city: string;
-  state: string;
-  cep: string;
-  contacts: Contact[];
-};
 
 export const suppliers: Supplier[] = [
   {
@@ -30,11 +19,11 @@ export const suppliers: Supplier[] = [
     cnpj: "12.345.678/0001-90",
     email: "contato@fornecedora.com",
     phone: "(11) 1234-5678",
-    state_registration: "1234567890",
+    stateRegistration: "1234567890",
     address: "Rua das Flores, 123",
     neighborhood: "Centro",
     city: "São Paulo",
-    state: "SP",
+    federativeUnit: "SP",
     cep: "01000-000",
     contacts: [
       {
@@ -56,11 +45,11 @@ export const suppliers: Supplier[] = [
     cnpj: "23.456.789/0001-01",
     email: "vendas@fornecedorb.com",
     phone: "(21) 2345-6789",
-    state_registration: "2345678901",
+    stateRegistration: "2345678901",
     address: "Avenida Brasil, 456",
     neighborhood: "Jardim",
     city: "Rio de Janeiro",
-    state: "RJ",
+    federativeUnit: "RJ",
     cep: "22000-000",
     contacts: [
       {
@@ -82,11 +71,11 @@ export const suppliers: Supplier[] = [
     cnpj: "34.567.890/0001-12",
     email: "financeiro@fornecedorc.com",
     phone: "(31) 3456-7890",
-    state_registration: "3456789012",
+    stateRegistration: "3456789012",
     address: "Praça da Liberdade, 789",
     neighborhood: "Liberdade",
     city: "Belo Horizonte",
-    state: "MG",
+    federativeUnit: "MG",
     cep: "30140-000",
     contacts: [
       {
@@ -102,11 +91,11 @@ export const suppliers: Supplier[] = [
     cnpj: "45.678.901/0001-23",
     email: "suporte@fornecedord.com",
     phone: "(88) 88888-8888",
-    state_registration: "4567890123",
+    stateRegistration: "4567890123",
     address: "Rua XV de Novembro, 101",
     neighborhood: "Centro Cívico",
     city: "Curitiba",
-    state: "PR",
+    federativeUnit: "PR",
     cep: "80010-000",
     contacts: [
       {
@@ -134,11 +123,11 @@ export const suppliers: Supplier[] = [
     cnpj: "56.789.012/0001-34",
     email: "emaildofornecedorabcdefghi@gmail.com",
     phone: "(00) 00000-0000",
-    state_registration: "5678901234",
+    stateRegistration: "5678901234",
     address: "Avenida Ipiranga, 202",
     neighborhood: "Independência",
     city: "Porto Alegre",
-    state: "RS",
+    federativeUnit: "RS",
     cep: "90030-000",
     contacts: [
       {

@@ -1,4 +1,5 @@
 "use client";
+
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -15,8 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { roles, states, type Supplier } from "../../supplierData";
+
+import { roles, states } from "../../supplierData";
 import { useSupplierForm } from "./useSupplierForm";
+
+import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
 
 type SupplierEditProps = {
   supplier: Supplier;
@@ -115,7 +119,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="state_registration"
+                name="stateRegistration"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -197,7 +201,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="state"
+                name="federativeUnit"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -363,7 +367,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               Editar Fornecedor
             </FormComponent.Button>
             <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
+              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
               handlePress={form.form.handleSubmit(form.onSubmitRemove)}
             >
               Remover Fornecedor

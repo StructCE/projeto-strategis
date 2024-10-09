@@ -33,7 +33,7 @@ export const ManageSuppliersTable = () => {
     isLoading,
   } = api.supplier.getAll.useQuery({
     filters: {
-      address: selectState,
+      address: undefined,
       cnpj: undefined,
       company: inputCompany,
       email: inputEmail,
@@ -131,7 +131,7 @@ export const ManageSuppliersTable = () => {
             <TableComponent.Value>{supplier.name}</TableComponent.Value>
             <TableComponent.Value>
               {supplier.address} - {supplier.neighborhood} - {supplier.city} (
-              {supplier.state})
+              {supplier.federativeUnit})
             </TableComponent.Value>
             <TableComponent.Value>{supplier.email}</TableComponent.Value>
 

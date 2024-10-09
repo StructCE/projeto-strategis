@@ -78,7 +78,7 @@ export const editSupplierFormSchema = z.object({
     })
     .optional(),
 
-  state_registration: z
+  stateRegistration: z
     .string({
       required_error: "Por favor digite a inscrição estadual do fornecedor.",
     })
@@ -110,7 +110,7 @@ export const editSupplierFormSchema = z.object({
       message: "A cidade deve ter pelo menos 2 caracteres.",
     }),
 
-  state: z
+  federativeUnit: z
     .string({
       required_error: "Por favor selecione a unidade federativa do fornecedor.",
     })
@@ -132,4 +132,6 @@ export const editSupplierFormSchema = z.object({
   contacts: z.array(supplierContactSchema).optional(),
 });
 
-export type EditSupplierFormValues = z.infer<typeof editSupplierFormSchema>;
+export type EditSupplierFormValues = { id: string } & z.infer<
+  typeof editSupplierFormSchema
+>;
