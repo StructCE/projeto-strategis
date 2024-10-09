@@ -64,7 +64,6 @@ export default function Navbar({ session }: { session: Session | null }) {
             Empresa:{" "}
             <span className="font-normal">{user.UserRole.}</span>
           </DropdownMenuLabel> */}
-          <UserInfo />
           <SignButtons />
         </DropdownMenuContent>
       </DropdownMenu>
