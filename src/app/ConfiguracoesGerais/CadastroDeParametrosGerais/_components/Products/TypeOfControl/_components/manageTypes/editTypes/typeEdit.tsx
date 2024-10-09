@@ -50,7 +50,7 @@ export const TypeEdit = (props: TypeEditForm) => {
               Editar Tipo
             </FormComponent.Button>
             <FormComponent.Button
-              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
+              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
               handlePress={typeEditForm.form.handleSubmit(
                 typeEditForm.onSubmitRemove,
               )}

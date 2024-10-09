@@ -11,11 +11,14 @@ export const useProductForm = (product: Product) => {
     resolver: zodResolver(editProductFormSchema),
     mode: "onChange",
     defaultValues: {
+      code: product.code,
       name: product.name,
       suppliers: product.suppliers.map((supplier) => supplier.name),
       status: product.status,
       parent_product: product.parent_product,
-      buy_or_production: product.buy_or_production,
+      users_with_permission: product.users_with_permission?.map(
+        (user) => user.name,
+      ),
       buy_unit: product.buy_unit.description,
       buy_quantity: product.buy_quantity,
       buy_day: product.buy_day,

@@ -92,7 +92,7 @@ export const UnitEdit = (props: UnitEditForm) => {
               Editar Unidade
             </FormComponent.Button>
             <FormComponent.Button
-              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
+              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
               handlePress={unitEditForm.form.handleSubmit(
                 unitEditForm.onSubmitRemove,
               )}

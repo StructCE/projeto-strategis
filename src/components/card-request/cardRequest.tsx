@@ -9,7 +9,7 @@ type RequestProps = {
 
 export const RequestComponent = (props: RequestProps) => {
   const rootStyle = cn(
-    "mx-12 my-3 border-1 solid gap-auto rounded-lg py-2.5 px-4 shadow-[0px_0px_4px_0px_#0000004d]",
+    "my-3 border-1 solid gap-auto rounded-lg py-2.5 px-4 shadow-[0px_0px_4px_0px_#0000004d]",
     props.classname,
   );
   return <div className={rootStyle}>{props.children}</div>;
@@ -38,6 +38,10 @@ type RequestComponentColumnItemProps = {
   isnº?: boolean;
 };
 
+type ColumnButtonManageProps = {
+  onOpen: () => void;
+};
+
 RequestComponent.ColumnItem = function RequestComponentColumnItem(
   props: RequestComponentColumnItemProps,
 ) {
@@ -56,11 +60,14 @@ RequestComponent.ColumnItem = function RequestComponentColumnItem(
 
 //// Botão gerenciar  ////
 RequestComponent.ColumnButtonManage =
-  function RequestComponentColumnButtonManage() {
+  function RequestComponentColumnButtonManage({
+    onOpen,
+  }: ColumnButtonManageProps) {
     return (
       <div className="flex items-center justify-center max-[768px]:col-span-2 max-[768px]:row-end-4">
         <Button
           size={"sm"}
+          onClick={onOpen}
           className="w-[130px] rounded-xl bg-cinza_destaque text-base font-semibold text-black hover:bg-hover_cinza_destaque"
         >
           Gerenciar

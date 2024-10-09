@@ -1,3 +1,5 @@
+import { type User } from "~/components/navbar/_components/userData";
+
 export type TypeOfControl = {
   description: string;
 };
@@ -155,7 +157,6 @@ export type Product = {
   suppliers: Supplier[];
   status: string;
   parent_product?: string;
-  buy_or_production: string;
   buy_unit: Unit;
   buy_quantity: string;
   buy_day: string;
@@ -166,7 +167,7 @@ export type Product = {
   product_category: ProductCategory;
   sector_of_use: SectorOfUse;
   address: Address;
-  permission?: boolean;
+  users_with_permission?: User[];
 };
 
 export const products: Product[] = [
@@ -174,8 +175,11 @@ export const products: Product[] = [
     name: "Cerveja Pilsen",
     code: "1001",
     status: "Ativo",
-    suppliers: [{ name: "Fornecedor A" }, { name: "Fornecedor B" }],
-    buy_or_production: "Produto de Compra",
+    suppliers: [
+      { name: "Fornecedor A" },
+      { name: "Fornecedor B" },
+      { name: "Fornecedor C" },
+    ],
     buy_unit: { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
     buy_quantity: "100",
     buy_day: "Segunda",
@@ -190,14 +194,26 @@ export const products: Product[] = [
       storage: "Armário 1",
       shelf: "Prateleira 1",
     },
-    permission: true,
+    users_with_permission: [
+      {
+        name: "Nome do Usuário 1",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+      {
+        name: "Nome do Usuário 3",
+        role: "Requisitante",
+        company: "TechNova Matriz",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
   {
     name: "Carne Bovina",
     code: "1002",
     status: "Ativo",
-    suppliers: [{ name: "Fornecedor B" }],
-    buy_or_production: "Produto de Compra",
+    suppliers: [{ name: "Fornecedor B" }, { name: "Fornecedor C" }],
     buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "50",
     buy_day: "Terça",
@@ -212,14 +228,20 @@ export const products: Product[] = [
       storage: "Armário 2",
       shelf: "Prateleira 3",
     },
-    permission: false,
+    users_with_permission: [
+      {
+        name: "Nome do Usuário 2",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
   {
     name: "Carne Moída",
     code: "1006",
     status: "Ativo",
     suppliers: [{ name: "Fornecedor B" }],
-    buy_or_production: "Produto de Produção",
     parent_product: "Carne Bovina",
     buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "20",
@@ -235,14 +257,20 @@ export const products: Product[] = [
       storage: "Armário 2",
       shelf: "Prateleira 4",
     },
-    permission: false,
+    users_with_permission: [
+      {
+        name: "Nome do Usuário 2",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
   {
     name: "Água Mineral",
     code: "1003",
     status: "Ativo",
-    suppliers: [{ name: "Fornecedor C" }],
-    buy_or_production: "Produto de Compra",
+    suppliers: [{ name: "Fornecedor C" }, { name: "Fornecedor D" }],
     buy_unit: { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
     buy_quantity: "200",
     buy_day: "Quarta",
@@ -257,14 +285,26 @@ export const products: Product[] = [
       storage: "Zona 1",
       shelf: "Prateleira 6",
     },
-    permission: true,
+    users_with_permission: [
+      {
+        name: "Nome do Usuário 1",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+      {
+        name: "Nome do Usuário 4",
+        role: "Requisitante",
+        company: "TechNova Filial",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
   {
     name: "Sabão em Pó",
     code: "1004",
     status: "Ativo",
     suppliers: [{ name: "Fornecedor D" }],
-    buy_or_production: "Produto de Compra",
     buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
     buy_quantity: "30",
     buy_day: "Quinta",
@@ -279,14 +319,20 @@ export const products: Product[] = [
       storage: "Zona 2",
       shelf: "Prateleira 7",
     },
-    permission: false,
+    users_with_permission: [
+      {
+        name: "Nome do Usuário 2",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
   {
     name: "Vinho Tinto",
     code: "1005",
     status: "Ativo",
     suppliers: [{ name: "Fornecedor E" }],
-    buy_or_production: "Produto de Compra",
     buy_unit: { description: "Fardo", abbreviation: "FRD", unitsPerPack: 10 },
     buy_quantity: "120",
     buy_day: "Sexta",
@@ -301,6 +347,73 @@ export const products: Product[] = [
       storage: "Zona 3",
       shelf: "Prateleira 10",
     },
-    permission: true,
+    users_with_permission: [
+      {
+        name: "Nome do Usuário 1",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+    ],
+  },
+  {
+    name: "Vodka Orloff",
+    code: "1007",
+    status: "Ativo",
+    suppliers: [{ name: "Fornecedor C" }, { name: "Fornecedor E" }],
+    buy_unit: { description: "Unidade", abbreviation: "UN", unitsPerPack: 1 },
+    buy_quantity: "4",
+    buy_day: "Sexta",
+    stock_current: "11",
+    stock_min: "10",
+    stock_max: "40",
+    type_of_control: { description: "Produtos de Bar" },
+    product_category: { description: "Bebidas - Destilados" },
+    sector_of_use: { description: "Bar" },
+    address: {
+      stock: "Estoque Bar",
+      storage: "Armário 1",
+      shelf: "Prateleira 2",
+    },
+    users_with_permission: [
+      {
+        name: "Nome do Usuário 1",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+    ],
+  },
+  {
+    name: "Arroz Branco",
+    code: "1008",
+    status: "Ativo",
+    suppliers: [
+      { name: "Fornecedor A" },
+      { name: "Fornecedor C" },
+      { name: "Fornecedor D" },
+    ],
+    buy_unit: { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
+    buy_quantity: "10",
+    buy_day: "Sexta",
+    stock_current: "0",
+    stock_min: "10",
+    stock_max: "30",
+    type_of_control: { description: "Produtos de Produção" },
+    product_category: { description: "Bebidas - Vinho" },
+    sector_of_use: { description: "Bar" },
+    address: {
+      stock: "Estoque Padaria",
+      storage: "Zona 3",
+      shelf: "Prateleira 10",
+    },
+    users_with_permission: [
+      {
+        name: "Nome do Usuário 2",
+        role: "Requisitante",
+        company: "Alimentos WCW",
+        phone: "(61) 99999-9999",
+      },
+    ],
   },
 ];

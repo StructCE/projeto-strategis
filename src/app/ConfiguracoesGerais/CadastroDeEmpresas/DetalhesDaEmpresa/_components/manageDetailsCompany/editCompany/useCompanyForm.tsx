@@ -28,13 +28,8 @@ export const useCompanyForm = (company: Company) => {
       cep: company.cep,
       state_registration: company.state_registration,
       tax_regime: company.tax_regime,
-      address_file_XML: company.xmlFilePath,
-      legal_representative: {
-        name: company.legal_representative.name,
-        role: company.legal_representative.role.value,
-        email: company.legal_representative.email,
-        phone: company.legal_representative.phone,
-      },
+      // address_file_XML: company.xmlFilePath,
+      legal_representative: company.legal_representative.name,
     },
   });
 

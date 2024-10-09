@@ -4,13 +4,18 @@ type Supplier = {
   name: string;
 };
 
+export type Address = {
+  stock: string;
+  storage: string;
+  shelf: string;
+};
+
 export type Product = {
   name: string;
   code: string;
   supplier: Supplier;
   status: string;
   parent_product?: string;
-  buy_or_production: string;
   buy_unit: Unit;
   requested_quantity: string;
   released_quantity: string;
@@ -18,6 +23,7 @@ export type Product = {
   stock_current: string;
   stock_min: string;
   stock_max: string;
+  address: Address;
 };
 
 export type Request = {
@@ -25,7 +31,7 @@ export type Request = {
   request_responsible: string;
   products: Product[];
   request_description: string;
-  status: "pending" | "accepted" | "rejected";
+  status: "Pendente" | "Confirmada" | "Rejeitada";
   status_description?: string;
   status_date?: Date;
   status_responsible?: string;
@@ -41,7 +47,6 @@ export const requests: Request[] = [
         code: "1001",
         status: "Ativo",
         supplier: { name: "Fornecedor A" },
-        buy_or_production: "Produto de Compra",
         buy_unit: {
           description: "Pacote",
           abbreviation: "PCT",
@@ -53,13 +58,17 @@ export const requests: Request[] = [
         stock_current: "200",
         stock_min: "50",
         stock_max: "300",
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 1",
+        },
       },
       {
         name: "Água Mineral",
         code: "1003",
         status: "Ativo",
         supplier: { name: "Fornecedor C" },
-        buy_or_production: "Produto de Compra",
         buy_unit: {
           description: "Pacote",
           abbreviation: "PCT",
@@ -71,10 +80,15 @@ export const requests: Request[] = [
         stock_current: "250",
         stock_min: "100",
         stock_max: "400",
+        address: {
+          stock: "Estoque Cozinha",
+          storage: "Armário 2",
+          shelf: "Prateleira 3",
+        },
       },
     ],
     request_description: "Descrição da requisição 1",
-    status: "pending",
+    status: "Pendente",
   },
   {
     request_date: new Date(2024, 9, 23),
@@ -85,7 +99,6 @@ export const requests: Request[] = [
         code: "1002",
         status: "Ativo",
         supplier: { name: "Fornecedor B" },
-        buy_or_production: "Produto de Compra",
         buy_unit: {
           description: "Kilograma",
           abbreviation: "KG",
@@ -97,13 +110,17 @@ export const requests: Request[] = [
         stock_current: "120",
         stock_min: "30",
         stock_max: "200",
+        address: {
+          stock: "Estoque Cozinha",
+          storage: "Armário 2",
+          shelf: "Prateleira 4",
+        },
       },
       {
         name: "Carne Moída",
         code: "1006",
         status: "Ativo",
         supplier: { name: "Fornecedor B" },
-        buy_or_production: "Produto de Produção",
         parent_product: "Carne Bovina",
         buy_unit: {
           description: "Kilograma",
@@ -116,10 +133,15 @@ export const requests: Request[] = [
         stock_current: "60",
         stock_min: "10",
         stock_max: "100",
+        address: {
+          stock: "Estoque Salão",
+          storage: "Zona 1",
+          shelf: "Prateleira 6",
+        },
       },
     ],
     request_description: "Descrição da requisição 2",
-    status: "accepted",
+    status: "Confirmada",
     status_description: "Confirmada parcialmente por motivo x",
     status_date: new Date(2024, 9, 24),
     status_responsible: "Estoquista 1",
@@ -133,7 +155,6 @@ export const requests: Request[] = [
         code: "1004",
         status: "Ativo",
         supplier: { name: "Fornecedor D" },
-        buy_or_production: "Produto de Compra",
         buy_unit: {
           description: "Kilograma",
           abbreviation: "KG",
@@ -145,13 +166,17 @@ export const requests: Request[] = [
         stock_current: "80",
         stock_min: "20",
         stock_max: "100",
+        address: {
+          stock: "Estoque Geral",
+          storage: "Zona 2",
+          shelf: "Prateleira 7",
+        },
       },
       {
         name: "Vinho Tinto",
         code: "1005",
         status: "Ativo",
         supplier: { name: "Fornecedor E" },
-        buy_or_production: "Produto de Compra",
         buy_unit: {
           description: "Fardo",
           abbreviation: "FRD",
@@ -163,10 +188,15 @@ export const requests: Request[] = [
         stock_current: "150",
         stock_min: "50",
         stock_max: "250",
+        address: {
+          stock: "Estoque Bar",
+          storage: "Armário 1",
+          shelf: "Prateleira 1",
+        },
       },
     ],
     request_description: "Descrição da requisição 3",
-    status: "rejected",
+    status: "Rejeitada",
     status_description: "Rejeitada por motivo x",
     status_date: new Date(2024, 9, 25),
     status_responsible: "Estoquista 2",

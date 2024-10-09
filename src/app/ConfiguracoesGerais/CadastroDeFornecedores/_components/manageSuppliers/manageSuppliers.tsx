@@ -135,7 +135,7 @@ export const ManageSuppliersTable = () => {
 
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
                   Detalhes
                 </Button>
               </DialogTrigger>

@@ -1,6 +1,11 @@
 import { Accordion } from "~/components/ui/accordion";
+// import AccountPlans from "./_components/Payments/AccountPlans";
+// import Banks from "./_components/Payments/Banks";
+// import DocumentTypes from "./_components/Payments/DocumentTypes";
+// import Groups from "./_components/Payments/Groups";
+// import Projects from "./_components/Payments/Projects";
 import ProductCategories from "./_components/Products/ProductCategories";
-import Reasons from "./_components/Products/Reasons";
+// import Reasons from "./_components/Products/Reasons";
 import SectorsOfUse from "./_components/Products/SectorsOfUse";
 import TypesOfControl from "./_components/Products/TypeOfControl";
 import Units from "./_components/Products/Units";
@@ -16,13 +21,22 @@ export default function GeneralParametersRegister() {
         <ProductCategories />
         <SectorsOfUse />
         <Units />
-        <Reasons />
+        {/* <Reasons /> */}
+
         <h1 className="mt-8 text-[32px] font-medium">
           Parâmetros Gerais de Estoques
         </h1>
-        {/* <Places /> */}
         <Storages />
         <Shelves />
+
+        {/* <h1 className="mt-8 text-[32px] font-medium">
+          Parâmetros Gerais de Pagamentos
+        </h1>
+        <DocumentTypes />
+        <AccountPlans />
+        <Projects />
+        <Banks />
+        <Groups /> */}
       </Accordion>
     </div>
   );

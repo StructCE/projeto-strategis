@@ -10,10 +10,11 @@ export const useProductForm = () => {
     resolver: zodResolver(createProductFormSchema),
     mode: "onChange",
     defaultValues: {
+      code: "",
       name: "",
       status: "",
       suppliers: [],
-      buy_or_production: "",
+      users_with_permission: [],
       buy_unit: "",
       buy_quantity: "",
       buy_day: "",

@@ -1,6 +1,7 @@
 "use client";
-import { Upload } from "lucide-react";
+// import { Upload } from "lucide-react";
 import { useState } from "react";
+import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -19,7 +20,6 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import {
-  roles,
   states,
   suppliers,
 } from "../../../CadastroDeFornecedores/_components/supplierData";
@@ -160,6 +160,36 @@ export const CompanyRegister = () => {
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>Representante Legal</FormComponent.Label>
+              <FormField
+                control={companyForm.form.control}
+                name="legal_representative"
+                render={({ field }) => (
+                  <FormItem>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                          <SelectValue placeholder="Selecione um usuário" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {users.map((user, index) => (
+                          <SelectItem value={user.name} key={index}>
+                            {user.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -375,101 +405,7 @@ export const CompanyRegister = () => {
             </FormComponent.Frame>
           </FormComponent.Line>
 
-          <FormComponent.BoxSpecify boxName="Responsável Legal">
-            <FormComponent.Line>
-              <FormComponent.Frame>
-                <FormComponent.Label>Nome</FormComponent.Label>
-                <FormField
-                  control={companyForm.form.control}
-                  name={`legal_representative.name`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                          placeholder="Nome do Responsável Legal"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Cargo</FormComponent.Label>
-                <FormField
-                  control={companyForm.form.control}
-                  name={`legal_representative.role`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                            <SelectValue placeholder="Cargo" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {roles.map((role, i) => (
-                            <SelectItem value={role.value} key={i}>
-                              {role.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Email</FormComponent.Label>
-                <FormField
-                  control={companyForm.form.control}
-                  name={`legal_representative.email`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                          placeholder="email@email.com"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Telefone</FormComponent.Label>
-                <FormField
-                  control={companyForm.form.control}
-                  name={`legal_representative.phone`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                          placeholder="(XX) XXXXX-XXXX"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-            </FormComponent.Line>
-          </FormComponent.BoxSpecify>
-
-          <FormComponent.Line>
+          {/* <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>
                 Endereço Local dos Arquivos XML
@@ -495,7 +431,7 @@ export const CompanyRegister = () => {
                 )}
               />
             </FormComponent.Frame>
-          </FormComponent.Line>
+          </FormComponent.Line> */}
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button

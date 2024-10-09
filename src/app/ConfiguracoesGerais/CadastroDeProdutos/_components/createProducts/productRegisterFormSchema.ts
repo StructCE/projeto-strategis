@@ -21,6 +21,8 @@ export const addressSchema = z.object({
 });
 
 export const createProductFormSchema = z.object({
+  code: z.string({ required_error: "O código do produto é obrigatório." }),
+
   name: z
     .string({
       required_error: "Digite o nome do produto.",
@@ -39,11 +41,7 @@ export const createProductFormSchema = z.object({
 
   parent_product: z.string().optional(),
 
-  buy_or_production: z
-    .string({
-      required_error: "Selecione o tipo de produto.",
-    })
-    .min(1, { message: "Selecione o tipo de produto." }),
+  users_with_permission: z.array(z.string()).optional(),
 
   buy_unit: z
     .string({
