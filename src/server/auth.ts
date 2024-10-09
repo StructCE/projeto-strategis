@@ -74,15 +74,16 @@ declare module "next-auth" {
     }[];
   }
 }
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-  pages: {
-    signIn: "/login",
-  },
+  // pages: {
+  //   signIn: "/login",
+  // },
   callbacks: {
     session: ({ session, user }) => ({
       ...session,
@@ -91,24 +92,33 @@ export const authOptions: NextAuthOptions = {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        allowedPagesPath: [
-          ...new Set(
-            user.UserRole.flatMap((userRole) =>
-              userRole.role.RoleModule.map(
-                (roleModule) => roleModule.module.pagePath,
+        allowedPagesPath: user?.UserRole
+          ? [
+              ...new Set(
+                user.UserRole.flatMap((userRole) =>
+                  userRole?.role?.RoleModule
+                    ? userRole.role.RoleModule.map(
+                        (roleModule) => roleModule?.module?.pagePath,
+                      )
+                    : [],
+                ),
               ),
-            ),
-          ),
-        ],
-        allowedRouters: [
-          ...new Set(
-            user.UserRole.flatMap((userRole) =>
-              userRole.role.RoleModule.map(
-                (roleModule) => roleModule.module.allowedRouter,
+            ]
+          : [],
+
+        allowedRouters: user?.UserRole
+          ? [
+              ...new Set(
+                user.UserRole.flatMap((userRole) =>
+                  userRole?.role?.RoleModule
+                    ? userRole.role.RoleModule.map(
+                        (roleModule) => roleModule?.module?.allowedRouter,
+                      )
+                    : [],
+                ),
               ),
-            ),
-          ),
-        ],
+            ]
+          : [],
       },
     }),
   },
