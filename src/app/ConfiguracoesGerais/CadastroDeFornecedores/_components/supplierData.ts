@@ -6,25 +6,26 @@ export type Role = {
 };
 
 export type Contact = {
-  name: string;
-  role: Role;
-  email: string;
-  phone: string;
+  name?: string;
+  role?: string;
+  email?: string;
+  phone?: string;
 };
 
-
-export const suppliers: Supplier[] = [
+export const suppliers: { supplier: Supplier; contacts: Contact[] }[] = [
   {
-    name: "Fornecedor A",
-    cnpj: "12.345.678/0001-90",
-    email: "contato@fornecedora.com",
-    phone: "(11) 1234-5678",
-    stateRegistration: "1234567890",
-    address: "Rua das Flores, 123",
-    neighborhood: "Centro",
-    city: "São Paulo",
-    federativeUnit: "SP",
-    cep: "01000-000",
+    supplier: {
+      name: "Fornecedor A",
+      cnpj: "12.345.678/0001-90",
+      email: "contato@fornecedora.com",
+      phone: "(11) 1234-5678",
+      stateRegistration: "1234567890",
+      address: "Rua das Flores, 123",
+      neighborhood: "Centro",
+      city: "São Paulo",
+      federativeUnit: "SP",
+      cep: "01000-000",
+    },
     contacts: [
       {
         name: "Maria Silva",
@@ -41,16 +42,18 @@ export const suppliers: Supplier[] = [
     ],
   },
   {
-    name: "Fornecedor B",
-    cnpj: "23.456.789/0001-01",
-    email: "vendas@fornecedorb.com",
-    phone: "(21) 2345-6789",
-    stateRegistration: "2345678901",
-    address: "Avenida Brasil, 456",
-    neighborhood: "Jardim",
-    city: "Rio de Janeiro",
-    federativeUnit: "RJ",
-    cep: "22000-000",
+    supplier: {
+      name: "Fornecedor B",
+      cnpj: "23.456.789/0001-01",
+      email: "vendas@fornecedorb.com",
+      phone: "(21) 2345-6789",
+      stateRegistration: "2345678901",
+      address: "Avenida Brasil, 456",
+      neighborhood: "Jardim",
+      city: "Rio de Janeiro",
+      federativeUnit: "RJ",
+      cep: "22000-000",
+    },
     contacts: [
       {
         name: "Ana Oliveira",
@@ -67,16 +70,18 @@ export const suppliers: Supplier[] = [
     ],
   },
   {
-    name: "Fornecedor C",
-    cnpj: "34.567.890/0001-12",
-    email: "financeiro@fornecedorc.com",
-    phone: "(31) 3456-7890",
-    stateRegistration: "3456789012",
-    address: "Praça da Liberdade, 789",
-    neighborhood: "Liberdade",
-    city: "Belo Horizonte",
-    federativeUnit: "MG",
-    cep: "30140-000",
+    supplier: {
+      name: "Fornecedor C",
+      cnpj: "34.567.890/0001-12",
+      email: "financeiro@fornecedorc.com",
+      phone: "(31) 3456-7890",
+      stateRegistration: "3456789012",
+      address: "Praça da Liberdade, 789",
+      neighborhood: "Liberdade",
+      city: "Belo Horizonte",
+      federativeUnit: "MG",
+      cep: "30140-000",
+    },
     contacts: [
       {
         name: "Paula Costa",
@@ -87,16 +92,18 @@ export const suppliers: Supplier[] = [
     ],
   },
   {
-    name: "Fornecedor D",
-    cnpj: "45.678.901/0001-23",
-    email: "suporte@fornecedord.com",
-    phone: "(88) 88888-8888",
-    stateRegistration: "4567890123",
-    address: "Rua XV de Novembro, 101",
-    neighborhood: "Centro Cívico",
-    city: "Curitiba",
-    federativeUnit: "PR",
-    cep: "80010-000",
+    supplier: {
+      name: "Fornecedor D",
+      cnpj: "45.678.901/0001-23",
+      email: "suporte@fornecedord.com",
+      phone: "(88) 88888-8888",
+      stateRegistration: "4567890123",
+      address: "Rua XV de Novembro, 101",
+      neighborhood: "Centro Cívico",
+      city: "Curitiba",
+      federativeUnit: "PR",
+      cep: "80010-000",
+    },
     contacts: [
       {
         name: "Roberto Lima",
@@ -119,16 +126,18 @@ export const suppliers: Supplier[] = [
     ],
   },
   {
-    name: "Fornecedor E",
-    cnpj: "56.789.012/0001-34",
-    email: "emaildofornecedorabcdefghi@gmail.com",
-    phone: "(00) 00000-0000",
-    stateRegistration: "5678901234",
-    address: "Avenida Ipiranga, 202",
-    neighborhood: "Independência",
-    city: "Porto Alegre",
-    federativeUnit: "RS",
-    cep: "90030-000",
+    supplier: {
+      name: "Fornecedor E",
+      cnpj: "56.789.012/0001-34",
+      email: "emaildofornecedorabcdefghi@gmail.com",
+      phone: "(00) 00000-0000",
+      stateRegistration: "5678901234",
+      address: "Avenida Ipiranga, 202",
+      neighborhood: "Independência",
+      city: "Porto Alegre",
+      federativeUnit: "RS",
+      cep: "90030-000",
+    },
     contacts: [
       {
         name: "Ricardo Almeida",
