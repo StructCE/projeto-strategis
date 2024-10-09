@@ -18,6 +18,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+
+import type { Contact } from "../supplierData";
 import { states } from "../supplierData";
 import { SupplierEdit } from "./editSuppliers/supplierEdit";
 import { api } from "~/trpc/react";
@@ -33,12 +35,23 @@ export const ManageSuppliersTable = () => {
     isLoading,
   } = api.supplier.getAll.useQuery({
     filters: {
-      address: undefined,
+      address: selectState,
       cnpj: undefined,
       company: inputCompany,
       email: inputEmail,
     },
   });
+
+  const contacts: Contact[] = [];
+  // const {
+  //   data: contacts = [],
+  //   error,
+  //   isLoading,
+  // } = api.contact.getAll.useQuery({
+  //   filters: {
+  //     cnpj: undefined,
+  //   },
+  // });
 
   return (
     <TableComponent>
@@ -150,7 +163,7 @@ export const ManageSuppliersTable = () => {
                     Utilize os campos abaixo para editar os dados do fornecedor
                     ou o botão para remover
                   </DialogTitle>
-                  <SupplierEdit supplier={supplier} />
+                  <SupplierEdit supplier={supplier} contacts={contacts} />
                   <DialogDescription></DialogDescription>
                 </DialogHeader>
               </DialogContent>

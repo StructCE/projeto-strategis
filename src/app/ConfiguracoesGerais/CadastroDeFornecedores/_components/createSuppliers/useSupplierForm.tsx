@@ -5,7 +5,8 @@ import {
   type CreateSupplierFormValues,
 } from "./supplierRegisterFormSchema";
 import { useFieldArray } from "react-hook-form";
-import { api } from "~/trpc/server";
+// import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
 
 export const useSupplierForm = () => {
   const form = useForm<CreateSupplierFormValues>({
@@ -34,8 +35,11 @@ export const useSupplierForm = () => {
     console.log(JSON.stringify(data, null, 2));
 
     const { contacts, ...supplierData } = data;
-
-    const newSupplier = api.supplier.createSupplier(supplierData);
+    const {
+      data: newSupplier = [],
+      error,
+      isLoading,
+    } = api.supplier.createSupplier.useQuery(supplierData);
 
     // if (contacts) {
     //   for (const contact of contacts) {

@@ -4,7 +4,8 @@ import {
   editSupplierFormSchema,
   type EditSupplierFormValues,
 } from "./supplierEditFormSchema";
-import { api } from "~/trpc/server";
+// import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
 import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
 import type { Contact } from "../../supplierData";
 
@@ -41,7 +42,11 @@ export const useSupplierForm = (supplier: Supplier, contacts: Contact[]) => {
 
     const { contacts, ...supplierData } = data;
 
-    const updatedSupplier = api.supplier.editSupplier(supplierData);
+    const {
+      data: updatedSupplier = [],
+      error,
+      isLoading,
+    } = api.supplier.editSupplier.useQuery(supplierData);
   }
 
   function onSubmitRemove(data: EditSupplierFormValues) {
