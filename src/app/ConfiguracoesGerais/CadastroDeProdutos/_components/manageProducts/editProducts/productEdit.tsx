@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
+import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -63,6 +64,26 @@ export const ProductEdit = (props: ProductEditForm) => {
       >
         <FormComponent>
           <FormComponent.Line>
+            <FormComponent.Frame>
+              <FormComponent.Label>Código</FormComponent.Label>
+              <FormField
+                control={productEditForm.form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Código do produto"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
             <FormComponent.Frame>
               <FormComponent.Label>Produto</FormComponent.Label>
               <FormField
@@ -167,30 +188,25 @@ export const ProductEdit = (props: ProductEditForm) => {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
-              <FormComponent.Label>Compra/Produção</FormComponent.Label>
+              <FormComponent.Label>
+                Requisitantes com permissão
+              </FormComponent.Label>
               <FormField
                 control={productEditForm.form.control}
-                name="buy_or_production"
+                name="users_with_permission"
                 render={({ field }) => (
                   <FormItem>
-                    <Select
+                    <MultiSelect
+                      options={users.map((user) => ({
+                        label: user.name,
+                        value: user.name,
+                      }))}
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione se o produto é de compra ou produção" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Produto de Compra">
-                          Produto de Compra
-                        </SelectItem>
-                        <SelectItem value="Produto de Produção">
-                          Produto de Produção
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                      defaultValue={field.value ?? []}
+                      placeholder="Selecione o(s) requisitante(s)"
+                      variant="inverted"
+                      maxCount={1}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -545,7 +561,7 @@ export const ProductEdit = (props: ProductEditForm) => {
               Editar Produto
             </FormComponent.Button>
             <FormComponent.Button
-              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_login"
+              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
               handlePress={productEditForm.form.handleSubmit(
                 productEditForm.onSubmitRemove,
               )}

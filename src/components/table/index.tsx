@@ -35,7 +35,7 @@ TableComponent.Subtitle = function TableComponentSubtitle(
   props: TableComponentSubtitleProps,
 ) {
   const style = cn(
-    "text-[14px] sm:text-[16px] font-inter font-regular",
+    "text-[14px] sm:text-[16px] font-inter font-normal",
     props.className,
   );
   return <p className={style}>{props.children}</p>;
@@ -106,7 +106,7 @@ type TableComponentValueProps = {
 TableComponent.Value = function TableComponentValue(
   props: TableComponentValueProps,
 ) {
-  const style = cn("sm:text-[16px] font-regular text-[14px]", props.className);
+  const style = cn("sm:text-[16px] font-normal text-[14px]", props.className);
   return <div className={style}>{props.children}</div>;
 };
 

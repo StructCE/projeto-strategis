@@ -3,11 +3,9 @@ export type Role = {
   value: string;
 };
 
-export type legal_representative = {
+type User = {
   name: string;
-  role: Role;
   email: string;
-  phone: string;
 };
 
 type Supplier = {
@@ -33,8 +31,8 @@ export type Company = {
   cep: string;
   state_registration: string;
   tax_regime: string;
-  legal_representative: legal_representative;
-  xmlFilePath: string;
+  legal_representative: User;
+  // xmlFilePath: string;
   registered_products: number;
   low_stock_products: number;
   stocks: Stock[];
@@ -62,12 +60,10 @@ export const companies: Company[] = [
     registered_products: 10,
     low_stock_products: 10,
     legal_representative: {
-      name: "Maria Silva",
-      role: { name: "Estoquista", value: "Estoquista" },
-      email: "maria.silva@fornecedora.com",
-      phone: "(11) 91234-5678",
+      name: "Nome do Usuário 1",
+      email: "usuario1@gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo.xml",
+    // xmlFilePath: "/caminho/arquivo.xml",
     stocks: [{ name: "Estoque Bar" }, { name: "Estoque Cozinha" }],
   },
   {
@@ -87,12 +83,10 @@ export const companies: Company[] = [
     registered_products: 10,
     low_stock_products: 10,
     legal_representative: {
-      name: "João Pereira",
-      role: { name: "Estoquista", value: "Estoquista" },
-      email: "joao.martins@technovamatriz.com",
-      phone: "(21) 98765-4321",
+      name: "Nome do Usuário 2",
+      email: "usuario2@gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo2.xml",
+    // xmlFilePath: "/caminho/arquivo2.xml",
     stocks: [
       { name: "Estoque Bar" },
       { name: "Estoque Cozinha" },
@@ -120,12 +114,10 @@ export const companies: Company[] = [
     registered_products: 10,
     low_stock_products: 10,
     legal_representative: {
-      name: "João Pereira",
-      role: { name: "Requisitante", value: "Requisitante" },
-      email: "joao.pereira@technovafilial.com",
-      phone: "(21) 98765-4321",
+      name: "Nome do Usuário 3",
+      email: "usuario3@gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo2.xml",
+    // xmlFilePath: "/caminho/arquivo2.xml",
     stocks: [
       { name: "Estoque Bar" },
       { name: "Estoque Cozinha" },
@@ -149,12 +141,10 @@ export const companies: Company[] = [
     registered_products: 10,
     low_stock_products: 10,
     legal_representative: {
-      name: "Carlos Andrade",
-      role: { name: "Requisitante", value: "Requisitante" },
-      email: "carlos.andrade@quantumdynamics.com",
-      phone: "(31) 99876-5432",
+      name: "Nome do Usuário 4",
+      email: "usuario4gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo3.xml",
+    // xmlFilePath: "/caminho/arquivo3.xml",
     stocks: [{ name: "Estoque Bar" }, { name: "Estoque Cozinha" }],
   },
   {
@@ -174,12 +164,10 @@ export const companies: Company[] = [
     registered_products: 10,
     low_stock_products: 10,
     legal_representative: {
-      name: "Ana Costa",
-      role: { name: "Estoquista", value: "Estoquista" },
-      email: "ana.costa@apexmatriz.com",
-      phone: "(41) 90987-6543",
+      name: "Nome do Usuário 5",
+      email: "usuario5gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo4.xml",
+    // xmlFilePath: "/caminho/arquivo4.xml",
     stocks: [{ name: "Estoque Bar" }],
   },
   {
@@ -203,12 +191,10 @@ export const companies: Company[] = [
     registered_products: 10,
     low_stock_products: 10,
     legal_representative: {
-      name: "Ana Costa",
-      role: { name: "Estoquista", value: "Estoquista" },
-      email: "ana.costa@apexfilial.com",
-      phone: "(41) 90987-6543",
+      name: "Nome do Usuário 3",
+      email: "usuario3gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo4.xml",
+    // xmlFilePath: "/caminho/arquivo4.xml",
     stocks: [
       { name: "Estoque Bar" },
       { name: "Estoque Cozinha" },
@@ -232,12 +218,10 @@ export const companies: Company[] = [
     registered_products: 10,
     low_stock_products: 10,
     legal_representative: {
-      name: "Roberto Lima",
-      role: { name: "Operador", value: "Operador" },
-      email: "roberto.lima@fusionware.com",
-      phone: "(51) 99876-1234",
+      name: "Nome do Usuário 4",
+      email: "usuario4gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo5.xml",
+    // xmlFilePath: "/caminho/arquivo5.xml",
     stocks: [
       { name: "Estoque Bar" },
       { name: "Estoque Cozinha" },

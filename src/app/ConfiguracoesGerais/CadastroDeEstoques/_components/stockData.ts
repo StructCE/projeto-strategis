@@ -1,3 +1,8 @@
+type User = {
+  name: string;
+  email: string;
+};
+
 export type Company = {
   name: string;
   value: string;
@@ -22,7 +27,7 @@ export type Storage = {
 export type Stock = {
   name: string;
   company: Company;
-  stock_manager: StockManager;
+  stock_manager: User;
   address: Storage[];
 };
 
@@ -30,12 +35,7 @@ export const stocks: Stock[] = [
   {
     name: "Estoque Bar",
     company: { name: "Alimentos WCW", value: "Alimentos WCW" },
-    stock_manager: {
-      name: "Maria Silva",
-      role: "Estoquista",
-      email: "maria.silva@fornecedora.com",
-      phone: "(11) 91234-5678",
-    },
+    stock_manager: { name: "Nome do Usuário 1", email: "usuario1@gmail.com" },
     address: [
       {
         description: "Armário 1",
@@ -49,12 +49,7 @@ export const stocks: Stock[] = [
   {
     name: "Estoque Cozinha",
     company: { name: "TechNova Filial", value: "TechNova Filial" },
-    stock_manager: {
-      name: "Carlos Pereira",
-      role: "Operador",
-      email: "carlos.pereira@distribuidora.com",
-      phone: "(21) 92345-6789",
-    },
+    stock_manager: { name: "Nome do Usuário 2", email: "usuario2@gmail.com" },
     address: [
       {
         description: "Armário 2",
@@ -69,12 +64,7 @@ export const stocks: Stock[] = [
   {
     name: "Estoque Salão",
     company: { name: "Quantum Dynamics", value: "Quantum Dynamics" },
-    stock_manager: {
-      name: "Juliana Costa",
-      role: "Administrador",
-      email: "juliana.costa@fornecedora.com",
-      phone: "(31) 98765-4321",
-    },
+    stock_manager: { name: "Nome do Usuário 1", email: "usuario1@gmail.com" },
     address: [
       {
         description: "Zona 1",
@@ -88,12 +78,7 @@ export const stocks: Stock[] = [
       name: "Apex Innovations Filial",
       value: "Apex Innovations Filial",
     },
-    stock_manager: {
-      name: "Rafael Souza",
-      role: "Operador",
-      email: "rafael.souza@logistica.com",
-      phone: "(41) 91234-5678",
-    },
+    stock_manager: { name: "Nome do Usuário 3", email: "usuario3@gmail.com" },
     address: [
       {
         description: "Zona 2",
@@ -108,12 +93,7 @@ export const stocks: Stock[] = [
   {
     name: "Estoque Padaria",
     company: { name: "FusionWare", value: "FusionWare" },
-    stock_manager: {
-      name: "Patricia Oliveira",
-      role: "Requisitante",
-      email: "patricia.oliveira@suprimentos.com",
-      phone: "(51) 92345-6789",
-    },
+    stock_manager: { name: "Nome do Usuário 4", email: "usuario4@gmail.com" },
     address: [
       {
         description: "Zona 3",

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
+import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -57,6 +58,26 @@ export const ProductRegister = (props: ProductRegisterProps) => {
 
           <FormComponent.Line>
             <FormComponent.Frame>
+              <FormComponent.Label>Código</FormComponent.Label>
+              <FormField
+                control={props.form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Código do produto"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
               <FormComponent.Label>Produto</FormComponent.Label>
               <FormField
                 control={props.form.control}
@@ -92,7 +113,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       defaultValue={field.value ?? []}
                       placeholder="Selecione o(s) fornecedor(es) do produto"
                       variant="inverted"
-                      maxCount={1}
+                      maxCount={2}
                     />
                     <FormMessage />
                   </FormItem>
@@ -160,30 +181,25 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
-              <FormComponent.Label>Compra/Produção</FormComponent.Label>
+              <FormComponent.Label>
+                Requisitantes com permissão
+              </FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="buy_or_production"
+                name="users_with_permission"
                 render={({ field }) => (
                   <FormItem>
-                    <Select
+                    <MultiSelect
+                      options={users.map((user) => ({
+                        label: user.name,
+                        value: user.name,
+                      }))}
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione se o produto é de compra ou produção" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Produto de Compra">
-                          Produto de Compra
-                        </SelectItem>
-                        <SelectItem value="Produto de Produção">
-                          Produto de Produção
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                      defaultValue={field.value ?? []}
+                      placeholder="Selecione o(s) requisitante(s)"
+                      variant="inverted"
+                      maxCount={1}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

@@ -137,9 +137,10 @@ export const ManageUsersTable = () => {
             <TableComponent.Value>{user.email}</TableComponent.Value>
             <TableComponent.Value>{user.company}</TableComponent.Value>
             <TableComponent.Value>{user.role}</TableComponent.Value>
+          
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque sm:text-[16px]">
+                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
                   Detalhes
                 </Button>
               </DialogTrigger>
@@ -157,8 +158,10 @@ export const ManageUsersTable = () => {
                 </DialogHeader>
               </DialogContent>
             </Dialog>
+
           </TableComponent.Line>
-        ))}
+        ))
+        }
       </TableComponent.Table>
     </TableComponent>
   );

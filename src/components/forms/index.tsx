@@ -81,7 +81,7 @@ type FormComponentLabelProps = {
 FormComponent.Label = function FormComponentLabel(
   props: FormComponentLabelProps,
 ) {
-  const style = cn("font-inter text-[16px] font-regular", props.className);
+  const style = cn("font-inter text-[16px] font-normal", props.className);
   return <p className={style}>{props.children}</p>;
 };
 

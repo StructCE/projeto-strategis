@@ -1,3 +1,4 @@
+
 // CRIAR MODULES, ROLEMODULES AND ROLES
 import { modules } from "./seed-data/modules";
 import { roles } from "./seed-data/roles";

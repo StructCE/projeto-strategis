@@ -1,10 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   createSupplierFormSchema,
   type CreateSupplierFormValues,
 } from "./supplierRegisterFormSchema";
-import { useFieldArray } from "react-hook-form";
 
 export const useSupplierForm = () => {
   const form = useForm<CreateSupplierFormValues>({
@@ -21,7 +20,7 @@ export const useSupplierForm = () => {
       city: "",
       state: "",
       cep: "",
-      contacts: [{ name: "", role: "", email: "", phone: "" }],
+      contacts: [{ name: "", email: "", phone: "" }],
     },
   });
   const fieldArray = useFieldArray({
