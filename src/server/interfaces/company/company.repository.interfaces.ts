@@ -26,6 +26,7 @@ type GetCompanyStocksProps = z.infer<typeof getCompanyStocksProps>;
 
 const registerProps = z.object({
   name: z.string(),
+  email: z.string(),
   cnpj: z.string(),
   type: z.string(),
   headquarters: z.string(),
@@ -36,7 +37,6 @@ const registerProps = z.object({
   neighborhood: z.string(),
   federativeUnit: z.string(),
   cep: z.string(),
-  filesAddress: z.string(),
   legalResponsibleId: z.string(),
 });
 
@@ -52,6 +52,7 @@ const editProps = z.object({
   id: z.string(),
   data: z.object({
     name: z.string().optional(),
+    email: z.string(),
     cnpj: z.string().optional(),
     type: z.string().optional(),
     headquarters: z.string().optional(),
@@ -62,7 +63,6 @@ const editProps = z.object({
     neighborhood: z.string().optional(),
     federativeUnit: z.string().optional(),
     cep: z.string().optional(),
-    filesAddress: z.string().optional(),
     legalResponsibleId: z.string().optional(),
   }),
 });
