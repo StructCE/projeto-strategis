@@ -7,6 +7,11 @@ import { requestRouter } from "./routers/request";
 import { stockRouter } from "./routers/stock";
 import { supplierRouter } from "./routers/supplier";
 import { userRoleRouter } from "./routers/userRole";
+import { cabinetRouter } from "./routers/cabinet";
+import { controlTypeRouter } from "./routers/controlType";
+import { useSectorRouter } from "./routers/useSector";
+import { shelfRouter } from "./routers/shelf";
+import { productCategoryRouter } from "./routers/productCategory";
 
 /**
  * This is the primary router for your server.
@@ -22,6 +27,13 @@ export const appRouter = createTRPCRouter({
   stock: stockRouter,
   supplier: supplierRouter,
   userRole: userRoleRouter,
+  generalParameters: {
+    cabinet: cabinetRouter,
+    controlType: controlTypeRouter,
+    useSector: useSectorRouter,
+    shelf: shelfRouter,
+    productCategory: productCategoryRouter,
+  },
 });
 
 // export type definition of API

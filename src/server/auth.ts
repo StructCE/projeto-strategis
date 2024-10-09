@@ -18,7 +18,11 @@ function customPrismaAdapter(p: typeof db) {
       p.user.findUnique({
         where: { id },
         include: {
-          UserRole: { include: { role: { include: { RoleModule: true } } } },
+          UserRole: {
+            include: {
+              role: { include: { RoleModule: { include: { module: true } } } },
+            },
+          },
         },
       }),
   };
@@ -37,8 +41,8 @@ declare module "next-auth" {
       name: string;
       email: string;
       phone: string;
-      allowedFrontendPaths: string[];
-      allowedBackendPaths: string[];
+      allowedPagesPath: string[];
+      allowedRouters: string[];
       // ...other properties
     } & DefaultSession["user"];
   }
@@ -51,11 +55,15 @@ declare module "next-auth" {
       role: {
         RoleModule: {
           id: string;
-          functionalityName: string;
-          backendPath: string;
-          frontendPath: string;
           moduleId: string;
           roleId: string;
+          module: {
+            id: string;
+            name: string;
+            code: number;
+            pagePath: string;
+            allowedRouter: string;
+          };
         }[];
       } & {
         id: string;
@@ -83,17 +91,21 @@ export const authOptions: NextAuthOptions = {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        allowedFrontendPaths: [
+        allowedPagesPath: [
           ...new Set(
             user.UserRole.flatMap((userRole) =>
-              userRole.role.RoleModule.map((module) => module.frontendPath),
+              userRole.role.RoleModule.map(
+                (roleModule) => roleModule.module.pagePath,
+              ),
             ),
           ),
         ],
-        allowedBackendPaths: [
+        allowedRouters: [
           ...new Set(
             user.UserRole.flatMap((userRole) =>
-              userRole.role.RoleModule.map((module) => module.frontendPath),
+              userRole.role.RoleModule.map(
+                (roleModule) => roleModule.module.allowedRouter,
+              ),
             ),
           ),
         ],

@@ -119,21 +119,21 @@ model Role {
 }
 
 model RoleModule {
-    id                String @id @default(cuid())
-    functionalityName String
-    backendPath       String
-    frontendPath      String
-    moduleId          String
-    roleId            String
+    id         String @id @default(cuid())
+    moduleCode Int
+    roleId     String
 
-    module Module @relation(fields: [moduleId], references: [id])
+    module Module @relation(fields: [moduleCode], references: [code])
     role   Role   @relation(fields: [roleId], references: [id])
 }
 
 model Module {
-    id         String       @id @default(cuid())
-    operation  String
-    RoleModule RoleModule[]
+    id            String       @id @default(cuid())
+    name          String
+    code          Int          @unique
+    pagePath      String
+    allowedRouter String
+    RoleModule    RoleModule[]
 }
 
 model Supplier {
