@@ -1,10 +1,11 @@
 import { type Metadata } from "next";
 import { Inter } from "next/font/google";
 import LayoutSelector from "~/components/layout/layoutSelector";
+import { AuthProvider } from "~/lib/authProvider";
+import { RolePermissionsWrapper } from "~/lib/rolePermissionsWrapper";
+import { getServerAuthSession } from "~/server/auth";
 import "~/styles/globals.css";
 import { TRPCReactProvider } from "~/trpc/react";
-import { RolePermissionsWrapper } from "~/lib/rolePermissionsWrapper";
-import { AuthProvider } from "~/lib/authProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,14 +21,14 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await getServerAuthSession();
   return (
     <html lang="pt-BR">
       <body
         className={`${inter.variable} flex min-h-screen overflow-x-hidden bg-fundo_branco font-sans`}
       >
         <TRPCReactProvider>
-          {/* Use LayoutSelector para alternar entre layouts */}
-          <LayoutSelector>{children}</LayoutSelector>
+          <LayoutSelector session={session}>{children}</LayoutSelector>
         </TRPCReactProvider>
       </body>
     </html>

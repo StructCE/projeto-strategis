@@ -1,3 +1,5 @@
+import { signIn } from "next-auth/react";
+import { Button } from "~/components/ui/button";
 import BgLogin from "../../lib/assets/bg-login";
 import Ilustracao from "../../lib/assets/ilustracao";
 import LogoBranca from "../../lib/assets/logo-branca";
