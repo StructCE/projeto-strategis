@@ -2,7 +2,7 @@ import React from "react";
 
 function Ilustracao() {
   return (
-    <div className="mr-20">
+    <div className="">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         transform="scale(-1 1)"

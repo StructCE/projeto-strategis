@@ -17,7 +17,6 @@ import {
 } from "../ui/select";
 import SignButtons from "./_components/signButtons";
 import { companies } from "./_components/userData";
-import UserInfo from "./_components/userInfo";
 
 export default function Navbar({ session }: { session: Session | null }) {
   const [selectCompany, setSelectCompany] = useState("Empresa 1");
@@ -56,14 +55,14 @@ export default function Navbar({ session }: { session: Session | null }) {
           <DropdownMenuLabel className="p-0">
             Telefone: <span className="font-normal">{session?.user.phone}</span>
           </DropdownMenuLabel>
-          {/* <DropdownMenuLabel className="p-0">
+          <DropdownMenuLabel className="p-0">
             Cargo:{" "}
-            <span className="font-normal">{user.UserRole.}</span>
-          </DropdownMenuLabel> */}
-          {/* <DropdownMenuLabel className="p-0">
+            <span className="font-normal">{session?.user.role?.name}</span>
+          </DropdownMenuLabel>
+          <DropdownMenuLabel className="p-0">
             Empresa:{" "}
-            <span className="font-normal">{user.UserRole.}</span>
-          </DropdownMenuLabel> */}
+            <span className="font-normal">{session?.user.company?.name}</span>
+          </DropdownMenuLabel>
           <SignButtons />
         </DropdownMenuContent>
       </DropdownMenu>

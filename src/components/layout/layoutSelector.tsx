@@ -1,6 +1,6 @@
 "use client";
 import { type Session } from "next-auth";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import React from "react";
 import Navbar from "~/components/navbar/navbar";
 import ResponsiveNavbar from "~/components/navbar/responsiveNavbar";
@@ -12,8 +12,12 @@ export default function LayoutSelector({
 }: Readonly<{ children: React.ReactNode; session: Session | null }>) {
   const pathname = usePathname();
 
+  if (!session && pathname !== "/login") {
+    redirect("/login");
+  }
+
   // Verifica se a rota é "/login" para usar um layout diferente
-  if (pathname === "/login") {
+  if (pathname === "/login" || pathname === "/login2") {
     return <div>{children}</div>;
   }
 

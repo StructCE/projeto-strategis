@@ -15,14 +15,14 @@ export default function SignButtons() {
           Sair
         </Button>
       </DropdownMenuLabel>
-      <DropdownMenuLabel className="p-0">
+      {/* <DropdownMenuLabel className="p-0">
         <Link
           className="h-fit bg-white p-0 pt-1 text-[15px] font-bold text-verde_botao hover:bg-white"
           href="/login"
         >
           Entrar
         </Link>
-      </DropdownMenuLabel>
+      </DropdownMenuLabel> */}
     </>
   );
 }
