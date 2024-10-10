@@ -50,11 +50,20 @@ const removeProps = z.object({
 
 type RemoveProps = z.infer<typeof removeProps>;
 
+const getByProductId = z.object({
+  filters: z.object({
+    productId: z.string(),
+  }),
+});
+
+type GetByProductId = { filters: { productId: string } };
+
 export const supplierRepositorySchema = {
   createProps,
   editProps,
   removeProps,
   getAll,
+  getByProductId,
 };
 
 export type SupplierRepositoryInterfaces = {
@@ -62,4 +71,5 @@ export type SupplierRepositoryInterfaces = {
   EditProps: EditProps;
   RemoveProps: RemoveProps;
   GetAll: GetAll;
+  GetByProductId: GetByProductId;
 };

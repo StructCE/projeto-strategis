@@ -13,6 +13,15 @@ export const supplierRouter = createTRPCRouter({
       },
     ),
 
+  getByProductId: protectedProcedure
+    .input(supplierRepositorySchema.getByProductId)
+    .query(
+      async ({ input }): Promise<SupplierRouteInterfaces["Supplier"][]> => {
+        const suppliers = await SupplierRepository.getByProductId(input);
+        return suppliers;
+      },
+    ),
+
   createSupplier: protectedProcedure
     .input(supplierRepositorySchema.createProps)
     .mutation(

@@ -24,6 +24,19 @@ async function getAll(props: SupplierRepositoryInterfaces["GetAll"]) {
   return suppliers;
 }
 
+async function getByProductId(
+  props: SupplierRepositoryInterfaces["GetByProductId"],
+) {
+  const { filters } = props;
+  const suppliers = await db.productSupplier.findMany({
+    where: {
+      productId: filters.productId,
+    },
+    include: { supplier: true },
+  });
+  return suppliers;
+}
+
 async function create(props: SupplierRepositoryInterfaces["CreateProps"]) {
   const createdSupplier = await db.supplier.create({
     data: {
@@ -57,6 +70,7 @@ async function remove(props: SupplierRepositoryInterfaces["RemoveProps"]) {
 
 export const SupplierRepository = {
   getAll,
+  getByProductId,
   create,
   edit,
   remove,

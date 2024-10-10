@@ -62,7 +62,7 @@ export default function ManageProductsTable() {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAllProducts.useQuery({
+  } = api.product.getAllProductsAndSuppliers.useQuery({
     filters: {
       stock: selectStock,
       controlType: selectControlType,
