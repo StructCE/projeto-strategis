@@ -42,17 +42,61 @@ export const useSupplierForm = (supplier: Supplier, contacts: Contact[]) => {
 
     const { contacts, ...supplierData } = data;
 
-    const {
-      data: updatedSupplier = [],
-      error,
-      isLoading,
-    } = api.supplier.editSupplier.useQuery(supplierData);
+    const supplierMutation = api.supplier.editSupplier.useMutation({
+      onSuccess: (updatedSupplier) => {
+        console.log("Supplier edited successfully:", updatedSupplier);
+
+        // if (contacts) {
+        //   for (const contact of contacts) {
+        //     api.contact
+        //       .editContact({
+        //         ...contact,
+        //         supplierId: updatedSupplier.id,
+        //       })
+        //       .then((contactData) => {
+        //         console.log("Contact edited successfully:", contactData);
+        //       })
+        //       .catch((error) => {
+        //         console.error("Error editing contact:", error);
+        //       });
+        //   }
+        // }
+      },
+      onError: (error) => {
+        console.error("Error editing supplier:", error);
+      },
+    });
+
+    try {
+      supplierMutation.mutate({
+        ...supplierData,
+      });
+    } catch (error) {
+      console.error("Error submitting edit form:", error);
+    }
   }
 
   function onSubmitRemove(data: EditSupplierFormValues) {
     console.log("Removendo fornecedor:");
     console.log(JSON.stringify(data, null, 2));
-    // const removedSupplier = api.supplier.deleteSupplier(data.id)
+
+    const { contacts, id, ...supplierData } = data;
+    const supplierMutation = api.supplier.removeSupplier.useMutation({
+      onSuccess: (updatedSupplier) => {
+        console.log("Supplier removed successfully:", updatedSupplier);
+      },
+      onError: (error) => {
+        console.error("Error removing supplier:", error);
+      },
+    });
+
+    try {
+      supplierMutation.mutate({
+        id,
+      });
+    } catch (error) {
+      console.error("Error submitting remove form:", error);
+    }
   }
 
   const fieldArray = useFieldArray({

@@ -30,4 +30,14 @@ export const supplierRouter = createTRPCRouter({
         return editedSupplier;
       },
     ),
+
+  removeSupplier: protectedProcedure
+    .input(supplierRepositorySchema.removeProps)
+    .mutation(
+      async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
+        const removedSupplier = await SupplierRepository.remove(input);
+        return removedSupplier;
+      },
+    ),
+
 });
