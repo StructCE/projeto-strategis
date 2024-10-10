@@ -1,16 +1,20 @@
-import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
+import { Eraser, Search } from "lucide-react";
+
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
+
 import {
   ProductCategories,
   SectorsOfUse,
   TypesOfControl,
 } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
+
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
+
 import {
   Dialog,
   DialogContent,
@@ -19,8 +23,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
+
 import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
+
 import {
   Select,
   SelectContent,
@@ -28,14 +34,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { products, units } from "../productsData";
+
+import { units } from "../productsData";
 import { ProductEdit } from "./editProducts/productEdit";
+import { api } from "~/trpc/react";
 
 export default function ManageProductsTable() {
   const [inputCode, setInputCode] = useState("");
@@ -49,39 +58,63 @@ export default function ManageProductsTable() {
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
 
+  const {
+    data: products = [],
+    error,
+    isLoading,
+  } = api.product.getAllProducts.useQuery({
+    filters: {
+      stock: selectStock,
+      controlType: selectControlType,
+      productCategory: selectCategory,
+      name: inputProduct,
+      sectorOfUse: selectSector,
+    },
+  });
+
   const filteredProducts = products.filter((product) => {
-    const matchesCode = inputCode === "" || product.code.includes(inputCode);
+    const matchesCode = inputCode === "" || product.id.includes(inputCode);
+
     const matchesProduct =
       inputProduct === "" ||
       product.name.toLowerCase().includes(inputProduct.toLowerCase());
+
     const matchesSupplier =
       selectSuppliers.length === 0 ||
       product.suppliers.some((supplier) =>
         selectSuppliers.includes(supplier.name),
       );
+
     const matchesStock =
       selectStock === "" ||
-      `${product.address.stock}`
+      `${product.stock.name}`
         .toLowerCase()
         .includes(selectStock.toLowerCase());
+
     const matchesAddress =
       selectAddress === "" ||
-      `${product.address.storage}, ${product.address.shelf}`
+      `${product.shelf.name}, ${product.shelf.name}`
         .toLowerCase()
         .includes(selectAddress.toLowerCase());
+
     const matchesControlType =
       selectControlType === "" ||
-      product.type_of_control?.description === selectControlType;
+      product.controlType?.name === selectControlType;
+
     const matchesCategory =
       selectCategory === "" ||
-      product.product_category?.description === selectCategory;
+      product.category?.name === selectCategory;
+
     const matchesSector =
       selectSector === "" ||
-      product.sector_of_use?.description === selectSector;
+      product.sectorOfUse?.name === selectSector;
+
     const matchesStatus =
       selectStatus === "" || product.status === selectStatus;
-    const matchesBuyDay =
-      selectBuyDay === "" || product.buy_day === selectBuyDay;
+
+    // TODO: add buyDay to schema
+    // const matchesBuyDay =
+    //   selectBuyDay === "" || product.buyDate === selectBuyDay;
 
     return (
       matchesCode &&
@@ -357,7 +390,7 @@ export default function ManageProductsTable() {
             key={index}
           >
             <TableComponent.Value className="items-center justify-center text-center">
-              {product.code}
+              {product.id}
             </TableComponent.Value>
             <TableComponent.Value>
               <Input
@@ -366,7 +399,7 @@ export default function ManageProductsTable() {
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
-              <Select defaultValue={product.buy_unit.description}>
+              <Select defaultValue={product.buyUnit.description}>
                 <SelectTrigger className="h-7 bg-cinza_destaque text-center sm:h-8">
                   <SelectValue placeholder="Selecione a unidade de compra" />
                 </SelectTrigger>
@@ -381,19 +414,19 @@ export default function ManageProductsTable() {
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
               <Input
-                defaultValue={product.stock_current}
+                defaultValue={product.currentStock}
                 className="h-7 bg-cinza_destaque text-center sm:h-8"
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
               <Input
-                defaultValue={product.stock_min}
+                defaultValue={product.minimunStock}
                 className="h-7 bg-cinza_destaque text-center sm:h-8"
               />
             </TableComponent.Value>
             <TableComponent.Value className="items-center justify-center text-center">
               <Input
-                defaultValue={product.stock_max}
+                defaultValue={product.maximumStock}
                 className="h-7 bg-cinza_destaque text-center sm:h-8"
               />
             </TableComponent.Value>

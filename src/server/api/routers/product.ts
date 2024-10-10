@@ -2,6 +2,8 @@ import { productRepositorySchema } from "~/server/interfaces/product/product.rep
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import type { ProductRouteInterfaces } from "~/server/interfaces/product/product.route.interfaces";
 import { ProductRepository } from "~/server/repositories/product.repository";
+import { ProductSupplierRepository } from "~/server/repositories/productSupplier";
+import { productSupplierRepositorySchema } from "~/server/interfaces/productSupplier/productSupplier.repository.interfaces";
 
 export const productRouter = createTRPCRouter({
   countProducts: protectedProcedure.query(
@@ -13,10 +15,27 @@ export const productRouter = createTRPCRouter({
 
   getAllProducts: protectedProcedure
     .input(productRepositorySchema.getAllProps)
-    .query(async ({ input }): Promise<ProductRouteInterfaces["Product"][]> => {
-      const products = await ProductRepository.getAll(input);
-      return products;
-    }),
+    .query(
+      async ({
+        input,
+      }): Promise<ProductRouteInterfaces["ProductWithRelations"][]> => {
+        const products = await ProductRepository.getAll(input);
+
+        return products;
+      },
+    ),
+
+  getAllProductsAndSuppliers: protectedProcedure
+    .input(productSupplierRepositorySchema.getAllProps)
+    .query(
+      async ({
+        input,
+      }): Promise<ProductRouteInterfaces["ProductWithRelations"][]> => {
+        const products = await ProductSupplierRepository.getAll(input);
+
+        return products;
+      },
+    ),
 
   createProduct: protectedProcedure
     .input(productRepositorySchema.createProps)

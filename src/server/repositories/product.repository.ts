@@ -38,6 +38,15 @@ async function getAll(props: ProductRepositoryInterfaces["GetAllProps"]) {
         },
       ],
     },
+    include: {
+      unit: true,
+      controlType: true,
+      category: true,
+      sectorOfUse: true,
+      stock: true,
+      shelf: true,
+      cabinet: true,
+    },
   });
   return products;
 }

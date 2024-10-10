@@ -25,9 +25,9 @@ import {
   suppliers,
   TypesOfControl,
   units,
-  type Product,
 } from "../../productsData";
 import { useProductForm } from "./useProductForm";
+import type { Product } from "~/server/interfaces/product/product.route.interfaces";
 
 type ProductEditForm = {
   product: Product;
