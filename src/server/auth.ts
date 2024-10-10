@@ -78,11 +78,9 @@ export const authOptions: NextAuthOptions = {
             ? [
                 ...new Set(
                   user.UserRole.flatMap((userRole) =>
-                    userRole?.role?.RoleModule
-                      ? userRole.role.RoleModule.map(
-                          (roleModule) => roleModule?.module?.pagePath,
-                        )
-                      : [],
+                    userRole.role.RoleModule.map(
+                      (roleModule) => roleModule.module.pagePath,
+                    ),
                   ),
                 ),
               ]
@@ -91,11 +89,9 @@ export const authOptions: NextAuthOptions = {
             ? [
                 ...new Set(
                   user.UserRole.flatMap((userRole) =>
-                    userRole?.role?.RoleModule
-                      ? userRole.role.RoleModule.map(
-                          (roleModule) => roleModule?.module?.allowedRouter,
-                        )
-                      : [],
+                    userRole.role.RoleModule.map(
+                      (roleModule) => roleModule.module.allowedRouter,
+                    ),
                   ),
                 ),
               ]

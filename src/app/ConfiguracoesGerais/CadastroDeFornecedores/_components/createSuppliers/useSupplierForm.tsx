@@ -25,20 +25,13 @@ export const useSupplierForm = () => {
       contacts: [{ name: "", email: "", phone: "" }],
     },
   });
-  const fieldArray = useFieldArray({
-    control: form.control,
-    name: "contacts",
-  });
 
-function onSubmit(data: CreateSupplierFormValues) {
-  console.log(JSON.stringify(data, null, 2));
-
-  const { contacts, ...supplierData } = data;
-
+  // Move o hook useMutation para o topo, fora de funções condicionais
   const supplierMutation = api.supplier.createSupplier.useMutation({
     onSuccess: (newSupplier) => {
       console.log("Supplier created successfully:", newSupplier);
 
+      // Lógica de criação de contatos pode ser tratada aqui também
       // if (contacts) {
       //   for (const contact of contacts) {
       //     api.contact
@@ -54,22 +47,30 @@ function onSubmit(data: CreateSupplierFormValues) {
       //       });
       //   }
       // }
-
     },
     onError: (error) => {
       console.error("Error creating supplier:", error);
     },
   });
 
-  try {
-    supplierMutation.mutate({
-      ...supplierData,
-    });
-  } catch (error) {
-    console.error("Error submitting form:", error);
-  }
-}
+  function onSubmit(data: CreateSupplierFormValues) {
+    console.log(JSON.stringify(data, null, 2));
 
+    const { contacts, ...supplierData } = data;
+
+    try {
+      supplierMutation.mutate({
+        ...supplierData,
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  }
+
+  const fieldArray = useFieldArray({
+    control: form.control,
+    name: "contacts",
+  });
 
   return {
     form,

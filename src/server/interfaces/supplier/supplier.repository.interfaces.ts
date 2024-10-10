@@ -1,13 +1,6 @@
 import { z } from "zod";
 
-const getAll = z.object({
-  filters: z.object({
-    company: z.string().optional(),
-    cnpj: z.string().optional(),
-    email: z.string().optional(),
-    address: z.string().optional(),
-  }),
-});
+const getAll = z.object({});
 
 type GetAll = z.infer<typeof getAll>;
 
