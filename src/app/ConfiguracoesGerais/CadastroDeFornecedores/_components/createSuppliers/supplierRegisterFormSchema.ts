@@ -9,14 +9,6 @@ const supplierContactSchema = z.object({
       message: "O nome do contato deve ter pelo menos 3 caracteres.",
     }),
 
-  role: z
-    .string({
-      required_error: "Por favor selecione o cargo do usuário.",
-    })
-    .min(1, {
-      message: "Por favor selecione o cargo do usuário.",
-    }),
-
   email: z
     .string({
       required_error: "Por favor digite o email do contato.",

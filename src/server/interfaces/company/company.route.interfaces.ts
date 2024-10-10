@@ -1,6 +1,7 @@
 type Company = {
   id: string;
   name: string;
+  email: string;
   cnpj: string;
   type: string;
   headquarters: string;
@@ -11,13 +12,13 @@ type Company = {
   neighborhood: string;
   federativeUnit: string;
   cep: string;
-  filesAddress: string;
   legalResponsibleId: string;
 };
 
 type CompanySuppliers = {
   cnpj: string;
   name: string;
+  email: string;
   address: string;
   phone: string;
   stateRegistration: string;
@@ -27,17 +28,16 @@ type CompanySuppliers = {
   cep: string;
   contacts: {
     id: string;
-    name: string | null;
-    email: string | null;
-    phone: string | null;
-    cargo: string;
+    name: string;
+    email: string;
+    phone: string;
   }[];
 }[];
 
 type CompanyUsers =
   | {
-      name: string | null;
-      email: string | null;
+      name: string;
+      email: string;
       role: string;
       company: string;
     }[]

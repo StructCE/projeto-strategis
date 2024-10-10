@@ -1,5 +1,5 @@
 "use client";
-import { Upload } from "lucide-react";
+// import { Upload } from "lucide-react";
 import { useState } from "react";
 import {
   companies,
@@ -420,7 +420,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
             </FormComponent.Frame>
           </FormComponent.Line>
 
-          <FormComponent.Line>
+          {/* <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>
                 Endereço Local dos Arquivos XML
@@ -446,14 +446,14 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                 )}
               />
             </FormComponent.Frame>
-          </FormComponent.Line>
+          </FormComponent.Line> */}
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
               Editar Empresa
             </FormComponent.Button>
             <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
+              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
               handlePress={editCompanyForm.form.handleSubmit(
                 editCompanyForm.onSubmitRemove,
               )}

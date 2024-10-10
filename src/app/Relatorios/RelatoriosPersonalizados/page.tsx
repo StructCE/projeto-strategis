@@ -1,6 +1,9 @@
 "use client";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
 import { useState } from "react";
+import * as XLSX from "xlsx";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import {
@@ -108,72 +111,369 @@ export default function CustomReports() {
     const allFilteredProductCodes = filteredProducts.map(
       (product) => product.code,
     );
-    setSelectedProducts(allFilteredProductCodes);
+
+    setSelectedProducts((prevSelectedProducts) => [
+      ...new Set([...prevSelectedProducts, ...allFilteredProductCodes]),
+    ]);
   }
 
   function handleDeselectAll() {
     setSelectedProducts([]);
   }
 
-  function printSelectedProductData() {
+  interface StockWarningsData {
+    date: string;
+    products: Product[];
+  }
+
+  function exportSelectedProductData(fileType: string) {
     const productsToPrint = products.filter((product) =>
       selectedProducts.includes(product.code),
     );
 
-    const customReportData = {
-      date: new Date(2024, 9, 24)?.toISOString(),
-      products: productsToPrint.map((product) => {
-        const selectedAttributes: Partial<Product> = {};
-
-        if (selectReportOptions.includes("Código"))
-          selectedAttributes.code = product.code;
-        if (selectReportOptions.includes("Nome"))
-          selectedAttributes.name = product.name;
-        if (selectReportOptions.includes("Fornecedores"))
-          selectedAttributes.suppliers = product.suppliers;
-        if (selectReportOptions.includes("Status"))
-          selectedAttributes.status = product.status;
-        if (selectReportOptions.includes("Produto Pai"))
-          selectedAttributes.parent_product =
-            product.parent_product ?? "Não tem";
-        if (selectReportOptions.includes("Unidade de Compra"))
-          selectedAttributes.buy_unit = product.buy_unit;
-        if (selectReportOptions.includes("Quantidade de Compra"))
-          selectedAttributes.buy_quantity = product.buy_quantity;
-        if (selectReportOptions.includes("Dia de Compra"))
-          selectedAttributes.buy_day = product.buy_day;
-        if (selectReportOptions.includes("Estoque Atual"))
-          selectedAttributes.stock_current = product.stock_current;
-        if (selectReportOptions.includes("Estoque Mínimo"))
-          selectedAttributes.stock_min = product.stock_min;
-        if (selectReportOptions.includes("Estoque Máximo"))
-          selectedAttributes.stock_max = product.stock_max;
-        if (selectReportOptions.includes("Tipo de Controle"))
-          selectedAttributes.type_of_control = product.type_of_control;
-        if (selectReportOptions.includes("Categoria do Produto"))
-          selectedAttributes.product_category = product.product_category;
-        if (selectReportOptions.includes("Setor de Utilização"))
-          selectedAttributes.sector_of_use = product.sector_of_use;
-        if (selectReportOptions.includes("Endereço do Estoque"))
-          selectedAttributes.address = product.address;
-        if (selectReportOptions.includes("Usuários com Permissão"))
-          selectedAttributes.users_with_permission =
-            product.users_with_permission;
-
-        return selectedAttributes;
-      }),
+    const stockWarningsData = {
+      date: new Date()?.toISOString(),
+      products: productsToPrint.map((product) => ({
+        code: product.code,
+        name: product.name,
+        suppliers: product.suppliers,
+        status: product.status,
+        parent_product: product.parent_product,
+        buy_unit: product.buy_unit,
+        buy_quantity: product.buy_quantity,
+        buy_day: product.buy_day,
+        stock_current: product.stock_current,
+        stock_min: product.stock_min,
+        stock_max: product.stock_max,
+        type_of_control: product.type_of_control,
+        product_category: product.product_category,
+        sector_of_use: product.sector_of_use,
+        address: product.address,
+        users_with_permission: product.users_with_permission,
+      })),
     };
 
-    console.log(JSON.stringify(customReportData, null, 2));
+    switch (fileType) {
+      case "json":
+        exportToJson(stockWarningsData);
+        break;
+      case "csv":
+        exportToCSV(stockWarningsData);
+        break;
+      case "pdf":
+        exportToPDF(stockWarningsData);
+        break;
+      default:
+        break;
+    }
+  }
 
-    // Exemplo de exportação do pedido como JSON (feito com gpt, verificar se ta tudo certo)
-    // const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-    //   JSON.stringify(customReportData),
-    // )}`;
-    // const link = document.createElement("a");
-    // link.href = jsonString;
-    // link.download = `RelatorioPersonalizado`;
-    // link.click();
+  function exportToJson(stockWarningsData: StockWarningsData) {
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(stockWarningsData),
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = `Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+  }
+
+  function exportToPDF(stockWarningsData: StockWarningsData) {
+    const doc = new jsPDF();
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text(
+      `Relatório Personalizado - ${new Date(
+        stockWarningsData.date,
+      ).toLocaleDateString()}`,
+      14,
+      20,
+    );
+
+    doc.setFontSize(12);
+    let yPosition = 25;
+    const lineHeight = 5.5;
+    const pageHeight = 280;
+
+    function addKeyValuePair(
+      key: string,
+      value: string | number,
+      x1: number,
+      x2: number,
+      y: number,
+    ) {
+      doc.setFont("helvetica", "bold");
+      doc.text(`${key}:`, x1, y);
+      doc.setFont("helvetica", "normal");
+
+      const splitText: string[] = doc.splitTextToSize(
+        `${value}`,
+        120,
+      ) as string[];
+      doc.text(splitText, x2, y);
+
+      return splitText.length * lineHeight;
+    }
+
+    stockWarningsData.products.forEach((product) => {
+      const productHeight = Object.keys(product).length * lineHeight + 14;
+
+      if (yPosition + productHeight > pageHeight) {
+        doc.addPage();
+        yPosition = 14;
+      }
+
+      // Inclui os dados conforme os atributos selecionados
+      if (selectReportOptions.includes("Código")) {
+        yPosition += addKeyValuePair(
+          "Código",
+          product.code,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Nome")) {
+        yPosition += addKeyValuePair(
+          "Nome",
+          product.name,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Fornecedores")) {
+        yPosition += addKeyValuePair(
+          "Fornecedores",
+          product.suppliers.map((s) => s.name).join(", "),
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Status")) {
+        yPosition += addKeyValuePair(
+          "Status",
+          product.status,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Produto Pai")) {
+        yPosition += addKeyValuePair(
+          "Produto Pai",
+          product.parent_product ?? "N/A",
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Unidade de Compra")) {
+        yPosition += addKeyValuePair(
+          "Unidade de Compra",
+          `${product.buy_unit.description} (${product.buy_unit.abbreviation}) - ${product.buy_unit.unitsPerPack}`,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Quantidade de Compra")) {
+        yPosition += addKeyValuePair(
+          "Quantidade de Compra",
+          product.buy_quantity,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Dia de Compra")) {
+        yPosition += addKeyValuePair(
+          "Dia de Compra",
+          product.buy_day,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Estoque Atual")) {
+        yPosition += addKeyValuePair(
+          "Estoque Atual",
+          product.stock_current,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Estoque Mínimo")) {
+        yPosition += addKeyValuePair(
+          "Estoque Mínimo",
+          product.stock_min,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Estoque Máximo")) {
+        yPosition += addKeyValuePair(
+          "Estoque Máximo",
+          product.stock_max,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Tipo de Controle")) {
+        yPosition += addKeyValuePair(
+          "Tipo de Controle",
+          product.type_of_control.description,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Categoria do Produto")) {
+        yPosition += addKeyValuePair(
+          "Categoria do Produto",
+          product.product_category.description,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Setor de Utilização")) {
+        yPosition += addKeyValuePair(
+          "Setor de Utilização",
+          product.sector_of_use.description,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Endereço do Estoque")) {
+        yPosition += addKeyValuePair(
+          "Endereço do Estoque",
+          `${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`,
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+      if (selectReportOptions.includes("Usuários com Permissão")) {
+        yPosition += addKeyValuePair(
+          "Usuários com Permissão",
+          product.users_with_permission?.map((u) => u.name).join(", ") ?? "N/A",
+          14,
+          70,
+          (yPosition += lineHeight),
+        );
+      }
+
+      yPosition += 10;
+    });
+
+    doc.save(
+      `Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.pdf`,
+    );
+  }
+
+  function exportToCSV(stockWarningsData: StockWarningsData) {
+    // Mapear as colunas a partir de `selectReportOptions`
+    const headers: string[] = [];
+
+    if (selectReportOptions.includes("Código")) headers.push("Codigo");
+    if (selectReportOptions.includes("Nome")) headers.push("Nome");
+    if (selectReportOptions.includes("Fornecedores"))
+      headers.push("Fornecedores");
+    if (selectReportOptions.includes("Status")) headers.push("Status");
+    if (selectReportOptions.includes("Produto Pai"))
+      headers.push("Produto Pai");
+    if (selectReportOptions.includes("Unidade de Compra"))
+      headers.push("Unidade de Compra (Sigla) - Qtd");
+    if (selectReportOptions.includes("Quantidade de Compra"))
+      headers.push("Quantidade de Compra");
+    if (selectReportOptions.includes("Dia de Compra"))
+      headers.push("Dia de Compra");
+    if (selectReportOptions.includes("Estoque Atual"))
+      headers.push("Estoque Atual");
+    if (selectReportOptions.includes("Estoque Mínimo"))
+      headers.push("Estoque Mínimo");
+    if (selectReportOptions.includes("Estoque Máximo"))
+      headers.push("Estoque Máximo");
+    if (selectReportOptions.includes("Tipo de Controle"))
+      headers.push("Tipo de Controle");
+    if (selectReportOptions.includes("Categoria do Produto"))
+      headers.push("Categoria do Produto");
+    if (selectReportOptions.includes("Setor de Utilização"))
+      headers.push("Setor de Utilização");
+    if (selectReportOptions.includes("Endereço do Estoque"))
+      headers.push("Endereço de Estoque");
+    if (selectReportOptions.includes("Usuários com Permissão"))
+      headers.push("Quem Pode Requisitar o Produto");
+
+    const worksheetData = [
+      headers,
+      ...stockWarningsData.products.map((product: Product) => {
+        const rowData: (string | number | null | undefined)[] = [];
+
+        if (selectReportOptions.includes("Código")) rowData.push(product.code);
+        if (selectReportOptions.includes("Nome")) rowData.push(product.name);
+        if (selectReportOptions.includes("Fornecedores"))
+          rowData.push(
+            product.suppliers.map((supplier) => supplier.name).join(", "),
+          );
+        if (selectReportOptions.includes("Status"))
+          rowData.push(product.status);
+        if (selectReportOptions.includes("Produto Pai"))
+          rowData.push(product.parent_product ?? "Não tem Produto Pai");
+        if (selectReportOptions.includes("Unidade de Compra"))
+          rowData.push(
+            `${product.buy_unit.description} (${product.buy_unit.abbreviation}) - ${product.buy_unit.unitsPerPack}`,
+          );
+        if (selectReportOptions.includes("Quantidade de Compra"))
+          rowData.push(product.buy_quantity);
+        if (selectReportOptions.includes("Dia de Compra"))
+          rowData.push(product.buy_day);
+        if (selectReportOptions.includes("Estoque Atual"))
+          rowData.push(product.stock_current);
+        if (selectReportOptions.includes("Estoque Mínimo"))
+          rowData.push(product.stock_min);
+        if (selectReportOptions.includes("Estoque Máximo"))
+          rowData.push(product.stock_max);
+        if (selectReportOptions.includes("Tipo de Controle"))
+          rowData.push(product.type_of_control.description);
+        if (selectReportOptions.includes("Categoria do Produto"))
+          rowData.push(product.product_category.description);
+        if (selectReportOptions.includes("Setor de Utilização"))
+          rowData.push(product.sector_of_use.description);
+        if (selectReportOptions.includes("Endereço do Estoque"))
+          rowData.push(
+            `${product.address?.stock}, ${product.address?.storage}, ${product.address?.shelf}`,
+          );
+        if (selectReportOptions.includes("Usuários com Permissão"))
+          rowData.push(
+            product.users_with_permission
+              ?.filter((user) => user.role === "Requisitante")
+              .map((user) => user.name)
+              .join(", "),
+          );
+
+        return rowData;
+      }),
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Relatorio Personalizado",
+    );
+    XLSX.writeFile(
+      workbook,
+      `Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.xlsx`,
+    );
   }
 
   return (
@@ -561,7 +861,7 @@ export default function CustomReports() {
         ))}
       </TableComponent.Table>
 
-      <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
+      <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">
         <TableButtonComponent.Button
           className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
           icon={
@@ -572,9 +872,24 @@ export default function CustomReports() {
               color="white"
             />
           }
-          handlePress={printSelectedProductData}
+          handlePress={() => exportSelectedProductData("pdf")}
         >
-          Baixar Relatório
+          Exportar Dados em PDF
+        </TableButtonComponent.Button>
+
+        <TableButtonComponent.Button
+          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
+          icon={
+            <Download
+              className="flex h-full cursor-pointer self-center"
+              size={20}
+              strokeWidth={2.2}
+              color="white"
+            />
+          }
+          handlePress={() => exportSelectedProductData("csv")}
+        >
+          Exportar Dados em CSV
         </TableButtonComponent.Button>
       </TableButtonComponent>
     </TableComponent>

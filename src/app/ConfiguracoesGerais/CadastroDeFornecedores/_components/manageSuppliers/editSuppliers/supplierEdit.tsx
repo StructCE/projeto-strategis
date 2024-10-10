@@ -17,8 +17,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-import type { Contact } from "../../supplierData";
-import { roles, states } from "../../supplierData";
+import { roles, states, type Contact } from "../../supplierData";
 import { useSupplierForm } from "./useSupplierForm";
 
 import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
@@ -274,36 +273,6 @@ export const SupplierEdit = (props: SupplierEditProps) => {
                 </FormComponent.Frame>
 
                 <FormComponent.Frame>
-                  <FormComponent.Label>Cargo</FormComponent.Label>
-                  <FormField
-                    control={form.form.control}
-                    name={`contacts.${index}.role`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                              <SelectValue placeholder="Selecione um cargo" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {roles.map((role, i) => (
-                              <SelectItem value={role.value} key={i}>
-                                {role.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
-
-                <FormComponent.Frame>
                   <FormComponent.Label>Email</FormComponent.Label>
                   <FormField
                     control={form.form.control}
@@ -353,7 +322,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
           <FormComponent.ButtonLayout>
             <button
               onClick={() =>
-                form.fieldAppend({ name: "", email: "", phone: "", role: "" })
+                form.fieldAppend({ name: "", email: "", phone: "" })
               }
               className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"
               type="button"

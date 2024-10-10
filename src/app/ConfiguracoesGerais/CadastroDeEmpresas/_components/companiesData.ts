@@ -32,7 +32,7 @@ export type Company = {
   state_registration: string;
   tax_regime: string;
   legal_representative: User;
-  xmlFilePath: string;
+  // xmlFilePath: string;
   registered_products: number;
   low_stock_products: number;
   stocks: Stock[];
@@ -63,7 +63,7 @@ export const companies: Company[] = [
       name: "Nome do Usuário 1",
       email: "usuario1@gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo.xml",
+    // xmlFilePath: "/caminho/arquivo.xml",
     stocks: [{ name: "Estoque Bar" }, { name: "Estoque Cozinha" }],
   },
   {
@@ -86,7 +86,7 @@ export const companies: Company[] = [
       name: "Nome do Usuário 2",
       email: "usuario2@gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo2.xml",
+    // xmlFilePath: "/caminho/arquivo2.xml",
     stocks: [
       { name: "Estoque Bar" },
       { name: "Estoque Cozinha" },
@@ -117,7 +117,7 @@ export const companies: Company[] = [
       name: "Nome do Usuário 3",
       email: "usuario3@gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo2.xml",
+    // xmlFilePath: "/caminho/arquivo2.xml",
     stocks: [
       { name: "Estoque Bar" },
       { name: "Estoque Cozinha" },
@@ -144,7 +144,7 @@ export const companies: Company[] = [
       name: "Nome do Usuário 4",
       email: "usuario4gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo3.xml",
+    // xmlFilePath: "/caminho/arquivo3.xml",
     stocks: [{ name: "Estoque Bar" }, { name: "Estoque Cozinha" }],
   },
   {
@@ -167,7 +167,7 @@ export const companies: Company[] = [
       name: "Nome do Usuário 5",
       email: "usuario5gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo4.xml",
+    // xmlFilePath: "/caminho/arquivo4.xml",
     stocks: [{ name: "Estoque Bar" }],
   },
   {
@@ -194,7 +194,7 @@ export const companies: Company[] = [
       name: "Nome do Usuário 3",
       email: "usuario3gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo4.xml",
+    // xmlFilePath: "/caminho/arquivo4.xml",
     stocks: [
       { name: "Estoque Bar" },
       { name: "Estoque Cozinha" },
@@ -221,7 +221,7 @@ export const companies: Company[] = [
       name: "Nome do Usuário 4",
       email: "usuario4gmail.com",
     },
-    xmlFilePath: "/caminho/arquivo5.xml",
+    // xmlFilePath: "/caminho/arquivo5.xml",
     stocks: [
       { name: "Estoque Bar" },
       { name: "Estoque Cozinha" },

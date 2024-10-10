@@ -15,8 +15,8 @@ Para a construção desse site, está sendo utilizada a Stack T3 que possui tecn
 
 ```bash
 pnpm i
-pnpm prisma migrate reset -f # isso apaga todo conteúdo do banco de dados, cuidado para não apagar dados que não estão na seed
+npx prisma db push --force-reset # isso apaga todo conteúdo do banco de dados, cuidado para não apagar dados que não estão na seed
 pnpm db:push
-pnpm db:seed
+pnpm tsx prisma/seed.ts
 pnpm dev
 ```

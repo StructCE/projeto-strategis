@@ -10,9 +10,9 @@ import {
   FolderCog,
   FolderSearch,
   Info,
-  PackageMinus,
+  // PackageMinus,
   PackageOpen,
-  PackagePlus,
+  // PackagePlus,
   Settings,
   ShoppingBasket,
   SlidersHorizontal,
@@ -76,16 +76,16 @@ export const sidebarButtons: Record<string, SidebarButton[]> = {
       icon: (props) => <FileInput {...props} />,
       refLink: "/GestaoDeEstoque/ImportacaoDeNFs",
     },
-    {
-      name: "Entrada de Mercadorias",
-      icon: (props) => <PackagePlus {...props} />,
-      refLink: "/GestaoDeEstoque/EntradaDeMercadorias",
-    },
-    {
-      name: "Saída de Mercadorias",
-      icon: (props) => <PackageMinus {...props} />,
-      refLink: "/GestaoDeEstoque/SaidaDeMercadorias",
-    },
+    // {
+    //   name: "Entrada de Mercadorias",
+    //   icon: (props) => <PackagePlus {...props} />,
+    //   refLink: "/GestaoDeEstoque/EntradaDeMercadorias",
+    // },
+    // {
+    //   name: "Saída de Mercadorias",
+    //   icon: (props) => <PackageMinus {...props} />,
+    //   refLink: "/GestaoDeEstoque/SaidaDeMercadorias",
+    // },
     {
       name: "Compra de Mercadorias",
       icon: (props) => <CircleDollarSign {...props} />,

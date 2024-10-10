@@ -148,7 +148,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Conta
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.account_plan.accounts.map((account) => account.name)}
+            {props.payment.account_plan.account.name}
           </TableCell>
         </TableRow>
 

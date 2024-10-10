@@ -1,4 +1,6 @@
 "use client";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import {
   Building2,
   Calendar,
@@ -12,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import * as XLSX from "xlsx";
 import { companies } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/companiesData";
 import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import { Filter } from "~/components/filter";
@@ -33,12 +36,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import PaymentDetails from "./_components/editPayment/paymentDetails";
 import PaymentCompleteDetails from "./_components/paymentCompleteDetails";
-import PaymentDetails from "./_components/paymentDetails";
 import {
   account_plans,
   banks,
   groups,
+  type Payment,
   payments,
   projects,
 } from "./_components/paymentsData";
@@ -140,7 +144,7 @@ export default function PaymentHistory() {
   });
 
   // Seleção dos pagamentos via checkbox
-  function handleProductSelection(
+  function handlePaymentSelection(
     paymentDocumentNumber: string,
     checked: string | boolean,
   ) {
@@ -156,12 +160,14 @@ export default function PaymentHistory() {
     }
   }
 
-  // Selecionar todos pagamentos filtrados
   function handleSelectAll() {
-    const allFilteredProductCodes = filteredPayments.map(
+    const allFilteredPayments = filteredPayments.map(
       (payment) => payment.document_number,
     );
-    setSelectedPayments(allFilteredProductCodes);
+
+    setSelectedPayments((prevSelectedPayments) => [
+      ...new Set([...prevSelectedPayments, ...allFilteredPayments]),
+    ]);
   }
 
   // Deselecionar tudo
@@ -193,14 +199,10 @@ export default function PaymentHistory() {
       .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitaliza a primeira letra
   }
 
-  type Product = {
-    name: string;
-  };
-
   function paymentDescription(
     nota_fiscal: string,
     valor: number,
-    produtos: Product[],
+    produtos: { name: string }[],
   ): string {
     const productsString = produtos
       .map((product) => capitalizeFirstLetter(product.name))
@@ -214,14 +216,19 @@ export default function PaymentHistory() {
       .replace(/\s/g, "")}-[${productsString}]`;
   }
 
-  function printSelectedPaymentsData() {
+  interface PaymentReportData {
+    date: string;
+    payments: Payment[];
+  }
+
+  function exportSelectedProductData(fileType: string) {
     const paymentsToPrint = payments.filter((payment) =>
       selectedPayments.includes(payment.document_number),
     );
 
-    const stockWarningsData = {
-      report_date: new Date()?.toISOString(),
-      products: paymentsToPrint.map((payment) => ({
+    const paymentReportData = {
+      date: new Date()?.toISOString(),
+      payments: paymentsToPrint.map((payment) => ({
         document_number: payment.document_number,
         company: payment.company,
         date_document: payment.date_document,
@@ -231,31 +238,306 @@ export default function PaymentHistory() {
         expense_type: payment.expense_type,
         recurrence: payment.recurrence,
         supplier: payment.supplier,
-        // Descrição -> padrão com nº da nota, valor global e nomes dos produtos
         bank: payment.bank,
         value: payment.value,
-        installment: payment.installment, // Parcela (Pode ser 'única' ou o numero da parcela incluindo a data ou não)
+        installment: payment.installment,
         value_payed: payment.value_payed,
         date_deadline: payment.date_deadline,
         date_payment: payment.date_payment,
         confirmed_status: payment.confirmed_status,
         payed_status: payment.payed_status,
-        // Lista -> é a abreviação do AccountPlan
         group: payment.group,
         products: payment.products,
       })),
     };
 
-    console.log(JSON.stringify(stockWarningsData, null, 2));
+    switch (fileType) {
+      case "csv":
+        exportToCSV(paymentReportData);
+        break;
 
-    // Exemplo de exportação do pedido como JSON (feito com gpt, verificar se ta tudo certo)
-    // const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-    //   JSON.stringify(stockWarningsData),
-    // )}`;
-    // const link = document.createElement("a");
-    // link.href = jsonString;
-    // link.download = `RelatorioPersonalizado`;
-    // link.click();
+      case "json":
+        exportToJson(paymentReportData);
+        break;
+
+      case "pdf":
+        exportToPDF(paymentReportData);
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  function exportToJson(paymentReportData: PaymentReportData) {
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(paymentReportData),
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = `Relatorio_Pagamentos_${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+  }
+
+  function exportToPDF(paymentReportData: PaymentReportData) {
+    const doc = new jsPDF();
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text(
+      `Relatório de Pagamentos - ${new Date(paymentReportData.date).toLocaleDateString()}`,
+      14,
+      20,
+    );
+
+    doc.setFontSize(12);
+    let yPosition = 25;
+    const lineHeight = 5.5; // Altura entre as linhas de texto
+    const pageHeight = 280; // Limite de altura da página
+
+    function addKeyValuePair(
+      key: string,
+      value: string | number,
+      x1: number,
+      x2: number,
+      y: number,
+    ) {
+      doc.setFont("helvetica", "bold");
+      doc.text(`${key}:`, x1, y); // Chave
+      doc.setFont("helvetica", "normal");
+
+      const splitText: string[] = doc.splitTextToSize(
+        `${value}`,
+        120,
+      ) as string[];
+      doc.text(splitText, x2, y);
+
+      return splitText.length * lineHeight;
+    }
+
+    paymentReportData.payments.forEach((payment) => {
+      const productHeight = 12 * lineHeight + 14;
+
+      if (yPosition + productHeight > pageHeight) {
+        doc.addPage();
+        yPosition = 14;
+      }
+
+      yPosition += addKeyValuePair(
+        "Nº do Documento",
+        payment.document_number,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Empresa",
+        payment.company.name,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Fornecedor",
+        payment.supplier.name,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Data do Documento",
+        new Date(payment.date_document).toLocaleDateString(),
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Data de Vencimento",
+        new Date(payment.date_deadline).toLocaleDateString(),
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Produtos",
+        payment.products.map((product) => product.name).join(", "),
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Banco",
+        payment.bank?.name ?? "N/A",
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Valor",
+        payment.value.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Parcela",
+        payment.installment,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Valor Pago",
+        payment.value_payed?.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }) ?? "N/A",
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Data de Pagamento",
+        new Date(
+          payment.date_payment ? payment.date_payment : "",
+        ).toLocaleDateString() ?? "N/A",
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Status",
+        payment.payed_status,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Tipo de Documento",
+        payment.document.name,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Plano de Contas",
+        payment.account_plan.name,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Conta",
+        payment.account_plan.account.name,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Projeto",
+        payment.project.name,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Tipo de Despesa",
+        payment.expense_type,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Recorrência",
+        payment.recurrence,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+      yPosition += addKeyValuePair(
+        "Grupo",
+        payment.group.name,
+        14,
+        70,
+        (yPosition += lineHeight),
+      );
+
+      yPosition += 10;
+    });
+
+    doc.save(`Avisos_Estoque_${new Date().toISOString().slice(0, 10)}.pdf`);
+  }
+
+  function exportToCSV(paymentReportData: PaymentReportData) {
+    const headers = [
+      "Nº do Documento",
+      "Empresa",
+      "Fornecedor",
+      "Data do Documento",
+      "Data de Vencimento",
+      "Produtos",
+      "Banco",
+      "Valor",
+      "Parcela",
+      "Valor Pago",
+      "Data de Pagamento",
+      "Status",
+      "Tipo de Documento",
+      "Plano de Contas",
+      "Conta",
+      "Projeto",
+      "Tipo de Despesa",
+      "Recorrência",
+      "Grupo",
+    ];
+
+    const worksheetData = [
+      headers,
+      ...paymentReportData.payments.map((payment: Payment) => [
+        payment.document_number,
+        payment.company.name,
+        payment.supplier.name,
+        new Date(payment.date_document).toLocaleDateString(),
+        new Date(payment.date_deadline).toLocaleDateString(),
+        payment.products.map((product) => product.name).join(", "),
+        payment.bank ? payment.bank.name : "Em Aberto",
+        payment.value.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }),
+        payment.installment,
+        payment.value_payed
+          ? payment.value_payed.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })
+          : "Em Aberto",
+        payment.date_payment
+          ? new Date(
+              payment.date_payment ? payment.date_payment : "",
+            ).toLocaleDateString()
+          : "Em Aberto",
+        payment.payed_status,
+        payment.document.name,
+        payment.account_plan.name,
+        payment.account_plan.account.name,
+        payment.project.name,
+        payment.expense_type,
+        payment.recurrence,
+        payment.group.name,
+      ]),
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Avisos de Estoque");
+    XLSX.writeFile(
+      workbook,
+      `Relatorio_Pagamentos_${new Date().toISOString().slice(0, 10)}.xlsx`,
+    );
   }
 
   return (
@@ -615,7 +897,7 @@ export default function PaymentHistory() {
                 <Checkbox
                   checked={selectedPayments.includes(payment.document_number)}
                   onCheckedChange={(checked) =>
-                    handleProductSelection(payment.document_number, checked)
+                    handlePaymentSelection(payment.document_number, checked)
                   }
                 />
               </TableComponent.Value>
@@ -705,7 +987,7 @@ export default function PaymentHistory() {
               color="white"
             />
           }
-          handlePress={printSelectedPaymentsData}
+          handlePress={() => exportSelectedProductData("csv")}
         >
           Exportar Dados em CSV
         </TableButtonComponent.Button>

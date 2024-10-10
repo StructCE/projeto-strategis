@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
-import { banks, type Payment } from "./paymentsData";
+import { banks, type Payment } from "../paymentsData";
 import { usePaymentForm } from "./usePaymentForm";
 
 type PaymentType = {
@@ -279,9 +279,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Conta
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.account_plan.accounts.map(
-                  (account) => account.name,
-                )}
+                {props.payment.account_plan.account.name}
               </TableCell>
             </TableRow>
 

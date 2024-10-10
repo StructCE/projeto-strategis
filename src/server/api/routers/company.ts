@@ -31,6 +31,7 @@ export const companyRouter = createTRPCRouter({
         const serializedSuppliers = companySuppliers.map((supplier) => ({
           cnpj: supplier.cnpj,
           name: supplier.name,
+          email: supplier.email,
           address: supplier.address,
           phone: supplier.phone,
           stateRegistration: supplier.stateRegistration,
@@ -38,12 +39,11 @@ export const companyRouter = createTRPCRouter({
           city: supplier.city,
           federativeUnit: supplier.federativeUnit,
           cep: supplier.cep,
-          contacts: supplier.UserRole.map((userRole) => ({
-            id: userRole.user.id,
-            name: userRole.user.name,
-            email: userRole.user.email,
-            phone: userRole.user.phone,
-            cargo: userRole.role.name,
+          contacts: supplier.Contact.map((contact) => ({
+            id: contact.id,
+            name: contact.name,
+            email: contact.email,
+            phone: contact.phone,
           })),
         }));
         return serializedSuppliers;
@@ -82,21 +82,21 @@ export const companyRouter = createTRPCRouter({
 
   registerCompany: protectedProcedure
     .input(companyRepositorySchema.registerProps)
-    .query(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
+    .mutation(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
       const registeredCompany = await CompanyRepository.register(input);
       return registeredCompany;
     }),
 
   editCompany: protectedProcedure
     .input(companyRepositorySchema.editProps)
-    .query(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
+    .mutation(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
       const editedCompany = await CompanyRepository.edit(input);
       return editedCompany;
     }),
 
   deleteCompany: protectedProcedure
     .input(companyRepositorySchema.deleteProps)
-    .query(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
+    .mutation(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
       const deletedCompany = await CompanyRepository.remove(input);
       return deletedCompany;
     }),

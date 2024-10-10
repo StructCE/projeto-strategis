@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   createSupplierFormSchema,
   type CreateSupplierFormValues,
 } from "./supplierRegisterFormSchema";
+
 import { useFieldArray } from "react-hook-form";
 // import { api } from "~/trpc/server";
 import { api } from "~/trpc/react";
@@ -23,7 +24,7 @@ export const useSupplierForm = () => {
       city: "",
       federativeUnit: "",
       cep: "",
-      contacts: [{ name: "", role: "", email: "", phone: "" }],
+      contacts: [{ name: "", email: "", phone: "" }],
     },
   });
   const fieldArray = useFieldArray({

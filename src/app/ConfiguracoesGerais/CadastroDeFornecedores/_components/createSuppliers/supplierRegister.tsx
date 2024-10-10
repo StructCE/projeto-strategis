@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { roles, states } from "../supplierData";
+import { states } from "../supplierData";
 import { useSupplierForm } from "./useSupplierForm";
 
 export const SupplierRegister = () => {
@@ -263,36 +263,6 @@ export const SupplierRegister = () => {
                 </FormComponent.Frame>
 
                 <FormComponent.Frame>
-                  <FormComponent.Label>Cargo</FormComponent.Label>
-                  <FormField
-                    control={form.form.control}
-                    name={`contacts.${index}.role`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                              <SelectValue placeholder="Selecione um cargo" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {roles.map((role, i) => (
-                              <SelectItem value={role.value} key={i}>
-                                {role.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
-
-                <FormComponent.Frame>
                   <FormComponent.Label>Email</FormComponent.Label>
                   <FormField
                     control={form.form.control}
@@ -342,7 +312,7 @@ export const SupplierRegister = () => {
           <FormComponent.ButtonLayout>
             <button
               onClick={() =>
-                form.arrayAppend({ name: "", email: "", phone: "", role: "" })
+                form.arrayAppend({ name: "", email: "", phone: "" })
               }
               className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"
               type="button"
