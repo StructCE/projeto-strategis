@@ -71,11 +71,12 @@ model Company {
     email              String
     cnpj               String
     type               String
-    headquarters       String
+    headquarters       String?
     phone              String
     stateRegistration  String
     taxRegime          String
     address            String
+    city               String
     neighborhood       String
     federativeUnit     String
     cep                String

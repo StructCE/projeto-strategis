@@ -83,7 +83,6 @@ async function createUserWithRole({
   roleName: string;
   companyId: string;
 }) {
-  // Cria o usuário
   const user = await db.user.create({
     data: {
       name,
@@ -92,34 +91,22 @@ async function createUserWithRole({
     },
   });
 
-  // Recupera o cargo de administrador
   const role = await db.role.findFirst({
     where: { name: roleName },
   });
 
   if (!role) throw new Error(`Role ${roleName} not found`);
 
-  // Verifica se a empresa existe
   const company = await db.company.findUnique({
     where: { id: companyId },
   });
-
   if (!company) throw new Error(`Company with ID ${companyId} not found`);
 
-  // Cria o vínculo entre o usuário e o cargo de administrador
-  const userRole = await db.userRole.create({
+  await db.userRole.create({
     data: {
       userId: user.id,
       roleId: role.id,
-      companyId: company.id, // Usa o ID da empresa existente
-    },
-  });
-
-  // Atualiza o legalResponsibleId da empresa se necessário
-  await db.company.update({
-    where: { id: company.id },
-    data: {
-      legalResponsibleId: userRole.id, // Define o usuário criado como responsável legal
+      companyId: company.id,
     },
   });
 
@@ -143,34 +130,53 @@ async function main() {
   // });
   // await Promise.all(createdRoles);
 
-  const exampleCompany = await db.company.create({
+  const companyStruct = await db.company.create({
     data: {
-      name: "Tech Solutions Ltda",
-      email: "contact@techsolutions.com",
-      cnpj: "12.345.678/0001-90",
-      type: "Tecnologia",
-      headquarters: "São Paulo",
-      phone: "11 98765-4321",
-      stateRegistration: "123456789",
+      name: "Struct EJ",
+      email: "projetostrategis@gmail.com",
+      cnpj: "21.803.569/0001-65",
+      type: "Matriz",
+      phone: "(32) 3025-0102",
+      stateRegistration: "0771508800122",
       taxRegime: "Simples Nacional",
-      address: "Avenida das Nações, 1000",
-      neighborhood: "Centro",
-      federativeUnit: "SP",
-      cep: "01000-000",
-      // legalResponsibleId: "", // Este campo deve ser preenchido após a criação do responsável legal
+      address:
+        "Campus Universitario Darcy Ribeiro S/n Univ de Brasilia Edif Predio SG",
+      city: "Brasília",
+      neighborhood: "Asa Norte",
+      federativeUnit: "DF",
+      cep: "70910-900",
+      // legalResponsibleId: "",
     },
   });
 
-  // Criar o usuário com o cargo de administrador
-  const adminUser = await createUserWithRole({
+  await createUserWithRole({
     name: "Leonardo Côrtes",
     email: "leonardo.cortes@struct.unb.br",
-    phone: "11988888888",
+    phone: "(61) 99116-4633",
     roleName: "administrador",
-    companyId: exampleCompany.id,
+    companyId: companyStruct.id,
   });
-
-  console.log("Usuário administrador criado:", adminUser);
+  await createUserWithRole({
+    name: "Matheus das Neves Fernandes",
+    email: "matheusnf@struct.unb.br",
+    phone: "(61) 99999-9999",
+    roleName: "administrador",
+    companyId: companyStruct.id,
+  });
+  await createUserWithRole({
+    name: "Guilherme Sampaio",
+    email: "guilherme.sampaio@struct.unb.br",
+    phone: "(61) 99999-9999",
+    roleName: "administrador",
+    companyId: companyStruct.id,
+  });
+  await createUserWithRole({
+    name: "Willyan Marques",
+    email: "willyan.marques@struct.unb.br",
+    phone: "(61) 99999-9999",
+    roleName: "administrador",
+    companyId: companyStruct.id,
+  });
 }
 
 main().catch((e) => console.log(e));
