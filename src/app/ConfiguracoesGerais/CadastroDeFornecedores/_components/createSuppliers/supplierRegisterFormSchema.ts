@@ -67,10 +67,10 @@ export const createSupplierFormSchema = z.object({
     .max(16, {
       message:
         "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
-    })
-    .optional(),
+    }),
+    // .optional(),
 
-  state_registration: z
+  stateRegistration: z
     .string({
       required_error: "Por favor digite a inscrição estadual do fornecedor.",
     })
@@ -102,7 +102,7 @@ export const createSupplierFormSchema = z.object({
       message: "A cidade deve ter pelo menos 2 caracteres.",
     }),
 
-  state: z
+  federativeUnit: z
     .string({
       required_error: "Por favor selecione a unidade federativa do fornecedor.",
     })

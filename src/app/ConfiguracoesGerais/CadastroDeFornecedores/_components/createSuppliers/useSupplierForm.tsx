@@ -5,6 +5,10 @@ import {
   type CreateSupplierFormValues,
 } from "./supplierRegisterFormSchema";
 
+import { useFieldArray } from "react-hook-form";
+// import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
+
 export const useSupplierForm = () => {
   const form = useForm<CreateSupplierFormValues>({
     resolver: zodResolver(createSupplierFormSchema),
@@ -14,11 +18,11 @@ export const useSupplierForm = () => {
       cnpj: "",
       email: "",
       phone: "",
-      state_registration: "",
+      stateRegistration: "",
       address: "",
       neighborhood: "",
       city: "",
-      state: "",
+      federativeUnit: "",
       cep: "",
       contacts: [{ name: "", email: "", phone: "" }],
     },
@@ -29,7 +33,23 @@ export const useSupplierForm = () => {
   });
 
   function onSubmit(data: CreateSupplierFormValues) {
-    console.log(JSON.stringify(data, null, 2)); // Criar fornecedor
+    console.log(JSON.stringify(data, null, 2));
+
+    const { contacts, ...supplierData } = data;
+    const {
+      data: newSupplier = [],
+      error,
+      isLoading,
+    } = api.supplier.createSupplier.useQuery(supplierData);
+
+    // if (contacts) {
+    //   for (const contact of contacts) {
+    //     api.contact.createContact({
+    //       ...contact,
+    //       companyCnpj: newSupplier.cnpj,
+    //     });
+    //   }
+    // }
   }
 
   return {

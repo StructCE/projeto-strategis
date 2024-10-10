@@ -110,7 +110,7 @@ export const SupplierRegister = () => {
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="state_registration"
+                name="stateRegistration"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -192,7 +192,7 @@ export const SupplierRegister = () => {
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="state"
+                name="federativeUnit"
                 render={({ field }) => (
                   <FormItem>
                     <Select

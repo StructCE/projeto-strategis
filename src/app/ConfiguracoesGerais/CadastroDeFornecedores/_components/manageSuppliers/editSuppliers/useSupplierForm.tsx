@@ -1,28 +1,35 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
-import { type Supplier } from "../../supplierData";
 import {
   editSupplierFormSchema,
   type EditSupplierFormValues,
 } from "./supplierEditFormSchema";
+// import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
+import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
+import type { Contact } from "../../supplierData";
 
-export const useSupplierForm = (supplier: Supplier) => {
+export const useSupplierForm = (supplier: Supplier, contacts: Contact[]) => {
   const form = useForm<EditSupplierFormValues>({
     resolver: zodResolver(editSupplierFormSchema),
     mode: "onChange",
     defaultValues: {
-      name: supplier.name,
-      cnpj: supplier.cnpj,
-      email: supplier.email,
-      phone: supplier.phone,
-      state_registration: supplier.state_registration,
-      address: supplier.address,
-      neighborhood: supplier.neighborhood,
-      city: supplier.city,
-      state: supplier.state,
-      cep: supplier.cep,
-      contacts: supplier.contacts.map((contact) => ({
+      id: supplier.id,
+      data: {
+        name: supplier.name,
+        cnpj: supplier.cnpj,
+        email: supplier.email,
+        phone: supplier.phone,
+        stateRegistration: supplier.stateRegistration,
+        address: supplier.address,
+        neighborhood: supplier.neighborhood,
+        city: supplier.city,
+        federativeUnit: supplier.federativeUnit,
+        cep: supplier.cep,
+      },
+      contacts: contacts.map((contact) => ({
         name: contact.name,
+        role: contact.role,
         email: contact.email,
         phone: contact.phone,
       })),
@@ -31,12 +38,21 @@ export const useSupplierForm = (supplier: Supplier) => {
 
   function onSubmitEdit(data: EditSupplierFormValues) {
     console.log("Editando fornecedor:");
-    console.log(JSON.stringify(data, null, 2)); // Editar fornecedor
+    console.log(JSON.stringify(data, null, 2));
+
+    const { contacts, ...supplierData } = data;
+
+    const {
+      data: updatedSupplier = [],
+      error,
+      isLoading,
+    } = api.supplier.editSupplier.useQuery(supplierData);
   }
 
   function onSubmitRemove(data: EditSupplierFormValues) {
     console.log("Removendo fornecedor:");
-    console.log(JSON.stringify(data, null, 2)); // Remover fornecedor
+    console.log(JSON.stringify(data, null, 2));
+    // const removedSupplier = api.supplier.deleteSupplier(data.id)
   }
 
   const fieldArray = useFieldArray({
