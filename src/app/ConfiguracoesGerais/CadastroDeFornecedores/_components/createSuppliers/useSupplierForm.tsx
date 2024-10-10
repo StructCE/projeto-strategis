@@ -5,8 +5,6 @@ import {
   type CreateSupplierFormValues,
 } from "./supplierRegisterFormSchema";
 
-import { useFieldArray } from "react-hook-form";
-// import { api } from "~/trpc/server";
 import { api } from "~/trpc/react";
 
 export const useSupplierForm = () => {
@@ -32,25 +30,46 @@ export const useSupplierForm = () => {
     name: "contacts",
   });
 
-  function onSubmit(data: CreateSupplierFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+function onSubmit(data: CreateSupplierFormValues) {
+  console.log(JSON.stringify(data, null, 2));
 
-    const { contacts, ...supplierData } = data;
-    const {
-      data: newSupplier = [],
-      error,
-      isLoading,
-    } = api.supplier.createSupplier.useQuery(supplierData);
+  const { contacts, ...supplierData } = data;
 
-    // if (contacts) {
-    //   for (const contact of contacts) {
-    //     api.contact.createContact({
-    //       ...contact,
-    //       companyCnpj: newSupplier.cnpj,
-    //     });
-    //   }
-    // }
+  const supplierMutation = api.supplier.createSupplier.useMutation({
+    onSuccess: (newSupplier) => {
+      console.log("Supplier created successfully:", newSupplier);
+
+      // if (contacts) {
+      //   for (const contact of contacts) {
+      //     api.contact
+      //       .createContact({
+      //         ...contact,
+      //         supplierId: newSupplier.id,
+      //       })
+      //       .then((contactData) => {
+      //         console.log("Contact created successfully:", contactData);
+      //       })
+      //       .catch((error) => {
+      //         console.error("Error creating contact:", error);
+      //       });
+      //   }
+      // }
+
+    },
+    onError: (error) => {
+      console.error("Error creating supplier:", error);
+    },
+  });
+
+  try {
+    supplierMutation.mutate({
+      ...supplierData,
+    });
+  } catch (error) {
+    console.error("Error submitting form:", error);
   }
+}
+
 
   return {
     form,
