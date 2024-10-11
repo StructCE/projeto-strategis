@@ -16,19 +16,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-
-import { roles, states, type Contact } from "../../supplierData";
+import { states } from "../../supplierData";
 import { useSupplierForm } from "./useSupplierForm";
 
 import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
 
 type SupplierEditProps = {
   supplier: Supplier;
-  contacts: Contact[];
 };
 
 export const SupplierEdit = (props: SupplierEditProps) => {
-  const form = useSupplierForm(props.supplier, props.contacts);
+  const form = useSupplierForm(props.supplier);
 
   return (
     <Form {...form.form}>
@@ -41,7 +39,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Nome</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="data.name"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -60,7 +58,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>CNPJ</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="data.cnpj"
+                name="cnpj"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -82,7 +80,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Email</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="data.email"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -101,7 +99,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Telefone</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="data.phone"
+                name="phone"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -120,7 +118,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="data.stateRegistration"
+                name="stateRegistration"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -142,7 +140,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Endereço</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="data.address"
+                name="address"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -162,7 +160,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Bairro</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="data.neighborhood"
+                name="neighborhood"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -182,7 +180,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Município/Cidade</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="data.city"
+                name="city"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -202,7 +200,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="data.federativeUnit"
+                name="federativeUnit"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -232,7 +230,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>CEP</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="data.cep"
+                name="cep"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
