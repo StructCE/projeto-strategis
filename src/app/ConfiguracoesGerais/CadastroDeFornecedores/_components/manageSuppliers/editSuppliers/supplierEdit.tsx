@@ -334,7 +334,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
           </FormComponent.ButtonLayout>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
+            <FormComponent.Button className="bg-verde_botao hover:bg-verde_botao">
               Editar Fornecedor
             </FormComponent.Button>
             <FormComponent.Button

@@ -30,11 +30,6 @@ export const useSupplierForm = () => {
     name: "contacts",
   });
 
-function onSubmit(data: CreateSupplierFormValues) {
-  console.log(JSON.stringify(data, null, 2));
-
-  const { contacts, ...supplierData } = data;
-
   const supplierMutation = api.supplier.createSupplier.useMutation({
     onSuccess: (newSupplier) => {
       console.log("Supplier created successfully:", newSupplier);
@@ -54,22 +49,25 @@ function onSubmit(data: CreateSupplierFormValues) {
       //       });
       //   }
       // }
-
     },
     onError: (error) => {
       console.error("Error creating supplier:", error);
     },
   });
 
-  try {
-    supplierMutation.mutate({
-      ...supplierData,
-    });
-  } catch (error) {
-    console.error("Error submitting form:", error);
-  }
-}
+  function onSubmit(data: CreateSupplierFormValues) {
+    console.log(JSON.stringify(data, null, 2));
 
+    const { contacts, ...supplierData } = data;
+
+    try {
+      supplierMutation.mutate({
+        ...supplierData,
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  }
 
   return {
     form,
