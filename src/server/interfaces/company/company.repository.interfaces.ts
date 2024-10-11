@@ -29,15 +29,16 @@ const registerProps = z.object({
   email: z.string(),
   cnpj: z.string(),
   type: z.string(),
-  headquarters: z.string(),
+  headquarters: z.string().optional(),
   phone: z.string(),
   stateRegistration: z.string(),
   taxRegime: z.string(),
   address: z.string(),
+  city: z.string(),
   neighborhood: z.string(),
   federativeUnit: z.string(),
   cep: z.string(),
-  legalResponsibleId: z.string(),
+  legalResponsibleId: z.string().optional(),
 });
 
 type RegisterProps = z.infer<typeof registerProps>;
@@ -60,6 +61,7 @@ const editProps = z.object({
     stateRegistration: z.string().optional(),
     taxRegime: z.string().optional(),
     address: z.string().optional(),
+    city: z.string().optional(),
     neighborhood: z.string().optional(),
     federativeUnit: z.string().optional(),
     cep: z.string().optional(),

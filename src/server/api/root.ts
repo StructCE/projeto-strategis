@@ -1,17 +1,19 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+import { cabinetRouter } from "./routers/cabinet";
 import { companyRouter } from "./routers/company";
+import { controlTypeRouter } from "./routers/controlType";
 import { entryRouter } from "./routers/entry";
 import { operationRouter } from "./routers/operation";
 import { productRouter } from "./routers/product";
+import { productCategoryRouter } from "./routers/productCategory";
 import { requestRouter } from "./routers/request";
+import { roleRouter } from "./routers/role";
+import { shelfRouter } from "./routers/shelf";
 import { stockRouter } from "./routers/stock";
 import { supplierRouter } from "./routers/supplier";
+import { userRouter } from "./routers/user";
 import { userRoleRouter } from "./routers/userRole";
-import { cabinetRouter } from "./routers/cabinet";
-import { controlTypeRouter } from "./routers/controlType";
 import { useSectorRouter } from "./routers/useSector";
-import { shelfRouter } from "./routers/shelf";
-import { productCategoryRouter } from "./routers/productCategory";
 
 /**
  * This is the primary router for your server.
@@ -24,9 +26,11 @@ export const appRouter = createTRPCRouter({
   operation: operationRouter,
   product: productRouter,
   request: requestRouter,
+  role: roleRouter,
   stock: stockRouter,
   supplier: supplierRouter,
   userRole: userRoleRouter,
+  user: userRouter,
   generalParameters: {
     cabinet: cabinetRouter,
     controlType: controlTypeRouter,

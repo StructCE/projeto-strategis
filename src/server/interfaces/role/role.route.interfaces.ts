@@ -3,6 +3,7 @@ type Role = {
 };
 
 type RoleWithModules = {
+  id: string;
   name: string;
   modules: string[];
 };

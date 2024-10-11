@@ -1,20 +1,18 @@
 import { companyRepositorySchema } from "~/server/interfaces/company/company.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { CompanyRepository } from "~/server/repositories/company.repository";
 import type { CompanyRouteInterfaces } from "~/server/interfaces/company/company.route.interfaces";
+import { CompanyRepository } from "~/server/repositories/company.repository";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const companyRouter = createTRPCRouter({
   getOneCompany: protectedProcedure
     .input(companyRepositorySchema.getOneProps)
-    .query(
-      async ({ input }): Promise<CompanyRouteInterfaces["Company"] | null> => {
-        const company = await CompanyRepository.getOne(input);
-        return company;
-      },
-    ),
+    .query(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
+      const company = await CompanyRepository.getOne(input);
+      return company;
+    }),
 
   getAllCompanies: protectedProcedure.query(
-    async (): Promise<CompanyRouteInterfaces["Company"][] | null> => {
+    async (): Promise<CompanyRouteInterfaces["Company"][]> => {
       const companies = await CompanyRepository.getAll();
       return companies;
     },

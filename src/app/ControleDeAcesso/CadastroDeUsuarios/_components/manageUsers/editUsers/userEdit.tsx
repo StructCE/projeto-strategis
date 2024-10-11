@@ -15,15 +15,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { companies, roles, type User } from "../../usersData";
+import { api } from "~/trpc/react";
+import { type User, type UserWithRoles } from "../../usersData";
 import { useUserForm } from "./useUserForm";
 
-type UserEdituserEditForm = {
-  user: User;
+type UserEditForm = {
+  user: UserWithRoles;
 };
 
-export const UserEdit = (props: UserEdituserEditForm) => {
+export const UserEdit = (props: UserEditForm) => {
   const userEditForm = useUserForm(props.user);
+
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: roles = [] } = api.role.getAll.useQuery();
+
+  function capitalizeFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
 
   return (
     <Form {...userEditForm.form}>
@@ -31,70 +39,6 @@ export const UserEdit = (props: UserEdituserEditForm) => {
         onSubmit={userEditForm.form.handleSubmit(userEditForm.onSubmitEdit)}
       >
         <FormComponent>
-          <FormComponent.Line>
-            <FormComponent.Frame>
-              <FormComponent.Label>Email</FormComponent.Label>
-              <FormField
-                control={userEditForm.form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Endereço de email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-
-            <FormComponent.Frame>
-              <FormComponent.Label>Senha</FormComponent.Label>
-              <FormField
-                control={userEditForm.form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Senha de acesso ao sistema"
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-
-            <FormComponent.Frame>
-              <FormComponent.Label>Confirme a senha</FormComponent.Label>
-              <FormField
-                control={userEditForm.form.control}
-                name="password_confirmation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Confirmação de senha"
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-          </FormComponent.Line>
-
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
@@ -107,6 +51,26 @@ export const UserEdit = (props: UserEdituserEditForm) => {
                       <Input
                         className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
                         placeholder="Nome completo"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>Email</FormComponent.Label>
+              <FormField
+                control={userEditForm.form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Endereço de email"
                         {...field}
                       />
                     </FormControl>
@@ -135,7 +99,9 @@ export const UserEdit = (props: UserEdituserEditForm) => {
                 )}
               />
             </FormComponent.Frame>
+          </FormComponent.Line>
 
+          <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
@@ -154,8 +120,8 @@ export const UserEdit = (props: UserEdituserEditForm) => {
                       </FormControl>
                       <SelectContent>
                         {companies.map((company, index) => (
-                          <SelectItem value={company.value} key={index}>
-                            {company.name}
+                          <SelectItem value={company.id} key={index}>
+                            {capitalizeFirstLetter(company.name)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -184,8 +150,8 @@ export const UserEdit = (props: UserEdituserEditForm) => {
                       </FormControl>
                       <SelectContent>
                         {roles.map((role, index) => (
-                          <SelectItem value={role.value} key={index}>
-                            {role.name}
+                          <SelectItem value={role.id} key={index}>
+                            {capitalizeFirstLetter(role.name)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -202,7 +168,7 @@ export const UserEdit = (props: UserEdituserEditForm) => {
               Editar Usuário
             </FormComponent.Button>
             <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
+              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
               handlePress={userEditForm.form.handleSubmit(
                 userEditForm.onSubmitRemove,
               )}

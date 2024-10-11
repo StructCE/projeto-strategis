@@ -1,30 +1,12 @@
 import { db } from "../db";
 import type { UserRepositoryInterfaces } from "../interfaces/user/user.repository.interfaces";
 
-async function getAll(props: UserRepositoryInterfaces["GetAllProps"]) {
-  const { filters } = props;
+async function getAll() {
   const users = await db.user.findMany({
-    where: {
-      AND: [
-        { name: filters.name },
-        {
-          UserRole: {
-            every: {
-              company: {
-                name: filters.company,
-              },
-            },
-            some: {
-              role: { name: filters.role },
-            },
-          },
-        },
-        {},
-      ],
-    },
     include: {
       UserRole: {
         include: {
+          company: true,
           role: true,
         },
       },
@@ -34,11 +16,31 @@ async function getAll(props: UserRepositoryInterfaces["GetAllProps"]) {
 }
 
 async function register(props: UserRepositoryInterfaces["RegisterProps"]) {
+  const { name, email, phone, companyId, roleId } = props;
+
   const registeredUser = await db.user.create({
-    data: { ...props },
+    data: {
+      name,
+      email,
+      phone,
+      UserRole: {
+        create: {
+          companyId,
+          roleId,
+        },
+      },
+    },
   });
+
   return registeredUser;
 }
+
+// async function register(props: UserRepositoryInterfaces["RegisterProps"]) {
+//   const registeredUser = await db.user.create({
+//     data: { ...props },
+//   });
+//   return registeredUser;
+// }
 
 async function edit(props: UserRepositoryInterfaces["EditProps"]) {
   const { id, data } = props;

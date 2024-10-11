@@ -4,15 +4,16 @@ type Company = {
   email: string;
   cnpj: string;
   type: string;
-  headquarters: string;
+  headquarters: string | null;
   phone: string;
   stateRegistration: string;
   taxRegime: string;
   address: string;
+  city: string;
   neighborhood: string;
   federativeUnit: string;
   cep: string;
-  legalResponsibleId: string;
+  legalResponsibleId: string | null;
 };
 
 type CompanySuppliers = {

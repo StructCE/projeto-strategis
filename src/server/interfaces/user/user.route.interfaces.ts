@@ -10,6 +10,7 @@ type UserWithRoles = {
   name: string;
   email: string;
   phone: string;
+  companies: string[];
   roles: string[];
 };
 

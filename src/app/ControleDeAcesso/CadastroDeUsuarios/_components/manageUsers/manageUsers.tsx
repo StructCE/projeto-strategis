@@ -18,7 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { companies, roles, users } from "../usersData";
+import { api } from "~/trpc/react";
 import { UserEdit } from "./editUsers/userEdit";
 
 export const ManageUsersTable = () => {
@@ -26,17 +26,27 @@ export const ManageUsersTable = () => {
   const [selectCompany, setSelectCompany] = useState("");
   const [selectRole, setSelectRole] = useState("");
 
+  const { data: users = [] } = api.user.getAll.useQuery();
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: roles = [] } = api.role.getAll.useQuery();
+
+  console.log(users);
+
   const filteredUsers = users.filter((user) => {
     const matchesName =
       inputNameEmail === "" ||
       user.name.toLowerCase().includes(inputNameEmail.toLowerCase()) ||
       user.email.toLowerCase().includes(inputNameEmail.toLowerCase());
     const matchesCompany =
-      selectCompany === "" || user.company === selectCompany;
-    const matchesRole = selectRole === "" || user.role === selectRole;
+      selectCompany === "" || user.companies.includes(selectCompany);
+    const matchesRole = selectRole === "" || user.roles.includes(selectRole);
 
     return matchesName && matchesCompany && matchesRole;
   });
+
+  function capitalizeFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
 
   return (
     <TableComponent>
@@ -111,15 +121,13 @@ export const ManageUsersTable = () => {
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[repeat(4,_1fr)_130px]">
+        <TableComponent.LineTitle className="grid-cols-[repeat(4,_1fr)_130px] gap-6">
           <TableComponent.ValueTitle>Nome</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Email</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Empresa</TableComponent.ValueTitle>
@@ -128,16 +136,24 @@ export const ManageUsersTable = () => {
         </TableComponent.LineTitle>
         {filteredUsers.map((user, index) => (
           <TableComponent.Line
-            className={`grid-cols-[repeat(4,_1fr)_130px] ${
+            className={`grid-cols-[repeat(4,_1fr)_130px] gap-6 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
             <TableComponent.Value>{user.name}</TableComponent.Value>
-            <TableComponent.Value>{user.email}</TableComponent.Value>
-            <TableComponent.Value>{user.company}</TableComponent.Value>
-            <TableComponent.Value>{user.role}</TableComponent.Value>
-          
+            <TableComponent.Value className="overflow-x-hidden">
+              {user.email}
+            </TableComponent.Value>
+            <TableComponent.Value>
+              {user.companies
+                .map((company) => capitalizeFirstLetter(company))
+                .join(", ")}
+            </TableComponent.Value>
+            <TableComponent.Value>
+              {user.roles.map((role) => capitalizeFirstLetter(role)).join(", ")}
+            </TableComponent.Value>
+
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
@@ -158,10 +174,8 @@ export const ManageUsersTable = () => {
                 </DialogHeader>
               </DialogContent>
             </Dialog>
-
           </TableComponent.Line>
-        ))
-        }
+        ))}
       </TableComponent.Table>
     </TableComponent>
   );

@@ -1,23 +1,21 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type User } from "../../usersData";
+import { type UserWithRoles } from "../../usersData";
 import {
   editUserFormSchema,
   type EditUserFormValues,
 } from "./userEditFormSchema";
 
-export const useUserForm = (user: User) => {
+export const useUserForm = (user: UserWithRoles) => {
   const form = useForm<EditUserFormValues>({
     resolver: zodResolver(editUserFormSchema),
     mode: "onChange",
     defaultValues: {
-      email: user.email,
-      password: user.password,
-      password_confirmation: user.password_confirmation,
       name: user.name,
+      email: user.email,
       phone: user.phone,
-      company: user.company,
-      role: user.role,
+      company: user.companies[0],
+      role: user.roles[0],
     },
   });
 

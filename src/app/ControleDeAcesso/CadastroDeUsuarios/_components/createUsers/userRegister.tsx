@@ -15,12 +15,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { companies, roles } from "../usersData";
+import { api } from "~/trpc/react";
 import { useUserForm } from "./useUserForm";
 
 export const UserRegister = () => {
   const userForm = useUserForm();
-  
+
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: roles = [] } = api.role.getAll.useQuery();
+
+  function capitalizeFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
   return (
     <Form {...userForm.form}>
       <form onSubmit={userForm.form.handleSubmit(userForm.onSubmit)}>
@@ -28,6 +35,26 @@ export const UserRegister = () => {
           <FormComponent.Title>Cadastro de Usuário</FormComponent.Title>
 
           <FormComponent.Line>
+            <FormComponent.Frame>
+              <FormComponent.Label>Nome</FormComponent.Label>
+              <FormField
+                control={userForm.form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Nome completo"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
             <FormComponent.Frame>
               <FormComponent.Label>Email</FormComponent.Label>
               <FormField
@@ -39,70 +66,6 @@ export const UserRegister = () => {
                       <Input
                         className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
                         placeholder="Endereço de email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-
-            <FormComponent.Frame>
-              <FormComponent.Label>Senha</FormComponent.Label>
-              <FormField
-                control={userForm.form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Crie uma senha para acesso ao sistema"
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-
-            <FormComponent.Frame>
-              <FormComponent.Label>Confirme a senha</FormComponent.Label>
-              <FormField
-                control={userForm.form.control}
-                name="password_confirmation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Confirme a senha"
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-          </FormComponent.Line>
-
-          <FormComponent.Line>
-            <FormComponent.Frame>
-              <FormComponent.Label>Nome</FormComponent.Label>
-              <FormField
-                control={userForm.form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Nome completo"
                         {...field}
                       />
                     </FormControl>
@@ -131,7 +94,9 @@ export const UserRegister = () => {
                 )}
               />
             </FormComponent.Frame>
+          </FormComponent.Line>
 
+          <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
@@ -150,8 +115,8 @@ export const UserRegister = () => {
                       </FormControl>
                       <SelectContent>
                         {companies.map((company, index) => (
-                          <SelectItem value={company.value} key={index}>
-                            {company.name}
+                          <SelectItem value={company.id} key={index}>
+                            {capitalizeFirstLetter(company.name)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -180,8 +145,8 @@ export const UserRegister = () => {
                       </FormControl>
                       <SelectContent>
                         {roles.map((role, index) => (
-                          <SelectItem value={role.value} key={index}>
-                            {role.name}
+                          <SelectItem value={role.id} key={index}>
+                            {capitalizeFirstLetter(role.name)}
                           </SelectItem>
                         ))}
                       </SelectContent>
