@@ -396,7 +396,6 @@ model Adjust {
     date          DateTime
     type          String
     responsibleId String
-    operationId   String
 
     stock         Stock           @relation(fields: [stockId], references: [id])
     responsible   UserRole        @relation("AdjustResponsible", fields: [responsibleId], references: [id])
