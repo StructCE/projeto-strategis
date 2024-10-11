@@ -4,8 +4,12 @@ const registerProps = z.object({
   name: z.string(),
   email: z.string().email(),
   phone: z.string(),
-  companyId: z.string(),
-  roleId: z.string(),
+  UserRole: z.array(
+    z.object({
+      companyId: z.string(),
+      roleId: z.string(),
+    }),
+  ),
 });
 
 type RegisterProps = z.infer<typeof registerProps>;
@@ -13,11 +17,15 @@ type RegisterProps = z.infer<typeof registerProps>;
 const editProps = z.object({
   id: z.string(),
   data: z.object({
-    name: z.string().optional(),
-    email: z.string().email().optional(),
-    phone: z.string().optional(),
-    companyId: z.string().optional(),
-    roleId: z.string().optional(),
+    name: z.string(),
+    email: z.string().email(),
+    phone: z.string(),
+    UserRole: z.array(
+      z.object({
+        companyId: z.string(),
+        roleId: z.string(),
+      }),
+    ),
   }),
 });
 

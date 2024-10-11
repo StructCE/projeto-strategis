@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { api } from "~/trpc/react";
-import { type User, type UserWithRoles } from "../../usersData";
+import { type UserWithRoles } from "../../usersData";
 import { useUserForm } from "./useUserForm";
 
 type UserEditForm = {
@@ -28,10 +28,6 @@ export const UserEdit = (props: UserEditForm) => {
 
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();
   const { data: roles = [] } = api.role.getAll.useQuery();
-
-  function capitalizeFirstLetter(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
 
   return (
     <Form {...userEditForm.form}>
@@ -101,67 +97,89 @@ export const UserEdit = (props: UserEditForm) => {
             </FormComponent.Frame>
           </FormComponent.Line>
 
-          <FormComponent.Line>
-            <FormComponent.Frame>
-              <FormComponent.Label>Empresa</FormComponent.Label>
-              <FormField
-                control={userEditForm.form.control}
-                name="company"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Empresa do usuário" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {companies.map((company, index) => (
-                          <SelectItem value={company.id} key={index}>
-                            {capitalizeFirstLetter(company.name)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
+          <FormComponent.BoxSpecify boxName="Empresas/Cargos">
+            {userEditForm.fieldsArray.map((UserRole, index) => (
+              <FormComponent.Line key={index}>
+                <FormComponent.Frame>
+                  <FormComponent.Label>Empresa</FormComponent.Label>
+                  <FormField
+                    control={userEditForm.form.control}
+                    name={`UserRole.${index}.company`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value ?? ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                              <SelectValue placeholder="Selecione uma empresa" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {companies.map((company, index) => (
+                              <SelectItem value={company.id} key={index}>
+                                {company.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FormComponent.Frame>
 
-            <FormComponent.Frame>
-              <FormComponent.Label>Cargo</FormComponent.Label>
-              <FormField
-                control={userEditForm.form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Cargo do usuário" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {roles.map((role, index) => (
-                          <SelectItem value={role.id} key={index}>
-                            {capitalizeFirstLetter(role.name)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-          </FormComponent.Line>
+                <FormComponent.Frame>
+                  <FormComponent.Label>Cargo</FormComponent.Label>
+                  <FormField
+                    control={userEditForm.form.control}
+                    name={`UserRole.${index}.role`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value ?? ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                              <SelectValue placeholder="Selecione um cargo" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {roles.map((role, index) => (
+                              <SelectItem value={role.id} key={index}>
+                                {role.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </FormComponent.Frame>
+
+                <FormComponent.ButtonRemove
+                  handlePress={() => userEditForm.arrayRemove(index)}
+                ></FormComponent.ButtonRemove>
+              </FormComponent.Line>
+            ))}
+          </FormComponent.BoxSpecify>
+
+          <FormComponent.ButtonLayout>
+            <button
+              onClick={() =>
+                userEditForm.arrayAppend({ company: "", role: "" })
+              }
+              className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"
+              type="button"
+            >
+              <p className="text-[14px] font-semibold tracking-wider sm:text-[16px] sm:tracking-normal">
+                Adicionar Empresa
+              </p>
+            </button>
+          </FormComponent.ButtonLayout>
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">

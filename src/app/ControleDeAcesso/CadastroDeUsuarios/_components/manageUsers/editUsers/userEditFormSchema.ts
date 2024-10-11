@@ -30,13 +30,20 @@ export const editUserFormSchema = z.object({
     })
     .optional(),
 
-  company: z.string({
-    required_error: "Por favor selecione uma empresa.",
-  }),
-
-  role: z.string({
-    required_error: "Por favor selecione um cargo.",
-  }),
+  UserRole: z
+    .array(
+      z.object({
+        company: z.string({
+          required_error: "Por favor selecione uma empresa.",
+        }),
+        role: z.string({
+          required_error: "Por favor selecione um cargo.",
+        }),
+      }),
+    )
+    .min(1, {
+      message: "É necessário selecionar ao menos uma empresa e cargo.",
+    }),
 });
 
 export type EditUserFormValues = z.infer<typeof editUserFormSchema>;

@@ -30,7 +30,7 @@ export const ManageUsersTable = () => {
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();
   const { data: roles = [] } = api.role.getAll.useQuery();
 
-  console.log(users);
+  // console.log(users);
 
   const filteredUsers = users.filter((user) => {
     const matchesName =
@@ -38,15 +38,14 @@ export const ManageUsersTable = () => {
       user.name.toLowerCase().includes(inputNameEmail.toLowerCase()) ||
       user.email.toLowerCase().includes(inputNameEmail.toLowerCase());
     const matchesCompany =
-      selectCompany === "" || user.companies.includes(selectCompany);
-    const matchesRole = selectRole === "" || user.roles.includes(selectRole);
+      selectCompany === "" ||
+      user.UserRole.some((userRole) => userRole.company === selectCompany);
+    const matchesRole =
+      selectRole === "" ||
+      user.UserRole.some((userRole) => userRole.role === selectRole);
 
     return matchesName && matchesCompany && matchesRole;
   });
-
-  function capitalizeFirstLetter(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
 
   return (
     <TableComponent>
@@ -146,12 +145,10 @@ export const ManageUsersTable = () => {
               {user.email}
             </TableComponent.Value>
             <TableComponent.Value>
-              {user.companies
-                .map((company) => capitalizeFirstLetter(company))
-                .join(", ")}
+              {user.UserRole.map((userRole) => userRole.company).join(", ")}
             </TableComponent.Value>
             <TableComponent.Value>
-              {user.roles.map((role) => capitalizeFirstLetter(role)).join(", ")}
+              {user.UserRole.map((userRole) => userRole.role).join(", ")}
             </TableComponent.Value>
 
             <Dialog>

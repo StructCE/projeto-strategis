@@ -153,28 +153,28 @@ async function main() {
     name: "Leonardo Côrtes",
     email: "leonardo.cortes@struct.unb.br",
     phone: "(61) 99116-4633",
-    roleName: "administrador",
+    roleName: "Administrador",
     companyId: companyStruct.id,
   });
   await createUserWithRole({
     name: "Matheus das Neves Fernandes",
     email: "matheusnf@struct.unb.br",
     phone: "(61) 99999-9999",
-    roleName: "administrador",
+    roleName: "Administrador",
     companyId: companyStruct.id,
   });
   await createUserWithRole({
     name: "Guilherme Sampaio",
     email: "guilherme.sampaio@struct.unb.br",
     phone: "(61) 99999-9999",
-    roleName: "administrador",
+    roleName: "Administrador",
     companyId: companyStruct.id,
   });
   await createUserWithRole({
     name: "Willyan Marques",
     email: "willyan.marques@struct.unb.br",
     phone: "(61) 99999-9999",
-    roleName: "administrador",
+    roleName: "Administrador",
     companyId: companyStruct.id,
   });
 }

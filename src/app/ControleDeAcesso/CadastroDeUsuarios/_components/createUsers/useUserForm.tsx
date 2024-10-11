@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { api } from "~/trpc/react";
 import {
   createUserFormSchema,
@@ -7,7 +7,6 @@ import {
 } from "./userRegisterFormSchema";
 
 export const useUserForm = () => {
-  // Define a mutação fora da função onSubmit
   const userMutation = api.user.registerUser.useMutation({
     onSuccess: (newUser) => {
       console.log("User created successfully:", newUser);
@@ -20,6 +19,22 @@ export const useUserForm = () => {
   const form = useForm<CreateUserFormValues>({
     resolver: zodResolver(createUserFormSchema),
     mode: "onChange",
+    defaultValues: {
+      email: "",
+      name: "",
+      phone: "",
+      UserRole: [
+        {
+          company: "",
+          role: "",
+        },
+      ],
+    },
+  });
+
+  const fieldArray = useFieldArray({
+    control: form.control,
+    name: "UserRole",
   });
 
   function onSubmit(data: CreateUserFormValues) {
@@ -29,8 +44,10 @@ export const useUserForm = () => {
       email: data.email,
       name: data.name,
       phone: data.phone ?? "",
-      companyId: data.company,
-      roleId: data.role,
+      UserRole: data.UserRole.map((userRole) => ({
+        companyId: userRole.company,
+        roleId: userRole.role,
+      })),
     };
 
     try {
@@ -42,5 +59,11 @@ export const useUserForm = () => {
     }
   }
 
-  return { form, onSubmit };
+  return {
+    form,
+    onSubmit,
+    fieldsArray: fieldArray.fields,
+    arrayAppend: fieldArray.append,
+    arrayRemove: fieldArray.remove,
+  };
 };

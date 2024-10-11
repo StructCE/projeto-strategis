@@ -16,7 +16,7 @@ async function getAll() {
 }
 
 async function register(props: UserRepositoryInterfaces["RegisterProps"]) {
-  const { name, email, phone, companyId, roleId } = props;
+  const { name, email, phone, UserRole } = props;
 
   const registeredUser = await db.user.create({
     data: {
@@ -24,10 +24,10 @@ async function register(props: UserRepositoryInterfaces["RegisterProps"]) {
       email,
       phone,
       UserRole: {
-        create: {
-          companyId,
-          roleId,
-        },
+        create: UserRole.map((role) => ({
+          companyId: role.companyId,
+          roleId: role.roleId,
+        })),
       },
     },
   });
@@ -44,24 +44,35 @@ async function register(props: UserRepositoryInterfaces["RegisterProps"]) {
 
 async function edit(props: UserRepositoryInterfaces["EditProps"]) {
   const { id, data } = props;
-  const editedUser = await db.user.update({
+
+  // Buscar UserRoles existentes com base em companyId e roleId
+  const userRoles = await db.userRole.findMany({
     where: {
-      id: id,
+      companyId: { in: data.UserRole.map((ur) => ur.companyId) },
+      roleId: { in: data.UserRole.map((ur) => ur.roleId) },
+      userId: id,
     },
+  });
+
+  const editedUser = await db.user.update({
+    where: { id: id },
     data: {
       ...data,
+      UserRole: {
+        connect: userRoles.map((userRole) => ({ id: userRole.id })),
+      },
     },
   });
   return editedUser;
 }
 
 async function remove(props: UserRepositoryInterfaces["DeleteProps"]) {
-  const deleteedUser = await db.user.delete({
+  const deletedUser = await db.user.delete({
     where: {
       id: props.id,
     },
   });
-  return deleteedUser;
+  return deletedUser;
 }
 
 export const userRepository = {
