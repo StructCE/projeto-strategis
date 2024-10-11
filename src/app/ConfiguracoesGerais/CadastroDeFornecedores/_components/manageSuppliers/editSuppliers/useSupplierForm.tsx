@@ -36,23 +36,22 @@ export const useSupplierForm = (supplier: Supplier, contacts: Contact[]) => {
     },
   });
 
+  // const editContactsMutation = api.contact.editContact.useMutation({
+  //   onSuccess: (newSupplier) => {
+  //     console.log("Supplier updated successfully:", newSupplier);
+  //   },
+  //   onError: (error) => {
+  //     console.error("Error updating supplier:", error);
+  //   },
+  // });
+
   const editSupplierMutation = api.supplier.editSupplier.useMutation({
     onSuccess: (updatedSupplier) => {
       console.log("Supplier edited successfully:", updatedSupplier);
 
       // if (contacts) {
       //   for (const contact of contacts) {
-      //     api.contact
-      //       .editContact({
-      //         ...contact,
-      //         supplierId: updatedSupplier.id,
-      //       })
-      //       .then((contactData) => {
-      //         console.log("Contact edited successfully:", contactData);
-      //       })
-      //       .catch((error) => {
-      //         console.error("Error editing contact:", error);
-      //       });
+      //      contactMutation.mutate({ ...contact });
       //   }
       // }
     },
