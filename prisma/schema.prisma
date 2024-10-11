@@ -151,7 +151,6 @@ model Supplier {
     ProductSupplier   ProductSupplier[]
     ProductEntry      ProductEntry[]
     ProductOutput     ProductOutput[]
-    Inventory         Inventory[]
     OrderProduct      OrderProduct[]
     Invoice           Invoice[]
 }
@@ -174,8 +173,8 @@ model Product {
     status           String
     buyQuantity      Float
     buyDate          DateTime
-    currentStock     Int
-    currentInventory Int
+    currentStock     Float
+    currentInventory Float
     minimunStock     Int
     maximumStock     Int
     unitId           String
@@ -196,7 +195,6 @@ model Product {
     ProductSupplier  ProductSupplier[]
     ProductEntry     ProductEntry[]
     ProductOutput    ProductOutput[]
-    Inventory        Inventory[]
     ProductAdjust    ProductAdjust[]
     RequestProduct   RequestProduct[]
     ProductInventory ProductInventory[]
@@ -338,7 +336,6 @@ model Output {
     applicant   UserRole @relation("OutputApplicant", fields: [applicantId], references: [id])
 
     ProductOutput ProductOutput[]
-    Inventory     Inventory[]
 }
 
 model ProductEntry {
@@ -373,26 +370,20 @@ model ProductOutput {
 
 model Inventory {
     id            String   @id @default(cuid())
-    date          DateTime
     name          String
+    date          DateTime
     responsibleId String
-    outputId      String
-    productId     String
-    supplierId    String
-    operationId   String
 
     responsible      UserRole           @relation(fields: [responsibleId], references: [id])
-    output           Output             @relation(fields: [outputId], references: [id])
-    product          Product            @relation(fields: [productId], references: [id])
-    supplier         Supplier           @relation(fields: [supplierId], references: [id])
     ProductInventory ProductInventory[]
 }
 
 model ProductInventory {
-    id          String @id @default(cuid())
-    quantity    Float
-    productId   String
-    inventoryId String
+    id                String @id @default(cuid())
+    inventoryQuantity Float
+    stockQuantity     Float
+    productId         String
+    inventoryId       String
 
     product   Product   @relation(fields: [productId], references: [id])
     inventory Inventory @relation(fields: [inventoryId], references: [id])

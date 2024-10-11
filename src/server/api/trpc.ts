@@ -144,9 +144,32 @@ export const publicProcedure = errorHandledProcedure;
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = errorHandledProcedure.use(
-  ({ ctx, next, path }) => {
+  async ({ ctx, next, path }) => {
+    // async
+    const user = await db.user.findUnique({
+      where: { id: ctx.session?.user.id },
+      include: {
+        UserRole: {
+          include: {
+            role: { include: { RoleModule: { include: { module: true } } } },
+          },
+        },
+      },
+    });
+    const routes = user?.UserRole
+      ? [
+          ...new Set(
+            user.UserRole.flatMap((userRole) =>
+              userRole.role.RoleModule.map(
+                (roleModule) => roleModule.module.allowedRouter,
+              ),
+            ),
+          ),
+        ]
+      : [];
     const router = path.split(".")[0] ?? "";
-    if (!ctx.session?.user.allowedRouters.includes(router)) {
+    if (!routes.includes(router)) {
+      // !ctx.session?.user.allowedRouters.includes(router)
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next({

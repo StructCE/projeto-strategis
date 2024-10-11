@@ -64,45 +64,52 @@ declare module "next-auth" {
   }
 }
 
+/**
+ * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
+ *
+ * @see https://next-auth.js.org/configuration/options
+ */
 export const authOptions: NextAuthOptions = {
+  // pages: {
+  //   signIn: "/login",
+  // },
   callbacks: {
-    session: ({ session, user }) => {
-      return {
-        ...session,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          allowedPagesPath: user?.UserRole
-            ? [
-                ...new Set(
-                  user.UserRole.flatMap((userRole) =>
-                    userRole?.role?.RoleModule
-                      ? userRole.role.RoleModule.map(
-                          (roleModule) => roleModule?.module?.pagePath,
-                        )
-                      : [],
-                  ),
+    session: ({ session, user }) => ({
+      ...session,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        allowedPagesPath: user?.UserRole
+          ? [
+              ...new Set(
+                user.UserRole.flatMap((userRole) =>
+                  userRole?.role?.RoleModule
+                    ? userRole.role.RoleModule.map(
+                        (roleModule) => roleModule?.module?.pagePath,
+                      )
+                    : [],
                 ),
-              ]
-            : [],
-          allowedRouters: user?.UserRole
-            ? [
-                ...new Set(
-                  user.UserRole.flatMap((userRole) =>
-                    userRole?.role?.RoleModule
-                      ? userRole.role.RoleModule.map(
-                          (roleModule) => roleModule?.module?.allowedRouter,
-                        )
-                      : [],
-                  ),
+              ),
+            ]
+          : [],
+
+        allowedRouters: user?.UserRole
+          ? [
+              ...new Set(
+                user.UserRole.flatMap((userRole) =>
+                  userRole?.role?.RoleModule
+                    ? userRole.role.RoleModule.map(
+                        (roleModule) => roleModule?.module?.allowedRouter,
+                      )
+                    : [],
                 ),
-              ]
-            : [],
-        },
-      };
-    },
+              ),
+            ]
+          : [],
+      },
+    }),
   },
   adapter: customPrismaAdapter(db) as Adapter,
   providers: [
