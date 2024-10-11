@@ -66,22 +66,23 @@ model VerificationToken {
 }
 
 model Company {
-    id                 String @id @default(cuid())
+    id                 String  @id @default(cuid())
     name               String
     email              String
     cnpj               String
     type               String
-    headquarters       String
+    headquarters       String?
     phone              String
     stateRegistration  String
     taxRegime          String
     address            String
+    city               String
     neighborhood       String
     federativeUnit     String
     cep                String
-    legalResponsibleId String
+    legalResponsibleId String?
 
-    legaResponsible UserRole   @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
+    legaResponsible UserRole?  @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
     UserRole        UserRole[] @relation("CompanyEmployees")
     Stock           Stock[]
     Contact         Contact[]
