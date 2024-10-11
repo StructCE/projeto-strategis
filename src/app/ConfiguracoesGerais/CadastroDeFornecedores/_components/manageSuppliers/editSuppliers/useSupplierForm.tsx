@@ -36,39 +36,39 @@ export const useSupplierForm = (supplier: Supplier, contacts: Contact[]) => {
     },
   });
 
+  const editSupplierMutation = api.supplier.editSupplier.useMutation({
+    onSuccess: (updatedSupplier) => {
+      console.log("Supplier edited successfully:", updatedSupplier);
+
+      // if (contacts) {
+      //   for (const contact of contacts) {
+      //     api.contact
+      //       .editContact({
+      //         ...contact,
+      //         supplierId: updatedSupplier.id,
+      //       })
+      //       .then((contactData) => {
+      //         console.log("Contact edited successfully:", contactData);
+      //       })
+      //       .catch((error) => {
+      //         console.error("Error editing contact:", error);
+      //       });
+      //   }
+      // }
+    },
+    onError: (error) => {
+      console.error("Error editing supplier:", error);
+    },
+  });
+
   function onSubmitEdit(data: EditSupplierFormValues) {
     console.log("Editando fornecedor:");
     console.log(JSON.stringify(data, null, 2));
 
     const { contacts, ...supplierData } = data;
 
-    const supplierMutation = api.supplier.editSupplier.useMutation({
-      onSuccess: (updatedSupplier) => {
-        console.log("Supplier edited successfully:", updatedSupplier);
-
-        // if (contacts) {
-        //   for (const contact of contacts) {
-        //     api.contact
-        //       .editContact({
-        //         ...contact,
-        //         supplierId: updatedSupplier.id,
-        //       })
-        //       .then((contactData) => {
-        //         console.log("Contact edited successfully:", contactData);
-        //       })
-        //       .catch((error) => {
-        //         console.error("Error editing contact:", error);
-        //       });
-        //   }
-        // }
-      },
-      onError: (error) => {
-        console.error("Error editing supplier:", error);
-      },
-    });
-
     try {
-      supplierMutation.mutate({
+      editSupplierMutation.mutate({
         ...supplierData,
       });
     } catch (error) {
@@ -76,22 +76,23 @@ export const useSupplierForm = (supplier: Supplier, contacts: Contact[]) => {
     }
   }
 
+  const removeSupplierMutation = api.supplier.removeSupplier.useMutation({
+    onSuccess: (updatedSupplier) => {
+      console.log("Supplier removed successfully:", updatedSupplier);
+    },
+    onError: (error) => {
+      console.error("Error removing supplier:", error);
+    },
+  });
+
   function onSubmitRemove(data: EditSupplierFormValues) {
     console.log("Removendo fornecedor:");
     console.log(JSON.stringify(data, null, 2));
 
     const { contacts, id, ...supplierData } = data;
-    const supplierMutation = api.supplier.removeSupplier.useMutation({
-      onSuccess: (updatedSupplier) => {
-        console.log("Supplier removed successfully:", updatedSupplier);
-      },
-      onError: (error) => {
-        console.error("Error removing supplier:", error);
-      },
-    });
 
     try {
-      supplierMutation.mutate({
+      removeSupplierMutation.mutate({
         id,
       });
     } catch (error) {

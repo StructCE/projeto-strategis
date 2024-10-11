@@ -319,7 +319,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             ))}
           </FormComponent.BoxSpecify>
 
-          <FormComponent.ButtonLayout>
+          <FormComponent.ButtonLayout className="flex justify-end">
             <button
               onClick={() =>
                 form.fieldAppend({ name: "", email: "", phone: "" })
@@ -334,14 +334,17 @@ export const SupplierEdit = (props: SupplierEditProps) => {
           </FormComponent.ButtonLayout>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-verde_botao hover:bg-verde_botao">
-              Editar Fornecedor
+            <FormComponent.Button
+              className="bg-verde_botao hover:bg-verde_botao"
+              // handlePress={form.form.handleSubmit(form.onSubmitEdit)}
+            >
+              Salvar
             </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
-              handlePress={form.form.handleSubmit(form.onSubmitRemove)}
+              // handlePress={form.form.handleSubmit(form.onSubmitRemove)}
             >
-              Remover Fornecedor
+              Excluir
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>
