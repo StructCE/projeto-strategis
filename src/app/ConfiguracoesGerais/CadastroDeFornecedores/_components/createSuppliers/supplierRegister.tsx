@@ -309,7 +309,7 @@ export const SupplierRegister = () => {
             ))}
           </FormComponent.BoxSpecify>
 
-          <FormComponent.ButtonLayout>
+          <FormComponent.ButtonLayout className="flex justify-end">
             <button
               onClick={() =>
                 form.arrayAppend({ name: "", email: "", phone: "" })

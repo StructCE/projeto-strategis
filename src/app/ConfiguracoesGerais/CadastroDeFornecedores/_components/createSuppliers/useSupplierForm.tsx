@@ -33,27 +33,20 @@ export const useSupplierForm = () => {
   const supplierMutation = api.supplier.createSupplier.useMutation({
     onSuccess: (newSupplier) => {
       console.log("Supplier created successfully:", newSupplier);
-
-      // if (contacts) {
-      //   for (const contact of contacts) {
-      //     api.contact
-      //       .createContact({
-      //         ...contact,
-      //         supplierId: newSupplier.id,
-      //       })
-      //       .then((contactData) => {
-      //         console.log("Contact created successfully:", contactData);
-      //       })
-      //       .catch((error) => {
-      //         console.error("Error creating contact:", error);
-      //       });
-      //   }
-      // }
     },
     onError: (error) => {
       console.error("Error creating supplier:", error);
     },
   });
+
+  // const contactsMutation = api.contact.createContact.useMutation({
+  //   onSuccess: (newSupplier) => {
+  //     console.log("Supplier created successfully:", newSupplier);
+  //   },
+  //   onError: (error) => {
+  //     console.error("Error creating supplier:", error);
+  //   },
+  // });
 
   function onSubmit(data: CreateSupplierFormValues) {
     console.log(JSON.stringify(data, null, 2));
@@ -64,6 +57,12 @@ export const useSupplierForm = () => {
       supplierMutation.mutate({
         ...supplierData,
       });
+
+      // if (contacts) {
+      //   for (const contact of contacts) {
+      //     contactMutation.mutate({ ...contact });
+      //   }
+      // }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
