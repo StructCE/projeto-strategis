@@ -11,18 +11,28 @@ export const useUserForm = (user: UserWithRoles) => {
   const userMutation = api.user.editUser.useMutation({
     onSuccess: (updatedUser) => {
       console.log("User updated successfully:", updatedUser);
+      alert("Usuário atualizado com sucesso.");
+      setTimeout(function () {
+        location.reload();
+      }, 500);
     },
     onError: (error) => {
       console.error("Error updating user:", error);
+      alert("Erro ao atualizar usuário.");
     },
   });
 
   const deleteUserMutation = api.user.deleteUser.useMutation({
     onSuccess: (deletedUser) => {
       console.log("User removed successfully:", deletedUser);
+      alert("Usuário removido com sucesso.");
+      setTimeout(function () {
+        location.reload();
+      }, 500);
     },
     onError: (error) => {
       console.error("Error removing user:", error);
+      alert("Erro ao remover usuário.");
     },
   });
 

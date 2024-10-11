@@ -67,11 +67,20 @@ async function edit(props: UserRepositoryInterfaces["EditProps"]) {
 }
 
 async function remove(props: UserRepositoryInterfaces["DeleteProps"]) {
+  // Primeiro deletar registros relacionados, como UserRole, por exemplo
+  await db.userRole.deleteMany({
+    where: {
+      userId: props.id,
+    },
+  });
+
+  // Agora, deletar o usuário
   const deletedUser = await db.user.delete({
     where: {
       id: props.id,
     },
   });
+
   return deletedUser;
 }
 

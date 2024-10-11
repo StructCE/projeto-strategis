@@ -10,9 +10,14 @@ export const useUserForm = () => {
   const userMutation = api.user.registerUser.useMutation({
     onSuccess: (newUser) => {
       console.log("User created successfully:", newUser);
+      alert("Usuário criado com sucesso.");
+      setTimeout(function () {
+        location.reload();
+      }, 500);
     },
     onError: (error) => {
       console.error("Error creating user:", error);
+      alert("Erro ao criar usuário.");
     },
   });
 
