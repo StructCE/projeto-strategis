@@ -1,27 +1,26 @@
 import { userRepositorySchema } from "~/server/interfaces/user/user.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
 import type { UserRouteInterfaces } from "~/server/interfaces/user/user.route.interfaces";
 import { userRepository } from "~/server/repositories/user.repository";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
-  getAll: protectedProcedure
-    .input(userRepositorySchema.getAllProps)
-    .query(
-      async ({ input }): Promise<UserRouteInterfaces["UserWithRoles"][]> => {
-        const usersWithRoles = await userRepository.getAll(input);
-        const serializedUsersWithRoles = usersWithRoles.map(
-          (userWithRoles) => ({
-            id: userWithRoles.id,
-            name: userWithRoles.name,
-            email: userWithRoles.email,
-            phone: userWithRoles.phone,
-            roles: userWithRoles.UserRole.map((userRole) => userRole.role.name),
-          }),
-        );
+  getAll: protectedProcedure.query(
+    async (): Promise<UserRouteInterfaces["UserWithRoles"][]> => {
+      const usersWithRoles = await userRepository.getAll();
+      const serializedUsersWithRoles = usersWithRoles.map((userWithRoles) => ({
+        id: userWithRoles.id,
+        name: userWithRoles.name,
+        email: userWithRoles.email,
+        phone: userWithRoles.phone,
+        UserRole: userWithRoles.UserRole.map((userRole) => ({
+          company: userRole.company.name,
+          role: userRole.role.name,
+        })),
+      }));
 
-        return serializedUsersWithRoles;
-      },
-    ),
+      return serializedUsersWithRoles;
+    },
+  ),
 
   registerUser: protectedProcedure
     .input(userRepositorySchema.registerProps)

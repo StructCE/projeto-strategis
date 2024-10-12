@@ -10,7 +10,7 @@ type UserWithRoles = {
   name: string;
   email: string;
   phone: string;
-  roles: string[];
+  UserRole: { company: string; role: string }[];
 };
 
 export type UserRouteInterfaces = {
