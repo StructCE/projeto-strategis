@@ -15,7 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { states, type Supplier } from "../../supplierData";
+import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
+import { states } from "../../supplierData";
 import { useSupplierForm } from "./useSupplierForm";
 
 type SupplierEditProps = {
@@ -29,8 +30,6 @@ export const SupplierEdit = (props: SupplierEditProps) => {
     <Form {...form.form}>
       <form onSubmit={form.form.handleSubmit(form.onSubmitEdit)}>
         <FormComponent>
-          <FormComponent.Title>Cadastro de Fornecedor</FormComponent.Title>
-
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
@@ -115,7 +114,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="state_registration"
+                name="stateRegistration"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -197,7 +196,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="state"
+                name="federativeUnit"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -314,7 +313,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             ))}
           </FormComponent.BoxSpecify>
 
-          <FormComponent.ButtonLayout>
+          <FormComponent.ButtonLayout className="flex justify-end">
             <button
               onClick={() =>
                 form.fieldAppend({ name: "", email: "", phone: "" })
@@ -329,14 +328,24 @@ export const SupplierEdit = (props: SupplierEditProps) => {
           </FormComponent.ButtonLayout>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Fornecedor
-            </FormComponent.Button>
             <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
-              handlePress={form.form.handleSubmit(form.onSubmitRemove)}
+              handlePress={() => {
+                const confirmed = window.confirm(
+                  "Tem certeza que deseja excluir este fornecedor? Esta ação não pode ser desfeita.",
+                );
+                if (confirmed) {
+                  form.form.handleSubmit(form.onSubmitRemove);
+                }
+              }}
             >
-              Remover Fornecedor
+              Excluir
+            </FormComponent.Button>
+            <FormComponent.Button
+              className="bg-verde_botao hover:bg-verde_botao"
+              handlePress={form.form.handleSubmit(form.onSubmitEdit)}
+            >
+              Salvar
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

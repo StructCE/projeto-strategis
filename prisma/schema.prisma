@@ -85,7 +85,7 @@ model Company {
     legaResponsible UserRole?  @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
     UserRole        UserRole[] @relation("CompanyEmployees")
     Stock           Stock[]
-    Contact         Contact[]
+    // Contact         Contact[]
 }
 
 model UserRole {
@@ -140,14 +140,14 @@ model Supplier {
     name              String
     cnpj              String
     email             String
-    phone             String
+    phone             String?
     stateRegistration String
     address           String
     neighborhood      String
     city              String
     federativeUnit    String
     cep               String
-    Contact           Contact[]
+    contacts          Contact[]
     ProductSupplier   ProductSupplier[]
     ProductEntry      ProductEntry[]
     ProductOutput     ProductOutput[]
@@ -161,9 +161,9 @@ model Contact {
     email      String
     phone      String
     supplierId String
-    companyId  String
+    // companyId  String
 
-    company  Company  @relation(fields: [companyId], references: [id])
+    // company  Company  @relation(fields: [companyId], references: [id])
     supplier Supplier @relation(fields: [supplierId], references: [id])
 }
 

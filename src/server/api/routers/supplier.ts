@@ -1,7 +1,7 @@
 import { supplierRepositorySchema } from "~/server/interfaces/supplier/supplier.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
 import type { SupplierRouteInterfaces } from "~/server/interfaces/supplier/supplier.route.interfaces";
 import { SupplierRepository } from "~/server/repositories/supplier.repository";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const supplierRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -28,6 +28,15 @@ export const supplierRouter = createTRPCRouter({
       async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
         const editedSupplier = await SupplierRepository.edit(input);
         return editedSupplier;
+      },
+    ),
+
+  removeSupplier: protectedProcedure
+    .input(supplierRepositorySchema.removeProps)
+    .mutation(
+      async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
+        const removedSupplier = await SupplierRepository.remove(input);
+        return removedSupplier;
       },
     ),
 });
