@@ -1,12 +1,11 @@
 import { z } from "zod";
 
 const getAll = z.object({
-  filters: z.object({
-    company: z.string().optional(),
-    cnpj: z.string().optional(),
-    email: z.string().optional(),
-    address: z.string().optional(),
-  }),
+  // filters: z.object({
+  //   name: z.string().optional(),
+  //   email: z.string().optional(),
+  //   federativeUnit: z.string().optional(),
+  // }),
 });
 
 type GetAll = z.infer<typeof getAll>;
@@ -51,6 +50,7 @@ const editProps = z.object({
     contacts: z
       .array(
         z.object({
+          id: z.string(),
           name: z.string(),
           email: z.string(),
           phone: z.string().optional(),

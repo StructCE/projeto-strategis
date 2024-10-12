@@ -2,52 +2,19 @@ import { db } from "../db";
 import type { SupplierRepositoryInterfaces } from "../interfaces/supplier/supplier.repository.interfaces";
 
 async function getAll(props: SupplierRepositoryInterfaces["GetAll"]) {
-  const { filters } = props;
-
-  // Construct the `where` clause conditionally, excluding empty filters
-  // const whereClause: any = {
-  //   AND: [],
-  // };
-
-  // if (filters.company != "") {
-  //   whereClause.AND.push({
-  //     UserRole: {
-  //       every: {
-  //         company: {
-  //           name: filters.company,
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-
-  // if (filters.cnpj != "") {
-  //   whereClause.AND.push({
-  //     cnpj: filters.cnpj,
-  //   });
-  // }
-
-  // if (filters.email != "") {
-  //   whereClause.AND.push({
-  //     email: filters.email,
-  //   });
-  // }
-
-  // if (filters.address != "") {
-  //   whereClause.AND.push({
-  //     address: filters.address,
-  //   });
-  // }
-
-  // console.log(whereClause);
+  // const { filters } = props;
   const suppliers = await db.supplier.findMany({
+    // where: {
+    //   AND: [
+    //     { name: filters.name },
+    //     { email: filters.email },
+    //     { federativeUnit: filters.federativeUnit },
+    //   ],
+    // },
     include: { contacts: true },
   });
 
-  // Mapeie para o formato correto esperado pela interface Supplier
-  return suppliers.map((supplier) => ({
-    ...supplier,
-  }));
+  return suppliers;
 }
 
 async function create(props: SupplierRepositoryInterfaces["CreateProps"]) {
@@ -92,18 +59,53 @@ async function create(props: SupplierRepositoryInterfaces["CreateProps"]) {
 async function edit(props: SupplierRepositoryInterfaces["EditProps"]) {
   const { id, data } = props;
 
-  const contacts = await db.contact.findMany({
-    where: {
-      supplierId: id,
-    },
+  // Buscar contatos existentes
+  const existingContacts = await db.contact.findMany({
+    where: { supplierId: id },
   });
 
+  // Mapeia os IDs dos contatos atuais
+  const existingContactIds = existingContacts.map((contact) => contact.id);
+
+  // Mapeia os IDs dos contatos vindos do form
+  const newContactIds = data.contacts?.map((contact) => contact.id) ?? [];
+
+  // Identificar contatos a remover
+  const contactsToRemove = existingContacts.filter(
+    (contact) => !newContactIds.includes(contact.id),
+  );
+
+  // Identificar contatos a adicionar
+  const contactsToAdd =
+    data.contacts?.filter(
+      (contact) => !existingContactIds.includes(contact.id),
+    ) ?? [];
+
+  // Atualizar fornecedor e tratar contatos
   const editedSupplier = await db.supplier.update({
     where: { id: id },
     data: {
       ...data,
+      // Atualiza os contatos existentes
       contacts: {
-        connect: contacts.map((contact) => ({ id: contact.id })),
+        update: data.contacts
+          ?.filter((contact) => contact.id)
+          .map((contact) => ({
+            where: { id: contact.id },
+            data: {
+              name: contact.name,
+              email: contact.email,
+              phone: contact.phone,
+            },
+          })),
+        // Adiciona novos contatos
+        create: contactsToAdd.map((contact) => ({
+          name: contact.name,
+          email: contact.email,
+          phone: contact.phone ?? "",
+        })),
+        // Remove contatos excluídos
+        delete: contactsToRemove.map((contact) => ({ id: contact.id })),
       },
     },
   });

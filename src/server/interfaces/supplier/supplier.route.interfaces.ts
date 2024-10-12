@@ -10,7 +10,12 @@ export type Supplier = {
   city: string;
   federativeUnit: string;
   cep: string;
-  contacts?: { name: string; email: string; phone: string | null }[];
+  contacts?: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string | null;
+  }[];
 };
 
 export type SupplierRouteInterfaces = {

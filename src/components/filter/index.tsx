@@ -36,7 +36,7 @@ Filter.Icon = function FilterIcon(props: FilterIconProps) {
 
 type FilterInputProps = {
   className?: string;
-  state: string;
+  state: string | undefined;
   setState: (value: string) => void;
   placeholder: string;
 };
@@ -60,7 +60,7 @@ Filter.Input = function FilterInput(props: FilterInputProps) {
 type FilterSelectProps = {
   className?: string;
   placeholder: string;
-  state: string;
+  state: string | undefined;
   setState: (value: string) => void;
   children: React.ReactNode[];
 };

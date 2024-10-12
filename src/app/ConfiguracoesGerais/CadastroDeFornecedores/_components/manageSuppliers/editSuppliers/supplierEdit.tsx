@@ -1,5 +1,4 @@
 "use client";
-
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -16,10 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
 import { states } from "../../supplierData";
 import { useSupplierForm } from "./useSupplierForm";
-
-import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
 
 type SupplierEditProps = {
   supplier: Supplier;
@@ -32,8 +30,6 @@ export const SupplierEdit = (props: SupplierEditProps) => {
     <Form {...form.form}>
       <form onSubmit={form.form.handleSubmit(form.onSubmitEdit)}>
         <FormComponent>
-          <FormComponent.Title>Cadastro de Fornecedor</FormComponent.Title>
-
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
@@ -333,16 +329,23 @@ export const SupplierEdit = (props: SupplierEditProps) => {
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button
-              className="bg-verde_botao hover:bg-verde_botao"
-              // handlePress={form.form.handleSubmit(form.onSubmitEdit)}
-            >
-              Salvar
-            </FormComponent.Button>
-            <FormComponent.Button
               className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
-              // handlePress={form.form.handleSubmit(form.onSubmitRemove)}
+              handlePress={() => {
+                const confirmed = window.confirm(
+                  "Tem certeza que deseja excluir este fornecedor? Esta ação não pode ser desfeita.",
+                );
+                if (confirmed) {
+                  form.form.handleSubmit(form.onSubmitRemove);
+                }
+              }}
             >
               Excluir
+            </FormComponent.Button>
+            <FormComponent.Button
+              className="bg-verde_botao hover:bg-verde_botao"
+              handlePress={form.form.handleSubmit(form.onSubmitEdit)}
+            >
+              Salvar
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

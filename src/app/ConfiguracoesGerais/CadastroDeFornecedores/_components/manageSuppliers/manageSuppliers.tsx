@@ -20,12 +20,11 @@ import {
 } from "~/components/ui/tooltip";
 
 import { api } from "~/trpc/react";
-import type { Contact } from "../supplierData";
 import { states } from "../supplierData";
 import { SupplierEdit } from "./editSuppliers/supplierEdit";
 
 export const ManageSuppliersTable = () => {
-  const [inputCompany, setinputCompany] = useState("");
+  const [inputName, setInputName] = useState("");
   const [inputEmail, setInputEmail] = useState("");
   const [selectState, setSelectState] = useState("");
 
@@ -33,13 +32,19 @@ export const ManageSuppliersTable = () => {
     data: suppliers = [],
     error,
     isLoading,
-  } = api.supplier.getAll.useQuery({
-    filters: {
-      address: selectState,
-      cnpj: undefined,
-      company: inputCompany,
-      email: inputEmail,
-    },
+  } = api.supplier.getAll.useQuery({});
+
+  const filteredSuppliers = suppliers.filter((supplier) => {
+    const matchesName =
+      inputName === "" ||
+      supplier.name.toLowerCase().includes(inputName?.toLowerCase());
+    const matchesEmail =
+      inputEmail === "" ||
+      supplier.email.toLowerCase().includes(inputEmail?.toLowerCase());
+    const matchesState =
+      selectState === "" || supplier.federativeUnit === selectState;
+
+    return matchesName && matchesEmail && matchesState;
   });
 
   return (
@@ -58,8 +63,8 @@ export const ManageSuppliersTable = () => {
           />
           <Filter.Input
             placeholder="Nome"
-            state={inputCompany}
-            setState={setinputCompany}
+            state={inputName}
+            setState={setInputName}
           />
         </Filter>
 
@@ -102,15 +107,13 @@ export const ManageSuppliersTable = () => {
               <Eraser
                 size={20}
                 onClick={() => {
-                  setinputCompany("");
+                  setInputName("");
                   setInputEmail("");
                   setSelectState("");
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
@@ -123,42 +126,75 @@ export const ManageSuppliersTable = () => {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {suppliers.map((supplier, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[2fr_4fr_3fr_130px] ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
-            <TableComponent.Value>{supplier.name}</TableComponent.Value>
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
-              {supplier.address} - {supplier.neighborhood} - {supplier.city} (
-              {supplier.federativeUnit})
+              Erro ao mostrar fornecedores: {error.message}
             </TableComponent.Value>
-            <TableComponent.Value>{supplier.email}</TableComponent.Value>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="sm:max-w-7xl"
-              >
-                <DialogHeader>
-                  <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do fornecedor
-                    ou o botão para remover
-                  </DialogTitle>
-                  <SupplierEdit supplier={supplier} />
-                  <DialogDescription></DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
           </TableComponent.Line>
-        ))}
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando fornecedores...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {suppliers.length > 0 && !isLoading && !error ? (
+          filteredSuppliers.length > 0 ? (
+            filteredSuppliers.map((supplier, index) => (
+              <TableComponent.Line
+                className={`grid-cols-[2fr_4fr_3fr_130px] ${
+                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                }`}
+                key={index}
+              >
+                <TableComponent.Value>{supplier.name}</TableComponent.Value>
+                <TableComponent.Value>
+                  {supplier.address} - {supplier.neighborhood} - {supplier.city}{" "}
+                  ({supplier.federativeUnit})
+                </TableComponent.Value>
+                <TableComponent.Value>{supplier.email}</TableComponent.Value>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                      Detalhes
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent
+                    aria-describedby={undefined}
+                    className="sm:max-w-7xl"
+                  >
+                    <DialogHeader>
+                      <DialogTitle className="pb-1.5">
+                        Utilize os campos abaixo para editar os dados do
+                        fornecedor ou o botão para remover
+                      </DialogTitle>
+                      <SupplierEdit supplier={supplier} />
+                      <DialogDescription></DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </TableComponent.Line>
+            ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum fornecedor encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum fornecedor encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
     </TableComponent>
   );

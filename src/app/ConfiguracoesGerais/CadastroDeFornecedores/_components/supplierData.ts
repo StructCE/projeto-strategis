@@ -1,24 +1,3 @@
-export type Contact = {
-  name: string;
-  email: string;
-  phone: string | null;
-};
-
-export type Supplier = {
-  id: string;
-  name: string;
-  cnpj: string;
-  email: string;
-  phone: string | null;
-  stateRegistration: string;
-  address: string;
-  neighborhood: string;
-  city: string;
-  federativeUnit: string;
-  cep: string;
-  contacts?: Contact[];
-};
-
 export const states = [
   { name: "Acre (AC)", value: "AC" },
   { name: "Alagoas (AL)", value: "AL" },

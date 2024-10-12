@@ -66,28 +66,27 @@ export const useSupplierForm = (supplier: Supplier) => {
   function onSubmitEdit(data: EditSupplierFormValues) {
     console.log(JSON.stringify(data, null, 2));
 
-    const supplierData = {
-      name: data.name,
-      cnpj: data.cnpj,
-      email: data.email,
-      phone: data.phone,
-      stateRegistration: data.stateRegistration,
-      address: data.address,
-      neighborhood: data.neighborhood,
-      city: data.city,
-      federativeUnit: data.federativeUnit,
-      cep: data.cep,
-      contacts: data.contacts?.map((contact) => ({
-        name: contact.name,
-        email: contact.email,
-        phone: contact.phone,
-      })),
-    };
-
     try {
       supplierMutation.mutate({
         id: supplier.id,
-        data: supplierData,
+        data: {
+          name: data.name,
+          cnpj: data.cnpj,
+          email: data.email,
+          phone: data.phone,
+          stateRegistration: data.stateRegistration,
+          address: data.address,
+          neighborhood: data.neighborhood,
+          city: data.city,
+          federativeUnit: data.federativeUnit,
+          cep: data.cep,
+          contacts: data.contacts?.map((contact, index) => ({
+            id: supplier.contacts?.[index]?.id ?? "",
+            name: contact.name,
+            email: contact.email,
+            phone: contact.phone,
+          })),
+        },
       });
     } catch (error) {
       console.error("Error submitting edit form:", error);
