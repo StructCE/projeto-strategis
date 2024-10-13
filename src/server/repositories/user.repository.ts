@@ -35,13 +35,6 @@ async function register(props: UserRepositoryInterfaces["RegisterProps"]) {
   return registeredUser;
 }
 
-// async function register(props: UserRepositoryInterfaces["RegisterProps"]) {
-//   const registeredUser = await db.user.create({
-//     data: { ...props },
-//   });
-//   return registeredUser;
-// }
-
 async function edit(props: UserRepositoryInterfaces["EditProps"]) {
   const { id, data } = props;
 

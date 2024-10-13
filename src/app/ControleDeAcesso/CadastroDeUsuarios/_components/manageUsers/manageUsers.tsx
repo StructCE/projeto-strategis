@@ -26,11 +26,19 @@ export const ManageUsersTable = () => {
   const [selectCompany, setSelectCompany] = useState("");
   const [selectRole, setSelectRole] = useState("");
 
-  const { data: users = [] } = api.user.getAll.useQuery();
+  const { data: users = [], error, isLoading } = api.user.getAll.useQuery();
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();
   const { data: roles = [] } = api.role.getAll.useQuery();
 
-  // console.log(users);
+  const getCompanyNameById = (companyId: string) => {
+    const company = companies.find((company) => company.id === companyId);
+    return company ? company.name : "Empresa não encontrada";
+  };
+
+  const getRoleNameById = (roleId: string) => {
+    const role = roles.find((role) => role.id === roleId);
+    return role ? role.name : "Cargo não encontrado";
+  };
 
   const filteredUsers = users.filter((user) => {
     const matchesName =
@@ -39,10 +47,14 @@ export const ManageUsersTable = () => {
       user.email.toLowerCase().includes(inputNameEmail.toLowerCase());
     const matchesCompany =
       selectCompany === "" ||
-      user.UserRole.some((userRole) => userRole.company === selectCompany);
+      user.UserRole.some(
+        (userRole) => getCompanyNameById(userRole.companyId) === selectCompany,
+      );
     const matchesRole =
       selectRole === "" ||
-      user.UserRole.some((userRole) => userRole.role === selectRole);
+      user.UserRole.some(
+        (userRole) => getRoleNameById(userRole.roleId) === selectRole,
+      );
 
     return matchesName && matchesCompany && matchesRole;
   });
@@ -126,53 +138,111 @@ export const ManageUsersTable = () => {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[repeat(4,_1fr)_130px] gap-6">
+        <TableComponent.LineTitle className="grid-cols-[repeat(3,_1fr)_0.75fr_130px] gap-8">
           <TableComponent.ValueTitle>Nome</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Email</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Empresa</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Cargo</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {filteredUsers.map((user, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[repeat(4,_1fr)_130px] gap-6 ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
-            <TableComponent.Value>{user.name}</TableComponent.Value>
-            <TableComponent.Value className="overflow-x-hidden">
-              {user.email}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {user.UserRole.map((userRole) => userRole.company).join(", ")}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {user.UserRole.map((userRole) => userRole.role).join(", ")}
-            </TableComponent.Value>
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="sm:max-w-7xl"
-              >
-                <DialogHeader>
-                  <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do usuário ou
-                    o botão para remover
-                  </DialogTitle>
-                  <UserEdit user={user} />
-                  <DialogDescription></DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Erro ao mostrar usuários: {error.message}
+            </TableComponent.Value>
           </TableComponent.Line>
-        ))}
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>Carregando usuários...</TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {users.length > 0 && !isLoading && !error ? (
+          filteredUsers.length > 0 ? (
+            filteredUsers.map((user, index) => (
+              <TableComponent.Line
+                className={`grid-cols-[repeat(3,_1fr)_0.75fr_130px] gap-8 ${
+                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                }`}
+                key={index}
+              >
+                <TableComponent.Value>{user.name}</TableComponent.Value>
+                <TableComponent.Value>{user.email}</TableComponent.Value>
+                <TableComponent.Value>
+                  {user.UserRole.length > 2
+                    ? user.UserRole.slice(0, 2)
+                        .map(
+                          (userRole, index) =>
+                            `${index + 1}-${getCompanyNameById(userRole.companyId)}`,
+                        )
+                        .join(", ") + "..."
+                    : user.UserRole.length > 1
+                      ? user.UserRole.map(
+                          (userRole, index) =>
+                            `${index + 1}-${getCompanyNameById(userRole.companyId)}`,
+                        ).join(", ")
+                      : user.UserRole.map((userRole) =>
+                          getCompanyNameById(userRole.companyId),
+                        ).join(", ")}
+                </TableComponent.Value>
+                <TableComponent.Value>
+                  {user.UserRole.length > 2
+                    ? user.UserRole.slice(0, 2)
+                        .map(
+                          (userRole, index) =>
+                            `${index + 1}-${getRoleNameById(userRole.roleId)}`,
+                        )
+                        .join(", ") + "..."
+                    : user.UserRole.length > 1
+                      ? user.UserRole.map(
+                          (userRole, index) =>
+                            `${index + 1}-${getRoleNameById(userRole.roleId)}`,
+                        ).join(", ")
+                      : user.UserRole.map((userRole) =>
+                          getRoleNameById(userRole.roleId),
+                        ).join(", ")}
+                </TableComponent.Value>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                      Detalhes
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent
+                    aria-describedby={undefined}
+                    className="sm:max-w-7xl"
+                  >
+                    <DialogHeader>
+                      <DialogTitle className="pb-1.5">
+                        Utilize os campos abaixo para editar os dados do usuário
+                        ou o botão para remover
+                      </DialogTitle>
+                      <UserEdit user={user} />
+                      <DialogDescription></DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </TableComponent.Line>
+            ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum usuário encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum usuário encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
     </TableComponent>
   );

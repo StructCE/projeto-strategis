@@ -15,8 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { type UserWithRoles } from "~/server/interfaces/user/user.route.interfaces";
 import { api } from "~/trpc/react";
-import { type UserWithRoles } from "../../usersData";
 import { useUserForm } from "./useUserForm";
 
 type UserEditForm = {
@@ -104,12 +104,12 @@ export const UserEdit = (props: UserEditForm) => {
                   <FormComponent.Label>Empresa</FormComponent.Label>
                   <FormField
                     control={userEditForm.form.control}
-                    name={`UserRole.${index}.company`}
+                    name={`UserRole.${index}.companyId`}
                     render={({ field }) => (
                       <FormItem>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value ?? ""}
+                          defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
@@ -134,7 +134,7 @@ export const UserEdit = (props: UserEditForm) => {
                   <FormComponent.Label>Cargo</FormComponent.Label>
                   <FormField
                     control={userEditForm.form.control}
-                    name={`UserRole.${index}.role`}
+                    name={`UserRole.${index}.roleId`}
                     render={({ field }) => (
                       <FormItem>
                         <Select
@@ -167,10 +167,10 @@ export const UserEdit = (props: UserEditForm) => {
             ))}
           </FormComponent.BoxSpecify>
 
-          <FormComponent.ButtonLayout>
+          <FormComponent.ButtonLayout className="flex justify-end">
             <button
               onClick={() =>
-                userEditForm.arrayAppend({ company: "", role: "" })
+                userEditForm.arrayAppend({ companyId: "", roleId: "" })
               }
               className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"
               type="button"
@@ -182,17 +182,29 @@ export const UserEdit = (props: UserEditForm) => {
           </FormComponent.ButtonLayout>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Usuário
-            </FormComponent.Button>
-            <FormComponent.Button
-              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
-              handlePress={userEditForm.form.handleSubmit(
-                userEditForm.onSubmitRemove,
-              )}
-            >
-              Remover Usuário
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.",
+                  );
+                  if (confirmed) {
+                    userEditForm.onSubmitRemove();
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={userEditForm.form.handleSubmit(
+                  userEditForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

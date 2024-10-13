@@ -24,10 +24,6 @@ export const UserRegister = () => {
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();
   const { data: roles = [] } = api.role.getAll.useQuery();
 
-  function capitalizeFirstLetter(str: string): string {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
   return (
     <Form {...userForm.form}>
       <form onSubmit={userForm.form.handleSubmit(userForm.onSubmit)}>
@@ -103,7 +99,7 @@ export const UserRegister = () => {
                   <FormComponent.Label>Empresa</FormComponent.Label>
                   <FormField
                     control={userForm.form.control}
-                    name={`UserRole.${index}.company`}
+                    name={`UserRole.${index}.companyId`}
                     render={({ field }) => (
                       <FormItem>
                         <Select
@@ -118,7 +114,7 @@ export const UserRegister = () => {
                           <SelectContent>
                             {companies.map((company, index) => (
                               <SelectItem value={company.id} key={index}>
-                                {capitalizeFirstLetter(company.name)}
+                                {company.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -133,7 +129,7 @@ export const UserRegister = () => {
                   <FormComponent.Label>Cargo</FormComponent.Label>
                   <FormField
                     control={userForm.form.control}
-                    name={`UserRole.${index}.role`}
+                    name={`UserRole.${index}.roleId`}
                     render={({ field }) => (
                       <FormItem>
                         <Select
@@ -148,7 +144,7 @@ export const UserRegister = () => {
                           <SelectContent>
                             {roles.map((role, index) => (
                               <SelectItem value={role.id} key={index}>
-                                {capitalizeFirstLetter(role.name)}
+                                {role.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -166,9 +162,11 @@ export const UserRegister = () => {
             ))}
           </FormComponent.BoxSpecify>
 
-          <FormComponent.ButtonLayout>
+          <FormComponent.ButtonLayout className="flex justify-end">
             <button
-              onClick={() => userForm.arrayAppend({ company: "", role: "" })}
+              onClick={() =>
+                userForm.arrayAppend({ companyId: "", roleId: "" })
+              }
               className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"
               type="button"
             >

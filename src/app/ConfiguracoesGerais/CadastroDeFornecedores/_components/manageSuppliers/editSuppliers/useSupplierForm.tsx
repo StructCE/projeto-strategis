@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
 import { api } from "~/trpc/react";
@@ -8,10 +9,14 @@ import {
 } from "./supplierEditFormSchema";
 
 export const useSupplierForm = (supplier: Supplier) => {
+  const [isDeleted, setIsDeleted] = useState(false);
+
   const supplierMutation = api.supplier.editSupplier.useMutation({
     onSuccess: (updatedSupplier) => {
       console.log("Supplier updated successfully:", updatedSupplier);
-      alert("Fornecedor atualizado com sucesso.");
+      if (isDeleted === false) {
+        alert("Fornecedor atualizado com sucesso.");
+      }
       setTimeout(function () {
         location.reload();
       }, 500);
@@ -64,6 +69,7 @@ export const useSupplierForm = (supplier: Supplier) => {
   });
 
   function onSubmitEdit(data: EditSupplierFormValues) {
+    if (isDeleted) return;
     console.log(JSON.stringify(data, null, 2));
 
     try {
@@ -94,6 +100,7 @@ export const useSupplierForm = (supplier: Supplier) => {
   }
 
   function onSubmitRemove() {
+    setIsDeleted(true);
     try {
       deleteSupplierMutation.mutate({
         id: supplier.id,

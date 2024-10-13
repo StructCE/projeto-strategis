@@ -1,16 +1,16 @@
-type User = {
+export type User = {
   id: string;
   name: string;
   email: string;
   phone: string;
 };
 
-type UserWithRoles = {
+export type UserWithRoles = {
   id: string;
   name: string;
   email: string;
   phone: string;
-  UserRole: { company: string; role: string }[];
+  UserRole: { companyId: string; roleId: string }[];
 };
 
 export type UserRouteInterfaces = {

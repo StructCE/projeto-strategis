@@ -13,8 +13,8 @@ export const userRouter = createTRPCRouter({
         email: userWithRoles.email,
         phone: userWithRoles.phone,
         UserRole: userWithRoles.UserRole.map((userRole) => ({
-          company: userRole.company.name,
-          role: userRole.role.name,
+          companyId: userRole.companyId,
+          roleId: userRole.roleId,
         })),
       }));
 

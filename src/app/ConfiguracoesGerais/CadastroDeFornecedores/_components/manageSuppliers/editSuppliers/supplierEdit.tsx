@@ -335,14 +335,14 @@ export const SupplierEdit = (props: SupplierEditProps) => {
                   "Tem certeza que deseja excluir este fornecedor? Esta ação não pode ser desfeita.",
                 );
                 if (confirmed) {
-                  form.form.handleSubmit(form.onSubmitRemove);
+                  form.onSubmitRemove();
                 }
               }}
             >
               Excluir
             </FormComponent.Button>
             <FormComponent.Button
-              className="bg-verde_botao hover:bg-verde_botao"
+              className="bg-verde_botao hover:bg-hover_verde_botao"
               handlePress={form.form.handleSubmit(form.onSubmitEdit)}
             >
               Salvar

@@ -106,7 +106,10 @@ type TableComponentValueProps = {
 TableComponent.Value = function TableComponentValue(
   props: TableComponentValueProps,
 ) {
-  const style = cn("sm:text-[16px] font-normal text-[14px]", props.className);
+  const style = cn(
+    "sm:text-[16px] font-normal text-[14px] overflow-x-hidden",
+    props.className,
+  );
   return <div className={style}>{props.children}</div>;
 };
 

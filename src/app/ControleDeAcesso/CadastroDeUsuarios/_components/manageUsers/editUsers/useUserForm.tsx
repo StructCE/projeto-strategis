@@ -1,17 +1,22 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { type UserWithRoles } from "~/server/interfaces/user/user.route.interfaces";
 import { api } from "~/trpc/react";
-import { type UserWithRoles } from "../../usersData";
 import {
   editUserFormSchema,
   type EditUserFormValues,
 } from "./userEditFormSchema";
 
 export const useUserForm = (user: UserWithRoles) => {
+  const [isDeleted, setIsDeleted] = useState(false);
+
   const userMutation = api.user.editUser.useMutation({
     onSuccess: (updatedUser) => {
       console.log("User updated successfully:", updatedUser);
-      alert("Usuário atualizado com sucesso.");
+      if (isDeleted === false) {
+        alert("Usuário atualizado com sucesso.");
+      }
       setTimeout(function () {
         location.reload();
       }, 500);
@@ -44,8 +49,8 @@ export const useUserForm = (user: UserWithRoles) => {
       email: user.email,
       phone: user.phone,
       UserRole: user.UserRole.map((userRole) => ({
-        company: userRole.company,
-        role: userRole.role,
+        companyId: userRole.companyId,
+        roleId: userRole.roleId,
       })),
     },
   });
@@ -56,6 +61,7 @@ export const useUserForm = (user: UserWithRoles) => {
   });
 
   function onSubmitEdit(data: EditUserFormValues) {
+    if (isDeleted) return;
     console.log(JSON.stringify(data, null, 2));
 
     const userData = {
@@ -63,8 +69,8 @@ export const useUserForm = (user: UserWithRoles) => {
       name: data.name,
       phone: data.phone ?? "",
       UserRole: data.UserRole.map((userRole) => ({
-        companyId: userRole.company,
-        roleId: userRole.role,
+        companyId: userRole.companyId,
+        roleId: userRole.roleId,
       })),
     };
 
@@ -79,6 +85,7 @@ export const useUserForm = (user: UserWithRoles) => {
   }
 
   function onSubmitRemove() {
+    setIsDeleted(true);
     try {
       deleteUserMutation.mutate({
         id: user.id,

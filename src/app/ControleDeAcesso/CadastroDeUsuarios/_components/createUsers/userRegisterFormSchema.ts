@@ -33,10 +33,10 @@ export const createUserFormSchema = z.object({
   UserRole: z
     .array(
       z.object({
-        company: z.string({
+        companyId: z.string({
           required_error: "Por favor selecione uma empresa.",
         }),
-        role: z.string({
+        roleId: z.string({
           required_error: "Por favor selecione um cargo.",
         }),
       }),

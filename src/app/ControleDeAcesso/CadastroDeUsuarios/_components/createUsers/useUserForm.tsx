@@ -30,8 +30,8 @@ export const useUserForm = () => {
       phone: "",
       UserRole: [
         {
-          company: "",
-          role: "",
+          companyId: "",
+          roleId: "",
         },
       ],
     },
@@ -50,8 +50,8 @@ export const useUserForm = () => {
       name: data.name,
       phone: data.phone ?? "",
       UserRole: data.UserRole.map((userRole) => ({
-        companyId: userRole.company,
-        roleId: userRole.role,
+        companyId: userRole.companyId,
+        roleId: userRole.roleId,
       })),
     };
 
