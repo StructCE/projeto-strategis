@@ -33,32 +33,31 @@ async function register(props: RoleRepositoryInterfaces["RegisterProps"]) {
 
 async function edit(props: RoleRepositoryInterfaces["EditProps"]) {
   const { id, data } = props;
+
+  // Atualiza apenas o nome
   const editedRole = await db.role.update({
-    where: {
-      id: id,
-    },
-    data: {
-      name: data.name,
-    },
+    where: { id },
+    data: { name: data.name },
   });
 
-  await db.roleModule.deleteMany({
-    where: {
-      roleId: id,
-    },
-  });
-
-  const recreatedRoleModules = data.modules?.map(async (roleModule) => {
-    const recreatedRoleModule = await db.roleModule.create({
-      data: {
-        roleId: editedRole.id,
-        moduleCode: roleModule.code,
-      },
+  // Atualiza os módulos apenas se forem fornecidos
+  if (data.modules) {
+    await db.roleModule.deleteMany({
+      where: { roleId: id },
     });
-    return recreatedRoleModule;
-  });
 
-  if (recreatedRoleModules) await Promise.all(recreatedRoleModules);
+    const recreatedRoleModules = data.modules.map(async (roleModule) => {
+      const recreatedRoleModule = await db.roleModule.create({
+        data: {
+          roleId: editedRole.id,
+          moduleCode: roleModule,
+        },
+      });
+      return recreatedRoleModule;
+    });
+
+    await Promise.all(recreatedRoleModules);
+  }
 
   return editedRole;
 }

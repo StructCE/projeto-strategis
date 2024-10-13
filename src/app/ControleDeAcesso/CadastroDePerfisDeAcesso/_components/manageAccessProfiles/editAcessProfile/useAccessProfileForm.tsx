@@ -46,7 +46,7 @@ export const useAccessProfileForm = (role: RoleWithModules) => {
     mode: "onChange",
     defaultValues: {
       name: role.name,
-      modules: role.modules,
+      modules: role.modules.map((module) => module.code.toString()),
     },
   });
 
@@ -58,7 +58,7 @@ export const useAccessProfileForm = (role: RoleWithModules) => {
         id: role.id,
         data: {
           name: data.name,
-          modules: role.modules,
+          modules: data.modules,
         },
       });
     } catch (error) {

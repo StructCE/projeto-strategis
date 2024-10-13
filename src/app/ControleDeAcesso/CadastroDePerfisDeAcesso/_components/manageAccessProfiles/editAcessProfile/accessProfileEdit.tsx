@@ -61,7 +61,7 @@ export const AccessProfileEdit = (props: AccessProfileEditForm) => {
                         label: module.name,
                         value: module.code.toString(),
                       }))}
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => field.onChange(value)}
                       defaultValue={
                         Array.isArray(field.value)
                           ? field.value.map(String)

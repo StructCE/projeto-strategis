@@ -11,7 +11,14 @@ const editProps = z.object({
   id: z.string(),
   data: z.object({
     name: z.string(),
-    modules: z.array(z.object({ name: z.string(), code: z.number() })),
+    modules: z
+      .array(
+        z
+          .string()
+          .transform((val) => Number(val))
+          .refine((val) => !isNaN(val)),
+      )
+      .optional(),
   }),
 });
 

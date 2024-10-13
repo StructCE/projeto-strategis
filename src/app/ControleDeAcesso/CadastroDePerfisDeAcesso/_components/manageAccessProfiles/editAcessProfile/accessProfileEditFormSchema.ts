@@ -10,7 +10,13 @@ export const editAccessProfileFormSchema = z.object({
       message: "Nome deve ter no máximo 60 caracteres.",
     }),
 
-  modules: z.array(z.object({ name: z.string(), code: z.number() })).optional(),
+  modules: z
+    .array(
+      z.string(),
+      // .transform((val) => Number(val))
+      // .refine((val) => !isNaN(val)),
+    )
+    .optional(),
 });
 
 export type EditAccessProfileFormValues = z.infer<
