@@ -44,7 +44,7 @@ export default function SectorRegister(props: SectorRegisterProps) {
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
-              Criar Setor
+              Criar Setor de Utilização
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

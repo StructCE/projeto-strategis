@@ -1,4 +1,3 @@
-import { type TypeOfControl } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -8,14 +7,15 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { type ControlType } from "~/server/interfaces/controlType/controlType.route.interfaces";
 import { useTypeForm } from "./useTypeForm";
 
 type TypeEditForm = {
-  type_of_control: TypeOfControl;
+  controlType: ControlType;
 };
 
 export const TypeEdit = (props: TypeEditForm) => {
-  const typeEditForm = useTypeForm(props.type_of_control);
+  const typeEditForm = useTypeForm(props.controlType);
 
   return (
     <Form {...typeEditForm.form}>
@@ -28,7 +28,7 @@ export const TypeEdit = (props: TypeEditForm) => {
               <FormComponent.Label>Tipo de Controle</FormComponent.Label>
               <FormField
                 control={typeEditForm.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -46,17 +46,29 @@ export const TypeEdit = (props: TypeEditForm) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Tipo
-            </FormComponent.Button>
-            <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
-              handlePress={typeEditForm.form.handleSubmit(
-                typeEditForm.onSubmitRemove,
-              )}
-            >
-              Remover Tipo
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir este tipo de controle? Esta ação não pode ser desfeita.",
+                  );
+                  if (confirmed) {
+                    typeEditForm.onSubmitRemove();
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={typeEditForm.form.handleSubmit(
+                  typeEditForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

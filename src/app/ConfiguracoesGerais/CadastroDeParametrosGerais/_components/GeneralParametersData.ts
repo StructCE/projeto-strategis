@@ -19,22 +19,22 @@ Pagamentos               -> Payments       (Payment)
 */
 
 // Products
-export type TypeOfControl = {
-  description: string;
-};
+// export type TypeOfControl = {
+//   description: string;
+// };
 
-export const TypesOfControl = [
-  { description: "Patrimônio" },
-  { description: "Produtos de Bar" },
-  { description: "Produtos de Finalização" },
-  { description: "Produtos de Funcionários" },
-  { description: "Produtos de Hortifruti" },
-  { description: "Produtos de Limpeza" },
-  { description: "Produtos de Produção" },
-  { description: "Produtos de Salao" },
-  { description: "Produtos Evento" },
-  { description: "Produtos Porcionados" },
-];
+// export const TypesOfControl = [
+//   { description: "Patrimônio" },
+//   { description: "Produtos de Bar" },
+//   { description: "Produtos de Finalização" },
+//   { description: "Produtos de Funcionários" },
+//   { description: "Produtos de Hortifruti" },
+//   { description: "Produtos de Limpeza" },
+//   { description: "Produtos de Produção" },
+//   { description: "Produtos de Salao" },
+//   { description: "Produtos Evento" },
+//   { description: "Produtos Porcionados" },
+// ];
 
 // export type ProductCategory = {
 //   description: string;
@@ -90,23 +90,23 @@ export const TypesOfControl = [
 //   { description: "Utensilhos - Quadro" },
 // ];
 
-export type SectorOfUse = {
-  description: string;
-};
+// export type SectorOfUse = {
+//   description: string;
+// };
 
-export const SectorsOfUse = [
-  { description: "Bar" },
-  { description: "Caixa" },
-  { description: "Cozinha" },
-  { description: "Delivery" },
-  { description: "Evento" },
-  { description: "Finalização" },
-  { description: "Geral" },
-  { description: "Produção" },
-  { description: "Salão" },
-  { description: "Serviços Gerais" },
-  { description: "Sobremesa" },
-];
+// export const SectorsOfUse = [
+//   { description: "Bar" },
+//   { description: "Caixa" },
+//   { description: "Cozinha" },
+//   { description: "Delivery" },
+//   { description: "Evento" },
+//   { description: "Finalização" },
+//   { description: "Geral" },
+//   { description: "Produção" },
+//   { description: "Salão" },
+//   { description: "Serviços Gerais" },
+//   { description: "Sobremesa" },
+// ];
 
 export type Unit = {
   description: string;

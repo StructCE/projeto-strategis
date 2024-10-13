@@ -68,8 +68,10 @@ export const ManageCategoriesTable = () => {
                           Utilize o campo abaixo para editar a categoria ou o
                           botão para remover
                         </DialogTitle>
-                        <CategoryEdit category={category} />
-                        <DialogDescription></DialogDescription>
+
+                        <DialogDescription className="text-black">
+                          <CategoryEdit category={category} />
+                        </DialogDescription>
                       </DialogHeader>
                     </DialogContent>
                   </Dialog>

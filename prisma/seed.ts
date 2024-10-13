@@ -2,6 +2,7 @@
 import { db } from "~/server/db";
 import { adjustementReasons } from "./seed-data/adjustmentReasons";
 import { categories } from "./seed-data/categories";
+import { controlTypes } from "./seed-data/controlType";
 import { modules } from "./seed-data/modules";
 import { roles } from "./seed-data/roles";
 import { sectorsOfUse } from "./seed-data/sectorOfUse";
@@ -44,6 +45,13 @@ async function createSectorOfUse(props: { name: string }) {
     data: { ...props },
   });
   return createdSector;
+}
+
+async function createControlType(props: { name: string }) {
+  const createdControlType = await db.controlType.create({
+    data: { ...props },
+  });
+  return createdControlType;
 }
 
 async function createRoleModules(props: { roleId: string; modules: number[] }) {
@@ -166,11 +174,19 @@ async function main() {
   // });
   // await Promise.all(createdReasons);
 
-  const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
-    const createdSector = await createSectorOfUse({ name: sector.name });
-    return createdSector;
+  // const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
+  //   const createdSector = await createSectorOfUse({ name: sector.name });
+  //   return createdSector;
+  // });
+  // await Promise.all(createdSectorOfUse);
+
+  const createdControlType = controlTypes.map(async (controlType) => {
+    const createdControlType = await createControlType({
+      name: controlType.name,
+    });
+    return createdControlType;
   });
-  await Promise.all(createdSectorOfUse);
+  await Promise.all(createdControlType);
 
   // const companyStruct = await db.company.create({
   //   data: {

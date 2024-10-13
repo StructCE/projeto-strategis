@@ -65,11 +65,13 @@ export const ManageSectorsTable = () => {
                     >
                       <DialogHeader>
                         <DialogTitle className="pb-1.5">
-                          Utilize o campo abaixo para editar o setor ou o botão
-                          para remover
+                          Utilize o campo abaixo para editar o setor de
+                          utilização ou o botão para remover
                         </DialogTitle>
-                        <SectorEdit sector={sector} />
-                        <DialogDescription></DialogDescription>
+
+                        <DialogDescription className="text-black">
+                          <SectorEdit sector={sector} />
+                        </DialogDescription>
                       </DialogHeader>
                     </DialogContent>
                   </Dialog>

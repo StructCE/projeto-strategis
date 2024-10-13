@@ -1,4 +1,4 @@
-type ControlType = {
+export type ControlType = {
   id: string;
   name: string;
 };
