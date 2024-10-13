@@ -9,7 +9,15 @@ export const createAccessProfileFormSchema = z.object({
     .max(60, {
       message: "Nome deve ter no máximo 60 caracteres.",
     }),
-  modules: z.array(z.string()).optional(), // Ver como fazer funcionar o multiselect com o zod
+
+  modules: z
+    .array(
+      z
+        .string()
+        .transform((val) => Number(val))
+        .refine((val) => !isNaN(val)),
+    )
+    .optional(),
 });
 
 export type CreateAccessProfileFormValues = z.infer<

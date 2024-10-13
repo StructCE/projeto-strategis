@@ -53,12 +53,19 @@ export const AccessProfilesRegister = () => {
               <FormField
                 control={accessProfileForm.form.control}
                 name="modules"
-                render={() => (
+                render={({ field }) => (
                   <FormItem>
                     <MultiSelect
-                      options={modules}
-                      onValueChange={accessProfileForm.setSelectedModules}
-                      defaultValue={accessProfileForm.selectedModules}
+                      options={modules.flatMap((module) => ({
+                        label: module.name,
+                        value: module.code.toString(),
+                      }))}
+                      onValueChange={(value) => field.onChange(value)}
+                      defaultValue={
+                        Array.isArray(field.value)
+                          ? field.value.map(String)
+                          : []
+                      }
                       placeholder="Selecione um ou mais conteúdos para o cargo ter acesso"
                       variant="inverted"
                       maxCount={2}

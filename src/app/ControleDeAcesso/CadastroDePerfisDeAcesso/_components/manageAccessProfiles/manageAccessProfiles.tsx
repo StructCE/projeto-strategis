@@ -65,8 +65,8 @@ export const ManageAccessProfilesTable = () => {
           <MultiSelect
             FilterIcon={Search}
             options={modules.flatMap((module) => ({
-              label: module,
-              value: module,
+              label: module.name,
+              value: module.name,
             }))}
             onValueChange={setSelectModules}
             defaultValue={selectModules}
