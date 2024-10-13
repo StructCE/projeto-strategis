@@ -19,22 +19,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { modules, roles } from "../accessProfileData";
+import { api } from "~/trpc/react";
+import { modules } from "../accessProfileData";
 import { AccessProfileEdit } from "./editAcessProfile/accessProfileEdit";
 
 export const ManageAccessProfilesTable = () => {
   const [inputName, setInputName] = useState("");
   const [selectModules, setSelectModules] = useState<string[]>([]);
 
-  // Função para verificar se o cargo tem pelo menos um módulo selecionado
-  const roleMatchesSelectedModules = (
-    roleModules: { label: string; value: string }[],
-  ) => {
-    if (selectModules.length === 0) return true; // Se nenhum módulo foi selecionado, não filtrar por módulos
-    return roleModules.some((module) => selectModules.includes(module.value));
+  const { data: roles = [], error, isLoading } = api.role.getAll.useQuery();
+
+  const roleMatchesSelectedModules = (roleModules: string[]) => {
+    if (selectModules.length === 0) return true;
+    return roleModules.some((module) => selectModules.includes(module));
   };
 
-  // Filtrar os cargos com base no nome e módulos selecionados
   const filteredRoles = roles.filter(
     (role) =>
       role.name.toLowerCase().includes(inputName.toLowerCase()) && // Filtrar pelo nome do cargo
@@ -47,6 +46,7 @@ export const ManageAccessProfilesTable = () => {
       <TableComponent.Subtitle>
         Selecione um cargo para ver detalhes, editar ou remover
       </TableComponent.Subtitle>
+
       <TableComponent.FiltersLine>
         <Filter>
           <Filter.Icon
@@ -64,8 +64,11 @@ export const ManageAccessProfilesTable = () => {
         <div className="font-inter m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] font-normal text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
           <MultiSelect
             FilterIcon={Search}
-            options={modules} // Suas opções de módulos
-            onValueChange={setSelectModules} // Atualiza os módulos selecionados
+            options={modules.flatMap((module) => ({
+              label: module,
+              value: module,
+            }))}
+            onValueChange={setSelectModules}
             defaultValue={selectModules}
             placeholder="Módulos de acesso"
             variant="inverted"
@@ -85,9 +88,7 @@ export const ManageAccessProfilesTable = () => {
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
@@ -100,42 +101,74 @@ export const ManageAccessProfilesTable = () => {
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {filteredRoles.map((role, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[1fr_3fr_130px] ${index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""}`}
-            key={index}
-          >
-            <TableComponent.Value>{role.name}</TableComponent.Value>
+
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
-              {role.modules.length > 4
-                ? `${role.modules
-                    .slice(0, 4)
-                    .map((module) => module.label)
-                    .join(", ")}...`
-                : role.modules.map((module) => module.label).join(", ")}
+              Erro ao mostrar cargos: {error.message}
             </TableComponent.Value>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="sm:max-w-7xl"
-              >
-                <DialogHeader>
-                  <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do fornecedor
-                    ou o botão para remover
-                  </DialogTitle>
-                  <AccessProfileEdit role={role} />
-                  <DialogDescription></DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
           </TableComponent.Line>
-        ))}
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>Carregando cargos...</TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {roles.length > 0 && !isLoading && !error ? (
+          filteredRoles.length > 0 ? (
+            filteredRoles.map((role, index) => (
+              <TableComponent.Line
+                className={`grid-cols-[1fr_3fr_130px] ${index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""}`}
+                key={index}
+              >
+                <TableComponent.Value>{role.name}</TableComponent.Value>
+                <TableComponent.Value>
+                  {role.modules.length > 3
+                    ? `${role.modules
+                        .slice(0, 3)
+                        .map((module) => module)
+                        .join(", ")}...`
+                    : role.modules.map((module) => module).join(", ")}
+                </TableComponent.Value>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                      Detalhes
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent
+                    aria-describedby={undefined}
+                    className="sm:max-w-7xl"
+                  >
+                    <DialogHeader>
+                      <DialogTitle className="pb-1.5">
+                        Utilize os campos abaixo para editar os dados do
+                        fornecedor ou o botão para remover
+                      </DialogTitle>
+                      <AccessProfileEdit role={role} />
+                      <DialogDescription></DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </TableComponent.Line>
+            ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum cargo encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum cargo encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
     </TableComponent>
   );
