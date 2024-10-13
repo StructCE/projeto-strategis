@@ -36,59 +36,59 @@ export const TypesOfControl = [
   { description: "Produtos Porcionados" },
 ];
 
-export type ProductCategory = {
-  description: string;
-};
+// export type ProductCategory = {
+//   description: string;
+// };
 
-export const ProductCategories = [
-  { description: "Acompanhamento" },
-  { description: "Bebidas" },
-  { description: "Bebidas - Águas" },
-  { description: "Bebidas - Café" },
-  { description: "Bebidas - Cervejas" },
-  { description: "Bebidas - Chop" },
-  { description: "Bebidas - Destilados" },
-  { description: "Bebidas - Energéticos" },
-  { description: "Bebidas - Refrigerantes" },
-  { description: "Bebidas - Vinho" },
-  { description: "Bebidas - Xaropes" },
-  { description: "Carnes" },
-  { description: "Carnes - Em Processo" },
-  { description: "Carnes - Funcionários" },
-  { description: "Carnes - In Natura" },
-  { description: "Carnes - Porcionadas" },
-  { description: "Embalagens" },
-  { description: "Embalagens - A vácuo" },
-  { description: "Embalagens - Evento" },
-  { description: "Entradas" },
-  { description: "Equipamento" },
-  { description: "Equipamento - Refrigeração" },
-  { description: "Equipamento - Bar" },
-  { description: "Equipamento - Cozinha" },
-  { description: "Equipamento - Eletrônico" },
-  { description: "Equipamento - Limpeza" },
-  { description: "Funcionários" },
-  { description: "Hortifruti" },
-  { description: "Insumos" },
-  { description: "Mobiliário" },
-  { description: "Mobiliário - Salão" },
-  { description: "Mobiliário - Assentos Salão" },
-  { description: "Mobiliário - Mesas Salão" },
-  { description: "Mobiliário - Cozinha" },
-  { description: "Molhos" },
-  { description: "Pães" },
-  { description: "Produtos" },
-  { description: "Produtos - Limpeza" },
-  { description: "Queijos" },
-  { description: "Queijos - Porcionados" },
-  { description: "Queima" },
-  { description: "Sobremesas" },
-  { description: "Temperos" },
-  { description: "Utensilhos" },
-  { description: "Utensilhos - Bar" },
-  { description: "Utensilhos - Cozinho" },
-  { description: "Utensilhos - Quadro" },
-];
+// export const ProductCategories = [
+//   { description: "Acompanhamento" },
+//   { description: "Bebidas" },
+//   { description: "Bebidas - Águas" },
+//   { description: "Bebidas - Café" },
+//   { description: "Bebidas - Cervejas" },
+//   { description: "Bebidas - Chop" },
+//   { description: "Bebidas - Destilados" },
+//   { description: "Bebidas - Energéticos" },
+//   { description: "Bebidas - Refrigerantes" },
+//   { description: "Bebidas - Vinho" },
+//   { description: "Bebidas - Xaropes" },
+//   { description: "Carnes" },
+//   { description: "Carnes - Em Processo" },
+//   { description: "Carnes - Funcionários" },
+//   { description: "Carnes - In Natura" },
+//   { description: "Carnes - Porcionadas" },
+//   { description: "Embalagens" },
+//   { description: "Embalagens - A vácuo" },
+//   { description: "Embalagens - Evento" },
+//   { description: "Entradas" },
+//   { description: "Equipamento" },
+//   { description: "Equipamento - Refrigeração" },
+//   { description: "Equipamento - Bar" },
+//   { description: "Equipamento - Cozinha" },
+//   { description: "Equipamento - Eletrônico" },
+//   { description: "Equipamento - Limpeza" },
+//   { description: "Funcionários" },
+//   { description: "Hortifruti" },
+//   { description: "Insumos" },
+//   { description: "Mobiliário" },
+//   { description: "Mobiliário - Salão" },
+//   { description: "Mobiliário - Assentos Salão" },
+//   { description: "Mobiliário - Mesas Salão" },
+//   { description: "Mobiliário - Cozinha" },
+//   { description: "Molhos" },
+//   { description: "Pães" },
+//   { description: "Produtos" },
+//   { description: "Produtos - Limpeza" },
+//   { description: "Queijos" },
+//   { description: "Queijos - Porcionados" },
+//   { description: "Queima" },
+//   { description: "Sobremesas" },
+//   { description: "Temperos" },
+//   { description: "Utensilhos" },
+//   { description: "Utensilhos - Bar" },
+//   { description: "Utensilhos - Cozinho" },
+//   { description: "Utensilhos - Quadro" },
+// ];
 
 export type SectorOfUse = {
   description: string;
@@ -126,27 +126,27 @@ export const units: Unit[] = [
   { description: "Lata", abbreviation: "LT", unitsPerPack: 1 },
 ];
 
-export type AdjustmentReason = {
-  description: string;
-};
+// export type AdjustmentReason = {
+//   description: string;
+// };
 
-export const adjustment_reasons: AdjustmentReason[] = [
-  {
-    description: "Congelamento",
-  },
-  {
-    description: "Queima/desperdício",
-  },
-  {
-    description: "Quebra/extravio",
-  },
-  {
-    description: "Contagem anterior errada",
-  },
-  {
-    description: "Outro",
-  },
-];
+// export const adjustment_reasons: AdjustmentReason[] = [
+//   {
+//     description: "Congelamento",
+//   },
+//   {
+//     description: "Queima/desperdício",
+//   },
+//   {
+//     description: "Quebra/extravio",
+//   },
+//   {
+//     description: "Contagem anterior errada",
+//   },
+//   {
+//     description: "Outro",
+//   },
+// ];
 
 // Stocks
 export type Shelf = {

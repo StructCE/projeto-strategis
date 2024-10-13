@@ -1,4 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+import { adjustReasonRouter } from "./routers/adjustReason";
 import { cabinetRouter } from "./routers/cabinet";
 import { companyRouter } from "./routers/company";
 import { controlTypeRouter } from "./routers/controlType";
@@ -37,6 +38,7 @@ export const appRouter = createTRPCRouter({
     useSector: useSectorRouter,
     shelf: shelfRouter,
     productCategory: productCategoryRouter,
+    adjustReason: adjustReasonRouter,
   },
 });
 

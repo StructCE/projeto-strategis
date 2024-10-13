@@ -417,8 +417,8 @@ model ProductAdjust {
 }
 
 model AdjustReason {
-    id         String @id @default(cuid())
-    reasonName String
+    id   String @id @default(cuid())
+    name String
 
     ProductAdjust ProductAdjust[]
 }

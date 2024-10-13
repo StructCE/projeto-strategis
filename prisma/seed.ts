@@ -1,5 +1,6 @@
 // CRIAR MODULES, ROLEMODULES AND ROLES
 import { db } from "~/server/db";
+import { adjustementReasons } from "./seed-data/adjustmentReasons";
 import { categories } from "./seed-data/categories";
 import { modules } from "./seed-data/modules";
 import { roles } from "./seed-data/roles";
@@ -28,6 +29,13 @@ async function createCategory(props: { name: string }) {
     data: { ...props },
   });
   return createdCategory;
+}
+
+async function createAdjustmentReason(props: { name: string }) {
+  const createdReason = await db.adjustReason.create({
+    data: { ...props },
+  });
+  return createdReason;
 }
 
 async function createRoleModules(props: { roleId: string; modules: number[] }) {
@@ -138,62 +146,68 @@ async function main() {
   // });
   // await Promise.all(createdRoles);
 
-  const createdCategories = categories.map(async (category) => {
-    const createdCategory = await createCategory({ name: category.name });
-    return createdCategory;
+  // const createdCategories = categories.map(async (category) => {
+  //   const createdCategory = await createCategory({ name: category.name });
+  //   return createdCategory;
+  // });
+  // await Promise.all(createdCategories);
+
+  // const createdReasons = adjustementReasons.map(async (reason) => {
+  //   const createdReason = await createAdjustmentReason({ name: reason.name });
+  //   return createdReason;
+  // });
+  // await Promise.all(createdReasons);
+
+  const companyStruct = await db.company.create({
+    data: {
+      name: "Struct EJ",
+      email: "projetostrategis@gmail.com",
+      cnpj: "21.803.569/0001-65",
+      type: "Matriz",
+      phone: "(32) 3025-0102",
+      stateRegistration: "0771508800122",
+      taxRegime: "Simples Nacional",
+      address:
+        "Campus Universitario Darcy Ribeiro S/n Univ de Brasilia Edif Predio SG",
+      city: "Brasília",
+      neighborhood: "Asa Norte",
+      federativeUnit: "DF",
+      cep: "70910-900",
+      // legalResponsibleId: "",
+    },
   });
-  await Promise.all(createdCategories);
 
-  // const companyStruct = await db.company.create({
-  //   data: {
-  //     name: "Struct EJ",
-  //     email: "projetostrategis@gmail.com",
-  //     cnpj: "21.803.569/0001-65",
-  //     type: "Matriz",
-  //     phone: "(32) 3025-0102",
-  //     stateRegistration: "0771508800122",
-  //     taxRegime: "Simples Nacional",
-  //     address:
-  //       "Campus Universitario Darcy Ribeiro S/n Univ de Brasilia Edif Predio SG",
-  //     city: "Brasília",
-  //     neighborhood: "Asa Norte",
-  //     federativeUnit: "DF",
-  //     cep: "70910-900",
-  //     // legalResponsibleId: "",
-  //   },
-  // });
+  await createUserWithRole({
+    name: "Leonardo Côrtes",
+    email: "leonardo.cortes@struct.unb.br",
+    phone: "(61) 99116-4633",
+    roleName: "Administrador",
+    companyId: companyStruct.id,
+  });
 
-  // await createUserWithRole({
-  //   name: "Leonardo Côrtes",
-  //   email: "leonardo.cortes@struct.unb.br",
-  //   phone: "(61) 99116-4633",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
+  await createUserWithRole({
+    name: "Matheus das Neves Fernandes",
+    email: "matheusnf@struct.unb.br",
+    phone: "(61) 99999-9999",
+    roleName: "Administrador",
+    companyId: companyStruct.id,
+  });
 
-  // await createUserWithRole({
-  //   name: "Matheus das Neves Fernandes",
-  //   email: "matheusnf@struct.unb.br",
-  //   phone: "(61) 99999-9999",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
+  await createUserWithRole({
+    name: "Guilherme Sampaio",
+    email: "guilherme.sampaio@struct.unb.br",
+    phone: "(61) 99999-9999",
+    roleName: "Administrador",
+    companyId: companyStruct.id,
+  });
 
-  // await createUserWithRole({
-  //   name: "Guilherme Sampaio",
-  //   email: "guilherme.sampaio@struct.unb.br",
-  //   phone: "(61) 99999-9999",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
-
-  // await createUserWithRole({
-  //   name: "Willyan Marques",
-  //   email: "willyan.marques@struct.unb.br",
-  //   phone: "(61) 99999-9999",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
+  await createUserWithRole({
+    name: "Willyan Marques",
+    email: "willyan.marques@struct.unb.br",
+    phone: "(61) 99999-9999",
+    roleName: "Administrador",
+    companyId: companyStruct.id,
+  });
 }
 
 main().catch((e) => console.log(e));
