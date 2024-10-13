@@ -6,7 +6,7 @@ export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-fundo_branco font-bold text-black">
+    <div className="flex h-[80vh] w-full flex-col items-center justify-center gap-4 bg-fundo_branco font-bold text-black">
       <h2 className="text-4xl sm:text-6xl">404 | Not Found</h2>
       <p className="text-md font-normal sm:text-xl">
         A página que você está procurando não existe.
