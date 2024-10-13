@@ -94,7 +94,7 @@ export const ManageAccessProfilesTable = () => {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1fr_3fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[1fr_3fr_130px] gap-4">
           <TableComponent.ValueTitle>Nome</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>
             Módulos de Acesso
@@ -118,7 +118,7 @@ export const ManageAccessProfilesTable = () => {
           filteredRoles.length > 0 ? (
             filteredRoles.map((role, index) => (
               <TableComponent.Line
-                className={`grid-cols-[1fr_3fr_130px] ${index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""}`}
+                className={`grid-cols-[1fr_3fr_130px] gap-4 ${index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""}`}
                 key={index}
               >
                 <TableComponent.Value>{role.name}</TableComponent.Value>

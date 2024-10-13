@@ -17,7 +17,7 @@ export const useAccessProfileForm = (role: RoleWithModules) => {
       if (isDeleted === false) {
         alert("Cargo atualizado com sucesso.");
       }
-      setTimeout(function () {
+      setTimeout(() => {
         location.reload();
       }, 500);
     },
@@ -31,7 +31,7 @@ export const useAccessProfileForm = (role: RoleWithModules) => {
     onSuccess: (deletedRole) => {
       console.log("Role removed successfully:", deletedRole);
       alert("Cargo removido com sucesso.");
-      setTimeout(function () {
+      setTimeout(() => {
         location.reload();
       }, 500);
     },
@@ -52,17 +52,18 @@ export const useAccessProfileForm = (role: RoleWithModules) => {
 
   function onSubmitEdit(data: EditAccessProfileFormValues) {
     if (isDeleted) return;
-
-    try {
-      roleMutation.mutate({
-        id: role.id,
-        data: {
-          name: data.name,
-          modules: data.modules,
-        },
-      });
-    } catch (error) {
-      console.error("Error submitting update form:", error);
+    else {
+      try {
+        roleMutation.mutate({
+          id: role.id,
+          data: {
+            name: data.name,
+            modules: data.modules,
+          },
+        });
+      } catch (error) {
+        console.error("Error submitting update form:", error);
+      }
     }
   }
 

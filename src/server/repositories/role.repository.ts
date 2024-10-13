@@ -63,11 +63,27 @@ async function edit(props: RoleRepositoryInterfaces["EditProps"]) {
 }
 
 async function remove(props: RoleRepositoryInterfaces["DeleteProps"]) {
+  // Deleta primeiro as dependências na tabela RoleModule
+  await db.roleModule.deleteMany({
+    where: {
+      roleId: props.id,
+    },
+  });
+
+  // Deleta as dependências na tabela UserRole
+  await db.userRole.deleteMany({
+    where: {
+      roleId: props.id,
+    },
+  });
+
+  // Finalmente, deleta o cargo
   const deletedRole = await db.role.delete({
     where: {
       id: props.id,
     },
   });
+
   return deletedRole;
 }
 
