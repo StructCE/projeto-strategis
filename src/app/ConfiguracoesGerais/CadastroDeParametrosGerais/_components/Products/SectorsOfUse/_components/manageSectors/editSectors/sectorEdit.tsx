@@ -1,4 +1,3 @@
-import { type SectorOfUse } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -8,10 +7,11 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { type UseSector } from "~/server/interfaces/useSector/useSector.route.interfaces";
 import { useSectorForm } from "./useSectorForm";
 
 type SectorEditForm = {
-  sector: SectorOfUse;
+  sector: UseSector;
 };
 
 export const SectorEdit = (props: SectorEditForm) => {
@@ -28,7 +28,7 @@ export const SectorEdit = (props: SectorEditForm) => {
               <FormComponent.Label>Setor de Utilização</FormComponent.Label>
               <FormField
                 control={sectorEditForm.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -46,17 +46,29 @@ export const SectorEdit = (props: SectorEditForm) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Setor
-            </FormComponent.Button>
-            <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
-              handlePress={sectorEditForm.form.handleSubmit(
-                sectorEditForm.onSubmitRemove,
-              )}
-            >
-              Remover Setor
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir esta categoria? Esta ação não pode ser desfeita.",
+                  );
+                  if (confirmed) {
+                    sectorEditForm.onSubmitRemove();
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={sectorEditForm.form.handleSubmit(
+                  sectorEditForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

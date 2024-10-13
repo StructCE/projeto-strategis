@@ -1,4 +1,4 @@
-type UseSector = {
+export type UseSector = {
   id: string;
   name: string;
 };
