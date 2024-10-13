@@ -23,7 +23,7 @@ export const useTypeForm = (controlType: ControlType) => {
         }, 500);
       },
       onError: (error) => {
-        console.error("Error updating controlType:", error);
+        console.error("Error updating control type:", error);
         alert("Erro ao atualizar tipo de controle.");
       },
     });

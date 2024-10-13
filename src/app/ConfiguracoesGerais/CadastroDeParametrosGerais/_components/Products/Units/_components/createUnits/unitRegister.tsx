@@ -25,7 +25,7 @@ export default function UnitRegister(props: UnitRegisterProps) {
               <FormComponent.Label>Unidade</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -62,7 +62,9 @@ export default function UnitRegister(props: UnitRegisterProps) {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
-              <FormComponent.Label>Unidades por Pacote/Fardo</FormComponent.Label>
+              <FormComponent.Label>
+                Unidades por Pacote/Fardo
+              </FormComponent.Label>
               <FormField
                 control={props.form.control}
                 name="unitsPerPack"
@@ -72,7 +74,9 @@ export default function UnitRegister(props: UnitRegisterProps) {
                       <Input
                         className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
                         placeholder="Unidades por pacote/fardo"
-                        {...field}
+                        type="number"
+                        value={field.value || ""}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
                       />
                     </FormControl>
                     <FormMessage />

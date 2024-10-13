@@ -12,6 +12,7 @@ import { roleRouter } from "./routers/role";
 import { shelfRouter } from "./routers/shelf";
 import { stockRouter } from "./routers/stock";
 import { supplierRouter } from "./routers/supplier";
+import { unitRouter } from "./routers/unit";
 import { userRouter } from "./routers/user";
 import { userRoleRouter } from "./routers/userRole";
 import { useSectorRouter } from "./routers/useSector";
@@ -39,6 +40,7 @@ export const appRouter = createTRPCRouter({
     shelf: shelfRouter,
     productCategory: productCategoryRouter,
     adjustReason: adjustReasonRouter,
+    unit: unitRouter,
   },
 });
 

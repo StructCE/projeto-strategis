@@ -108,23 +108,23 @@ Pagamentos               -> Payments       (Payment)
 //   { description: "Sobremesa" },
 // ];
 
-export type Unit = {
-  description: string;
-  abbreviation: string;
-  unitsPerPack: number;
-};
+// export type Unit = {
+//   description: string;
+//   abbreviation: string;
+//   unitsPerPack: number;
+// };
 
-export const units: Unit[] = [
-  { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
-  { description: "Grama", abbreviation: "G", unitsPerPack: 1 },
-  { description: "Mililitro", abbreviation: "ML", unitsPerPack: 1 },
-  { description: "Unidade", abbreviation: "UN", unitsPerPack: 1 },
-  { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
-  { description: "Caixa", abbreviation: "CX", unitsPerPack: 24 },
-  { description: "Fardo", abbreviation: "FRD", unitsPerPack: 10 },
-  { description: "Saco", abbreviation: "SC", unitsPerPack: 20 },
-  { description: "Lata", abbreviation: "LT", unitsPerPack: 1 },
-];
+// export const units: Unit[] = [
+//   { description: "Kilograma", abbreviation: "KG", unitsPerPack: 1 },
+//   { description: "Grama", abbreviation: "G", unitsPerPack: 1 },
+//   { description: "Mililitro", abbreviation: "ML", unitsPerPack: 1 },
+//   { description: "Unidade", abbreviation: "UN", unitsPerPack: 1 },
+//   { description: "Pacote", abbreviation: "PCT", unitsPerPack: 12 },
+//   { description: "Caixa", abbreviation: "CX", unitsPerPack: 24 },
+//   { description: "Fardo", abbreviation: "FRD", unitsPerPack: 10 },
+//   { description: "Saco", abbreviation: "SC", unitsPerPack: 20 },
+//   { description: "Lata", abbreviation: "LT", unitsPerPack: 1 },
+// ];
 
 // export type AdjustmentReason = {
 //   description: string;
