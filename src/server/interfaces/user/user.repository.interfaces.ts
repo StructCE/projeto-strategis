@@ -22,6 +22,7 @@ const editProps = z.object({
     phone: z.string(),
     UserRole: z.array(
       z.object({
+        id: z.string(),
         companyId: z.string(),
         roleId: z.string(),
       }),

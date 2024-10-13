@@ -64,20 +64,19 @@ export const useUserForm = (user: UserWithRoles) => {
     if (isDeleted) return;
     console.log(JSON.stringify(data, null, 2));
 
-    const userData = {
-      email: data.email,
-      name: data.name,
-      phone: data.phone ?? "",
-      UserRole: data.UserRole.map((userRole) => ({
-        companyId: userRole.companyId,
-        roleId: userRole.roleId,
-      })),
-    };
-
     try {
       userMutation.mutate({
         id: user.id,
-        data: userData,
+        data: {
+          email: data.email,
+          name: data.name,
+          phone: data.phone ?? "",
+          UserRole: data.UserRole.map((userRole, index) => ({
+            id: user.UserRole?.[index]?.id ?? "",
+            companyId: userRole.companyId,
+            roleId: userRole.roleId,
+          })),
+        },
       });
     } catch (error) {
       console.error("Error submitting update form:", error);
