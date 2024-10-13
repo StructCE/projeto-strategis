@@ -67,7 +67,7 @@ type FilterSelectProps = {
 
 Filter.Select = function FilterSelect(props: FilterSelectProps) {
   const style = cn(
-    "h-auto gap-[14px] bg-transparent font-inter text-[16px] font-normal text-black opacity-100 data-[placeholder]:opacity-50 m-0 p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0",
+    "h-auto gap-[14px] bg-transparent font-inter text-[16px] font-normal text-black opacity-100 data-[placeholder]:opacity-50 m-0 p-0 border-none ring-transparent focus:outline-none active:outline-none outline-none focus:ring-0 focus:border-transparent ring-0 border-0 focus-visible:ring-offset-0 focus-visible:ring-0 focus:ring-transparent focus:ring-offset-0",
     props.className,
   );
   return (
@@ -76,7 +76,10 @@ Filter.Select = function FilterSelect(props: FilterSelectProps) {
       onValueChange={(value: string) => props.setState(value)}
     >
       <SelectTrigger className={style}>
-        <SelectValue placeholder={props.placeholder} />
+        <SelectValue
+          className="border-0 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none"
+          placeholder={props.placeholder}
+        />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>{props.children}</SelectGroup>
