@@ -37,7 +37,7 @@ export const ManageAccessProfilesTable = () => {
   const filteredRoles = roles.filter(
     (role) =>
       role.name.toLowerCase().includes(inputName.toLowerCase()) && // Filtrar pelo nome do cargo
-      roleMatchesSelectedModules(role.modules), // Filtrar pelos módulos selecionados
+      roleMatchesSelectedModules(role.modules.map((module) => module.name)), // Filtrar pelos módulos selecionados
   );
 
   return (
@@ -126,9 +126,9 @@ export const ManageAccessProfilesTable = () => {
                   {role.modules.length > 3
                     ? `${role.modules
                         .slice(0, 3)
-                        .map((module) => module)
+                        .map((module) => module.name)
                         .join(", ")}...`
-                    : role.modules.map((module) => module).join(", ")}
+                    : role.modules.map((module) => module.name).join(", ")}
                 </TableComponent.Value>
                 <Dialog>
                   <DialogTrigger asChild>
@@ -142,11 +142,13 @@ export const ManageAccessProfilesTable = () => {
                   >
                     <DialogHeader>
                       <DialogTitle className="pb-1.5">
-                        Utilize os campos abaixo para editar os dados do
-                        fornecedor ou o botão para remover
+                        Utilize os campos abaixo para editar os dados do cargo
+                        ou o botão para remover
                       </DialogTitle>
-                      <AccessProfileEdit role={role} />
-                      <DialogDescription></DialogDescription>
+
+                      <DialogDescription className="text-black">
+                        <AccessProfileEdit role={role} />
+                      </DialogDescription>
                     </DialogHeader>
                   </DialogContent>
                 </Dialog>

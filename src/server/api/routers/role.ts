@@ -10,7 +10,10 @@ export const roleRouter = createTRPCRouter({
       const serializedRoles = roles.map((role) => ({
         id: role.id,
         name: role.name,
-        modules: role.RoleModule.map((roleModule) => roleModule.module.name),
+        modules: role.RoleModule.map((roleModule) => ({
+          name: roleModule.module.name,
+          code: roleModule.module.code,
+        })),
       }));
       return serializedRoles;
     },

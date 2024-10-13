@@ -171,8 +171,10 @@ export const ManageSuppliersTable = () => {
                         Utilize os campos abaixo para editar os dados do
                         fornecedor ou o botão para remover
                       </DialogTitle>
-                      <SupplierEdit supplier={supplier} />
-                      <DialogDescription></DialogDescription>
+
+                      <DialogDescription className="text-black">
+                        <SupplierEdit supplier={supplier} />
+                      </DialogDescription>
                     </DialogHeader>
                   </DialogContent>
                 </Dialog>

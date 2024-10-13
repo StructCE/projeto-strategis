@@ -9,11 +9,12 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
-import { modules, type Role } from "../../accessProfileData";
+import { type RoleWithModules } from "~/server/interfaces/role/role.route.interfaces";
+import { modules } from "../../accessProfileData";
 import { useAccessProfileForm } from "./useAccessProfileForm";
 
 type AccessProfileEditForm = {
-  role: Role;
+  role: RoleWithModules;
 };
 
 export const AccessProfileEdit = (props: AccessProfileEditForm) => {
@@ -53,12 +54,19 @@ export const AccessProfileEdit = (props: AccessProfileEditForm) => {
               <FormField
                 control={accessProfileEditForm.form.control}
                 name="modules"
-                render={() => (
+                render={({ field }) => (
                   <FormItem>
                     <MultiSelect
-                      options={modules}
-                      onValueChange={accessProfileEditForm.setSelectedModules}
-                      defaultValue={accessProfileEditForm.selectedModules}
+                      options={modules.flatMap((module) => ({
+                        label: module.name,
+                        value: module.code.toString(),
+                      }))}
+                      onValueChange={field.onChange}
+                      defaultValue={
+                        Array.isArray(field.value)
+                          ? field.value.map(String)
+                          : []
+                      }
                       placeholder="Selecione um ou mais conteúdos para o cargo ter acesso"
                       variant="inverted"
                       maxCount={2}
@@ -71,17 +79,29 @@ export const AccessProfileEdit = (props: AccessProfileEditForm) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Perfil de Acesso
-            </FormComponent.Button>
-            <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
-              handlePress={accessProfileEditForm.form.handleSubmit(
-                accessProfileEditForm.onSubmitRemove,
-              )}
-            >
-              Remover Perfil de Acesso
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir este cargo? Esta ação não pode ser desfeita.",
+                  );
+                  if (confirmed) {
+                    accessProfileEditForm.onSubmitRemove();
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={accessProfileEditForm.form.handleSubmit(
+                  accessProfileEditForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

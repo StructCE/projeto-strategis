@@ -10,8 +10,8 @@ type RegisterProps = z.infer<typeof registerProps>;
 const editProps = z.object({
   id: z.string(),
   data: z.object({
-    name: z.string().optional(),
-    modules: z.array(z.number()).optional(),
+    name: z.string(),
+    modules: z.array(z.object({ name: z.string(), code: z.number() })),
   }),
 });
 

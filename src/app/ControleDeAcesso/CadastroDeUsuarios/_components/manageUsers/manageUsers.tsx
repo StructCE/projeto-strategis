@@ -219,8 +219,10 @@ export const ManageUsersTable = () => {
                         Utilize os campos abaixo para editar os dados do usuário
                         ou o botão para remover
                       </DialogTitle>
-                      <UserEdit user={user} />
-                      <DialogDescription></DialogDescription>
+
+                      <DialogDescription className="text-black">
+                        <UserEdit user={user} />
+                      </DialogDescription>
                     </DialogHeader>
                   </DialogContent>
                 </Dialog>

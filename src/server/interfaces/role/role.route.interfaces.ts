@@ -1,11 +1,11 @@
-type Role = {
+export type Role = {
   name: string;
 };
 
-type RoleWithModules = {
+export type RoleWithModules = {
   id: string;
   name: string;
-  modules: string[];
+  modules: { name: string; code: number }[];
 };
 
 export type RoleRouteInterfaces = {

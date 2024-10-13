@@ -52,7 +52,7 @@ async function edit(props: RoleRepositoryInterfaces["EditProps"]) {
     const recreatedRoleModule = await db.roleModule.create({
       data: {
         roleId: editedRole.id,
-        moduleCode: roleModule,
+        moduleCode: roleModule.code,
       },
     });
     return recreatedRoleModule;
