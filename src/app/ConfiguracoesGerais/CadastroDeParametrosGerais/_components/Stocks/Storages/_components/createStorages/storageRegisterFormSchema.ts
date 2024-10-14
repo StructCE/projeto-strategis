@@ -1,10 +1,7 @@
 import { z } from "zod";
 
 export const createStorageFormSchema = z.object({
-  place: z.string({
-    required_error: "Por favor selecione um local.",
-  }),
-  description: z
+  name: z
     .string()
     .min(3, {
       message: "Descrição/nome deve ter pelo menos 3 caracteres.",

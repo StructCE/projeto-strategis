@@ -1,4 +1,3 @@
-import { type Storage } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -8,14 +7,15 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { type Cabinet } from "~/server/interfaces/cabinet/cabinet.route.interfaces";
 import { useStorageForm } from "./useStorageForm";
 
 type StorageEditForm = {
-  storage: Storage;
+  cabinet: Cabinet;
 };
 
 export const StorageEdit = (props: StorageEditForm) => {
-  const storageEditForm = useStorageForm(props.storage);
+  const storageEditForm = useStorageForm(props.cabinet);
 
   return (
     <Form {...storageEditForm.form}>
@@ -30,7 +30,7 @@ export const StorageEdit = (props: StorageEditForm) => {
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
                 control={storageEditForm.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -48,17 +48,29 @@ export const StorageEdit = (props: StorageEditForm) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Armário/Zona
-            </FormComponent.Button>
-            <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
-              handlePress={storageEditForm.form.handleSubmit(
-                storageEditForm.onSubmitRemove,
-              )}
-            >
-              Remover Armário/Zona
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir esta unidade? Esta ação não pode ser desfeita.",
+                  );
+                  if (confirmed) {
+                    storageEditForm.onSubmitRemove();
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={storageEditForm.form.handleSubmit(
+                  storageEditForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

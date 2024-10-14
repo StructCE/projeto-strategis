@@ -2,7 +2,19 @@ import { db } from "../db";
 import type { CabinetRepositoryInterfaces } from "../interfaces/cabinet/cabinet.repository.interfaces";
 
 async function getAll() {
-  const cabinets = await db.cabinet.findMany();
+  const cabinets = await db.cabinet.findMany({
+    include: {
+      StockCabinet: {
+        include: {
+          CabinetShelf: {
+            include: {
+              shelf: true,
+            },
+          },
+        },
+      },
+    },
+  });
   return cabinets;
 }
 
@@ -25,11 +37,26 @@ async function edit(props: CabinetRepositoryInterfaces["EditProps"]) {
 }
 
 async function remove(props: CabinetRepositoryInterfaces["RemoveProps"]) {
-  const deletedCabinet = await db.cabinet.delete({
+  await db.cabinetShelf.deleteMany({
     where: {
-      id: props.id,
+      cabinet: {
+        cabinetId: props.id, // Apaga todas as prateleiras associadas ao armário
+      },
     },
   });
+
+  await db.stockCabinet.deleteMany({
+    where: {
+      cabinetId: props.id, // Apaga todos os StockCabinets associados ao armário
+    },
+  });
+
+  const deletedCabinet = await db.cabinet.delete({
+    where: {
+      id: props.id, // Deletar o Cabinet em si
+    },
+  });
+
   return deletedCabinet;
 }
 
