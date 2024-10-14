@@ -1,9 +1,4 @@
 "use client";
-import { storages } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
-import {
-  companies,
-  users,
-} from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -13,7 +8,6 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -21,21 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { api } from "~/trpc/react";
 import { useStockForm } from "./useStockForm";
 
 export const StockRegister = () => {
   const stockForm = useStockForm();
 
-  // Filtra as prateleiras baseadas no storage selecionado
-  const getShelfOptions = (storageDescription: string) => {
-    const storage = storages.find((s) => s.description === storageDescription);
-    return storage
-      ? storage.shelves.map((shelf) => ({
-          label: shelf.description,
-          value: shelf.description,
-        }))
-      : [];
-  };
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: users = [] } = api.user.getAll.useQuery();
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getAll.useQuery();
 
   return (
     <Form {...stockForm.form}>
@@ -68,7 +57,7 @@ export const StockRegister = () => {
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
                 control={stockForm.form.control}
-                name="company"
+                name="companyId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -82,8 +71,8 @@ export const StockRegister = () => {
                       </FormControl>
                       <SelectContent>
                         {companies.map((company, index) => (
-                          <SelectItem value={company.value} key={index}>
-                            {company.value}
+                          <SelectItem value={company.id} key={index}>
+                            {company.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -100,7 +89,7 @@ export const StockRegister = () => {
               </FormComponent.Label>
               <FormField
                 control={stockForm.form.control}
-                name="stock_manager"
+                name="legalResponsibleId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -114,7 +103,7 @@ export const StockRegister = () => {
                       </FormControl>
                       <SelectContent>
                         {users.map((user, index) => (
-                          <SelectItem value={user.name} key={index}>
+                          <SelectItem value={user.id} key={index}>
                             {user.name}
                           </SelectItem>
                         ))}
@@ -128,24 +117,17 @@ export const StockRegister = () => {
           </FormComponent.Line>
 
           <FormComponent.BoxSpecify boxName="Endereços">
-            {stockForm.fieldsArray.map((address, index) => (
+            {stockForm.fieldsArray.map((StockCabinet, index) => (
               <FormComponent.Line key={index}>
                 <FormComponent.Frame>
                   <FormComponent.Label>Armários/Zonas</FormComponent.Label>
                   <FormField
                     control={stockForm.form.control}
-                    name={`address.${index}.storage`}
+                    name={`StockCabinet.${index}.cabinetId`}
                     render={({ field }) => (
                       <FormItem>
                         <Select
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            stockForm.setSelectedStorages((prev) => {
-                              const updatedStorages = [...prev];
-                              updatedStorages[index] = value;
-                              return updatedStorages;
-                            });
-                          }}
+                          onValueChange={field.onChange}
                           value={field.value}
                         >
                           <FormControl>
@@ -154,41 +136,13 @@ export const StockRegister = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {storages.map((storage, index) => (
-                              <SelectItem
-                                key={index}
-                                value={storage.description}
-                              >
-                                {storage.description}
+                            {cabinets.map((cabinet, index) => (
+                              <SelectItem key={index} value={cabinet.id}>
+                                {cabinet.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
-
-                <FormComponent.Frame>
-                  <FormComponent.Label>Prateleiras</FormComponent.Label>
-                  <FormField
-                    control={stockForm.form.control}
-                    name={`address.${index}.shelves`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <MultiSelect
-                          options={getShelfOptions(
-                            stockForm.selectedStorages[index] ?? "",
-                          )}
-                          onValueChange={(selected) => {
-                            field.onChange(selected);
-                          }}
-                          defaultValue={field.value}
-                          placeholder="Selecione uma ou mais prateleiras do armário/zona selecionado"
-                          variant="inverted"
-                          maxCount={3}
-                        />
                         <FormMessage />
                       </FormItem>
                     )}
@@ -204,9 +158,7 @@ export const StockRegister = () => {
 
           <FormComponent.ButtonLayout>
             <button
-              onClick={() =>
-                stockForm.arrayAppend({ storage: "", shelves: [] })
-              }
+              onClick={() => stockForm.arrayAppend({ cabinetId: "" })}
               className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"
               type="button"
             >

@@ -175,18 +175,18 @@ model Product {
     minimunStock     Int
     maximumStock     Int
 
-    unitId           String
-    controlTypeId    String
-    categoryId       String
-    sectorOfUseId    String
-    stockCabinetId   String? // Relacionamento opcional com StockCabinet
-    shelfId          String? // Relacionamento opcional com Shelf
+    unitId         String
+    controlTypeId  String
+    categoryId     String
+    sectorOfUseId  String
+    stockCabinetId String? // Relacionamento opcional com StockCabinet
+    shelfId        String? // Relacionamento opcional com Shelf
 
     unit             Unit               @relation(fields: [unitId], references: [id])
     controlType      ControlType        @relation(fields: [controlTypeId], references: [id])
     category         ProductCategory    @relation(fields: [categoryId], references: [id])
     sectorOfUse      UseSector          @relation(fields: [sectorOfUseId], references: [id])
-    stockCabinet     StockCabinet?      @relation(fields: [stockCabinetId], references: [id], onDelete: Cascade) // Produto pode ser associado a um cabinet
+    // stockCabinet     StockCabinet?      @relation(fields: [stockCabinetId], references: [id], onDelete: Cascade) // Produto pode ser associado a um cabinet
     shelf            Shelf?             @relation(fields: [shelfId], references: [id], onDelete: Cascade) // Produto pode ser associado a uma shelf
     ProductSupplier  ProductSupplier[]
     ProductOutput    ProductOutput[]
@@ -246,9 +246,9 @@ model StockCabinet {
     stockId   String
     cabinetId String
 
-    stock   Stock     @relation(fields: [stockId], references: [id], onDelete: Cascade) // O estoque pode remover a relação
-    cabinet Cabinet   @relation(fields: [cabinetId], references: [id], onDelete: Cascade) // O cabinet pode remover a relação
-    Product Product[]
+    stock   Stock   @relation(fields: [stockId], references: [id], onDelete: Cascade) // O estoque pode remover a relação
+    cabinet Cabinet @relation(fields: [cabinetId], references: [id], onDelete: Cascade) // O cabinet pode remover a relação
+    // Product Product[]
 }
 
 model Shelf {

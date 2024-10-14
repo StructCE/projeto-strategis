@@ -1,7 +1,7 @@
 import { stockRepositorySchema } from "~/server/interfaces/stock/stock.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
 import type { StockRouteInterfaces } from "~/server/interfaces/stock/stock.route.interfaces";
 import { StockRepository } from "~/server/repositories/stock.repository";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const stockRouter = createTRPCRouter({
   getAllStocks: protectedProcedure
@@ -15,8 +15,8 @@ export const stockRouter = createTRPCRouter({
           company: stock.company.name,
           cabinets: stock.StockCabinet.map((stockCabinet) => ({
             name: stockCabinet.cabinet.name,
-            shelves: stockCabinet.CabinetShelf.map(
-              (cabinetShelf) => cabinetShelf.shelf.name,
+            shelves: stockCabinet.cabinet.Shelf.map(
+              (cabinetShelf) => cabinetShelf.name,
             ),
           })),
           legalResponsible: {
