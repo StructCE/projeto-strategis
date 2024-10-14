@@ -158,47 +158,47 @@ async function createUserWithRole({
 }
 
 async function main() {
-  // const createdModules = modules.map(async (module) => {
-  //   const createdModule = await createModule(module);
-  //   return createdModule;
-  // });
-  // await Promise.all(createdModules);
+  const createdModules = modules.map(async (module) => {
+    const createdModule = await createModule(module);
+    return createdModule;
+  });
+  await Promise.all(createdModules);
 
-  // const createdRoles = roles.map(async (role) => {
-  //   const createdRole = await createRole({ name: role.name });
-  //   const createdRoleModules = await createRoleModules({
-  //     roleId: createdRole.id,
-  //     modules: role.modules,
-  //   });
-  //   return createdRoleModules;
-  // });
-  // await Promise.all(createdRoles);
+  const createdRoles = roles.map(async (role) => {
+    const createdRole = await createRole({ name: role.name });
+    const createdRoleModules = await createRoleModules({
+      roleId: createdRole.id,
+      modules: role.modules,
+    });
+    return createdRoleModules;
+  });
+  await Promise.all(createdRoles);
 
-  // const createdCategories = categories.map(async (category) => {
-  //   const createdCategory = await createCategory({ name: category.name });
-  //   return createdCategory;
-  // });
-  // await Promise.all(createdCategories);
+  const createdCategories = categories.map(async (category) => {
+    const createdCategory = await createCategory({ name: category.name });
+    return createdCategory;
+  });
+  await Promise.all(createdCategories);
 
-  // const createdReasons = adjustementReasons.map(async (reason) => {
-  //   const createdReason = await createAdjustmentReason({ name: reason.name });
-  //   return createdReason;
-  // });
-  // await Promise.all(createdReasons);
+  const createdReasons = adjustementReasons.map(async (reason) => {
+    const createdReason = await createAdjustmentReason({ name: reason.name });
+    return createdReason;
+  });
+  await Promise.all(createdReasons);
 
-  // const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
-  //   const createdSector = await createSectorOfUse({ name: sector.name });
-  //   return createdSector;
-  // });
-  // await Promise.all(createdSectorOfUse);
+  const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
+    const createdSector = await createSectorOfUse({ name: sector.name });
+    return createdSector;
+  });
+  await Promise.all(createdSectorOfUse);
 
-  // const createdControlType = controlTypes.map(async (controlType) => {
-  //   const createdControlType = await createControlType({
-  //     name: controlType.name,
-  //   });
-  //   return createdControlType;
-  // });
-  // await Promise.all(createdControlType);
+  const createdControlType = controlTypes.map(async (controlType) => {
+    const createdControlType = await createControlType({
+      name: controlType.name,
+    });
+    return createdControlType;
+  });
+  await Promise.all(createdControlType);
 
   const createdUnits = units.map(async (unit) => {
     const createdUnit = await createUnit({
@@ -210,56 +210,56 @@ async function main() {
   });
   await Promise.all(createdUnits);
 
-  // const companyStruct = await db.company.create({
-  //   data: {
-  //     name: "Struct EJ",
-  //     email: "projetostrategis@gmail.com",
-  //     cnpj: "21.803.569/0001-65",
-  //     type: "Matriz",
-  //     phone: "(32) 3025-0102",
-  //     stateRegistration: "0771508800122",
-  //     taxRegime: "Simples Nacional",
-  //     address:
-  //       "Campus Universitario Darcy Ribeiro S/n Univ de Brasilia Edif Predio SG",
-  //     city: "Brasília",
-  //     neighborhood: "Asa Norte",
-  //     federativeUnit: "DF",
-  //     cep: "70910-900",
-  //     // legalResponsibleId: "",
-  //   },
-  // });
+  const companyStruct = await db.company.create({
+    data: {
+      name: "Struct EJ",
+      email: "projetostrategis@gmail.com",
+      cnpj: "21.803.569/0001-65",
+      type: "Matriz",
+      phone: "(32) 3025-0102",
+      stateRegistration: "0771508800122",
+      taxRegime: "Simples Nacional",
+      address:
+        "Campus Universitario Darcy Ribeiro S/n Univ de Brasilia Edif Predio SG",
+      city: "Brasília",
+      neighborhood: "Asa Norte",
+      federativeUnit: "DF",
+      cep: "70910-900",
+      // legalResponsibleId: "",
+    },
+  });
 
-  // await createUserWithRole({
-  //   name: "Leonardo Côrtes",
-  //   email: "leonardo.cortes@struct.unb.br",
-  //   phone: "(61) 99116-4633",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
+  await createUserWithRole({
+    name: "Leonardo Côrtes",
+    email: "leonardo.cortes@struct.unb.br",
+    phone: "(61) 99116-4633",
+    roleName: "Administrador",
+    companyId: companyStruct.id,
+  });
 
-  // await createUserWithRole({
-  //   name: "Matheus das Neves Fernandes",
-  //   email: "matheusnf@struct.unb.br",
-  //   phone: "(61) 99999-9999",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
+  await createUserWithRole({
+    name: "Matheus das Neves Fernandes",
+    email: "matheusnf@struct.unb.br",
+    phone: "(61) 99999-9999",
+    roleName: "Administrador",
+    companyId: companyStruct.id,
+  });
 
-  // await createUserWithRole({
-  //   name: "Guilherme Sampaio",
-  //   email: "guilherme.sampaio@struct.unb.br",
-  //   phone: "(61) 99999-9999",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
+  await createUserWithRole({
+    name: "Guilherme Sampaio",
+    email: "guilherme.sampaio@struct.unb.br",
+    phone: "(61) 99999-9999",
+    roleName: "Administrador",
+    companyId: companyStruct.id,
+  });
 
-  // await createUserWithRole({
-  //   name: "Willyan Marques",
-  //   email: "willyan.marques@struct.unb.br",
-  //   phone: "(61) 99999-9999",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
+  await createUserWithRole({
+    name: "Willyan Marques",
+    email: "willyan.marques@struct.unb.br",
+    phone: "(61) 99999-9999",
+    roleName: "Administrador",
+    companyId: companyStruct.id,
+  });
 }
 
 main().catch((e) => console.log(e));

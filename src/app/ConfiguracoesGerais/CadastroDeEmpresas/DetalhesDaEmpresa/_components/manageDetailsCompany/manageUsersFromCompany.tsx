@@ -1,5 +1,5 @@
 import { Trash2 } from "lucide-react";
-import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
+// import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { TableComponent } from "~/components/table";
 import {
   Tooltip,

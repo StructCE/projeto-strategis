@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
+// import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -28,6 +28,8 @@ import {
   units,
 } from "../productsData";
 import { type CreateProductFormValues } from "./productRegisterFormSchema";
+import { api } from "~/trpc/react";
+
 
 type ProductRegisterProps = {
   form: UseFormReturn<CreateProductFormValues>;
@@ -37,6 +39,8 @@ type ProductRegisterProps = {
 export const ProductRegister = (props: ProductRegisterProps) => {
   const [selectedStock, setSelectedStock] = useState("");
   const [selectedStorage, setSelectedStorage] = useState("");
+  
+  const { data: users = [], error, isLoading } = api.user.getAll.useQuery();
 
   // Filtra os armários/zona com base no estoque selecionado
   const filteredStorages = selectedStock

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
+// import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,

@@ -1,12 +1,7 @@
 import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
-import {
-  ProductCategories,
-  SectorsOfUse,
-  TypesOfControl,
-} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
+
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -36,6 +31,7 @@ import {
 } from "~/components/ui/tooltip";
 import { products, units } from "../productsData";
 import { ProductEdit } from "./editProducts/productEdit";
+import { api } from "~/trpc/react";
 
 export default function ManageProductsTable() {
   const [inputCode, setInputCode] = useState("");
@@ -48,6 +44,14 @@ export default function ManageProductsTable() {
   const [selectSector, setSelectSector] = useState("");
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
+
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: productCategories = [] } =
+    api.generalParameters.productCategory.getAll.useQuery();
+  const { data: useSectors = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: controlTypes = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
 
   const filteredProducts = products.filter((product) => {
     const matchesCode = inputCode === "" || product.code.includes(inputCode);
@@ -218,10 +222,10 @@ export default function ManageProductsTable() {
             state={selectControlType}
             setState={setSelectControlType}
           >
-            {TypesOfControl.map((type, index) => (
+            {controlTypes.map((type, index) => (
               <Filter.SelectItems
                 key={index}
-                value={type.description}
+                value={type.name}
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
@@ -238,10 +242,10 @@ export default function ManageProductsTable() {
             state={selectCategory}
             setState={setSelectCategory}
           >
-            {ProductCategories.map((category, index) => (
+            {productCategories.map((category, index) => (
               <Filter.SelectItems
                 key={index}
-                value={category.description}
+                value={category.name}
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
@@ -258,10 +262,10 @@ export default function ManageProductsTable() {
             state={selectSector}
             setState={setSelectSector}
           >
-            {SectorsOfUse.map((sector, index) => (
+            {useSectors.map((sector, index) => (
               <Filter.SelectItems
                 key={index}
-                value={sector.description}
+                value={sector.name}
               ></Filter.SelectItems>
             ))}
           </Filter.Select>

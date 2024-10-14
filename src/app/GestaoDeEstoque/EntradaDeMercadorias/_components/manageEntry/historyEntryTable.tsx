@@ -2,7 +2,7 @@
 import { Calendar, Eraser, Search, Truck, UserCog } from "lucide-react";
 import { useState } from "react";
 import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
-import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
+// import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
