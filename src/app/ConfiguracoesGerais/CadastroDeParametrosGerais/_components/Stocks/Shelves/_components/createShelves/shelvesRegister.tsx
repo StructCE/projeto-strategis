@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { storages } from "../../../../GeneralParametersData";
+import { api } from "~/trpc/react";
 import { type CreateShelfFormValues } from "./shelvesRegisterFormSchema";
 
 type ShelfRegisterProps = {
@@ -24,6 +24,9 @@ type ShelfRegisterProps = {
 };
 
 export default function ShelfRegister(props: ShelfRegisterProps) {
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getAll.useQuery();
+
   return (
     <Form {...props.form}>
       <form onSubmit={props.form.handleSubmit(props.onSubmit)}>
@@ -33,7 +36,7 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="storage"
+                name="cabinetId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -46,9 +49,9 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {storages.map((storage, index) => (
-                          <SelectItem value={storage.description} key={index}>
-                            {storage.description}
+                        {cabinets.map((cabinet, index) => (
+                          <SelectItem value={cabinet.id} key={index}>
+                            {cabinet.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -63,7 +66,7 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
               <FormComponent.Label>Prateleira</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

@@ -1,13 +1,10 @@
 import { z } from "zod";
 
 export const createShelfFormSchema = z.object({
-  place: z.string({
-    required_error: "Por favor selecione um local.",
-  }),
-  storage: z.string({
+  cabinetId: z.string({
     required_error: "Por favor selecione um armário/zona.",
   }),
-  description: z
+  name: z
     .string()
     .min(3, {
       message: "Descrição/nome deve ter pelo menos 1 caractere.",

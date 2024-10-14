@@ -1,4 +1,3 @@
-import { type Shelf } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -8,6 +7,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { type Shelf } from "~/server/interfaces/cabinet/cabinet.route.interfaces";
 import { useShelfForm } from "./useShelvesForm";
 
 type ShelfEditForm = {
@@ -28,7 +28,7 @@ export const ShelfEdit = (props: ShelfEditForm) => {
               <FormComponent.Label>Prateleira</FormComponent.Label>
               <FormField
                 control={shelfEditForm.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -46,17 +46,29 @@ export const ShelfEdit = (props: ShelfEditForm) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Prateleira
-            </FormComponent.Button>
-            <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
-              handlePress={shelfEditForm.form.handleSubmit(
-                shelfEditForm.onSubmitRemove,
-              )}
-            >
-              Remover Prateleira
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir esta prateleira? Esta ação não pode ser desfeita.",
+                  );
+                  if (confirmed) {
+                    shelfEditForm.onSubmitRemove();
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={shelfEditForm.form.handleSubmit(
+                  shelfEditForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

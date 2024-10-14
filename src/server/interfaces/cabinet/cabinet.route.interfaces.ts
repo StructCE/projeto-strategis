@@ -3,16 +3,21 @@ export type Shelf = {
   name: string;
 };
 
+// Relacionamento entre Cabinet e Shelf, associando prateleiras a armários
 export type CabinetShelf = {
   id: string;
-  shelf: Shelf; // Inclui o objeto Shelf
+  shelf: Shelf; // Inclui o objeto Shelf associado
 };
 
+// Representa a relação entre Stock e Cabinet
 export type StockCabinet = {
   id: string;
+  cabinetId: string;
+  stockId: string;
   CabinetShelf: CabinetShelf[]; // Inclui as prateleiras associadas ao StockCabinet
 };
 
+// Representa um armário que pode ter várias prateleiras através de StockCabinet
 export type Cabinet = {
   id: string;
   name: string;

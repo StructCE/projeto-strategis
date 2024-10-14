@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const editShelfFormSchema = z.object({
-  description: z
+  name: z
     .string()
     .min(3, {
       message: "Descrição/nome deve ter pelo menos 1 caractere.",
