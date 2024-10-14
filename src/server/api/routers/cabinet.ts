@@ -1,11 +1,11 @@
 import { cabinetRepositorySchema } from "~/server/interfaces/cabinet/cabinet.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { cabinetRepository } from "~/server/repositories/cabinet.repository";
 import type { CabinetRouteInterfaces } from "~/server/interfaces/cabinet/cabinet.route.interfaces";
+import { cabinetRepository } from "~/server/repositories/cabinet.repository";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const cabinetRouter = createTRPCRouter({
   getAll: protectedProcedure.query(
-    async (): Promise<CabinetRouteInterfaces["Cabinet"][]> => {
+    async (): Promise<CabinetRouteInterfaces["CabinetWithShelves"][]> => {
       const cabinets = await cabinetRepository.getAll();
       return cabinets;
     },

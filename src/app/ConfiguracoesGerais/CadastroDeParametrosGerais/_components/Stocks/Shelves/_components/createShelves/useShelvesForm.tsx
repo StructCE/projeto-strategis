@@ -33,12 +33,14 @@ export const useShelfForm = () => {
   function onSubmit(data: CreateShelfFormValues) {
     console.log(JSON.stringify(data, null, 2));
 
+    // Dados para criar a Shelf e a relação com o Cabinet
     const shelfData = {
-      cabinetId: data.cabinetId,
       name: data.name,
+      cabinetId: data.cabinetId, // ID do StockCabinet associado
     };
 
     try {
+      // Chama a mutação que cria a Shelf e a relação na tabela CabinetShelf
       shelfMutation.mutate({
         ...shelfData,
       });

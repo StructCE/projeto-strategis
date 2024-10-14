@@ -18,12 +18,18 @@ export type StockCabinet = {
 };
 
 // Representa um armário que pode ter várias prateleiras através de StockCabinet
-export type Cabinet = {
+export type CabinetWithShelves = {
   id: string;
   name: string;
   StockCabinet: StockCabinet[]; // Inclui os StockCabinets associados ao Cabinet
 };
 
+export type Cabinet = {
+  id: string;
+  name: string;
+};
+
 export type CabinetRouteInterfaces = {
   Cabinet: Cabinet;
+  CabinetWithShelves: CabinetWithShelves;
 };

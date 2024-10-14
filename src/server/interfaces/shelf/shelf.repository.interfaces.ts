@@ -1,6 +1,7 @@
 import z from "zod";
 
 const registerProps = z.object({
+  cabinetId: z.string(),
   name: z.string(),
 });
 
