@@ -1,21 +1,23 @@
 import { db } from "../db";
 import type { CabinetRepositoryInterfaces } from "../interfaces/cabinet/cabinet.repository.interfaces";
+import {
+  type CabinetWithShelves,
+  type Shelf,
+} from "../interfaces/cabinet/cabinet.route.interfaces";
 
 async function getAll() {
   const cabinets = await db.cabinet.findMany({
     include: {
-      StockCabinet: {
-        include: {
-          CabinetShelf: {
-            include: {
-              shelf: true,
-            },
-          },
-        },
-      },
+      Shelf: true,
     },
   });
-  return cabinets;
+  return cabinets.map(
+    (cabinet): CabinetWithShelves => ({
+      id: cabinet.id,
+      name: cabinet.name,
+      shelf: cabinet.Shelf as Shelf[], // Define explicitamente o tipo de Shelf
+    }),
+  );
 }
 
 async function register(props: CabinetRepositoryInterfaces["RegisterProps"]) {
@@ -37,11 +39,9 @@ async function edit(props: CabinetRepositoryInterfaces["EditProps"]) {
 }
 
 async function remove(props: CabinetRepositoryInterfaces["RemoveProps"]) {
-  await db.cabinetShelf.deleteMany({
+  await db.shelf.deleteMany({
     where: {
-      cabinet: {
-        cabinetId: props.id, // Apaga todas as prateleiras associadas ao armário
-      },
+      cabinetId: props.id, // Apaga todas as prateleiras associadas ao armário
     },
   });
 

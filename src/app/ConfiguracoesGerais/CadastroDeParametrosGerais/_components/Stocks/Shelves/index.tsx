@@ -4,13 +4,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import ShelfRegister from "./_components/createShelves/shelvesRegister";
-import { useShelfForm } from "./_components/createShelves/useShelvesForm";
+import { ShelfRegister } from "./_components/createShelves/shelvesRegister";
 import { ManageShelvesTable } from "./_components/manageShelves/manageShelves";
 
 export default function Shelves() {
-  const { form, onSubmit } = useShelfForm();
-
   return (
     <AccordionItem value="item-6" className="border-vinho_strategis px-0">
       <AccordionTrigger className="mx-0 pb-1 text-[24px] font-medium">
@@ -20,7 +17,7 @@ export default function Shelves() {
         <p className="pb-2 text-[16px] font-medium">
           Cadastrar nova prateleira:
         </p>
-        <ShelfRegister form={form} onSubmit={onSubmit} />
+        <ShelfRegister />
         <p className="py-2 text-[16px] font-medium">
           Prateleiras já cadastradas e seus endereços:
         </p>

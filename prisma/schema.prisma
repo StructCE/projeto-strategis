@@ -181,23 +181,23 @@ model Product {
     controlTypeId    String
     categoryId       String
     sectorOfUseId    String
-    stockId          String
-    shelfId          String
-    cabinetId        String
+    stockCabinetId   String? // Relacionamento opcional com StockCabinet
+    shelfId          String? // Relacionamento opcional com Shelf
 
     unit             Unit               @relation(fields: [unitId], references: [id])
     controlType      ControlType        @relation(fields: [controlTypeId], references: [id])
     category         ProductCategory    @relation(fields: [categoryId], references: [id])
     sectorOfUse      UseSector          @relation(fields: [sectorOfUseId], references: [id])
-    stock            Stock              @relation(fields: [stockId], references: [id])
-    shelf            CabinetShelf       @relation(fields: [shelfId], references: [id])
-    cabinet          StockCabinet       @relation(fields: [cabinetId], references: [id])
+    stockCabinet     StockCabinet?      @relation(fields: [stockCabinetId], references: [id], onDelete: Cascade) // Produto pode ser associado a um cabinet
+    shelf            Shelf?             @relation(fields: [shelfId], references: [id], onDelete: Cascade) // Produto pode ser associado a uma shelf
     ProductSupplier  ProductSupplier[]
     ProductEntry     ProductEntry[]
     ProductOutput    ProductOutput[]
     ProductAdjust    ProductAdjust[]
     RequestProduct   RequestProduct[]
     ProductInventory ProductInventory[]
+    Stock            Stock?             @relation(fields: [stockId], references: [id])
+    stockId          String?
 }
 
 model ProductSupplier {
@@ -218,8 +218,8 @@ model Stock {
 
     company          Company        @relation(fields: [companyId], references: [id])
     legalResponsible UserRole       @relation("StockResponsible", fields: [legalResponsibleId], references: [id])
+    StockCabinet     StockCabinet[] // Relação com StockCabinet para associar cabinets ao estoque
     Product          Product[]
-    StockCabinet     StockCabinet[]
     Adjust           Adjust[]
     Order            Order[]
 }
@@ -237,36 +237,29 @@ model Unit {
 }
 
 model Cabinet {
-    id           String         @id @default(cuid())
-    name         String
-    StockCabinet StockCabinet[]
+    id   String @id @default(cuid())
+    name String
+
+    StockCabinet StockCabinet[] // Relação com StockCabinet para associar com estoques
+    Shelf        Shelf[] // Relação direta com Shelf para adicionar prateleiras ao cabinet
 }
 
 model StockCabinet {
     id        String @id @default(cuid())
-    cabinetId String
     stockId   String
+    cabinetId String
 
-    cabinet      Cabinet        @relation(fields: [cabinetId], references: [id])
-    stock        Stock          @relation(fields: [stockId], references: [id])
-    CabinetShelf CabinetShelf[]
-    Product      Product[]
+    stock   Stock     @relation(fields: [stockId], references: [id], onDelete: Cascade) // O estoque pode remover a relação
+    cabinet Cabinet   @relation(fields: [cabinetId], references: [id], onDelete: Cascade) // O cabinet pode remover a relação
+    Product Product[]
 }
 
 model Shelf {
-    id   String @id @default(cuid())
-    name String
-
-    CabinetShelf CabinetShelf[]
-}
-
-model CabinetShelf {
     id        String @id @default(cuid())
-    shelfId   String
-    cabinetId String
+    name      String
+    cabinetId String // Relacionamento direto com o Cabinet
 
-    shelf   Shelf        @relation(fields: [shelfId], references: [id])
-    cabinet StockCabinet @relation(fields: [cabinetId], references: [id])
+    cabinet Cabinet   @relation(fields: [cabinetId], references: [id], onDelete: Cascade) // Shelf associada a um Cabinet
     Product Product[]
 }
 

@@ -14,20 +14,20 @@ import Storages from "./_components/Stocks/Storages";
 
 export default function GeneralParametersRegister() {
   return (
-    <div className="flex w-full flex-col gap-4 bg-fundo_branco">
-      <h1 className="text-[32px] font-medium">Parâmetros Gerais de Produtos</h1>
+    <div className="flex w-full flex-col bg-fundo_branco">
+      <h1 className="text-[32px] font-medium">Parâmetros Gerais de Estoques</h1>
       <Accordion type="single" collapsible>
+        <Storages />
+        <Shelves />
+
+        <h1 className="mt-10 text-[32px] font-medium">
+          Parâmetros Gerais de Produtos
+        </h1>
         <TypesOfControl />
         <ProductCategories />
         <SectorsOfUse />
         <Units />
         <Reasons />
-
-        <h1 className="mt-8 text-[32px] font-medium">
-          Parâmetros Gerais de Estoques
-        </h1>
-        <Storages />
-        <Shelves />
 
         {/* <h1 className="mt-8 text-[32px] font-medium">
           Parâmetros Gerais de Pagamentos

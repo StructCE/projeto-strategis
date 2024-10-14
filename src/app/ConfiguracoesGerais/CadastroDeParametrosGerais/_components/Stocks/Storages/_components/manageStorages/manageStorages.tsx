@@ -53,7 +53,9 @@ export const ManageStoragesTable = () => {
                 >
                   <TableComponent.Value>{cabinet.name}</TableComponent.Value>
                   <TableComponent.Value>
-                    {cabinet.StockCabinet.map((shelf) => shelf).join(", ")}
+                    {cabinet.shelf.length > 0
+                      ? cabinet.shelf.map((shelf) => shelf.name).join(", ")
+                      : "Sem prateleiras"}
                   </TableComponent.Value>
                   <Dialog>
                     <DialogTrigger asChild>

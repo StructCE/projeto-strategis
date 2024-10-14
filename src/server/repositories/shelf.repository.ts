@@ -7,30 +7,10 @@ async function getAll() {
 }
 
 async function register(props: ShelfRepositoryInterfaces["RegisterProps"]) {
-  // Primeiro, cria a prateleira (Shelf)
   const registeredShelf = await db.shelf.create({
     data: {
       name: props.name,
-    },
-  });
-
-  // Verificar se o cabinetId existe no banco
-  const cabinetExists = await db.cabinet.findUnique({
-    where: { id: props.cabinetId },
-  });
-
-  if (!cabinetExists) {
-    throw new Error(`Cabinet with ID ${props.cabinetId} does not exist`);
-  }
-
-  console.log("Registered Shelf ID:", registeredShelf.id);
-  console.log("Cabinet ID:", props.cabinetId);
-
-  // Cria a associação na tabela de junção CabinetShelf
-  await db.cabinetShelf.create({
-    data: {
-      shelfId: registeredShelf.id, // ID da prateleira criada
-      cabinetId: props.cabinetId, // ID do armário/StockCabinet
+      cabinetId: props.cabinetId,
     },
   });
 

@@ -1,4 +1,3 @@
-import { type UseFormReturn } from "react-hook-form";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -16,36 +15,34 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { api } from "~/trpc/react";
-import { type CreateShelfFormValues } from "./shelvesRegisterFormSchema";
+import { useShelfForm } from "./useShelvesForm";
 
-type ShelfRegisterProps = {
-  form: UseFormReturn<CreateShelfFormValues>;
-  onSubmit: (data: CreateShelfFormValues) => void;
-};
+export const ShelfRegister = () => {
+  const shelvesForm = useShelfForm();
 
-export default function ShelfRegister(props: ShelfRegisterProps) {
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getAll.useQuery();
 
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmit)}>
+    <Form {...shelvesForm.form}>
+      <form onSubmit={shelvesForm.form.handleSubmit(shelvesForm.onSubmit)}>
         <FormComponent>
           <FormComponent.Line className="px-1">
             <FormComponent.Frame>
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={shelvesForm.form.control}
                 name="cabinetId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={field.onChange}
+                      value={field.value}
                       defaultValue={field.value}
                     >
                       <FormControl>
                         <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione um armário/zona associado ao local selecionado" />
+                          <SelectValue placeholder="Selecione o armário/zona da prateleira" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -65,7 +62,7 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
             <FormComponent.Frame>
               <FormComponent.Label>Prateleira</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={shelvesForm.form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
@@ -92,4 +89,4 @@ export default function ShelfRegister(props: ShelfRegisterProps) {
       </form>
     </Form>
   );
-}
+};
