@@ -11,12 +11,19 @@ export const productRouter = createTRPCRouter({
     },
   ),
 
-  getAllProducts: protectedProcedure
+  getAllWhere: protectedProcedure
     .input(productRepositorySchema.getAllProps)
     .query(async ({ input }): Promise<ProductRouteInterfaces["Product"][]> => {
-      const products = await ProductRepository.getAll(input);
+      const products = await ProductRepository.getAllWhere(input);
       return products;
     }),
+
+  getAll: protectedProcedure.query(
+    async ({ input }): Promise<ProductRouteInterfaces["Product"][]> => {
+      const products = await ProductRepository.getAll(input);
+      return products;
+    },
+  ),
 
   createProduct: protectedProcedure
     .input(productRepositorySchema.createProps)

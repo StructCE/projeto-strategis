@@ -173,10 +173,13 @@ model Product {
     status           String
     buyQuantity      Float
     buyDate          DateTime
+    // buyDay           String
     currentStock     Float
     currentInventory Float
+    // lastInventory    DateTime  
     minimunStock     Int
     maximumStock     Int
+
     unitId           String
     controlTypeId    String
     categoryId       String

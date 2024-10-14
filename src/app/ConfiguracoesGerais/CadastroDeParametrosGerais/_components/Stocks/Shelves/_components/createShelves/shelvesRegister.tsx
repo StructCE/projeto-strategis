@@ -23,6 +23,7 @@ type ShelfRegisterProps = {
   onSubmit: (data: CreateShelfFormValues) => void;
 };
 
+
 export default function ShelfRegister(props: ShelfRegisterProps) {
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getAll.useQuery();

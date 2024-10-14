@@ -10,7 +10,7 @@ async function countProducts() {
   return productsCount._sum.currentStock ?? 0;
 }
 
-async function getAll(props: ProductRepositoryInterfaces["GetAllProps"]) {
+async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
   const { filters } = props;
   const products = await db.product.findMany({
     where: {
@@ -39,6 +39,12 @@ async function getAll(props: ProductRepositoryInterfaces["GetAllProps"]) {
       ],
     },
   });
+  return products;
+}
+
+//TODO: logica para retornar apenas produtos do restaurante passado
+async function getAll() {
+  const products = await db.product.findMany();
   return products;
 }
 
@@ -76,6 +82,7 @@ async function remove(props: ProductRepositoryInterfaces["RemoveProps"]) {
 export const ProductRepository = {
   countProducts,
   getAll,
+  getAllWhere,
   create,
   edit,
   remove,
