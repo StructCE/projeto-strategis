@@ -99,7 +99,6 @@ model UserRole {
     role                       Role        @relation(fields: [roleId], references: [id])
     CompanyResponsible         Company[]   @relation("CompanyResponsible")
     StockResponsible           Stock[]     @relation("StockResponsible")
-    EntryResponsible           Entry[]     @relation("EntryResponsible")
     OutputResponsible          Output[]    @relation("OutputResponsible")
     OutputApplicant            Output[]    @relation("OutputApplicant")
     AdjustResponsible          Adjust[]    @relation("AdjustResponsible")
@@ -149,9 +148,7 @@ model Supplier {
     cep               String
     Contact           Contact[]
     ProductSupplier   ProductSupplier[]
-    ProductEntry      ProductEntry[]
     ProductOutput     ProductOutput[]
-    Invoice           Invoice[]
 }
 
 model Contact {
@@ -192,7 +189,6 @@ model Product {
     shelf            CabinetShelf       @relation(fields: [shelfId], references: [id])
     cabinet          StockCabinet       @relation(fields: [cabinetId], references: [id])
     ProductSupplier  ProductSupplier[]
-    ProductEntry     ProductEntry[]
     ProductOutput    ProductOutput[]
     ProductAdjust    ProductAdjust[]
     RequestProduct   RequestProduct[]
@@ -205,9 +201,10 @@ model ProductSupplier {
     productId  String
     supplierId String
 
-    product      Product        @relation(fields: [productId], references: [id])
-    supplier     Supplier       @relation(fields: [supplierId], references: [id])
-    OrderProduct OrderProduct[]
+    product        Product          @relation(fields: [productId], references: [id])
+    supplier       Supplier         @relation(fields: [supplierId], references: [id])
+    OrderProduct   OrderProduct[]
+    InvoiceProduct InvoiceProduct[]
 }
 
 model Stock {
@@ -232,7 +229,6 @@ model Unit {
 
     Product        Product[]
     RequestProduct RequestProduct[]
-    ProductEntry   ProductEntry[]
 }
 
 model Cabinet {
@@ -288,19 +284,6 @@ model UseSector {
     Product Product[]
 }
 
-model Entry {
-    id            String   @id @default(cuid())
-    invoice       String
-    date          DateTime
-    responsibleId String
-    operationId   String
-    type          String   @default("Em Aberto")
-    status        String   @default("Em Dia")
-
-    responsible  UserRole       @relation("EntryResponsible", fields: [responsibleId], references: [id])
-    ProductEntry ProductEntry[]
-}
-
 model Output {
     id            String   @id @default(cuid())
     number        Int
@@ -314,24 +297,6 @@ model Output {
     applicant   UserRole @relation("OutputApplicant", fields: [applicantId], references: [id])
 
     ProductOutput ProductOutput[]
-}
-
-model ProductEntry {
-    id               String @id @default(cuid())
-    ncm              Int
-    cfop             Int
-    unitId           String
-    entryId          String
-    productId        String
-    supplierId       String
-    quantity         Int
-    purchaseQuantity Int
-    unitValue        Float
-
-    entry    Entry    @relation(fields: [entryId], references: [id])
-    product  Product  @relation(fields: [productId], references: [id])
-    supplier Supplier @relation(fields: [supplierId], references: [id])
-    unit     Unit     @relation(fields: [unitId], references: [id])
 }
 
 model ProductOutput {
@@ -520,12 +485,24 @@ model Invoice {
     documentTypeId String?
     accountPlanId  String?
     projectId      String?
-    supplierId     String
 
-    group        Group?           @relation(fields: [groupId], references: [id])
-    documentType DocumentType?    @relation(fields: [documentTypeId], references: [id])
-    accountPlan  BankAccountPlan? @relation(fields: [accountPlanId], references: [id])
-    project      Project?         @relation(fields: [projectId], references: [id])
-    supplier     Supplier         @relation(fields: [supplierId], references: [id])
-    Payment      Payment[]
+    group          Group?           @relation(fields: [groupId], references: [id])
+    documentType   DocumentType?    @relation(fields: [documentTypeId], references: [id])
+    accountPlan    BankAccountPlan? @relation(fields: [accountPlanId], references: [id])
+    project        Project?         @relation(fields: [projectId], references: [id])
+    Payment        Payment[]
+    InvoiceProduct InvoiceProduct[]
+}
+
+model InvoiceProduct {
+    id                String @id @default(cuid())
+    ncm               Int
+    cfop              Int
+    invoiceId         String
+    productSupplierId String
+    purchaseQuantity  Int
+    unitValue         Float
+
+    productSupplier ProductSupplier @relation(fields: [productSupplierId], references: [id])
+    invoice         Invoice         @relation(fields: [invoiceId], references: [id])
 }
