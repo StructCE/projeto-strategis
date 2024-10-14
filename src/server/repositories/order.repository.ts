@@ -13,7 +13,13 @@ async function getAll(props: OrderRepositoryInterfaces["GetAllProps"]) {
     include: {
       responsible: { include: { user: true } },
       stock: true,
-      OrderProduct: { include: { unit: true, supplier: true } },
+      OrderProduct: {
+        include: {
+          product: {
+            include: { product: { include: { unit: true } }, supplier: true },
+          },
+        },
+      },
     },
   });
   return orders;
@@ -32,8 +38,7 @@ async function register(props: OrderRepositoryInterfaces["RegisterProps"]) {
       data: {
         buyQuantity: orderProduct.buyQuantity,
         orderId: createdOrder.id,
-        unitId: orderProduct.unitId,
-        supplierId: orderProduct.supplierId,
+        productSupplierId: orderProduct.productSupplierId,
       },
     });
     return createOrderProduct;

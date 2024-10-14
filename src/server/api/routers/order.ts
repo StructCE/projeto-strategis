@@ -16,8 +16,8 @@ export const orderRouter = createTRPCRouter({
           stockName: order.stock.name,
           products: order.OrderProduct.map((orderProduct) => ({
             buyQuantity: orderProduct.buyQuantity,
-            unitType: orderProduct.unit.name,
-            supplier: orderProduct.supplier.name,
+            unitType: orderProduct.product.product.unit.name,
+            supplier: orderProduct.product.supplier.name,
           })),
         }));
         return serializedOrders;

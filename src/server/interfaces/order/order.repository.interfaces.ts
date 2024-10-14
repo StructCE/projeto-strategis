@@ -16,8 +16,7 @@ const registerProps = z.object({
   orderProducts: z.array(
     z.object({
       buyQuantity: z.number(),
-      unitId: z.string(),
-      supplierId: z.string(),
+      productSupplierId: z.string(),
     }),
   ),
 });
@@ -35,8 +34,7 @@ const editProps = z.object({
         id: z.string(),
         data: z.object({
           buyQuantity: z.number().optional(),
-          unitId: z.string().optional(),
-          supplierId: z.string().optional(),
+          productSupplierId: z.string().optional(),
         }),
       }),
     ),
