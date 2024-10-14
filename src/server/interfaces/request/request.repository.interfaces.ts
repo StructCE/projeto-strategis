@@ -21,7 +21,7 @@ const registerProps = z.object({
   stockId: z.string(),
   requestProducts: z.array(
     z.object({
-      requestQuantity: z.number(),
+      requestedQuantity: z.number(),
       releasedQuantity: z.number(),
       requestId: z.string(),
       productId: z.string(),
@@ -47,7 +47,7 @@ const editProps = z.object({
       z.object({
         id: z.string(),
         requestProduct: z.object({
-          requestQuantity: z.number().optional(),
+          requestedQuantity: z.number().optional(),
           releasedQuantity: z.number().optional(),
           requestId: z.string().optional(),
           productId: z.string().optional(),

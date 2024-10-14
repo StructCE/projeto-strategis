@@ -106,7 +106,6 @@ model UserRole {
     RequestResponsible         Request[]   @relation("RequestResponsible")
     RequestDeliveryResponsible Request[]   @relation("StatusResponsible")
     Inventory                  Inventory[]
-    Request                    Request[]
 }
 
 model Role {
@@ -395,14 +394,10 @@ model Request {
     statusResponsibleId String
     responsibleId       String
     status              String
-    stockId             String
 
     responsible       UserRole         @relation("RequestResponsible", fields: [responsibleId], references: [id])
     statusResponsible UserRole         @relation("StatusResponsible", fields: [statusResponsibleId], references: [id])
     RequestProduct    RequestProduct[]
-
-    UserRole   UserRole? @relation(fields: [userRoleId], references: [id])
-    userRoleId String?
 }
 
 model RequestProduct {
