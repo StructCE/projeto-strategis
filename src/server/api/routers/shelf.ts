@@ -6,8 +6,8 @@ import type { ShelfRouteInterfaces } from "~/server/interfaces/shelf/shelf.route
 export const shelfRouter = createTRPCRouter({
   getAll: protectedProcedure.query(
     async (): Promise<ShelfRouteInterfaces["Shelf"][]> => {
-      const shelfs = await shelfRepository.getAll();
-      return shelfs;
+      const shelves = await shelfRepository.getAll();
+      return shelves;
     },
   ),
 

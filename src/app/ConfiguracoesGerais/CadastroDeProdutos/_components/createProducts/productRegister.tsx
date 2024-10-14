@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
 
-
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -20,6 +19,8 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
+import type { StockRouteInterfaces } from "~/server/interfaces/stock/stock.route.interfaces";
+
 import { type CreateProductFormValues } from "./productRegisterFormSchema";
 import { api } from "~/trpc/react";
 
@@ -32,7 +33,8 @@ type ProductRegisterProps = {
 };
 
 export const ProductRegister = (props: ProductRegisterProps) => {
-  const [selectedStock, setSelectedStock] = useState("");
+  const [selectedStock, setSelectedStock] =
+    useState<StockRouteInterfaces["SerializedStock"]>();
   const [selectedStorage, setSelectedStorage] = useState("");
 
   const { data: users = [] } = api.user.getAll.useQuery();
@@ -47,25 +49,20 @@ export const ProductRegister = (props: ProductRegisterProps) => {
     api.generalParameters.controlType.getAll.useQuery();
   const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
 
-
-  // TODO: make all this a single query
   const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
     filters: { company: "", name: "" },
   });
-  const { data: shelfs = [] } = api.generalParameters.shelf.getAll.useQuery();
-  const { data: cabinets = [] } =
-    api.generalParameters.cabinet.getAll.useQuery();
+
+  // const { data: shelves = [] } = api.generalParameters.shelf.getAll.useQuery();
+  // const { data: cabinets = [] } =
+  //   api.generalParameters.cabinet.getAll.useQuery();
 
   // Filtra os armários/zona com base no estoque selecionado
-  const filteredStorages = selectedStock
-    ? (stocks.find((stock) => stock.name === selectedStock)?.address ?? [])
-    : [];
+  const filteredStorages = selectedStock?.cabinets;
 
   // Filtra as prateleiras com base no armário/zona selecionado
-  const filteredShelves = selectedStorage
-    ? (filteredStorages.find(
-        (storage) => storage.description === selectedStorage,
-      )?.shelves ?? [])
+  const filteredShelves = filteredStorages
+    ? [...new Set(filteredStorages.flatMap((cabinet) => cabinet.shelves))]
     : [];
 
   return (
@@ -526,7 +523,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       <SelectContent>
                         {filteredStorages.map((storage, index) => (
                           <SelectItem value={storage.id} key={index}>
-                            {storage.description}
+                            {storage.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

@@ -15,7 +15,7 @@ export const stockRouter = createTRPCRouter({
           company: stock.company.name,
           cabinets: stock.StockCabinet.map((stockCabinet) => ({
             name: stockCabinet.cabinet.name,
-            shelfs: stockCabinet.CabinetShelf.map(
+            shelves: stockCabinet.CabinetShelf.map(
               (cabinetShelf) => cabinetShelf.shelf.name,
             ),
           })),

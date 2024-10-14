@@ -6,7 +6,7 @@ import {
 } from "./productRegisterFormSchema";
 
 import { api } from "~/trpc/react";
-import { ProductRouteInterfaces } from "~/server/interfaces/product/product.route.interfaces";
+import type { ProductRouteInterfaces } from "~/server/interfaces/product/product.route.interfaces";
 
 export const useProductForm = () => {
   const productMutation = api.product.createProduct.useMutation({
