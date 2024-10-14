@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { type UseFormReturn } from "react-hook-form";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-// import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
+
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -19,17 +18,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import {
-  ProductCategories,
-  products,
-  SectorsOfUse,
-  suppliers,
-  TypesOfControl,
-  units,
-} from "../productsData";
+
+import type { StockRouteInterfaces } from "~/server/interfaces/stock/stock.route.interfaces";
+
 import { type CreateProductFormValues } from "./productRegisterFormSchema";
 import { api } from "~/trpc/react";
 
+// import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
+// import { productCategories, products, useSectors, suppliers, controlTypes, units } from "../productsData";
 
 type ProductRegisterProps = {
   form: UseFormReturn<CreateProductFormValues>;
@@ -37,21 +33,36 @@ type ProductRegisterProps = {
 };
 
 export const ProductRegister = (props: ProductRegisterProps) => {
-  const [selectedStock, setSelectedStock] = useState("");
+  const [selectedStock, setSelectedStock] =
+    useState<StockRouteInterfaces["SerializedStock"]>();
   const [selectedStorage, setSelectedStorage] = useState("");
-  
-  const { data: users = [], error, isLoading } = api.user.getAll.useQuery();
+
+  const { data: users = [] } = api.user.getAll.useQuery();
+  const { data: productCategories = [] } = api.user.getAll.useQuery();
+
+  // TODO: get only the products for the crrnt restaurant
+  const { data: products = [] } = api.product.getAll.useQuery();
+  const { data: suppliers = [] } = api.user.getAll.useQuery();
+  const { data: useSectors = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: controlTypes = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
+  const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
+
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: { company: "", name: "" },
+  });
+
+  // const { data: shelves = [] } = api.generalParameters.shelf.getAll.useQuery();
+  // const { data: cabinets = [] } =
+  //   api.generalParameters.cabinet.getAll.useQuery();
 
   // Filtra os armários/zona com base no estoque selecionado
-  const filteredStorages = selectedStock
-    ? (stocks.find((stock) => stock.name === selectedStock)?.address ?? [])
-    : [];
+  const filteredStorages = selectedStock?.cabinets;
 
   // Filtra as prateleiras com base no armário/zona selecionado
-  const filteredShelves = selectedStorage
-    ? (filteredStorages.find(
-        (storage) => storage.description === selectedStorage,
-      )?.shelves ?? [])
+  const filteredShelves = filteredStorages
+    ? [...new Set(filteredStorages.flatMap((cabinet) => cabinet.shelves))]
     : [];
 
   return (
@@ -230,8 +241,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       </FormControl>
                       <SelectContent>
                         {units.map((unit, index) => (
-                          <SelectItem value={unit.description} key={index}>
-                            {unit.description} ({unit.abbreviation})
+                          <SelectItem value={unit.id} key={index}>
+                            {unit.name} ({unit.abbreviation})
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -380,9 +391,9 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {TypesOfControl.map((type, index) => (
-                          <SelectItem value={type.description} key={index}>
-                            {type.description}
+                        {controlTypes.map((type, index) => (
+                          <SelectItem value={type.id} key={index}>
+                            {type.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -410,9 +421,9 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {ProductCategories.map((category, index) => (
-                          <SelectItem value={category.description} key={index}>
-                            {category.description}
+                        {productCategories.map((category, index) => (
+                          <SelectItem value={category.id} key={index}>
+                            {category.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -440,9 +451,9 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {SectorsOfUse.map((sector, index) => (
-                          <SelectItem value={sector.description} key={index}>
-                            {sector.description}
+                        {useSectors.map((sector, index) => (
+                          <SelectItem value={sector.id} key={index}>
+                            {sector.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -477,7 +488,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       </FormControl>
                       <SelectContent>
                         {stocks.map((stock, index) => (
-                          <SelectItem value={stock.name} key={index}>
+                          <SelectItem value={stock.id} key={index}>
                             {stock.name}
                           </SelectItem>
                         ))}
@@ -511,8 +522,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       </FormControl>
                       <SelectContent>
                         {filteredStorages.map((storage, index) => (
-                          <SelectItem value={storage.description} key={index}>
-                            {storage.description}
+                          <SelectItem value={storage.id} key={index}>
+                            {storage.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -542,7 +553,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       </FormControl>
                       <SelectContent>
                         {filteredShelves.map((shelf, index) => (
-                          <SelectItem value={shelf.description} key={index}>
+                          <SelectItem value={shelf.id} key={index}>
                             {shelf.description}
                           </SelectItem>
                         ))}

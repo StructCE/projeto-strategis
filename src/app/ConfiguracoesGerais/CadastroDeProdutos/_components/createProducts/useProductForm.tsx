@@ -5,7 +5,24 @@ import {
   type CreateProductFormValues,
 } from "./productRegisterFormSchema";
 
+import { api } from "~/trpc/react";
+import type { ProductRouteInterfaces } from "~/server/interfaces/product/product.route.interfaces";
+
 export const useProductForm = () => {
+  const productMutation = api.product.createProduct.useMutation({
+    onSuccess: (newProduct) => {
+      console.log("Product created successfully:", newProduct);
+      alert("Produto criado com sucesso.");
+      setTimeout(function () {
+        location.reload();
+      }, 500);
+    },
+    onError: (error) => {
+      console.error("Error creating product:", error);
+      alert("Erro ao criar produto.");
+    },
+  });
+
   const form = useForm<CreateProductFormValues>({
     resolver: zodResolver(createProductFormSchema),
     mode: "onChange",
@@ -29,8 +46,36 @@ export const useProductForm = () => {
   });
 
   function onSubmit(data: CreateProductFormValues) {
-    // Criar produto
-    console.log(JSON.stringify(data, null, 2)); // buy_quantity, stock_current, stock_min e stock_max estão como string, passar para float/int (verificar no BD qual tipo é)
+    console.log(JSON.stringify(data, null, 2));
+
+    const productData: ProductRouteInterfaces["Product"] = {
+      id: data.code,
+      name: data.name,
+      status: data.status,
+      buyQuantity: Number(data.buy_quantity),
+      buyDate: new Date(), // TODO: change to buyDay
+      currentStock: Number(data.stock_current),
+      minimunStock: Number(data.stock_min),
+      maximumStock: Number(data.stock_max),
+      currentInventory: 0, // TODO: change to lastInventory
+
+      unitId: data.buy_unit,
+      controlTypeId: data.type_of_control,
+      categoryId: data.product_category,
+      sectorOfUseId: data.sector_of_use,
+
+      shelfId: data.address.shelf,
+      cabinetId: data.address.storage,
+      stockId: data.address.stock, // Estoque do restaurante
+    };
+
+    try {
+      productMutation.mutate({
+        ...productData,
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   }
 
   return { form, onSubmit };

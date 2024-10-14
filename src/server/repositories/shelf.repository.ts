@@ -2,8 +2,8 @@ import { db } from "../db";
 import type { ShelfRepositoryInterfaces } from "../interfaces/shelf/shelf.repository.interfaces";
 
 async function getAll() {
-  const shelfs = await db.shelf.findMany();
-  return shelfs;
+  const shelves = await db.shelf.findMany();
+  return shelves;
 }
 
 async function register(props: ShelfRepositoryInterfaces["RegisterProps"]) {
