@@ -25,11 +25,7 @@ async function getAll(props: StockRepositoryInterfaces["GetAllProps"]) {
       },
       StockCabinet: {
         include: {
-          cabinet: {
-            include: {
-              Shelf: true,
-            },
-          },
+          cabinet: { include: { Shelf: true } },
         },
       },
       company: true,

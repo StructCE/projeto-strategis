@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-import type { StockRouteInterfaces } from "~/server/interfaces/stock/stock.route.interfaces";
 
 import { type CreateProductFormValues } from "./productRegisterFormSchema";
 import { api } from "~/trpc/react";
@@ -33,8 +32,10 @@ type ProductRegisterProps = {
 };
 
 export const ProductRegister = (props: ProductRegisterProps) => {
-  const [selectedStock, setSelectedStock] =
-    useState<StockRouteInterfaces["SerializedStock"]>();
+  // const [selectedStock, setSelectedStock] =
+  //   useState<StockRouteInterfaces["StockWithCabinets"]>();
+
+  const [selectedStock, setSelectedStock] = useState("");
   const [selectedStorage, setSelectedStorage] = useState("");
 
   const { data: users = [] } = api.user.getAll.useQuery();
@@ -53,17 +54,15 @@ export const ProductRegister = (props: ProductRegisterProps) => {
     filters: { company: "", name: "" },
   });
 
-  // const { data: shelves = [] } = api.generalParameters.shelf.getAll.useQuery();
-  // const { data: cabinets = [] } =
-  //   api.generalParameters.cabinet.getAll.useQuery();
-
   // Filtra os armários/zona com base no estoque selecionado
-  const filteredStorages = selectedStock?.cabinets;
+  const filteredCabinets = stocks
+    .find((stock) => stock.id === selectedStock)
+    ?.StockCabinet?.map((stockCabinet) => stockCabinet.cabinet);
 
-  // Filtra as prateleiras com base no armário/zona selecionado
-  const filteredShelves = filteredStorages
-    ? [...new Set(filteredStorages.flatMap((cabinet) => cabinet.shelves))]
-    : [];
+  // Filtra as prateleiras com base no armário/zona selecionado, garantindo unicidade pelo id da Shelf
+  const filteredShelves = [
+    ...new Set(filteredCabinets?.flatMap((cabinet) => cabinet.Shelf)),
+  ];
 
   return (
     <Form {...props.form}>
@@ -513,7 +512,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         field.onChange(value);
                       }}
                       defaultValue={field.value}
-                      disabled={!selectedStock}
+                      disabled={!selectedStock || !filteredCabinets}
                     >
                       <FormControl>
                         <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
@@ -521,9 +520,9 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {filteredStorages.map((storage, index) => (
-                          <SelectItem value={storage.id} key={index}>
-                            {storage.name}
+                        {filteredCabinets?.map((cabinet, index) => (
+                          <SelectItem value={cabinet.id} key={index}>
+                            {cabinet.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -552,9 +551,9 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {filteredShelves.map((shelf, index) => (
+                        {filteredShelves?.map((shelf, index) => (
                           <SelectItem value={shelf.id} key={index}>
-                            {shelf.description}
+                            {shelf.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

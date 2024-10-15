@@ -20,6 +20,16 @@ export type StockWithCabinets = {
   StockCabinet: {
     id: string;
     cabinetId: string;
+    cabinet: {
+      Shelf: {
+        id: string;
+        name: string;
+        cabinetId: string;
+      }[];
+    } & {
+      id: string;
+      name: string;
+    };
   }[];
 };
 

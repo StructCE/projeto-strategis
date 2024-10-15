@@ -18,6 +18,7 @@ export const stockRouter = createTRPCRouter({
           StockCabinet: stock.StockCabinet.map((stockCabinet) => ({
             id: stockCabinet.id,
             cabinetId: stockCabinet.cabinetId,
+            cabinet: stockCabinet.cabinet
           })),
           legalResponsible: {
             id: stock.legalResponsible.id,
