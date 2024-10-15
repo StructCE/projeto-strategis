@@ -7,6 +7,7 @@ export type Product = {
   code: string;
   name: string;
   status: string;
+  ProductSupplier?: { supplierId: string }[] | null;
   buyQuantity: number;
   buyDay: string;
   currentStock: number;
@@ -39,7 +40,7 @@ export type ProductWithFeatures = {
   sectorOfUseId: string;
   shelfId: string;
   parentProductId?: string | null;
-  usersWithPermission?: string[] | null;
+  // usersWithPermission: string | null;
 
   // Relations
   parentProduct?: Product | null;
@@ -86,6 +87,7 @@ export type ProductWithFeatures = {
       cep: string;
     };
   }[];
+  usersWithPermission: { id: string; userId: string; productId: string }[];
 };
 
 export type ProductRouteInterfaces = {

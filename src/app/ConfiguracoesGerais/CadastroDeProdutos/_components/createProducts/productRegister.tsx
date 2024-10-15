@@ -94,7 +94,7 @@ export const ProductRegister = () => {
               <FormComponent.Label>Fornecedor(es)</FormComponent.Label>
               <FormField
                 control={productForm.form.control}
-                name="suppliers"
+                name="suppliersId"
                 render={({ field }) => (
                   <FormItem>
                     <MultiSelect

@@ -48,6 +48,7 @@ async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
           cabinet: true,
         },
       },
+      usersWithPermission: true,
       ProductSupplier: {
         include: {
           supplier: true,
@@ -90,6 +91,11 @@ async function create(props: ProductRepositoryInterfaces["CreateProps"]) {
       usersWithPermission: {
         create: props.usersWithPermission.map((userId) => ({
           userId,
+        })),
+      },
+      ProductSupplier: {
+        create: props.ProductSupplier?.map((supplierId) => ({
+          supplierId, // Associa os IDs dos fornecedores ao produto
         })),
       },
     },

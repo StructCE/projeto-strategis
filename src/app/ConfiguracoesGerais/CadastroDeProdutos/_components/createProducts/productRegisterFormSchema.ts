@@ -29,7 +29,7 @@ export const createProductFormSchema = z.object({
     })
     .min(1, { message: "Digite o nome do produto." }),
 
-  suppliers: z.array(z.string()).optional(),
+  suppliersId: z.array(z.string()).optional(),
   // .min(1, { message: "Selecione um ou mais fornecedores." }),
 
   status: z
