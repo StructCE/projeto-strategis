@@ -26,11 +26,11 @@ async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
             name: filters.productCategory,
           },
         },
-        {
-          stock: {
-            name: filters.stock,
-          },
-        },
+        // {
+        //   stock: {
+        //     name: filters.stock,
+        //   },
+        // },
         {
           sectorOfUse: {
             name: filters.sectorOfUse,
@@ -38,13 +38,47 @@ async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
         },
       ],
     },
+    include: {
+      unit: true,
+      controlType: true,
+      category: true,
+      sectorOfUse: true,
+      shelf: {
+        include: {
+          cabinet: true,
+        },
+      },
+      ProductSupplier: {
+        include: {
+          supplier: true,
+        },
+      },
+    },
   });
   return products;
 }
 
 //TODO: logica para retornar apenas produtos do restaurante passado
 async function getAll() {
-  const products = await db.product.findMany();
+  const products = await db.product.findMany({
+    include: {
+      unit: true,
+      controlType: true,
+      category: true,
+      sectorOfUse: true,
+      shelf: {
+        include: {
+          cabinet: true,
+        },
+      },
+      ProductSupplier: {
+        include: {
+          supplier: true,
+        },
+      },
+    },
+  });
+
   return products;
 }
 

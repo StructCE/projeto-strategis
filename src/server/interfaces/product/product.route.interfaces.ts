@@ -2,26 +2,92 @@ type ProductsCount = {
   productsCount: number;
 };
 
-type Product = {
+export type Product = {
   id: string;
+  code: string;
   name: string;
   status: string;
   buyQuantity: number;
-  buyDate: Date;
+  buyDay: string;
   currentStock: number;
   minimunStock: number;
   maximumStock: number;
-  currentInventory: number;
+  lastInventory: number;
   unitId: string;
   controlTypeId: string;
   categoryId: string;
   sectorOfUseId: string;
-  stockId: string;
   shelfId: string;
-  cabinetId: string;
+  parentProductId?: string | null;
+};
+
+export type ProductWithFeatures = {
+  id: string;
+  code: string;
+  name: string;
+  status: string;
+  buyQuantity: number;
+  buyDay: string;
+  currentStock: number;
+  minimunStock: number;
+  maximumStock: number;
+  lastInventory: number;
+  unitId: string;
+  controlTypeId: string;
+  categoryId: string;
+  sectorOfUseId: string;
+  shelfId: string;
+  parentProductId?: string | null;
+
+  // Relations
+  parentProduct?: Product | null;
+  unit: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    unitsPerPack: number;
+  };
+  controlType: {
+    id: string;
+    name: string;
+  };
+  category: {
+    id: string;
+    name: string;
+  };
+  sectorOfUse: {
+    id: string;
+    name: string;
+  };
+  shelf: {
+    id: string;
+    name: string;
+    cabinet: {
+      id: string;
+      name: string;
+    };
+  };
+  ProductSupplier: {
+    id: string;
+    value?: number | null;
+    supplier: {
+      id: string;
+      name: string;
+      cnpj: string;
+      email: string;
+      phone?: string | null;
+      stateRegistration: string;
+      address: string;
+      neighborhood: string;
+      city: string;
+      federativeUnit: string;
+      cep: string;
+    };
+  }[];
 };
 
 export type ProductRouteInterfaces = {
   ProductsCount: ProductsCount;
   Product: Product;
+  ProductWithFeatures: ProductWithFeatures;
 };

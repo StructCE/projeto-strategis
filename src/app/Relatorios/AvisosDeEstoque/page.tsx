@@ -5,14 +5,7 @@ import { Check, Download, Eraser, Search, X } from "lucide-react";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
-import {
-  ProductCategories,
-  SectorsOfUse,
-  TypesOfControl,
-} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import type { Product } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
-import { products } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -33,6 +26,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { api } from "~/trpc/react";
 import ProductDetails from "./_components/productDetails";
 
 export default function CustomReports() {
@@ -72,6 +66,19 @@ export default function CustomReports() {
     selectSector === "" &&
     selectStatus === "" &&
     selectBuyDay === "";
+
+  const {
+    data: products = [],
+    error,
+    isLoading,
+  } = api.product.getAll.useQuery();
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: sectorsOfUse = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: typesOfControl = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
+  const { data: productCategories = [] } =
+    api.generalParameters.productCategory.getAll.useQuery();
 
   const filteredProducts = areAllFiltersEmpty
     ? []
@@ -133,7 +140,7 @@ export default function CustomReports() {
           if (filterProduce)
             filterConditions.push(
               (isLowStock || isNoStock) &&
-                product.type_of_control?.description === "Produtos de Produção",
+                product.controlTypeId?.name === "Produtos de Produção",
             );
           if (filterDontProduce)
             filterConditions.push(
@@ -719,10 +726,10 @@ export default function CustomReports() {
             state={selectControlType}
             setState={setSelectControlType}
           >
-            {TypesOfControl.map((type, index) => (
+            {typesOfControl.map((type, index) => (
               <Filter.SelectItems
                 key={index}
-                value={type.description}
+                value={type.name}
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
@@ -739,10 +746,10 @@ export default function CustomReports() {
             state={selectCategory}
             setState={setSelectCategory}
           >
-            {ProductCategories.map((category, index) => (
+            {productCategories.map((category, index) => (
               <Filter.SelectItems
                 key={index}
-                value={category.description}
+                value={category.name}
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
@@ -759,10 +766,10 @@ export default function CustomReports() {
             state={selectSector}
             setState={setSelectSector}
           >
-            {SectorsOfUse.map((sector, index) => (
+            {sectorsOfUse.map((sector, index) => (
               <Filter.SelectItems
                 key={index}
-                value={sector.description}
+                value={sector.name}
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
@@ -872,6 +879,18 @@ export default function CustomReports() {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
+        {error && selectStock !== "" && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Erro ao mostrar produtos: {error.message}
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {isLoading && selectStock !== "" && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>Carregando produtos...</TableComponent.Value>
+          </TableComponent.Line>
+        )}
         {selectStock === "" && (
           <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
@@ -879,14 +898,19 @@ export default function CustomReports() {
             </TableComponent.Value>
           </TableComponent.Line>
         )}
-        {!areAllFiltersEmpty && filteredProducts.length === 0 && (
-          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-            <TableComponent.Value>
-              Nenhum produto encontrado com os filtros aplicados
-            </TableComponent.Value>
-          </TableComponent.Line>
-        )}
         {!areAllFiltersEmpty &&
+          !isLoading &&
+          !error &&
+          filteredProducts.length === 0 && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum produto encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
+        {!areAllFiltersEmpty &&
+          !isLoading &&
+          !error &&
           filteredProducts.map((product, index) => (
             <TableComponent.Line
               className={`grid-cols-[85px_70px_1fr_120px_90px_90px_90px_130px] gap-4 md:gap-8 ${

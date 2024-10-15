@@ -14,20 +14,20 @@ type GetAllProps = z.infer<typeof getAllProps>;
 
 const createProps = z.object({
   name: z.string(),
+  code: z.string(),
   status: z.string(),
+  parentProductId: z.string().optional(),
+  unitId: z.string(),
   buyQuantity: z.number(),
-  buyDate: z.date(),
+  buyDay: z.string(),
   currentStock: z.number(),
   minimunStock: z.number(),
   maximumStock: z.number(),
-  currentInventory: z.number(),
-  unitId: z.string(),
+  lastInventory: z.number(),
   controlTypeId: z.string(),
   categoryId: z.string(),
   sectorOfUseId: z.string(),
-  stockId: z.string(),
   shelfId: z.string(),
-  cabinetId: z.string(),
 });
 
 type CreateProps = z.infer<typeof createProps>;

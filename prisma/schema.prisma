@@ -163,38 +163,37 @@ model Contact {
 }
 
 model Product {
-    id               String   @id @default(cuid())
-    name             String
-    status           String
-    buyQuantity      Float
-    buyDate          DateTime
-    // buyDay           String
-    currentStock     Float
-    currentInventory Float
-    // lastInventory    DateTime  
-    minimunStock     Int
-    maximumStock     Int
+    id            String @id @default(cuid())
+    code          String
+    name          String
+    status        String
+    buyQuantity   Float
+    buyDay        String
+    currentStock  Float
+    minimunStock  Int
+    maximumStock  Int
+    lastInventory Float
 
-    unitId         String
-    controlTypeId  String
-    categoryId     String
-    sectorOfUseId  String
-    stockCabinetId String? // Relacionamento opcional com StockCabinet
-    shelfId        String? // Relacionamento opcional com Shelf
+    unitId        String
+    controlTypeId String
+    categoryId    String
+    sectorOfUseId String
+    shelfId       String
+
+    parentProductId String?
+    parentProduct   Product? @relation("ProductToParent", fields: [parentProductId], references: [id])
 
     unit             Unit               @relation(fields: [unitId], references: [id])
     controlType      ControlType        @relation(fields: [controlTypeId], references: [id])
     category         ProductCategory    @relation(fields: [categoryId], references: [id])
     sectorOfUse      UseSector          @relation(fields: [sectorOfUseId], references: [id])
-    // stockCabinet     StockCabinet?      @relation(fields: [stockCabinetId], references: [id], onDelete: Cascade) // Produto pode ser associado a um cabinet
-    shelf            Shelf?             @relation(fields: [shelfId], references: [id], onDelete: Cascade) // Produto pode ser associado a uma shelf
+    shelf            Shelf              @relation(fields: [shelfId], references: [id], onDelete: Cascade)
+    childProducts    Product[]          @relation("ProductToParent")
     ProductSupplier  ProductSupplier[]
     ProductOutput    ProductOutput[]
     ProductAdjust    ProductAdjust[]
     RequestProduct   RequestProduct[]
     ProductInventory ProductInventory[]
-    Stock            Stock?             @relation(fields: [stockId], references: [id])
-    stockId          String?
 }
 
 model ProductSupplier {
@@ -218,7 +217,6 @@ model Stock {
     company          Company        @relation(fields: [companyId], references: [id])
     legalResponsible UserRole       @relation("StockResponsible", fields: [legalResponsibleId], references: [id])
     StockCabinet     StockCabinet[] // Relação com StockCabinet para associar cabinets ao estoque
-    Product          Product[]
     Adjust           Adjust[]
     Order            Order[]
 }

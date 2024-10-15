@@ -1,5 +1,11 @@
 import z from "zod";
 
+const cabinetFromStockProps = z.object({
+  stockId: z.string(),
+});
+
+type CabinetFromStockProps = z.infer<typeof cabinetFromStockProps>;
+
 const registerProps = z.object({
   name: z.string(),
 });
@@ -22,12 +28,14 @@ const removeProps = z.object({
 type RemoveProps = z.infer<typeof removeProps>;
 
 export const cabinetRepositorySchema = {
+  cabinetFromStockProps,
   registerProps,
   editProps,
   removeProps,
 };
 
 export type CabinetRepositoryInterfaces = {
+  CabinetFromStockProps: CabinetFromStockProps;
   RegisterProps: RegisterProps;
   EditProps: EditProps;
   RemoveProps: RemoveProps;

@@ -5,8 +5,8 @@ import {
   type CreateProductFormValues,
 } from "./productRegisterFormSchema";
 
-import { api } from "~/trpc/react";
 import type { ProductRouteInterfaces } from "~/server/interfaces/product/product.route.interfaces";
+import { api } from "~/trpc/react";
 
 export const useProductForm = () => {
   const productMutation = api.product.createProduct.useMutation({
@@ -32,41 +32,43 @@ export const useProductForm = () => {
       status: "",
       suppliers: [],
       users_with_permission: [],
-      buy_unit: "",
-      buy_quantity: "",
-      buy_day: "",
-      stock_current: "",
-      stock_min: "",
-      stock_max: "",
-      type_of_control: "",
-      product_category: "",
-      sector_of_use: "",
-      address: { stock: "", storage: "", shelf: "" },
+      unitId: "",
+      buyQuantity: "",
+      buyDay: "",
+      currentStock: "",
+      minimunStock: "",
+      maximumStock: "",
+      controlTypeId: "",
+      categoryId: "",
+      sectorOfUseId: "",
+      // address: { stock: "", storage: "", shelf: "" },
+      shelfId: "",
     },
   });
 
   function onSubmit(data: CreateProductFormValues) {
     console.log(JSON.stringify(data, null, 2));
 
-    const productData: ProductRouteInterfaces["Product"] = {
-      id: data.code,
+    const productData = {
+      code: data.code,
       name: data.name,
       status: data.status,
-      buyQuantity: Number(data.buy_quantity),
-      buyDate: new Date(), // TODO: change to buyDay
-      currentStock: Number(data.stock_current),
-      minimunStock: Number(data.stock_min),
-      maximumStock: Number(data.stock_max),
-      currentInventory: 0, // TODO: change to lastInventory
+      buyQuantity: Number(data.buyQuantity),
+      buyDay: data.buyDay,
+      currentStock: Number(data.currentStock),
+      minimunStock: Number(data.minimunStock),
+      maximumStock: Number(data.maximumStock),
+      lastInventory: Number(data.currentStock),
 
-      unitId: data.buy_unit,
-      controlTypeId: data.type_of_control,
-      categoryId: data.product_category,
-      sectorOfUseId: data.sector_of_use,
+      unitId: data.unitId,
+      controlTypeId: data.controlTypeId,
+      categoryId: data.categoryId,
+      sectorOfUseId: data.sectorOfUseId,
+      shelfId: data.shelfId,
+      parentProductId: data.parentProductId ?? undefined,
 
-      shelfId: data.address.shelf,
-      cabinetId: data.address.storage,
-      stockId: data.address.stock, // Estoque do restaurante
+      // cabinetId: data.address.storage,
+      // stockId: data.address.stock, // Estoque do restaurante
     };
 
     try {

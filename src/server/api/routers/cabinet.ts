@@ -11,6 +11,17 @@ export const cabinetRouter = createTRPCRouter({
     },
   ),
 
+  getCabinetFromStock: protectedProcedure
+    .input(cabinetRepositorySchema.cabinetFromStockProps)
+    .query(
+      async ({
+        input,
+      }): Promise<CabinetRouteInterfaces["CabinetWithShelves"][]> => {
+        const cabinets = await cabinetRepository.getCabinetFromStock(input);
+        return cabinets;
+      },
+    ),
+
   registerCabinet: protectedProcedure
     .input(cabinetRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<CabinetRouteInterfaces["Cabinet"]> => {

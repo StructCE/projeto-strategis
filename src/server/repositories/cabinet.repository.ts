@@ -20,6 +20,31 @@ async function getAll() {
   );
 }
 
+async function getCabinetFromStock(
+  props: CabinetRepositoryInterfaces["CabinetFromStockProps"],
+) {
+  const cabinets = await db.cabinet.findMany({
+    where: {
+      StockCabinet: {
+        some: {
+          // Filtra cabinets que estão associados a algum StockCabinet
+          stockId: props.stockId,
+        },
+      },
+    },
+    include: {
+      Shelf: true,
+    },
+  });
+  return cabinets.map(
+    (cabinet): CabinetWithShelves => ({
+      id: cabinet.id,
+      name: cabinet.name,
+      shelf: cabinet.Shelf as Shelf[], // Define explicitamente o tipo de Shelf
+    }),
+  );
+}
+
 async function register(props: CabinetRepositoryInterfaces["RegisterProps"]) {
   const registeredCabinet = await db.cabinet.create({
     data: {
@@ -62,6 +87,7 @@ async function remove(props: CabinetRepositoryInterfaces["RemoveProps"]) {
 
 export const cabinetRepository = {
   getAll,
+  getCabinetFromStock,
   register,
   edit,
   remove,
