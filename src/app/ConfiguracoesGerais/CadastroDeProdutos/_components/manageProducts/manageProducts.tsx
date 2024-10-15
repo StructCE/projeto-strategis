@@ -29,9 +29,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { products, units } from "../productsData";
 import { ProductEdit } from "./editProducts/productEdit";
 import { api } from "~/trpc/react";
+
+import { products, units } from "../productsData";
 
 export default function ManageProductsTable() {
   const [inputCode, setInputCode] = useState("");
@@ -45,6 +46,9 @@ export default function ManageProductsTable() {
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
 
+  // const { data: products = [] } = api.product.getAll.useQuery();
+  
+  const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
@@ -376,8 +380,8 @@ export default function ManageProductsTable() {
                 </SelectTrigger>
                 <SelectContent>
                   {units.map((unit, index) => (
-                    <SelectItem value={unit.description} key={index}>
-                      {`${unit.description} (${unit.abbreviation})`}
+                    <SelectItem value={unit.name} key={index} className="text-left">
+                      {`${unit.abbreviation.trim()} (${unit.name})`}
                     </SelectItem>
                   ))}
                 </SelectContent>

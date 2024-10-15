@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const getAllProps = z.object({
+const getAllWhereProps = z.object({
   filters: z.object({
     name: z.string(),
     stock: z.string(),
@@ -10,7 +10,16 @@ const getAllProps = z.object({
   }),
 });
 
+type GetAllWhereProps = z.infer<typeof getAllWhereProps>;
+
+const getAllProps = z.object({
+  filters: z.object({
+    companyId: z.string(),
+  }),
+});
+
 type GetAllProps = z.infer<typeof getAllProps>;
+
 
 const createProps = z.object({
   name: z.string(),
@@ -62,6 +71,7 @@ const removeProps = z.object({
 type RemoveProps = z.infer<typeof removeProps>;
 
 export const productRepositorySchema = {
+  getAllWhereProps,
   getAllProps,
   createProps,
   editProps,
@@ -69,6 +79,7 @@ export const productRepositorySchema = {
 };
 
 export type ProductRepositoryInterfaces = {
+  GetAllWhereProps: GetAllWhereProps;
   GetAllProps: GetAllProps;
   CreateProps: CreateProps;
   EditProps: EditProps;

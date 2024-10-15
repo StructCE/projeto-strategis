@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-
 import { type CreateProductFormValues } from "./productRegisterFormSchema";
 import { api } from "~/trpc/react";
 
@@ -41,8 +40,11 @@ export const ProductRegister = (props: ProductRegisterProps) => {
   const { data: users = [] } = api.user.getAll.useQuery();
   const { data: productCategories = [] } = api.user.getAll.useQuery();
 
-  // TODO: get only the products for the crrnt restaurant
-  const { data: products = [] } = api.product.getAll.useQuery();
+  // TODO: get only the products for the crrnt company
+  const { data: products = [] } = api.product.getAll.useQuery({
+    filters: { companyId: "" },
+  });
+
   const { data: suppliers = [] } = api.user.getAll.useQuery();
   const { data: useSectors = [] } =
     api.generalParameters.useSector.getAll.useQuery();
@@ -434,7 +436,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
-              <FormComponent.Label>Setor de Utilização</FormComponent.Label>
+              <FormComponent.Label>Setor de Uso</FormComponent.Label>
               <FormField
                 control={props.form.control}
                 name="sector_of_use"
