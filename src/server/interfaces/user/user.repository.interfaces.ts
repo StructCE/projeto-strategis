@@ -1,5 +1,11 @@
 import z from "zod";
 
+const getUserById = z.object({
+  id: z.string().optional(),
+});
+
+type GetUserById = z.infer<typeof getUserById>;
+
 const registerProps = z.object({
   name: z.string(),
   email: z.string().email(),
@@ -39,12 +45,14 @@ const deleteProps = z.object({
 type DeleteProps = z.infer<typeof deleteProps>;
 
 export const userRepositorySchema = {
+  getUserById,
   registerProps,
   editProps,
   deleteProps,
 };
 
 export type UserRepositoryInterfaces = {
+  GetUserById: GetUserById;
   RegisterProps: RegisterProps;
   EditProps: EditProps;
   DeleteProps: DeleteProps;

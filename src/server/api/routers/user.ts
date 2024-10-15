@@ -4,6 +4,36 @@ import { userRepository } from "~/server/repositories/user.repository";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
+  getUserById: protectedProcedure
+    .input(userRepositorySchema.getUserById)
+    .query(
+      async ({
+        input,
+      }): Promise<UserRouteInterfaces["UserWithRoles"] | null> => {
+        const userWithRoles = await userRepository.getUserById({
+          id: input.id,
+        });
+
+        if (!userWithRoles) {
+          return null; // Retorna null se o usuário não for encontrado
+        }
+
+        const serializedUserWithRoles = {
+          id: userWithRoles.id,
+          name: userWithRoles.name,
+          email: userWithRoles.email,
+          phone: userWithRoles.phone,
+          UserRole: userWithRoles.UserRole.map((userRole) => ({
+            id: userRole.id,
+            companyId: userRole.companyId,
+            roleId: userRole.roleId,
+          })),
+        };
+
+        return serializedUserWithRoles;
+      },
+    ),
+
   getAll: protectedProcedure.query(
     async (): Promise<UserRouteInterfaces["UserWithRoles"][]> => {
       const usersWithRoles = await userRepository.getAll();

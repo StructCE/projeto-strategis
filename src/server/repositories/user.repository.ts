@@ -1,6 +1,23 @@
 import { db } from "../db";
 import type { UserRepositoryInterfaces } from "../interfaces/user/user.repository.interfaces";
 
+async function getUserById(props: UserRepositoryInterfaces["GetUserById"]) {
+  const user = await db.user.findUnique({
+    where: { id: props.id }, // Filtra pelo ID do usuário
+    include: {
+      UserRole: {
+        include: {
+          company: true, // Inclui os dados da empresa relacionada ao cargo
+          role: true, // Inclui os dados do cargo
+        },
+      },
+      // Caso tenha outras relações, você pode incluí-las aqui
+    },
+  });
+
+  return user;
+}
+
 async function getAll() {
   // const { filters } = props;
   const users = await db.user.findMany({
@@ -109,6 +126,7 @@ async function remove(props: UserRepositoryInterfaces["DeleteProps"]) {
 }
 
 export const userRepository = {
+  getUserById,
   getAll,
   register,
   edit,
