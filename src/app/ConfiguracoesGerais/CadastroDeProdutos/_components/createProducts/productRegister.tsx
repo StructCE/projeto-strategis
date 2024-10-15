@@ -179,7 +179,7 @@ export const ProductRegister = () => {
               </FormComponent.Label>
               <FormField
                 control={productForm.form.control}
-                name="users_with_permission"
+                name="usersWithPermission"
                 render={({ field }) => (
                   <FormItem>
                     <MultiSelect
@@ -492,7 +492,7 @@ export const ProductRegister = () => {
                     >
                       <FormControl>
                         <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione um endereço do esotque selecionado" />
+                          <SelectValue placeholder="Selecione um endereço do estoque selecionado" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

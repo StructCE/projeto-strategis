@@ -174,26 +174,36 @@ model Product {
     maximumStock  Int
     lastInventory Float
 
-    unitId        String
-    controlTypeId String
-    categoryId    String
-    sectorOfUseId String
-    shelfId       String
-
+    unitId          String
+    controlTypeId   String
+    categoryId      String
+    sectorOfUseId   String
+    shelfId         String
     parentProductId String?
-    parentProduct   Product? @relation("ProductToParent", fields: [parentProductId], references: [id])
 
-    unit             Unit               @relation(fields: [unitId], references: [id])
-    controlType      ControlType        @relation(fields: [controlTypeId], references: [id])
-    category         ProductCategory    @relation(fields: [categoryId], references: [id])
-    sectorOfUse      UseSector          @relation(fields: [sectorOfUseId], references: [id])
-    shelf            Shelf              @relation(fields: [shelfId], references: [id], onDelete: Cascade)
+    usersWithPermission ProductPermission[]
+
+    parentProduct Product?        @relation("ProductToParent", fields: [parentProductId], references: [id])
+    unit          Unit            @relation(fields: [unitId], references: [id])
+    controlType   ControlType     @relation(fields: [controlTypeId], references: [id])
+    category      ProductCategory @relation(fields: [categoryId], references: [id])
+    sectorOfUse   UseSector       @relation(fields: [sectorOfUseId], references: [id])
+    shelf         Shelf           @relation(fields: [shelfId], references: [id], onDelete: Cascade)
+
     childProducts    Product[]          @relation("ProductToParent")
     ProductSupplier  ProductSupplier[]
     ProductOutput    ProductOutput[]
     ProductAdjust    ProductAdjust[]
     RequestProduct   RequestProduct[]
     ProductInventory ProductInventory[]
+}
+
+model ProductPermission {
+    id        String @id @default(cuid())
+    userId    String
+    productId String
+
+    product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 model ProductSupplier {

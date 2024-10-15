@@ -1,7 +1,6 @@
 import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -16,13 +15,6 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
@@ -49,6 +41,9 @@ export default function ManageProductsTable() {
     error,
     isLoading,
   } = api.product.getAll.useQuery();
+
+  console.log(products);
+
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
@@ -56,7 +51,6 @@ export default function ManageProductsTable() {
     api.generalParameters.useSector.getAll.useQuery();
   const { data: controlTypes = [] } =
     api.generalParameters.controlType.getAll.useQuery();
-  const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
 
   const filteredProducts = products.filter((product) => {
     const matchesCode = inputCode === "" || product.code.includes(inputCode);
@@ -388,18 +382,7 @@ export default function ManageProductsTable() {
                   />
                 </TableComponent.Value>
                 <TableComponent.Value className="items-center justify-center text-center">
-                  <Select defaultValue={product.unit.id}>
-                    <SelectTrigger className="h-7 bg-cinza_destaque text-center sm:h-8">
-                      <SelectValue placeholder="Selecione a unidade de compra" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {units.map((unit, index) => (
-                        <SelectItem value={unit.id} key={index}>
-                          {`${unit.name} (${unit.abbreviation})`}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {product.unit.abbreviation}
                 </TableComponent.Value>
                 <TableComponent.Value className="items-center justify-center text-center">
                   <Input

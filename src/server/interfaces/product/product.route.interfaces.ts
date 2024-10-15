@@ -19,6 +19,7 @@ export type Product = {
   sectorOfUseId: string;
   shelfId: string;
   parentProductId?: string | null;
+  usersWithPermission?: { userId: string }[] | null;
 };
 
 export type ProductWithFeatures = {
@@ -38,6 +39,7 @@ export type ProductWithFeatures = {
   sectorOfUseId: string;
   shelfId: string;
   parentProductId?: string | null;
+  usersWithPermission?: string[] | null;
 
   // Relations
   parentProduct?: Product | null;

@@ -28,6 +28,7 @@ const createProps = z.object({
   categoryId: z.string(),
   sectorOfUseId: z.string(),
   shelfId: z.string(),
+  usersWithPermission: z.array(z.string()),
 });
 
 type CreateProps = z.infer<typeof createProps>;
@@ -50,6 +51,7 @@ const editProps = z.object({
     stockId: z.string().optional(),
     shelfId: z.string().optional(),
     cabinetId: z.string().optional(),
+    usersWithPermission: z.array(z.string()),
   }),
 });
 

@@ -1,12 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { api } from "~/trpc/react";
 import {
   createProductFormSchema,
   type CreateProductFormValues,
 } from "./productRegisterFormSchema";
-
-import type { ProductRouteInterfaces } from "~/server/interfaces/product/product.route.interfaces";
-import { api } from "~/trpc/react";
 
 export const useProductForm = () => {
   const productMutation = api.product.createProduct.useMutation({
@@ -31,7 +29,7 @@ export const useProductForm = () => {
       name: "",
       status: "",
       suppliers: [],
-      users_with_permission: [],
+      usersWithPermission: [],
       unitId: "",
       buyQuantity: "",
       buyDay: "",
@@ -41,7 +39,6 @@ export const useProductForm = () => {
       controlTypeId: "",
       categoryId: "",
       sectorOfUseId: "",
-      // address: { stock: "", storage: "", shelf: "" },
       shelfId: "",
     },
   });
@@ -59,16 +56,13 @@ export const useProductForm = () => {
       minimunStock: Number(data.minimunStock),
       maximumStock: Number(data.maximumStock),
       lastInventory: Number(data.currentStock),
-
       unitId: data.unitId,
       controlTypeId: data.controlTypeId,
       categoryId: data.categoryId,
       sectorOfUseId: data.sectorOfUseId,
       shelfId: data.shelfId,
       parentProductId: data.parentProductId ?? undefined,
-
-      // cabinetId: data.address.storage,
-      // stockId: data.address.stock, // Estoque do restaurante
+      usersWithPermission: data.usersWithPermission ?? [],
     };
 
     try {

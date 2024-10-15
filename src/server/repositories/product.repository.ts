@@ -71,6 +71,7 @@ async function getAll() {
           cabinet: true,
         },
       },
+      usersWithPermission: true,
       ProductSupplier: {
         include: {
           supplier: true,
@@ -86,6 +87,11 @@ async function create(props: ProductRepositoryInterfaces["CreateProps"]) {
   const createdProduct = await db.product.create({
     data: {
       ...props,
+      usersWithPermission: {
+        create: props.usersWithPermission.map((userId) => ({
+          userId,
+        })),
+      },
     },
   });
   return createdProduct;
