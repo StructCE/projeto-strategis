@@ -1,13 +1,14 @@
 "use client";
 import { UserRound } from "lucide-react";
 import { type Session } from "next-auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { api } from "~/trpc/react";
 import {
   Select,
   SelectContent,
@@ -16,27 +17,57 @@ import {
   SelectValue,
 } from "../ui/select";
 import SignButtons from "./_components/signButtons";
-import { companies } from "./_components/userData";
 
 export default function Navbar({ session }: { session: Session | null }) {
-  const [selectCompany, setSelectCompany] = useState("Empresa 1");
-  // console.log(session);
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.user.id,
+  });
+
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: roles = [] } = api.role.getAll.useQuery();
+
+  const getCompanyNameById = (companyId: string) => {
+    const company = companies.find((company) => company.id === companyId);
+    return company ? company.name : "Empresa não encontrada";
+  };
+
+  const getRoleNameById = (roleId: string) => {
+    const role = roles.find((role) => role.id === roleId);
+    return role ? role.name : "Cargo não encontrado";
+  };
+
+  const [selectCompanyId, setSelectCompanyId] = useState<string>(() => {
+    return localStorage.getItem("selectCompanyId") ?? "";
+  });
+
+  useEffect(() => {
+    if (selectCompanyId) {
+      localStorage.setItem("selectCompanyId", selectCompanyId);
+    }
+  }, [selectCompanyId]);
 
   return (
-    <nav className="z-10 flex h-[64px] w-full items-center justify-end gap-8 bg-black px-2 sm:h-[74px] sm:gap-12 sm:px-16 sm:px-8 lg:h-[87px]">
+    <nav className="z-10 flex h-[64px] w-full items-center justify-end gap-8 bg-black px-2 sm:h-[74px] sm:gap-12 sm:px-16 lg:h-[87px]">
       {/* Select */}
-      <Select onValueChange={setSelectCompany} defaultValue={selectCompany}>
-        <SelectTrigger className="h-fit w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-3 py-1.5 text-[12px] text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-4 sm:py-2 sm:text-base">
-          <SelectValue placeholder="Cargo do usuário" />
-        </SelectTrigger>
-        <SelectContent>
-          {companies.map((company, index) => (
-            <SelectItem value={company.value} key={index}>
-              {company.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {user?.UserRole.some(
+        (userRole) => getRoleNameById(userRole.roleId) === "Administrador",
+      ) && (
+        <Select
+          onValueChange={setSelectCompanyId}
+          defaultValue={selectCompanyId}
+        >
+          <SelectTrigger className="h-fit w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-3 py-1.5 text-[12px] text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-4 sm:py-2 sm:text-base">
+            <SelectValue placeholder="Empresa a Operar" />
+          </SelectTrigger>
+          <SelectContent>
+            {companies.map((company, index) => (
+              <SelectItem value={company.id} key={index}>
+                {company.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
 
       {/* Dropdown */}
       <DropdownMenu>
@@ -57,11 +88,19 @@ export default function Navbar({ session }: { session: Session | null }) {
           </DropdownMenuLabel>
           <DropdownMenuLabel className="p-0">
             Cargo:{" "}
-            <span className="font-normal">{session?.user.role?.name}</span>
+            <span className="font-normal">
+              {user?.UserRole.map((userRole) =>
+                getRoleNameById(userRole.roleId),
+              ).join(", ")}
+            </span>
           </DropdownMenuLabel>
           <DropdownMenuLabel className="p-0">
             Empresa:{" "}
-            <span className="font-normal">{session?.user.company?.name}</span>
+            <span className="font-normal">
+              {user?.UserRole.map((userRole) =>
+                getCompanyNameById(userRole.companyId),
+              ).join(", ")}
+            </span>
           </DropdownMenuLabel>
           <SignButtons />
         </DropdownMenuContent>
