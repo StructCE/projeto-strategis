@@ -1,5 +1,5 @@
 import { Eraser, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 
 import { Filter } from "~/components/filter";
@@ -46,8 +46,19 @@ export default function ManageProductsTable() {
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
 
-  // const { data: products = [] } = api.product.getAll.useQuery();
-  
+  const [selectCompanyId, setSelectCompanyId] = useState<string>("");
+
+  useEffect(() => {
+    const storedCompanyId = localStorage.getItem("selectCompanyId");
+    if (storedCompanyId) {
+      setSelectCompanyId(storedCompanyId);
+    }
+  }, [selectCompanyId]);
+
+  const { data: products = [] } = api.product.getAll.useQuery({
+    filters: { companyId: selectCompanyId },
+  });
+
   const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
   const { data: productCategories = [] } =
@@ -380,7 +391,11 @@ export default function ManageProductsTable() {
                 </SelectTrigger>
                 <SelectContent>
                   {units.map((unit, index) => (
-                    <SelectItem value={unit.name} key={index} className="text-left">
+                    <SelectItem
+                      value={unit.name}
+                      key={index}
+                      className="text-left"
+                    >
                       {`${unit.abbreviation.trim()} (${unit.name})`}
                     </SelectItem>
                   ))}
