@@ -44,7 +44,7 @@ export const ManageStocksTable = () => {
       .includes(inputStockName.toLowerCase());
 
     const companyMatches = selectCompany
-      ? stock.company === selectCompany
+      ? stock.company.name === selectCompany
       : true;
 
     const managerNameMatches = stock.legalResponsible.name
@@ -170,7 +170,7 @@ export const ManageStocksTable = () => {
                     {`${stock.name
                       .split(" ")
                       .map((word) => word.charAt(0).toUpperCase())
-                      .join("")}-${stock.company.split(" ")[0]}`}
+                      .join("")}-${stock.company.name.split(" ")[0]}`}
                   </TableComponent.Value>
                   <TableComponent.Value className="text-center">
                     {stock.legalResponsible.name}

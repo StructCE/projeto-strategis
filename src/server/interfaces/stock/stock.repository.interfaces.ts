@@ -22,12 +22,38 @@ const registerProps = z.object({
 
 type RegisterProps = z.infer<typeof registerProps>;
 
+const editProps = z.object({
+  id: z.string(),
+  data: z.object({
+    name: z.string(),
+    companyId: z.string(),
+    legalResponsibleId: z.string(),
+    StockCabinet: z.array(
+      z.object({
+        cabinetId: z.string(),
+      }),
+    ),
+  }),
+});
+
+type EditProps = z.infer<typeof editProps>;
+
+const deleteProps = z.object({
+  id: z.string(),
+});
+
+type DeleteProps = z.infer<typeof deleteProps>;
+
 export const stockRepositorySchema = {
   getAllProps,
   registerProps,
+  editProps,
+  deleteProps,
 };
 
 export type StockRepositoryInterfaces = {
   GetAllProps: GetAllProps;
   RegisterProps: RegisterProps;
+  EditProps: EditProps;
+  DeleteProps: DeleteProps;
 };

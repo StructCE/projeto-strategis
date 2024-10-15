@@ -116,11 +116,13 @@ export const StockRegister = () => {
             </FormComponent.Frame>
           </FormComponent.Line>
 
-          <FormComponent.BoxSpecify boxName="Endereços">
+          <FormComponent.BoxSpecify boxName="Armários/Zonas">
             {stockForm.fieldsArray.map((StockCabinet, index) => (
               <FormComponent.Line key={index}>
                 <FormComponent.Frame>
-                  <FormComponent.Label>Armários/Zonas</FormComponent.Label>
+                  <FormComponent.Label className="text-[15px]">
+                    {`Endereço ${index + 1}`}
+                  </FormComponent.Label>
                   <FormField
                     control={stockForm.form.control}
                     name={`StockCabinet.${index}.cabinetId`}
@@ -156,7 +158,7 @@ export const StockRegister = () => {
             ))}
           </FormComponent.BoxSpecify>
 
-          <FormComponent.ButtonLayout>
+          <FormComponent.ButtonLayout className="flex justify-end">
             <button
               onClick={() => stockForm.arrayAppend({ cabinetId: "" })}
               className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"

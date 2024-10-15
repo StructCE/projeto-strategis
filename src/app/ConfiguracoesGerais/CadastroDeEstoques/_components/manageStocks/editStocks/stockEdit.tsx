@@ -1,9 +1,4 @@
 "use client";
-import { storages } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
-import {
-  companies,
-  users,
-} from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -13,7 +8,6 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Select,
   SelectContent,
@@ -21,15 +15,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { stocks, type Stock } from "../../stockData";
+import { type StockWithCabinets } from "~/server/interfaces/stock/stock.route.interfaces";
+import { api } from "~/trpc/react";
 import { useStockForm } from "./useStockForm";
 
 type StockEditProps = {
-  stock: Stock;
+  stock: StockWithCabinets;
 };
 
 export const StockEdit = (props: StockEditProps) => {
   const stockForm = useStockForm(props.stock);
+
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: users = [] } = api.user.getAll.useQuery();
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getAll.useQuery();
 
   return (
     <Form {...stockForm.form}>
@@ -55,16 +55,17 @@ export const StockEdit = (props: StockEditProps) => {
                 )}
               />
             </FormComponent.Frame>
+
             <FormComponent.Frame>
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
                 control={stockForm.form.control}
-                name="company"
+                name="companyId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={field.value ?? ""}
                     >
                       <FormControl>
                         <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
@@ -73,8 +74,8 @@ export const StockEdit = (props: StockEditProps) => {
                       </FormControl>
                       <SelectContent>
                         {companies.map((company, index) => (
-                          <SelectItem value={company.value} key={index}>
-                            {company.value}
+                          <SelectItem value={company.id} key={index}>
+                            {company.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -91,12 +92,12 @@ export const StockEdit = (props: StockEditProps) => {
               </FormComponent.Label>
               <FormField
                 control={stockForm.form.control}
-                name="stock_manager"
+                name="legalResponsibleId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={field.value ?? ""}
                     >
                       <FormControl>
                         <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
@@ -105,7 +106,7 @@ export const StockEdit = (props: StockEditProps) => {
                       </FormControl>
                       <SelectContent>
                         {users.map((user, index) => (
-                          <SelectItem value={user.name} key={index}>
+                          <SelectItem value={user.id} key={index}>
                             {user.name}
                           </SelectItem>
                         ))}
@@ -118,26 +119,21 @@ export const StockEdit = (props: StockEditProps) => {
             </FormComponent.Frame>
           </FormComponent.Line>
 
-          <FormComponent.BoxSpecify boxName="Endereços">
-            {stockForm.fieldsArray.map((address, index) => (
+          <FormComponent.BoxSpecify boxName="Armários/Zonas">
+            {stockForm.fieldsArray.map((StockCabinet, index) => (
               <FormComponent.Line key={index}>
                 <FormComponent.Frame>
-                  <FormComponent.Label>Armários/Zonas</FormComponent.Label>
+                  <FormComponent.Label className="text-[14px]">
+                    {`Endereço ${index + 1}`}
+                  </FormComponent.Label>
                   <FormField
                     control={stockForm.form.control}
-                    name={`address.${index}.storage`}
+                    name={`StockCabinet.${index}.cabinetId`}
                     render={({ field }) => (
                       <FormItem>
                         <Select
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            stockForm.setSelectedStorages((prev) => {
-                              const updatedStorages = [...prev];
-                              updatedStorages[index] = value;
-                              return updatedStorages;
-                            });
-                          }}
-                          value={field.value}
+                          onValueChange={field.onChange}
+                          value={field.value ?? ""}
                         >
                           <FormControl>
                             <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
@@ -145,46 +141,13 @@ export const StockEdit = (props: StockEditProps) => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {storages.map((storage, index) => (
-                              <SelectItem
-                                key={index}
-                                value={storage.description}
-                              >
-                                {storage.description}
+                            {cabinets.map((cabinet, index) => (
+                              <SelectItem key={index} value={cabinet.id}>
+                                {cabinet.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
-
-                <FormComponent.Frame>
-                  <FormComponent.Label>Prateleiras</FormComponent.Label>
-                  <FormField
-                    control={stockForm.form.control}
-                    name={`address.${index}.shelves`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <MultiSelect
-                          options={stocks.flatMap((stock) =>
-                            stock.address.flatMap((address) =>
-                              address.shelves.map((shelf) => ({
-                                label: shelf.description,
-                                value: shelf.description,
-                              })),
-                            ),
-                          )}
-                          onValueChange={(selected) => {
-                            field.onChange(selected);
-                          }}
-                          defaultValue={field.value}
-                          placeholder="Selecione uma ou mais prateleiras do armário/zona selecionado"
-                          variant="inverted"
-                          maxCount={3}
-                        />
                         <FormMessage />
                       </FormItem>
                     )}
@@ -198,11 +161,9 @@ export const StockEdit = (props: StockEditProps) => {
             ))}
           </FormComponent.BoxSpecify>
 
-          <FormComponent.ButtonLayout>
+          <FormComponent.ButtonLayout className="flex justify-end">
             <button
-              onClick={() =>
-                stockForm.arrayAppend({ storage: "", shelves: [] })
-              }
+              onClick={() => stockForm.arrayAppend({ cabinetId: "" })}
               className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"
               type="button"
             >
@@ -213,18 +174,29 @@ export const StockEdit = (props: StockEditProps) => {
           </FormComponent.ButtonLayout>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Estoque
-            </FormComponent.Button>
-
-            <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
-              handlePress={stockForm.form.handleSubmit(
-                stockForm.onSubmitRemove,
-              )}
-            >
-              Remover Estoque
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.",
+                  );
+                  if (confirmed) {
+                    stockForm.onSubmitRemove();
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={stockForm.form.handleSubmit(
+                  stockForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

@@ -1,24 +1,29 @@
-type Stock = {
+export type Stock = {
   id: string;
   name: string;
   companyId: string;
   legalResponsibleId: string;
 };
 
-type SerializedStock = {
+export type StockWithCabinets = {
   id: string;
   name: string;
-  company: string;
-  cabinets: { name: string; shelves: string[] }[];
+  company: { id: string; name: string };
   legalResponsible: {
+    id: string;
+    userId: string;
     name: string;
     email: string;
     role: string;
     phone: string;
   };
+  StockCabinet: {
+    id: string;
+    cabinetId: string;
+  }[];
 };
 
 export type StockRouteInterfaces = {
-  SerializedStock: SerializedStock;
+  StockWithCabinets: StockWithCabinets;
   Stock: Stock;
 };
