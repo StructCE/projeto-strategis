@@ -9,6 +9,12 @@ const getAllProps = z.object({
 
 type GetAllProps = z.infer<typeof getAllProps>;
 
+const stockFromShelfProps = z.object({
+  shelfId: z.string(),
+});
+
+type StockFromShelfProps = z.infer<typeof stockFromShelfProps>;
+
 const registerProps = z.object({
   name: z.string(),
   companyId: z.string(),
@@ -46,6 +52,7 @@ type DeleteProps = z.infer<typeof deleteProps>;
 
 export const stockRepositorySchema = {
   getAllProps,
+  stockFromShelfProps,
   registerProps,
   editProps,
   deleteProps,
@@ -53,6 +60,7 @@ export const stockRepositorySchema = {
 
 export type StockRepositoryInterfaces = {
   GetAllProps: GetAllProps;
+  StockFromShelfProps: StockFromShelfProps;
   RegisterProps: RegisterProps;
   EditProps: EditProps;
   DeleteProps: DeleteProps;

@@ -38,6 +38,45 @@ async function getAll(props: StockRepositoryInterfaces["GetAllProps"]) {
   return stocks;
 }
 
+async function getStockFromShelf(
+  props: StockRepositoryInterfaces["StockFromShelfProps"],
+) {
+  const stocks = await db.stock.findMany({
+    where: {
+      StockCabinet: {
+        some: {
+          cabinet: {
+            Shelf: {
+              some: {
+                id: props.shelfId,
+              },
+            },
+          },
+        },
+      },
+    },
+    include: {
+      legalResponsible: {
+        include: {
+          user: true,
+          role: true,
+        },
+      },
+      StockCabinet: {
+        include: {
+          cabinet: {
+            include: {
+              Shelf: true,
+            },
+          },
+        },
+      },
+      company: true,
+    },
+  });
+  return stocks;
+}
+
 async function register(props: StockRepositoryInterfaces["RegisterProps"]) {
   const { name, companyId, legalResponsibleId, StockCabinet } = props;
 
@@ -147,6 +186,7 @@ async function remove(props: StockRepositoryInterfaces["DeleteProps"]) {
 
 export const StockRepository = {
   getAll,
+  getStockFromShelf,
   register,
   edit,
   remove,

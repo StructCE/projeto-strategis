@@ -105,14 +105,28 @@ async function create(props: ProductRepositoryInterfaces["CreateProps"]) {
 
 async function edit(props: ProductRepositoryInterfaces["EditProps"]) {
   const { id, data } = props;
+
   const editedProduct = await db.product.update({
-    where: {
-      id: id,
-    },
+    where: { id },
     data: {
       ...data,
+      // Atualiza usersWithPermission, deletando os antigos e criando os novos
+      usersWithPermission: {
+        deleteMany: {}, // Deleta todas as permissões antigas
+        create: data.usersWithPermission.map((userId) => ({
+          userId,
+        })), // Cria as novas permissões
+      },
+      // Atualiza ProductSupplier, deletando os antigos e criando os novos
+      ProductSupplier: {
+        deleteMany: {}, // Deleta todos os fornecedores antigos
+        create: data.ProductSupplier?.map((supplierId) => ({
+          supplierId,
+        })),
+      },
     },
   });
+
   return editedProduct;
 }
 

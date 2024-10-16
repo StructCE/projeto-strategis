@@ -42,7 +42,7 @@ export default function ManageProductsTable() {
     isLoading,
   } = api.product.getAll.useQuery();
 
-  console.log(products);
+  // console.log(products);
 
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
   const { data: productCategories = [] } =

@@ -32,6 +32,13 @@ export const stockRouter = createTRPCRouter({
       },
     ),
 
+  getStockFromShelf: protectedProcedure
+    .input(stockRepositorySchema.stockFromShelfProps)
+    .query(async ({ input }): Promise<StockRouteInterfaces["Stock"][]> => {
+      const stock = await StockRepository.getStockFromShelf(input);
+      return stock;
+    }),
+
   registerStock: protectedProcedure
     .input(stockRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<StockRouteInterfaces["Stock"]> => {
