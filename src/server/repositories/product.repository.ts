@@ -88,7 +88,11 @@ async function getAll() {
           },
         },
       },
-      usersWithPermission: true,
+      usersWithPermission: {
+        include: {
+          user: true, // Inclui os dados do usuário relacionados à permissão
+        },
+      },
       ProductSupplier: {
         include: {
           supplier: true,

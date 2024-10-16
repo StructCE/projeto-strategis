@@ -115,10 +115,10 @@ export default function CustomReports() {
             );
           const matchesStock =
             selectStock === "" ||
-            product.shelf.cabinet.StockCabinet.some((stockCabinet) =>
-              stockCabinet.stock.name
-                .toLowerCase()
-                .includes(selectStock.toLowerCase()),
+            product.shelf.cabinet.StockCabinet.some(
+              (stockCabinet) =>
+                stockCabinet.stock.name.toLowerCase() ===
+                selectStock.toLowerCase(),
             );
           const matchesAddress =
             selectAddress === "" ||
@@ -176,9 +176,7 @@ export default function CustomReports() {
   const allProducts = products.filter((product) => {
     const matchesStock = product.shelf.cabinet.StockCabinet.some(
       (stockCabinet) =>
-        stockCabinet.stock.name
-          .toLowerCase()
-          .includes(selectStock.toLowerCase()),
+        stockCabinet.stock.name.toLowerCase() === selectStock.toLowerCase(),
     );
 
     return matchesStock;
@@ -193,9 +191,7 @@ export default function CustomReports() {
 
     const matchesStock = product.shelf.cabinet.StockCabinet.some(
       (stockCabinet) =>
-        stockCabinet.stock.name
-          .toLowerCase()
-          .includes(selectStock.toLowerCase()),
+        stockCabinet.stock.name.toLowerCase() === selectStock.toLowerCase(),
     );
 
     return matchesLowStock && matchesStock;
@@ -207,9 +203,7 @@ export default function CustomReports() {
 
     const matchesStock = product.shelf.cabinet.StockCabinet.some(
       (stockCabinet) =>
-        stockCabinet.stock.name
-          .toLowerCase()
-          .includes(selectStock.toLowerCase()),
+        stockCabinet.stock.name.toLowerCase() === selectStock.toLowerCase(),
     );
 
     return matchesNoStock && matchesStock;
@@ -367,7 +361,11 @@ export default function CustomReports() {
       );
       yPosition += addKeyValuePair(
         "Fornecedores",
-        product.suppliers.map((s) => s.name).join(", "),
+        product.ProductSupplier.length
+          ? product.ProductSupplier.map(
+              (supplier) => supplier.supplier.name,
+            ).join(", ")
+          : "N/A",
         14,
         70,
         (yPosition += lineHeight),
@@ -381,28 +379,28 @@ export default function CustomReports() {
       );
       yPosition += addKeyValuePair(
         "Produto Pai",
-        product.parent_product ?? "N/A",
+        product.parentProduct?.name ?? "N/A",
         14,
         70,
         (yPosition += lineHeight),
       );
       yPosition += addKeyValuePair(
         "Unidade de Compra",
-        `${product.buy_unit.description} (${product.buy_unit.abbreviation}) - ${product.buy_unit.unitsPerPack}`,
+        `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`,
         14,
         70,
         (yPosition += lineHeight),
       );
       yPosition += addKeyValuePair(
         "Quantidade de Compra",
-        product.buy_quantity,
+        product.buyQuantity,
         14,
         70,
         (yPosition += lineHeight),
       );
       yPosition += addKeyValuePair(
         "Dia de Compra",
-        product.buy_day,
+        product.buyDay,
         14,
         70,
         (yPosition += lineHeight),
@@ -423,42 +421,44 @@ export default function CustomReports() {
       );
       yPosition += addKeyValuePair(
         "Estoque Máximo",
-        product.stock_max,
+        product.maximumStock,
         14,
         70,
         (yPosition += lineHeight),
       );
       yPosition += addKeyValuePair(
         "Tipo de Controle",
-        product.type_of_control.description,
+        product.controlType.name,
         14,
         70,
         (yPosition += lineHeight),
       );
       yPosition += addKeyValuePair(
         "Categoria do Produto",
-        product.product_category.description,
+        product.category.name,
         14,
         70,
         (yPosition += lineHeight),
       );
       yPosition += addKeyValuePair(
         "Setor de Uso",
-        product.sector_of_use.description,
+        product.sectorOfUse.name,
         14,
         70,
         (yPosition += lineHeight),
       );
       yPosition += addKeyValuePair(
         "Endereço de Estoque",
-        `${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`,
+        `${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`,
         14,
         70,
         (yPosition += lineHeight),
       );
       yPosition += addKeyValuePair(
         "Usuários com Permissão",
-        product.users_with_permission?.map((u) => u.name).join(", ") ?? "N/A",
+        product.usersWithPermission.length > 0
+          ? product.usersWithPermission.map((user) => user.user.name).join(", ")
+          : "Sem usuários",
         14,
         70,
         (yPosition += lineHeight),
@@ -497,23 +497,28 @@ export default function CustomReports() {
         product.code,
         product.status,
         product.name,
-        `${product.buy_unit.description} (${product.buy_unit.abbreviation}) - ${product.buy_unit.unitsPerPack}`,
-        product.suppliers.map((supplier) => supplier.name).join(", "), // Fornecedores como string
-        product.type_of_control.description,
-        product.product_category.description,
-        product.sector_of_use.description,
-        product.address?.stock,
-        `${product.address?.storage}, ${product.address?.shelf}`,
+        `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`,
+        product.ProductSupplier.length
+          ? product.ProductSupplier.map(
+              (supplier) => supplier.supplier.name,
+            ).join(", ")
+          : "N/A",
+        product.controlType.name,
+        product.category.name,
+        product.sectorOfUse.name,
+        product.shelf.cabinet.StockCabinet.map(
+          (stockCabinet) => stockCabinet.stock.name,
+        ).join(),
+        ` ${product.shelf.cabinet.name}, ${product.shelf.name}`,
         product.currentStock,
         product.minimunStock,
-        product.stock_max,
-        product.buy_quantity,
-        product.buy_day,
-        product.users_with_permission
-          ?.filter((user) => user.role === "Requisitante")
-          .map((user) => user.name)
-          .join(", "),
-        product.parent_product ? product.parent_product : "Não tem Produto Pai",
+        product.maximumStock,
+        product.buyQuantity,
+        product.buyDay,
+        product.usersWithPermission.length > 0
+          ? product.usersWithPermission.map((user) => user.user.name).join(", ")
+          : "Sem usuários",
+        product.parentProduct?.name ?? "Não tem produto pai",
       ]),
     ];
 

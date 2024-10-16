@@ -46,13 +46,14 @@ model Session {
 }
 
 model User {
-    id       String     @id @default(cuid())
-    name     String
-    email    String     @unique
-    phone    String
-    accounts Account[]
-    sessions Session[]
-    UserRole UserRole[]
+    id                 String              @id @default(cuid())
+    name               String
+    email              String              @unique
+    phone              String
+    accounts           Account[]
+    sessions           Session[]
+    UserRole           UserRole[]
+    productPermissions ProductPermission[]
 
     @@map("users")
 }
@@ -203,6 +204,7 @@ model ProductPermission {
     userId    String
     productId String
 
+    user    User    @relation(fields: [userId], references: [id])
     product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 

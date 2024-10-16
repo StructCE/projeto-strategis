@@ -7,18 +7,6 @@ type ProductType = {
 };
 
 export default function ProductDetails(props: ProductType) {
-  function getUserById(userId: string) {
-    const { data: user } = api.user.getUserById.useQuery({ id: userId });
-
-    return user?.name;
-  }
-
-  // fucntion getProductAddress(){
-  //   const address =
-
-  //   return address
-  // }
-
   return (
     <Table>
       <TableBody>
@@ -153,13 +141,10 @@ export default function ProductDetails(props: ProductType) {
         </TableRow>
 
         <TableRow className="bg-[#fbfbfb]">
-          <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-            Usuários com Permissão
-          </TableCell>
-          <TableCell className="px-[10px] py-[5px]">
+          <TableCell>
             {props.product.usersWithPermission.length > 0
               ? props.product.usersWithPermission
-                  .map((user) => getUserById(user.id))
+                  .map((user) => user.user.name)
                   .join(", ")
               : "Sem usuários"}
           </TableCell>

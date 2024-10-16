@@ -69,5 +69,14 @@ export type Product = {
       }[];
     };
   };
-  usersWithPermission: { id: string; userId: string; productId: string }[];
+  usersWithPermission: {
+    id: string;
+    userId: string;
+    productId: string;
+    user: {
+      id: string;
+      name: string;
+      email: string;
+    };
+  }[];
 };

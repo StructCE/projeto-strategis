@@ -36,9 +36,17 @@ export default function Navbar({ session }: { session: Session | null }) {
     return role ? role.name : "Cargo não encontrado";
   };
 
-  const [selectCompanyId, setSelectCompanyId] = useState<string>(() => {
-    return localStorage.getItem("selectCompanyId") ?? "";
-  });
+  const [selectCompanyId, setSelectCompanyId] = useState<string>("");
+
+  useEffect(() => {
+    // Verificar se o window existe (somente no client-side)
+    if (typeof window !== "undefined") {
+      const storedCompanyId = localStorage.getItem("selectCompanyId");
+      if (storedCompanyId) {
+        setSelectCompanyId(storedCompanyId);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (selectCompanyId) {
