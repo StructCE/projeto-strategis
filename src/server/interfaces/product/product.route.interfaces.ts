@@ -40,7 +40,6 @@ export type ProductWithFeatures = {
   sectorOfUseId: string;
   shelfId: string;
   parentProductId?: string | null;
-  // usersWithPermission: string | null;
 
   // Relations
   parentProduct?: Product | null;
@@ -68,8 +67,17 @@ export type ProductWithFeatures = {
     cabinet: {
       id: string;
       name: string;
+      StockCabinet: {
+        stock: {
+          id: string;
+          name: string;
+          companyId: string;
+          legalResponsibleId: string;
+        };
+      }[];
     };
   };
+
   ProductSupplier: {
     id: string;
     value?: number | null;

@@ -1,6 +1,5 @@
 import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -42,9 +41,10 @@ export default function ManageProductsTable() {
     isLoading,
   } = api.product.getAll.useQuery();
 
-  // console.log(products);
+  console.log(products);
 
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
   const { data: useSectors = [] } =
@@ -52,26 +52,33 @@ export default function ManageProductsTable() {
   const { data: controlTypes = [] } =
     api.generalParameters.controlType.getAll.useQuery();
 
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getCabinetFromStock.useQuery({
+      stockName: selectStock ? selectStock : "",
+    });
+
   const filteredProducts = products.filter((product) => {
     const matchesCode = inputCode === "" || product.code.includes(inputCode);
     const matchesProduct =
       inputProduct === "" ||
       product.name.toLowerCase().includes(inputProduct.toLowerCase());
-    // const matchesSupplier =
-    //   selectSuppliers.length === 0 ||
-    //   product.suppliers.some((supplier) =>
-    //     selectSuppliers.includes(supplier.name),
-    //   );
-    // const matchesStock =
-    //   selectStock === "" ||
-    //   `${product.address.stock}`
-    //     .toLowerCase()
-    //     .includes(selectStock.toLowerCase());
-    // const matchesAddress =
-    //   selectAddress === "" ||
-    //   `${product.address.storage}, ${product.address.shelf}`
-    //     .toLowerCase()
-    //     .includes(selectAddress.toLowerCase());
+    const matchesSupplier =
+      selectSuppliers.length === 0 ||
+      product.ProductSupplier.some((supplier) =>
+        selectSuppliers.includes(supplier.supplier.name),
+      );
+    const matchesStock =
+      selectStock === "" ||
+      product.shelf.cabinet.StockCabinet.some((stockCabinet) =>
+        stockCabinet.stock.name
+          .toLowerCase()
+          .includes(selectStock.toLowerCase()),
+      );
+    const matchesAddress =
+      selectAddress === "" ||
+      `${product.shelf.cabinet.name} - ${product.shelf.name}`
+        .toLowerCase()
+        .includes(selectAddress.toLowerCase());
     const matchesControlType =
       selectControlType === "" ||
       product.controlType?.name === selectControlType;
@@ -87,9 +94,9 @@ export default function ManageProductsTable() {
     return (
       matchesCode &&
       matchesProduct &&
-      // matchesSupplier &&
-      // matchesStock &&
-      // matchesAddress &&
+      matchesSupplier &&
+      matchesStock &&
+      matchesAddress &&
       matchesControlType &&
       matchesCategory &&
       matchesSector &&
@@ -184,25 +191,21 @@ export default function ManageProductsTable() {
               selectStock === "" ? "cursor-not-allowed opacity-50" : ""
             }
           >
-            {selectStock === ""
-              ? [
+            {selectStock === "" ? (
+              <Filter.SelectItems
+                key="0"
+                value="Selecione um estoque primeiro"
+              />
+            ) : (
+              cabinets.flatMap((cabinet) =>
+                cabinet.shelf.map((shelf) => (
                   <Filter.SelectItems
-                    key="0"
-                    value="Selecione um estoque primeiro"
-                  ></Filter.SelectItems>,
-                ]
-              : stocks
-                  .filter((stock) => stock.name === selectStock)
-                  .flatMap((stock) =>
-                    stock.address.flatMap((address) =>
-                      address.shelves.map((shelf, index) => (
-                        <Filter.SelectItems
-                          key={index}
-                          value={`${address.description}, ${shelf.description}`}
-                        ></Filter.SelectItems>
-                      )),
-                    ),
-                  )}
+                    key={shelf.id}
+                    value={`${cabinet.name} - ${shelf.name}`}
+                  />
+                )),
+              )
+            )}
           </Filter.Select>
         </Filter>
       </TableComponent.FiltersLine>

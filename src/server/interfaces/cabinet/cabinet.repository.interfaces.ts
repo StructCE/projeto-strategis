@@ -1,7 +1,8 @@
 import z from "zod";
 
 const cabinetFromStockProps = z.object({
-  stockId: z.string(),
+  stockId: z.string().optional(),
+  stockName: z.string().optional(),
 });
 
 type CabinetFromStockProps = z.infer<typeof cabinetFromStockProps>;

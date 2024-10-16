@@ -62,7 +62,7 @@ type FilterSelectProps = {
   placeholder: string;
   state: string | undefined;
   setState: (value: string) => void;
-  children: React.ReactNode[];
+  children: React.ReactNode[] | React.ReactNode;
 };
 
 Filter.Select = function FilterSelect(props: FilterSelectProps) {

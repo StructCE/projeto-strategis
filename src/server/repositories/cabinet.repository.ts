@@ -27,8 +27,8 @@ async function getCabinetFromStock(
     where: {
       StockCabinet: {
         some: {
-          // Filtra cabinets que estão associados a algum StockCabinet
-          stockId: props.stockId,
+          ...(props.stockId ? { stockId: props.stockId } : {}),
+          ...(props.stockName ? { stock: { name: props.stockName } } : {}),
         },
       },
     },

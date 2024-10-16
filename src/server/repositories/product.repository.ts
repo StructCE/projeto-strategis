@@ -45,7 +45,15 @@ async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
       sectorOfUse: true,
       shelf: {
         include: {
-          cabinet: true,
+          cabinet: {
+            include: {
+              StockCabinet: {
+                include: {
+                  stock: true,
+                },
+              },
+            },
+          },
         },
       },
       usersWithPermission: true,
@@ -69,7 +77,15 @@ async function getAll() {
       sectorOfUse: true,
       shelf: {
         include: {
-          cabinet: true,
+          cabinet: {
+            include: {
+              StockCabinet: {
+                include: {
+                  stock: true,
+                },
+              },
+            },
+          },
         },
       },
       usersWithPermission: true,
