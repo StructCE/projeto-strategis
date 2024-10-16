@@ -4,8 +4,7 @@ import "jspdf-autotable";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
 import { useState } from "react";
 import * as XLSX from "xlsx";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import type { Product } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
+import { type Product } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -79,6 +78,11 @@ export default function CustomReports() {
     api.generalParameters.controlType.getAll.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getCabinetFromStock.useQuery({
+      stockName: selectStock ? selectStock : "",
+    });
 
   const filteredProducts = areAllFiltersEmpty
     ? []
@@ -89,8 +93,8 @@ export default function CustomReports() {
             return false;
           }
 
-          const stockCurrent = Number(product.stock_current);
-          const stockMin = Number(product.stock_min);
+          const stockCurrent = Number(product.currentStock);
+          const stockMin = Number(product.minimunStock);
           const stockThreshold = stockMin + stockMin * 0.1; // 110% do estoque mínimo
 
           // Verifica se o produto está com estoque baixo
@@ -106,30 +110,32 @@ export default function CustomReports() {
             product.name.toLowerCase().includes(inputProduct.toLowerCase());
           const matchesSupplier =
             selectSuppliers.length === 0 ||
-            product.suppliers.some((supplier) =>
-              selectSuppliers.includes(supplier.name),
+            product.ProductSupplier.some((supplier) =>
+              selectSuppliers.includes(supplier.supplier.name),
             );
-          const matchesStock = `${product.address.stock}`
-            .toLowerCase()
-            .includes(selectStock.toLowerCase());
+          const matchesStock =
+            selectStock === "" ||
+            product.shelf.cabinet.StockCabinet.some((stockCabinet) =>
+              stockCabinet.stock.name
+                .toLowerCase()
+                .includes(selectStock.toLowerCase()),
+            );
           const matchesAddress =
             selectAddress === "" ||
-            `${product.address.storage}, ${product.address.shelf}`
+            `${product.shelf.cabinet.name} - ${product.shelf.name}`
               .toLowerCase()
               .includes(selectAddress.toLowerCase());
           const matchesControlType =
             selectControlType === "" ||
-            product.type_of_control?.description === selectControlType;
+            product.controlType?.name === selectControlType;
           const matchesCategory =
-            selectCategory === "" ||
-            product.product_category?.description === selectCategory;
+            selectCategory === "" || product.category?.name === selectCategory;
           const matchesSector =
-            selectSector === "" ||
-            product.sector_of_use?.description === selectSector;
+            selectSector === "" || product.sectorOfUse?.name === selectSector;
           const matchesStatus =
             selectStatus === "" || product.status === selectStatus;
           const matchesBuyDay =
-            selectBuyDay === "" || product.buy_day === selectBuyDay;
+            selectBuyDay === "" || product.buyDay === selectBuyDay;
 
           const filterConditions = []; // Filtros de estoque com base nos botões e checkboxes
 
@@ -140,12 +146,12 @@ export default function CustomReports() {
           if (filterProduce)
             filterConditions.push(
               (isLowStock || isNoStock) &&
-                product.controlTypeId?.name === "Produtos de Produção",
+                product.controlType.name === "Produtos de Produção",
             );
           if (filterDontProduce)
             filterConditions.push(
               isAdequateStock &&
-                product.type_of_control?.description === "Produtos de Produção",
+                product.controlType.name === "Produtos de Produção",
             );
 
           const satisfiesStockFilters =
@@ -167,9 +173,13 @@ export default function CustomReports() {
         })
         .sort((a, b) => a.code.localeCompare(b.code));
 
-  // Produtos com estoque baixo (para contagem)
   const allProducts = products.filter((product) => {
-    const matchesStock = product.address.stock === selectStock;
+    const matchesStock = product.shelf.cabinet.StockCabinet.some(
+      (stockCabinet) =>
+        stockCabinet.stock.name
+          .toLowerCase()
+          .includes(selectStock.toLowerCase()),
+    );
 
     return matchesStock;
   });
@@ -177,20 +187,30 @@ export default function CustomReports() {
   // Produtos com estoque baixo (para contagem)
   const lowStockProducts = products.filter((product) => {
     const matchesLowStock =
-      Number(product.stock_current) > 0 &&
-      Number(product.stock_current) <=
-        Number(product.stock_min) + Number(product.stock_min) * 0.1;
+      Number(product.currentStock) > 0 &&
+      Number(product.currentStock) <=
+        Number(product.minimunStock) + Number(product.minimunStock) * 0.1;
 
-    const matchesStock = product.address.stock === selectStock;
+    const matchesStock = product.shelf.cabinet.StockCabinet.some(
+      (stockCabinet) =>
+        stockCabinet.stock.name
+          .toLowerCase()
+          .includes(selectStock.toLowerCase()),
+    );
 
     return matchesLowStock && matchesStock;
   });
 
   // Produtos sem estoque (para contagem)
   const noStockProducts = products.filter((product) => {
-    const matchesNoStock = Number(product.stock_current) === 0;
+    const matchesNoStock = Number(product.currentStock) === 0;
 
-    const matchesStock = product.address.stock === selectStock;
+    const matchesStock = product.shelf.cabinet.StockCabinet.some(
+      (stockCabinet) =>
+        stockCabinet.stock.name
+          .toLowerCase()
+          .includes(selectStock.toLowerCase()),
+    );
 
     return matchesNoStock && matchesStock;
   });
@@ -237,20 +257,25 @@ export default function CustomReports() {
       products: productsToPrint.map((product) => ({
         code: product.code,
         name: product.name,
-        suppliers: product.suppliers,
+        ProductSupplier: product.ProductSupplier,
         status: product.status,
-        parent_product: product.parent_product,
-        buy_unit: product.buy_unit,
-        buy_quantity: product.buy_quantity,
-        buy_day: product.buy_day,
-        stock_current: product.stock_current,
-        stock_min: product.stock_min,
-        stock_max: product.stock_max,
-        type_of_control: product.type_of_control,
-        product_category: product.product_category,
-        sector_of_use: product.sector_of_use,
-        address: product.address,
-        users_with_permission: product.users_with_permission,
+        parentProduct: product.parentProduct
+          ? {
+              ...product.parentProduct,
+              buyQuantity: Number(product.parentProduct.buyQuantity),
+            }
+          : undefined,
+        unit: product.unit,
+        buyQuantity: product.buyQuantity,
+        buyDay: product.buyDay,
+        currentStock: product.currentStock,
+        minimunStock: product.minimunStock,
+        maximumStock: product.maximumStock,
+        controlType: product.controlType,
+        category: product.category,
+        sectorOfUse: product.sectorOfUse,
+        shelf: product.shelf,
+        usersWithPermission: product.usersWithPermission,
       })),
     };
 
@@ -384,14 +409,14 @@ export default function CustomReports() {
       );
       yPosition += addKeyValuePair(
         "Estoque Atual",
-        product.stock_current,
+        product.currentStock,
         14,
         70,
         (yPosition += lineHeight),
       );
       yPosition += addKeyValuePair(
         "Estoque Mínimo",
-        product.stock_min,
+        product.minimunStock,
         14,
         70,
         (yPosition += lineHeight),
@@ -479,8 +504,8 @@ export default function CustomReports() {
         product.sector_of_use.description,
         product.address?.stock,
         `${product.address?.storage}, ${product.address?.shelf}`,
-        product.stock_current,
-        product.stock_min,
+        product.currentStock,
+        product.minimunStock,
         product.stock_max,
         product.buy_quantity,
         product.buy_day,
@@ -683,32 +708,28 @@ export default function CustomReports() {
             )}
           />
           <Filter.Select
-            placeholder="Endereço no estoque"
+            placeholder="Endereço"
             state={selectAddress}
             setState={setSelectAddress}
             className={
               selectStock === "" ? "cursor-not-allowed opacity-50" : ""
             }
           >
-            {selectStock === ""
-              ? [
+            {selectStock === "" ? (
+              <Filter.SelectItems
+                key="0"
+                value="Selecione um estoque primeiro"
+              />
+            ) : (
+              cabinets.flatMap((cabinet) =>
+                cabinet.shelf.map((shelf) => (
                   <Filter.SelectItems
-                    key="0"
-                    value="Selecione um estoque primeiro"
-                  ></Filter.SelectItems>,
-                ]
-              : stocks
-                  .filter((stock) => stock.name === selectStock)
-                  .flatMap((stock) =>
-                    stock.address.flatMap((address) =>
-                      address.shelves.map((shelf, index) => (
-                        <Filter.SelectItems
-                          key={index}
-                          value={`${address.description}, ${shelf.description}`}
-                        ></Filter.SelectItems>
-                      )),
-                    ),
-                  )}
+                    key={shelf.id}
+                    value={`${cabinet.name} - ${shelf.name}`}
+                  />
+                )),
+              )
+            )}
           </Filter.Select>
         </Filter>
       </TableComponent.FiltersLine>
@@ -931,18 +952,18 @@ export default function CustomReports() {
               </TableComponent.Value>
               <TableComponent.Value>{product.name}</TableComponent.Value>
               <TableComponent.Value>
-                {product.buy_unit.description} ({product.buy_unit.abbreviation})
+                {product.unit.name} ({product.unit.abbreviation})
               </TableComponent.Value>
               <TableComponent.Value className="text-center">
-                {product.stock_current}
+                {product.currentStock}
               </TableComponent.Value>
               <TableComponent.Value className="text-center">
-                {product.stock_min}
+                {product.minimunStock}
               </TableComponent.Value>
               <TableComponent.Value className="text-center">
-                {Number(product.stock_current) - Number(product.stock_min) > 0
-                  ? `+${Number(product.stock_current) - Number(product.stock_min)}`
-                  : Number(product.stock_current) - Number(product.stock_min)}
+                {Number(product.currentStock) - Number(product.minimunStock) > 0
+                  ? `+${Number(product.currentStock) - Number(product.minimunStock)}`
+                  : Number(product.currentStock) - Number(product.minimunStock)}
               </TableComponent.Value>
 
               <Dialog>

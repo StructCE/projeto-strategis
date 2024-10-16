@@ -1,11 +1,24 @@
-import { type Product } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
+import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
+import { api } from "~/trpc/react";
 
 type ProductType = {
-  product: Product;
+  product: ProductWithFeatures;
 };
 
 export default function ProductDetails(props: ProductType) {
+  function getUserById(userId: string) {
+    const { data: user } = api.user.getUserById.useQuery({ id: userId });
+
+    return user?.name;
+  }
+
+  // fucntion getProductAddress(){
+  //   const address =
+
+  //   return address
+  // }
+
   return (
     <Table>
       <TableBody>
@@ -23,9 +36,11 @@ export default function ProductDetails(props: ProductType) {
             Fornecedores
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.suppliers
-              .map((supplier) => supplier.name)
-              .join(", ")}
+            {props.product.ProductSupplier.length
+              ? props.product.ProductSupplier.map(
+                  (supplier) => supplier.supplier.name,
+                ).join(", ")
+              : "N/A"}
           </TableCell>
         </TableRow>
 
@@ -43,7 +58,7 @@ export default function ProductDetails(props: ProductType) {
             Produto Pai
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.parent_product ?? "Não tem"}
+            {props.product.parentProduct?.name ?? "Não tem"}
           </TableCell>
         </TableRow>
 
@@ -52,8 +67,7 @@ export default function ProductDetails(props: ProductType) {
             Unidade de Compra
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.buy_unit.description} (
-            {props.product.buy_unit.abbreviation})
+            {props.product.unit.name} ({props.product.unit.abbreviation})
           </TableCell>
         </TableRow>
 
@@ -62,7 +76,7 @@ export default function ProductDetails(props: ProductType) {
             Quantidade de Compra
           </TableCell>
           <TableCell className="flex border-0 px-[10px] py-[5px]">
-            {props.product.buy_quantity}
+            {props.product.buyQuantity}
           </TableCell>
         </TableRow>
 
@@ -71,7 +85,7 @@ export default function ProductDetails(props: ProductType) {
             Dia de Compra
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.buy_day}
+            {props.product.buyDay}
           </TableCell>
         </TableRow>
 
@@ -80,7 +94,7 @@ export default function ProductDetails(props: ProductType) {
             Estoque Atual
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.stock_current}
+            {props.product.currentStock}
           </TableCell>
         </TableRow>
 
@@ -89,7 +103,7 @@ export default function ProductDetails(props: ProductType) {
             Estoque Mínimo
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.stock_min}
+            {props.product.minimunStock}
           </TableCell>
         </TableRow>
 
@@ -98,7 +112,7 @@ export default function ProductDetails(props: ProductType) {
             Estoque Máximo
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.stock_max}
+            {props.product.maximumStock}
           </TableCell>
         </TableRow>
 
@@ -107,7 +121,7 @@ export default function ProductDetails(props: ProductType) {
             Tipo de Controle
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.type_of_control.description}
+            {props.product.controlType.name}
           </TableCell>
         </TableRow>
 
@@ -116,7 +130,7 @@ export default function ProductDetails(props: ProductType) {
             Categoria do Produto
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.product_category.description}
+            {props.product.category.name}
           </TableCell>
         </TableRow>
 
@@ -125,7 +139,7 @@ export default function ProductDetails(props: ProductType) {
             Setor de Utilização
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.sector_of_use.description}
+            {props.product.sectorOfUse.name}
           </TableCell>
         </TableRow>
 
@@ -134,7 +148,7 @@ export default function ProductDetails(props: ProductType) {
             Endereço de Estoque
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {`${props.product.address.stock}, ${props.product.address.storage}, ${props.product.address.shelf}`}
+            {`${props.product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${props.product.shelf.cabinet.name}, ${props.product.shelf.name}`}
           </TableCell>
         </TableRow>
 
@@ -143,9 +157,9 @@ export default function ProductDetails(props: ProductType) {
             Usuários com Permissão
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.users_with_permission
-              ? props.product.users_with_permission
-                  .map((user) => user.name)
+            {props.product.usersWithPermission.length > 0
+              ? props.product.usersWithPermission
+                  .map((user) => getUserById(user.id))
                   .join(", ")
               : "Sem usuários"}
           </TableCell>
