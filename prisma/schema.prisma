@@ -181,7 +181,8 @@ model Product {
     sectorOfUseId   String
     shelfId         String
     parentProductId String?
-
+    stockId        String
+    
     usersWithPermission ProductPermission[]
 
     parentProduct Product?        @relation("ProductToParent", fields: [parentProductId], references: [id])
@@ -190,6 +191,7 @@ model Product {
     category      ProductCategory @relation(fields: [categoryId], references: [id])
     sectorOfUse   UseSector       @relation(fields: [sectorOfUseId], references: [id])
     shelf         Shelf           @relation(fields: [shelfId], references: [id], onDelete: Cascade)
+    stock         Stock           @relation(fields: [stockId],references: [id])
 
     childProducts    Product[]          @relation("ProductToParent")
     ProductSupplier  ProductSupplier[]
@@ -231,6 +233,7 @@ model Stock {
     StockCabinet     StockCabinet[] // Relação com StockCabinet para associar cabinets ao estoque
     Adjust           Adjust[]
     Order            Order[]
+    Product          Product[]
 }
 
 model Unit {

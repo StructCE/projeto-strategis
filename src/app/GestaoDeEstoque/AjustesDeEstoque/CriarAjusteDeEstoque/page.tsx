@@ -1,4 +1,6 @@
 "use client";
+
+// Third-party imports
 import {
   CalendarIcon,
   Eraser,
@@ -9,16 +11,8 @@ import {
   UserCog2,
 } from "lucide-react";
 import { useState } from "react";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import {
-  ProductCategories,
-  SectorsOfUse,
-  TypesOfControl,
-} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
-import {
-  products,
-  type Product,
-} from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
+
+// UI Components
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -45,9 +39,67 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+
+// API and data imports
+import { api } from "~/trpc/react";
 import { adjustment_reasons } from "../_components/adjustmentsData";
 
+// import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
+// import {
+//   productCategories,
+//   useSectors,
+//   controlTypes,
+// } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
+// import {
+//   products,
+//   type Product,
+// } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
+
+import type {
+  ProductWithFeatures as Product,
+  ProductWithFeatures,
+} from "~/server/interfaces/product/product.route.interfaces";
+
+function convertToFlatProductWithFeatures(products: ProductWithFeatures[]) {
+  return products.map((product) => {
+    const { shelf } = product;
+    const firstStockCabinet = shelf?.cabinet?.StockCabinet[0]?.stock;
+
+    return {
+      ...product,
+      adress: {
+        shelf: {
+          id: shelf.id,
+          name: shelf.name,
+        },
+        cabinet: {
+          id: shelf.cabinet.id,
+          name: shelf.cabinet.name,
+        },
+        stock: {
+          id: firstStockCabinet?.id ?? "",
+          name: firstStockCabinet?.name ?? "",
+          companyId: firstStockCabinet?.companyId ?? "",
+          legalResponsibleId: firstStockCabinet?.legalResponsibleId ?? "",
+        },
+      },
+    };
+  });
+}
+
 export default function CreateAdjustment() {
+  const { data: productCategories = [] } =
+    api.generalParameters.productCategory.getAll.useQuery();
+  const { data: useSectors = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: controlTypes = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
+
+  const { data: productsRawData = [] } = api.product.getAll.useQuery();
+  const products = convertToFlatProductWithFeatures(productsRawData);
+
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
@@ -88,23 +140,23 @@ export default function CreateAdjustment() {
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
           selectStock === "" ||
-          `${product.address.stock}`
-            .toLowerCase()
-            .includes(selectStock.toLowerCase());
+          product.shelf.cabinet.StockCabinet.some((stockCabinet) =>
+            stockCabinet.stock.name
+              .toLowerCase()
+              .includes(selectStock.toLowerCase()),
+          );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.address.storage}, ${product.address.shelf}`
+          `${product.adress.cabinet.name}, ${product.adress.shelf.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
           selectControlType === "" ||
-          product.type_of_control?.description === selectControlType;
+          product.controlType?.name === selectControlType;
         const matchesCategory =
-          selectCategory === "" ||
-          product.product_category?.description === selectCategory;
+          selectCategory === "" || product.category?.name === selectCategory;
         const matchesSector =
-          selectSector === "" ||
-          product.sector_of_use?.description === selectSector;
+          selectSector === "" || product.sectorOfUse?.name === selectSector;
 
         return (
           matchesCode &&
@@ -172,7 +224,7 @@ export default function CreateAdjustment() {
       products: addedProducts.map((product) => ({
         code: product.code,
         name: product.name,
-        stock_current: product.stock_current,
+        currentStock: product.currentStock,
         stock_adjusted: adjustedStock[product.code] ?? 0,
         adjustment_reason:
           adjustmentReasons[product.code] ?? "Sem motivo informado",
@@ -307,17 +359,17 @@ export default function CreateAdjustment() {
                     <Filter.SelectItems
                       key="0"
                       value="Selecione um estoque primeiro"
-                    ></Filter.SelectItems>,
+                    />,
                   ]
                 : stocks
                     .filter((stock) => stock.name === selectStock)
                     .flatMap((stock) =>
-                      stock.address.flatMap((address) =>
-                        address.shelves.map((shelf, index) => (
+                      stock.cabinets.flatMap((cabinet) =>
+                        cabinet.shelves.map((shelf, index) => (
                           <Filter.SelectItems
                             key={index}
-                            value={`${address.description}, ${shelf.description}`}
-                          ></Filter.SelectItems>
+                            value={`${cabinet.name}, ${shelf.name}`}
+                          />
                         )),
                       ),
                     )}
@@ -338,10 +390,10 @@ export default function CreateAdjustment() {
               state={selectControlType}
               setState={setSelectControlType}
             >
-              {TypesOfControl.map((type, index) => (
+              {controlTypes.map((type, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={type.description}
+                  value={type.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -359,10 +411,10 @@ export default function CreateAdjustment() {
               state={selectCategory}
               setState={setSelectCategory}
             >
-              {ProductCategories.map((category, index) => (
+              {productCategories.map((category, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={category.description}
+                  value={category.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -380,10 +432,10 @@ export default function CreateAdjustment() {
               state={selectSector}
               setState={setSelectSector}
             >
-              {SectorsOfUse.map((sector, index) => (
+              {useSectors.map((sector, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={sector.description}
+                  value={sector.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -454,7 +506,7 @@ export default function CreateAdjustment() {
                 </TableComponent.Value>
                 <TableComponent.Value>{product.name}</TableComponent.Value>
                 <TableComponent.Value className="text-center">
-                  {product.stock_current}
+                  {product.currentStock}
                 </TableComponent.Value>
                 <TableComponent.Value>
                   {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
@@ -544,7 +596,7 @@ export default function CreateAdjustment() {
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Atual: </span>
-                        {product.stock_current}
+                        {product.currentStock}
                       </p>
                       <div className="my-1 text-base">
                         <span className="font-semibold">
@@ -565,7 +617,7 @@ export default function CreateAdjustment() {
                       <p className="text-base">
                         <span className="font-semibold">Diferença: </span>
                         {Number(adjustedStock[product.code] ?? 0) -
-                          Number(product.stock_current)}
+                          Number(product.currentStock)}
                       </p>
                       <div className="my-1 text-base">
                         <span className="font-semibold">Descrição: </span>
@@ -656,7 +708,7 @@ export default function CreateAdjustment() {
                   {product.name}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {product.stock_current}
+                  {product.currentStock}
                 </TableComponent.Value>
                 <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
                   <Input
@@ -670,7 +722,7 @@ export default function CreateAdjustment() {
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
                   {Number(adjustedStock[product.code] ?? 0) -
-                    Number(product.stock_current)}
+                    Number(product.currentStock)}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-[13px] sm:text-[15px]">
                   <Select
@@ -768,7 +820,7 @@ export default function CreateAdjustment() {
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Atual: </span>
-                        {product.stock_current}
+                        {product.currentStock}
                       </p>
                       <div className="my-1 text-base">
                         <span className="font-semibold">
@@ -789,7 +841,7 @@ export default function CreateAdjustment() {
                       <p className="text-base">
                         <span className="font-semibold">Diferença: </span>
                         {Number(adjustedStock[product.code] ?? 0) -
-                          Number(product.stock_current)}
+                          Number(product.currentStock)}
                       </p>
                       <div className="my-1 text-base">
                         <span className="font-semibold">Descrição: </span>
