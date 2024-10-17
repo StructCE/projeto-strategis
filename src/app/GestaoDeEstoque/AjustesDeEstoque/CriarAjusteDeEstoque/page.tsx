@@ -189,11 +189,9 @@ export default function CreateAdjustment() {
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
           selectStock === "" ||
-          product.shelf.cabinet.StockCabinet.some((stockCabinet) =>
-            stockCabinet.stock.name
-              .toLowerCase()
-              .includes(selectStock.toLowerCase()),
-          );
+          product.address.stock.name
+            .toLowerCase()
+            .includes(selectStock.toLowerCase());
         const matchesAddress =
           selectAddress === "" ||
           `${product.address.cabinet.name}, ${product.address.shelf.name}`
@@ -217,6 +215,17 @@ export default function CreateAdjustment() {
           matchesSector
         );
       });
+
+  const filteredAddresses = Array.from(
+    new Set(
+      products
+        .filter((product) => selectStock.includes(product.address.stock.name))
+        .map(
+          (product) =>
+            `${product.address.cabinet.name}, ${product.address.shelf.name}`,
+        ),
+    ),
+  );
 
   // Função para adicionar produtos ao ajuste
   const handleAddProduct = (product: FlatProductWithFeatures) => {
@@ -408,20 +417,14 @@ export default function CreateAdjustment() {
                     <Filter.SelectItems
                       key="0"
                       value="Selecione um estoque primeiro"
-                    />,
+                    ></Filter.SelectItems>,
                   ]
-                : stocks
-                    .filter((stock) => stock.name === selectStock)
-                    .flatMap((stock) =>
-                      stock.cabinets.flatMap((cabinet) =>
-                        cabinet.shelves.map((shelf, index) => (
-                          <Filter.SelectItems
-                            key={index}
-                            value={`${cabinet.name}, ${shelf.name}`}
-                          />
-                        )),
-                      ),
-                    )}
+                : filteredAddresses.map((address, index) => (
+                    <Filter.SelectItems
+                      key={index}
+                      value={`${address}`}
+                    ></Filter.SelectItems>
+                  ))}
             </Filter.Select>
           </Filter>
         </TableComponent.FiltersLine>
