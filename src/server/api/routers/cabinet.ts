@@ -11,6 +11,13 @@ export const cabinetRouter = createTRPCRouter({
     },
   ),
 
+  getCabinetsWithoutStock: protectedProcedure.query(
+    async (): Promise<CabinetRouteInterfaces["CabinetWithShelves"][]> => {
+      const cabinets = await cabinetRepository.getCabinetsWithoutStock();
+      return cabinets;
+    },
+  ),
+
   getCabinetFromStock: protectedProcedure
     .input(cabinetRepositorySchema.cabinetFromStockProps)
     .query(

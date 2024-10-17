@@ -253,12 +253,7 @@ export default function CustomReports() {
         name: product.name,
         ProductSupplier: product.ProductSupplier,
         status: product.status,
-        parentProduct: product.parentProduct
-          ? {
-              ...product.parentProduct,
-              buyQuantity: Number(product.parentProduct.buyQuantity),
-            }
-          : undefined,
+        parentProduct: product.parentProduct,
         unit: product.unit,
         buyQuantity: product.buyQuantity,
         buyDay: product.buyDay,

@@ -20,6 +20,28 @@ async function getAll() {
   );
 }
 
+async function getCabinetsWithoutStock() {
+  const cabinets = await db.cabinet.findMany({
+    where: {
+      // Filtro para garantir que o armário não está associado a nenhum estoque
+      StockCabinet: {
+        none: {}, // Nenhum StockCabinet deve estar associado a esse Cabinet
+      },
+    },
+    include: {
+      Shelf: true, // Inclui as prateleiras associadas
+    },
+  });
+
+  return cabinets.map(
+    (cabinet): CabinetWithShelves => ({
+      id: cabinet.id,
+      name: cabinet.name,
+      shelf: cabinet.Shelf as Shelf[], // Define explicitamente o tipo de Shelf
+    }),
+  );
+}
+
 async function getCabinetFromStock(
   props: CabinetRepositoryInterfaces["CabinetFromStockProps"],
 ) {
@@ -87,6 +109,7 @@ async function remove(props: CabinetRepositoryInterfaces["RemoveProps"]) {
 
 export const cabinetRepository = {
   getAll,
+  getCabinetsWithoutStock,
   getCabinetFromStock,
   register,
   edit,

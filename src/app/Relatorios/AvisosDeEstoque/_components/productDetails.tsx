@@ -141,7 +141,10 @@ export default function ProductDetails(props: ProductType) {
         </TableRow>
 
         <TableRow className="bg-[#fbfbfb]">
-          <TableCell>
+          <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
+            Usuários com Permissão
+          </TableCell>
+          <TableCell className="px-[10px] py-[5px]">
             {props.product.usersWithPermission.length > 0
               ? props.product.usersWithPermission
                   .map((user) => user.user.name)
