@@ -79,41 +79,6 @@ async function createRoleModules(props: { roleId: string; modules: number[] }) {
   await Promise.all(createdRoleModules);
 }
 
-async function createUser(props: {
-  name: string;
-  email: string;
-  phone: string;
-}) {
-  const newUser = await db.user.create({
-    data: {
-      name: props.name,
-      email: props.email,
-      phone: props.phone,
-    },
-  });
-  return newUser;
-}
-
-async function assignAdminRole(userId: string, companyId: string) {
-  const adminRole = await db.role.findFirst({
-    where: { name: "administrador" },
-  });
-
-  if (!adminRole) {
-    throw new Error("O cargo de administrador não foi encontrado");
-  }
-
-  const userRole = await db.userRole.create({
-    data: {
-      userId: userId,
-      roleId: adminRole.id,
-      companyId: companyId,
-    },
-  });
-
-  return userRole;
-}
-
 async function createUserWithRole({
   name,
   email,
@@ -172,6 +137,7 @@ async function main() {
   //   return createdRoleModules;
   // });
   // await Promise.all(createdRoles);
+
   // const createdCategories = categories.map(async (category) => {
   //   const createdCategory = await createCategory({ name: category.name });
   //   return createdCategory;
@@ -203,6 +169,7 @@ async function main() {
   //   return createdUnit;
   // });
   // await Promise.all(createdUnits);
+
   const companyStruct = await db.company.create({
     data: {
       name: "Struct EJ",

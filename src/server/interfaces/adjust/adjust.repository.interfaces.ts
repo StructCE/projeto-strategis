@@ -1,7 +1,7 @@
 import z from "zod";
 
 const getAllProps = z.object({
-  companyId: z.string(),
+  // companyId: z.string(),
 });
 
 type GetAllProps = z.infer<typeof getAllProps>;

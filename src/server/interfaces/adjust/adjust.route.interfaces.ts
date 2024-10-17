@@ -1,28 +1,49 @@
-type Adjust = {
+export type Adjust = {
   id: string;
-  name: string;
   date: Date;
   type: string;
   responsibleId: string;
   stockId: string;
 };
 
-type SerializedAdjust = {
+export type AdjustProduct = {
   id: string;
+  code: string;
   name: string;
+  oldStock: number;
+  adjustedStock: number;
+  reason: string;
+  unit: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    unitsPerPack: number;
+  };
+  shelf: {
+    id: string;
+    name: string;
+    cabinet: {
+      id: string;
+      name: string;
+      StockCabinet: {
+        stock: {
+          id: string;
+          name: string;
+          companyId: string;
+          legalResponsibleId: string;
+        };
+      }[];
+    };
+  };
+};
+
+export type SerializedAdjust = {
+  id: string;
   date: Date;
   type: string;
   responsibleName: string;
   stockName: string;
-  adjustProducts: {
-    id: string;
-    oldStock: number;
-    adjustedStock: number;
-    reason: string;
-    product: string;
-    productCode: string;
-    productUnit: string;
-  }[];
+  adjustProducts: AdjustProduct[];
 };
 
 export type AdjustRouteInterfaces = {
