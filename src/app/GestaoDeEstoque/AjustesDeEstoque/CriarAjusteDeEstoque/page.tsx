@@ -44,30 +44,77 @@ import {
 import { api } from "~/trpc/react";
 import { adjustment_reasons } from "../_components/adjustmentsData";
 
-// import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-// import {
-//   productCategories,
-//   useSectors,
-//   controlTypes,
-// } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
-// import {
-//   products,
-//   type Product,
-// } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
-
 import type {
   ProductWithFeatures as Product,
   ProductWithFeatures,
 } from "~/server/interfaces/product/product.route.interfaces";
 
-function convertToFlatProductWithFeatures(products: ProductWithFeatures[]) {
+type FlatProductWithFeatures = {
+  id: string;
+  code: string;
+  name: string;
+  status: string;
+  buyQuantity: number;
+  buyDay: string;
+  currentStock: number;
+  minimunStock: number;
+  maximumStock: number;
+  lastInventory: number;
+  unitId: string;
+  controlTypeId: string;
+  categoryId: string;
+  sectorOfUseId: string;
+  shelfId: string;
+  parentProductId?: string | null;
+
+  // Relations
+  parentProduct?: Product | null;
+  unit: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    unitsPerPack: number;
+  };
+  controlType: {
+    id: string;
+    name: string;
+  };
+  category: {
+    id: string;
+    name: string;
+  };
+  sectorOfUse: {
+    id: string;
+    name: string;
+  };
+  address: {
+    shelf: {
+      id: string;
+      name: string;
+    };
+    cabinet: {
+      id: string;
+      name: string;
+    };
+    stock: {
+      id: string;
+      name: string;
+      companyId: string;
+      legalResponsibleId: string;
+    };
+  };
+};
+
+function convertToFlatProductWithFeatures(
+  products: ProductWithFeatures[],
+): FlatProductWithFeatures[] {
   return products.map((product) => {
     const { shelf } = product;
     const firstStockCabinet = shelf?.cabinet?.StockCabinet[0]?.stock;
 
     return {
       ...product,
-      adress: {
+      address: {
         shelf: {
           id: shelf.id,
           name: shelf.name,
@@ -83,7 +130,7 @@ function convertToFlatProductWithFeatures(products: ProductWithFeatures[]) {
           legalResponsibleId: firstStockCabinet?.legalResponsibleId ?? "",
         },
       },
-    };
+    } as FlatProductWithFeatures;
   });
 }
 
@@ -112,7 +159,9 @@ export default function CreateAdjustment() {
   const [selectCategory, setSelectCategory] = useState("");
   const [selectSector, setSelectSector] = useState("");
 
-  const [addedProducts, setAddedProducts] = useState<Product[]>([]);
+  const [addedProducts, setAddedProducts] = useState<FlatProductWithFeatures[]>(
+    [],
+  );
   const [adjustedStock, setAdjustedStock] = useState<Record<string, string>>(
     {},
   );
@@ -147,7 +196,7 @@ export default function CreateAdjustment() {
           );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.adress.cabinet.name}, ${product.adress.shelf.name}`
+          `${product.address.cabinet.name}, ${product.address.shelf.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
@@ -170,7 +219,7 @@ export default function CreateAdjustment() {
       });
 
   // Função para adicionar produtos ao ajuste
-  const handleAddProduct = (product: Product) => {
+  const handleAddProduct = (product: FlatProductWithFeatures) => {
     setAddedProducts((prev) => [...prev, product]);
   };
 
@@ -509,7 +558,7 @@ export default function CreateAdjustment() {
                   {product.currentStock}
                 </TableComponent.Value>
                 <TableComponent.Value>
-                  {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                  {`${product.address.stock.name}, ${product.address.cabinet.name}, ${product.address.shelf.name}`}
                 </TableComponent.Value>
                 <Button
                   onClick={() => handleAddProduct(product)}
@@ -592,7 +641,7 @@ export default function CreateAdjustment() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                        {`${product.address.stock.name}, ${product.address.cabinet.name}, ${product.address.shelf.name}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Atual: </span>
@@ -816,7 +865,7 @@ export default function CreateAdjustment() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                        {`${product.address.stock.name}, ${product.address.cabinet.name}, ${product.address.shelf.name}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Atual: </span>
