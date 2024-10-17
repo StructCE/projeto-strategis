@@ -2,14 +2,14 @@ import { db } from "../db";
 import type { InventoryRepositoryInterfaces } from "../interfaces/inventory/inventory.repository.interfaces";
 
 async function getAll(props: InventoryRepositoryInterfaces["GetAllProps"]) {
-  const { filters } = props;
+  // const { filters } = props;
   const inventories = await db.inventory.findMany({
-    where: {
-      AND: [
-        { date: filters.date },
-        { responsible: { user: { name: filters.responsible } } },
-      ],
-    },
+    // where: {
+    //   AND: [
+    //     { date: filters.date },
+    //     { responsible: { user: { name: filters.responsible } } },
+    //   ],
+    // },
     include: {
       responsible: { include: { user: true } },
       ProductInventory: { include: { product: { include: { unit: true } } } },
@@ -37,7 +37,7 @@ async function register(props: InventoryRepositoryInterfaces["RegisterProps"]) {
           id: inventoryProduct.productId,
         },
         data: {
-          currentInventory: inventoryProduct.inventoryQuantity,
+          lastInventory: inventoryProduct.inventoryQuantity,
         },
       });
       return { registeredInventoryProduct, updatedProductInventoryQuantity };

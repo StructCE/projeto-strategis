@@ -19,13 +19,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { inventories } from "../inventoriesData";
+import { api } from "~/trpc/react";
 import InventoryDetails from "./inventoryDetails/inventoryDetailsTable";
 
 export default function ManageInventoriesTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
+
+  const {
+    data: inventories = [],
+    error,
+    isLoading,
+  } = api.inventory.getAllInventories.useQuery({
+    // filters: { date: date, responsible: inputResponsible },'
+  });
 
   const filteredInventories = inventories.filter((inventory) => {
     const matchesDate =
@@ -36,7 +44,7 @@ export default function ManageInventoriesTable() {
 
     const matchesResponsible =
       inputResponsible === "" ||
-      inventory.responsible
+      inventory.responsibleName
         .toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
@@ -86,9 +94,7 @@ export default function ManageInventoriesTable() {
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
@@ -106,58 +112,98 @@ export default function ManageInventoriesTable() {
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {filteredInventories.map((inventory, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[1fr_2fr_1.5fr_130px] ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
+
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
-              {`${inventory.date.getDate()}/${inventory.date.getMonth()}/${inventory.date.getFullYear()}`}
+              Erro ao mostrar inventários: {error.message}
             </TableComponent.Value>
-            <TableComponent.Value>{inventory.name}</TableComponent.Value>
-            <TableComponent.Value>{inventory.responsible}</TableComponent.Value>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
-              >
-                <DialogHeader>
-                  <DialogTitle className="w-fit pb-1.5">
-                    Informações do {inventory.name}
-                  </DialogTitle>
-                  <DialogDescription className="w-fit text-base text-black">
-                    <p className="w-fit">
-                      <span className="font-semibold">Data do Inventário:</span>{" "}
-                      {`${inventory.date.getDate()}/${inventory.date.getMonth()}/${inventory.date.getFullYear()}`}
-                    </p>
-                    <p className="w-fit">
-                      <span className="font-semibold">
-                        Responsável pelo Inventário:
-                      </span>{" "}
-                      {inventory.responsible}
-                    </p>
-                    <p className="w-fit font-semibold">Contagem:</p>
-                  </DialogDescription>
-
-                  <InventoryDetails inventory={inventory} />
-
-                  <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
-                    <TableButtonComponent.Button className="hover:bg-hover_vermelho_botao_1 bg-vermelho_botao_1 max-[425px]:w-full">
-                      Realizar Ajuste de Estoque Automático
-                    </TableButtonComponent.Button>
-                  </TableButtonComponent>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
           </TableComponent.Line>
-        ))}
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando inventários...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {inventories.length > 0 && !isLoading && !error ? (
+          filteredInventories.length > 0 ? (
+            filteredInventories
+              .sort((a, b) => b.date.getTime() - a.date.getTime())
+              .map((inventory, index) => (
+                <TableComponent.Line
+                  className={`grid-cols-[1fr_2fr_1.5fr_130px] ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value>
+                    {`${inventory.date.getDate()}/${inventory.date.getMonth()}/${inventory.date.getFullYear()}`}
+                  </TableComponent.Value>
+                  <TableComponent.Value>{inventory.name}</TableComponent.Value>
+                  <TableComponent.Value>
+                    {inventory.responsibleName}
+                  </TableComponent.Value>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="w-fit pb-1.5">
+                          Informações do {inventory.name}
+                        </DialogTitle>
+                        <DialogDescription className="w-fit text-base text-black">
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Data do Inventário:
+                            </span>{" "}
+                            {`${inventory.date.getDate()}/${inventory.date.getMonth()}/${inventory.date.getFullYear()}`}
+                          </p>
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Responsável pelo Inventário:
+                            </span>{" "}
+                            {inventory.responsibleName}
+                          </p>
+                          <p className="w-fit font-semibold">Contagem:</p>
+                        </DialogDescription>
+
+                        <InventoryDetails inventory={inventory} />
+
+                        <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
+                          <TableButtonComponent.Button className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full">
+                            Realizar Ajuste de Estoque Automático
+                          </TableButtonComponent.Button>
+                        </TableButtonComponent>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum inventário encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum inventário encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
     </TableComponent>
   );

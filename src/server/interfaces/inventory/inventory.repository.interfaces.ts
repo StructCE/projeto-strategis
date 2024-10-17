@@ -1,10 +1,10 @@
 import z from "zod";
 
 const getAllProps = z.object({
-  filters: z.object({
-    date: z.date(),
-    responsible: z.string(),
-  }),
+  // filters: z.object({
+  //   date: z.date().optional(),
+  //   responsible: z.string().optional(),
+  // }),
 });
 
 type GetAllProps = z.infer<typeof getAllProps>;

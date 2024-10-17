@@ -1,11 +1,11 @@
-type Inventory = {
+export type Inventory = {
   id: string;
   name: string;
   date: Date;
   responsibleId: string;
 };
 
-type SerializedInventory = {
+export type SerializedInventory = {
   id: string;
   name: string;
   date: Date;

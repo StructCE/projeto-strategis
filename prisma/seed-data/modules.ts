@@ -74,7 +74,7 @@ export const modules: {
     name: "Fazer Inventários",
     code: 12,
     pagePath: "/GestaoDeEstoque/InventariosDeEstoque",
-    allowedRouter: "",
+    allowedRouter: "inventory",
   },
   {
     name: "Fazer Ajustes de Estoque",

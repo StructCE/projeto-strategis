@@ -1,8 +1,8 @@
 import { TableComponent } from "~/components/table";
-import { type Inventory } from "../../inventoriesData";
+import { SerializedInventory } from "~/server/interfaces/inventory/inventory.route.interfaces";
 
 type InventoryType = {
-  inventory: Inventory;
+  inventory: SerializedInventory;
 };
 
 export default function InventoryDetails(props: InventoryType) {
@@ -39,7 +39,7 @@ export default function InventoryDetails(props: InventoryType) {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {props.inventory.products.map((product, index) => (
+        {props.inventory.inventoryProducts.map((product, index) => (
           <TableComponent.Line
             className={`min-w-full grid-cols-[70px_1fr_113px_113px_92px_1fr] gap-8 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -50,7 +50,7 @@ export default function InventoryDetails(props: InventoryType) {
               {product.code}
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] sm:text-[15px]">
-              {product.name}
+              {product.product}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
               {product.stockQuantity}
