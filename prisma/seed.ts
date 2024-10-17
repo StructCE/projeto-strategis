@@ -163,7 +163,6 @@ async function main() {
   //   return createdModule;
   // });
   // await Promise.all(createdModules);
-
   // const createdRoles = roles.map(async (role) => {
   //   const createdRole = await createRole({ name: role.name });
   //   const createdRoleModules = await createRoleModules({
@@ -173,25 +172,21 @@ async function main() {
   //   return createdRoleModules;
   // });
   // await Promise.all(createdRoles);
-
   // const createdCategories = categories.map(async (category) => {
   //   const createdCategory = await createCategory({ name: category.name });
   //   return createdCategory;
   // });
   // await Promise.all(createdCategories);
-
   // const createdReasons = adjustementReasons.map(async (reason) => {
   //   const createdReason = await createAdjustmentReason({ name: reason.name });
   //   return createdReason;
   // });
   // await Promise.all(createdReasons);
-
   // const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
   //   const createdSector = await createSectorOfUse({ name: sector.name });
   //   return createdSector;
   // });
   // await Promise.all(createdSectorOfUse);
-
   // const createdControlType = controlTypes.map(async (controlType) => {
   //   const createdControlType = await createControlType({
   //     name: controlType.name,
@@ -199,7 +194,6 @@ async function main() {
   //   return createdControlType;
   // });
   // await Promise.all(createdControlType);
-
   // const createdUnits = units.map(async (unit) => {
   //   const createdUnit = await createUnit({
   //     name: unit.name,
@@ -209,7 +203,6 @@ async function main() {
   //   return createdUnit;
   // });
   // await Promise.all(createdUnits);
-
   const companyStruct = await db.company.create({
     data: {
       name: "Struct EJ",
@@ -228,7 +221,6 @@ async function main() {
       // legalResponsibleId: "",
     },
   });
-
   await createUserWithRole({
     name: "Leonardo Côrtes",
     email: "leonardo.cortes@struct.unb.br",
@@ -236,7 +228,6 @@ async function main() {
     roleName: "Administrador",
     companyId: companyStruct.id,
   });
-
   await createUserWithRole({
     name: "Matheus das Neves Fernandes",
     email: "matheusnf@struct.unb.br",
@@ -244,7 +235,6 @@ async function main() {
     roleName: "Administrador",
     companyId: companyStruct.id,
   });
-
   await createUserWithRole({
     name: "Guilherme Sampaio",
     email: "guilherme.sampaio@struct.unb.br",
@@ -252,7 +242,6 @@ async function main() {
     roleName: "Administrador",
     companyId: companyStruct.id,
   });
-
   await createUserWithRole({
     name: "Willyan Marques",
     email: "willyan.marques@struct.unb.br",

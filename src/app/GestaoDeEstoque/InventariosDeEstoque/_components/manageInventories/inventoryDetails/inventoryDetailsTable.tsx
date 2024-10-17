@@ -1,5 +1,5 @@
 import { TableComponent } from "~/components/table";
-import { SerializedInventory } from "~/server/interfaces/inventory/inventory.route.interfaces";
+import { type SerializedInventory } from "~/server/interfaces/inventory/inventory.route.interfaces";
 
 type InventoryType = {
   inventory: SerializedInventory;
@@ -50,7 +50,7 @@ export default function InventoryDetails(props: InventoryType) {
               {product.code}
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] sm:text-[15px]">
-              {product.product}
+              {product.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
               {product.stockQuantity}

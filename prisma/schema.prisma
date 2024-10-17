@@ -318,7 +318,7 @@ model ProductOutput {
 
 model Inventory {
     id            String   @id @default(cuid())
-    name          String
+    // name          String
     date          DateTime
     responsibleId String
 
@@ -340,7 +340,7 @@ model ProductInventory {
 model Adjust {
     id            String   @id @default(cuid())
     stockId       String
-    name          String
+    // name          String
     date          DateTime
     type          String
     responsibleId String

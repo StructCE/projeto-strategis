@@ -100,15 +100,18 @@ export default function ManageInventoriesTable() {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1fr_2fr_1.5fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[1fr_1.5fr_0.7fr_1fr_130px] gap-8">
           <TableComponent.ValueTitle>
             Data do Inventário
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle>
-            Nome do Inventário
-          </TableComponent.ValueTitle>
-          <TableComponent.ValueTitle>
             Responsável pelo Inventário
+          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-center">
+            Produtos
+          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-center">
+            Ajuste Necessário?
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
@@ -133,7 +136,7 @@ export default function ManageInventoriesTable() {
               .sort((a, b) => b.date.getTime() - a.date.getTime())
               .map((inventory, index) => (
                 <TableComponent.Line
-                  className={`grid-cols-[1fr_2fr_1.5fr_130px] ${
+                  className={`grid-cols-[1fr_1.5fr_0.7fr_1fr_130px] gap-8 ${
                     index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                   }`}
                   key={index}
@@ -141,9 +144,23 @@ export default function ManageInventoriesTable() {
                   <TableComponent.Value>
                     {`${inventory.date.getDate()}/${inventory.date.getMonth()}/${inventory.date.getFullYear()}`}
                   </TableComponent.Value>
-                  <TableComponent.Value>{inventory.name}</TableComponent.Value>
                   <TableComponent.Value>
                     {inventory.responsibleName}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {inventory.inventoryProducts.length}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {inventory.inventoryProducts.some(
+                      (product) =>
+                        product.inventoryQuantity !== product.stockQuantity,
+                    ) ? (
+                      <span className="text-vermelho_botao_2">
+                        Ajuste Necessário
+                      </span>
+                    ) : (
+                      <span className="text-verde_botao">Estoque Ok</span>
+                    )}
                   </TableComponent.Value>
                   <Dialog>
                     <DialogTrigger asChild>
@@ -157,7 +174,7 @@ export default function ManageInventoriesTable() {
                     >
                       <DialogHeader>
                         <DialogTitle className="w-fit pb-1.5">
-                          Informações do {inventory.name}
+                          Informações do invnetário
                         </DialogTitle>
                         <DialogDescription className="w-fit text-base text-black">
                           <p className="w-fit">

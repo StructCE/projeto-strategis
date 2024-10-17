@@ -3,11 +3,11 @@ import { z } from "zod";
 export const editStorageFormSchema = z.object({
   name: z
     .string()
-    .min(3, {
-      message: "Descrição/nome deve ter pelo menos 3 caracteres.",
+    .min(2, {
+      message: "Descrição/nome deve ter pelo menos 2 caracteres.",
     })
-    .max(60, {
-      message: "Descrição/nome deve ter no máximo 60 caracteres.",
+    .max(40, {
+      message: "Descrição/nome deve ter no máximo 40 caracteres.",
     }),
 });
 

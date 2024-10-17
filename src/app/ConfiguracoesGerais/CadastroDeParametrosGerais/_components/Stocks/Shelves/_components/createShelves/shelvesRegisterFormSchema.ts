@@ -6,11 +6,11 @@ export const createShelfFormSchema = z.object({
   }),
   name: z
     .string()
-    .min(3, {
+    .min(1, {
       message: "Descrição/nome deve ter pelo menos 1 caractere.",
     })
-    .max(60, {
-      message: "Descrição/nome deve ter no máximo 60 caracteres.",
+    .max(30, {
+      message: "Descrição/nome deve ter no máximo 30 caracteres.",
     }),
 });
 
