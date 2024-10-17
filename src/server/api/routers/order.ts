@@ -1,7 +1,7 @@
 import { orderRepositorySchema } from "~/server/interfaces/order/order.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
 import type { OrderRouteInterfaces } from "~/server/interfaces/order/order.route.interfaces";
 import { orderRepository } from "~/server/repositories/order.repository";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const orderRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -13,13 +13,23 @@ export const orderRouter = createTRPCRouter({
           id: order.id,
           date: order.date,
           responsibleName: order.responsible.user.name,
-          stockName: order.stock.name,
-          products: order.OrderProduct.map((orderProduct) => ({
-            buyQuantity: orderProduct.buyQuantity,
-            unitType: orderProduct.product.product.unit.name,
-            supplier: orderProduct.product.supplier.name,
+          stock: { id: order.stock.id, name: order.stock.name },
+          orderProducts: order.OrderProduct.map((orderProduct) => ({
+            id: orderProduct.product.product.id,
+            code: orderProduct.product.product.code,
+            name: orderProduct.product.product.name,
+            purchaseQuantity: orderProduct.purchaseQuantity,
+            currentStock: orderProduct.product.product.currentStock,
+            minimunStock: orderProduct.product.product.minimunStock,
+            unit: orderProduct.product.product.unit,
+            ProductSupplier: {
+              id: orderProduct.product.supplier.id,
+              supplier: orderProduct.product.supplier,
+            },
+            shelf: orderProduct.product.product.shelf,
           })),
         }));
+
         return serializedOrders;
       },
     ),

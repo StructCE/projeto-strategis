@@ -6,6 +6,7 @@ import { companyRouter } from "./routers/company";
 import { controlTypeRouter } from "./routers/controlType";
 import { inventoryRouter } from "./routers/inventory";
 import { operationRouter } from "./routers/operation";
+import { orderRouter } from "./routers/order";
 import { productRouter } from "./routers/product";
 import { productCategoryRouter } from "./routers/productCategory";
 import { requestRouter } from "./routers/request";
@@ -35,6 +36,7 @@ export const appRouter = createTRPCRouter({
   userRole: userRoleRouter,
   user: userRouter,
   inventory: inventoryRouter,
+  order: orderRouter,
   generalParameters: {
     cabinet: cabinetRouter,
     controlType: controlTypeRouter,

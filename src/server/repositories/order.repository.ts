@@ -2,21 +2,41 @@ import { db } from "../db";
 import type { OrderRepositoryInterfaces } from "../interfaces/order/order.repository.interfaces";
 
 async function getAll(props: OrderRepositoryInterfaces["GetAllProps"]) {
-  const { filters } = props;
+  // const { filters } = props;
   const orders = await db.order.findMany({
-    where: {
-      AND: [
-        { date: filters.date },
-        { responsible: { user: { name: filters.responsibleName } } },
-      ],
-    },
+    // where: {
+    //   AND: [
+    //     { date: filters.date },
+    //     { responsible: { user: { name: filters.responsibleName } } },
+    //   ],
+    // },
     include: {
       responsible: { include: { user: true } },
       stock: true,
       OrderProduct: {
         include: {
           product: {
-            include: { product: { include: { unit: true } }, supplier: true },
+            include: {
+              product: {
+                include: {
+                  unit: true,
+                  shelf: {
+                    include: {
+                      cabinet: {
+                        include: {
+                          StockCabinet: {
+                            include: {
+                              stock: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              supplier: true,
+            },
           },
         },
       },
@@ -26,24 +46,34 @@ async function getAll(props: OrderRepositoryInterfaces["GetAllProps"]) {
 }
 
 async function register(props: OrderRepositoryInterfaces["RegisterProps"]) {
+  const userRole = await db.userRole.findFirst({
+    where: {
+      userId: props.responsibleId, // Relacionando o userId recebido do front-end
+    },
+  });
+
+  if (!userRole) {
+    throw new Error("O usuário não tem um papel associado (UserRole).");
+  }
+
   const createdOrder = await db.order.create({
     data: {
       date: props.date,
-      responsibleId: props.responsibleId,
+      responsibleId: userRole.id,
       stockId: props.stockId,
     },
   });
-  const createdORderProducts = props.orderProducts.map(async (orderProduct) => {
+  const createdOrderProducts = props.orderProducts.map(async (orderProduct) => {
     const createOrderProduct = await db.orderProduct.create({
       data: {
-        buyQuantity: orderProduct.buyQuantity,
+        purchaseQuantity: orderProduct.purchaseQuantity,
         orderId: createdOrder.id,
         productSupplierId: orderProduct.productSupplierId,
       },
     });
     return createOrderProduct;
   });
-  await Promise.all(createdORderProducts);
+  await Promise.all(createdOrderProducts);
 
   return createdOrder;
 }

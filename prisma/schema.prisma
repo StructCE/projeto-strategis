@@ -384,7 +384,7 @@ model Order {
 model OrderProduct {
     id                String @id @default(cuid())
     orderId           String
-    buyQuantity       Int
+    purchaseQuantity  Int
     productSupplierId String
 
     order   Order           @relation(fields: [orderId], references: [id])

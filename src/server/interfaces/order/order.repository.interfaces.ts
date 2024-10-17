@@ -1,10 +1,10 @@
 import z from "zod";
 
 const getAllProps = z.object({
-  filters: z.object({
-    date: z.date(),
-    responsibleName: z.string(),
-  }),
+  // filters: z.object({
+  //   date: z.date().optional(),
+  //   responsibleName: z.string().optional(),
+  // }),
 });
 
 type GetAllProps = z.infer<typeof getAllProps>;
@@ -15,7 +15,7 @@ const registerProps = z.object({
   stockId: z.string(),
   orderProducts: z.array(
     z.object({
-      buyQuantity: z.number(),
+      purchaseQuantity: z.number(),
       productSupplierId: z.string(),
     }),
   ),
