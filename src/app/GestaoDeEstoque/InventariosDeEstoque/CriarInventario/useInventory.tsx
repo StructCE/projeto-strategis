@@ -3,7 +3,7 @@ import { type InventoryProduct } from "~/server/interfaces/inventory/inventory.r
 import { api } from "~/trpc/react";
 
 interface FinalizeInventoryProps {
-  selectResponsible: string | null;
+  selectResponsible: string | undefined;
   addedProducts: InventoryProduct[];
   quantities: Record<string, string>;
   date?: Date;

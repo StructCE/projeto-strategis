@@ -103,22 +103,23 @@ async function edit(props: OrderRepositoryInterfaces["EditProps"]) {
       id: id,
     },
     data: {
-      date: data.date,
-      responsibleId: data.responsibleId,
+      // date: data.date,
+      // responsibleId: data.responsibleId,
+      status: data.status,
       // stockId: data.stockId,
     },
   });
 
-  const editedOrderProducts = data.orderProducts.map(async (orderProduct) => {
-    const editedOrderProduct = await db.orderProduct.update({
-      where: {
-        id: orderProduct.id,
-      },
-      data: { ...orderProduct.data },
-    });
-    return editedOrderProduct;
-  });
-  await Promise.all(editedOrderProducts);
+  // const editedOrderProducts = data.orderProducts.map(async (orderProduct) => {
+  //   const editedOrderProduct = await db.orderProduct.update({
+  //     where: {
+  //       id: orderProduct.id,
+  //     },
+  //     data: { ...orderProduct.data },
+  //   });
+  //   return editedOrderProduct;
+  // });
+  // await Promise.all(editedOrder);
 
   return editedOrder;
 }

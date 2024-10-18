@@ -374,6 +374,7 @@ model Order {
     id            String   @id @default(cuid())
     date          DateTime
     responsibleId String
+    status        Boolean  @default(false)
     // stockId       String
 
     responsible  UserRole       @relation("OrderResponsible", fields: [responsibleId], references: [id])

@@ -44,6 +44,7 @@ const FinalizeOrder: React.FC<FinalizeOrderProps> = ({
     const orderData = {
       date: date ?? new Date(),
       responsibleId: selectResponsible,
+      status: false,
       orderProducts: addedProducts.map((product) => ({
         productSupplierId: selectedSuppliers[product.code] ?? "",
         purchaseQuantity: Number(quantities[product.code]) || 0,

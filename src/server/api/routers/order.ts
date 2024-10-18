@@ -12,7 +12,11 @@ export const orderRouter = createTRPCRouter({
         const serializedOrders = orders.map((order) => ({
           id: order.id,
           date: order.date,
-          responsibleName: order.responsible.user.name,
+          responsible: {
+            id: order.responsible.user.id,
+            name: order.responsible.user.name,
+          },
+          status: order.status,
           // stock: { id: order.stock.id, name: order.stock.name },
           orderProducts: order.OrderProduct.map((orderProduct) => ({
             id: orderProduct.product.product.id,

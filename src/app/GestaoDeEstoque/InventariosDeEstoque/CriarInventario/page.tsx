@@ -8,6 +8,7 @@ import {
   Trash2,
   UserCog2,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -41,7 +42,12 @@ import FinalizeInventory from "./useInventory";
 export default function CreateInventory() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
-  const [selectResponsible, setSelectResponsible] = useState("");
+
+  const session = useSession();
+  const userId = session.data?.user.id;
+  const [selectResponsible, setSelectResponsible] = useState<
+    string | undefined
+  >(userId);
 
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
@@ -183,6 +189,7 @@ export default function CreateInventory() {
             <Select
               onValueChange={setSelectResponsible}
               value={selectResponsible}
+              defaultValue={selectResponsible}
             >
               <SelectTrigger className="font-inter m-0 h-auto border-0 border-none bg-transparent p-0 px-2 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-[250px]">
                 <UserCog2

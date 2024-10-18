@@ -23,6 +23,7 @@ import {
 import { api } from "~/trpc/react";
 import { default as PurchaseDetails } from "./purchaseDetails/purchaseDetailsTable";
 import { DeleteOrder } from "./useDeleteOrder";
+import { EditOrder } from "./useEditOrder";
 
 export default function ManagePurchasesTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -48,7 +49,7 @@ export default function ManagePurchasesTable() {
 
     const matchesResponsible =
       inputResponsible === "" ||
-      order.responsibleName
+      order.responsible.name
         .toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
@@ -171,7 +172,7 @@ export default function ManagePurchasesTable() {
                     {`${order.date.getDate()}/${order.date.getMonth()}/${order.date.getFullYear()}`}
                   </TableComponent.Value>
                   <TableComponent.Value>
-                    {order.responsibleName}
+                    {order.responsible.name}
                   </TableComponent.Value>
                   <TableComponent.Value className="flex">
                     {(() => {
@@ -220,7 +221,19 @@ export default function ManagePurchasesTable() {
                             <span className="font-semibold">
                               Responsável pelo Pedido:
                             </span>{" "}
-                            {order.responsibleName}
+                            {order.responsible.name}
+                          </p>
+                          <p className="w-fit">
+                            <span className="font-semibold">Status:</span>{" "}
+                            {order.status ? (
+                              <span className="font-normal text-verde_botao">
+                                Confirmado
+                              </span>
+                            ) : (
+                              <span className="font-normal text-amarelo_botao">
+                                Pendente
+                              </span>
+                            )}
                           </p>
                           <p className="w-fit font-semibold">Produtos:</p>
                         </DialogDescription>
@@ -228,7 +241,11 @@ export default function ManagePurchasesTable() {
                         <PurchaseDetails order={order} />
 
                         <TableButtonComponent className="w-fit justify-between pt-2 sm:pt-4 lg:w-full">
-                          <DeleteOrder orderId={order.id} />
+                          <div className="flex gap-3">
+                            <DeleteOrder orderId={order.id} />
+
+                            {order.status ? <></> : <EditOrder order={order} />}
+                          </div>
 
                           <TableButtonComponent.Button
                             className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
