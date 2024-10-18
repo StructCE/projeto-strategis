@@ -239,8 +239,8 @@ model Unit {
     abbreviation String
     unitsPerPack Float
 
-    Product        Product[]
-    RequestProduct RequestProduct[]
+    Product Product[]
+    // RequestProduct RequestProduct[]
 }
 
 model Cabinet {
@@ -396,28 +396,28 @@ model Request {
     id                  String    @id @default(cuid())
     requestDate         DateTime
     responsibleId       String
-    description         String
-    status              String
+    description         String?
+    status              String    @default("Esperando Confirmação")
     statusDescription   String?
     statusDate          DateTime?
-    statusResponsibleId String
+    statusResponsibleId String?
 
     responsible       UserRole         @relation("RequestResponsible", fields: [responsibleId], references: [id])
-    statusResponsible UserRole         @relation("StatusResponsible", fields: [statusResponsibleId], references: [id])
+    statusResponsible UserRole?        @relation("StatusResponsible", fields: [statusResponsibleId], references: [id])
     RequestProduct    RequestProduct[]
 }
 
 model RequestProduct {
     id                String @id @default(cuid())
     requestedQuantity Int
-    releasedQuantity  Int
+    releasedQuantity  Int?
     requestId         String
     productId         String
-    unitId            String
+    // unitId            String
 
     request Request @relation(fields: [requestId], references: [id])
     product Product @relation(fields: [productId], references: [id])
-    unit    Unit    @relation(fields: [unitId], references: [id])
+    // unit    Unit    @relation(fields: [unitId], references: [id])
 }
 
 model Operation {

@@ -17,15 +17,15 @@ const registerProps = z.object({
   status: z.string(),
   statusDescription: z.string().optional(),
   statusDate: z.date().optional(),
-  statusResponsibleId: z.string(),
-  stockId: z.string(),
+  statusResponsibleId: z.string().optional(),
+  // stockId: z.string(),
   requestProducts: z.array(
     z.object({
       requestedQuantity: z.number(),
-      releasedQuantity: z.number(),
-      requestId: z.string(),
+      releasedQuantity: z.number().optional(),
+      // requestId: z.string(),
       productId: z.string(),
-      unitId: z.string(),
+      // unitId: z.string(),
     }),
   ),
 });
@@ -42,12 +42,12 @@ const editProps = z.object({
     statusDescription: z.string().optional(),
     statusDate: z.date().optional(),
     statusResponsibleId: z.string(),
-    stockId: z.string(),
+    // stockId: z.string(),
     requestProducts: z.array(
       z.object({
         requestedQuantity: z.number(),
-        releasedQuantity: z.number(),
-        requestId: z.string(),
+        releasedQuantity: z.number().optional(),
+        // requestId: z.string(),
         productId: z.string(),
         unitId: z.string(),
       }),

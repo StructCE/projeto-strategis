@@ -32,8 +32,10 @@ export default function ManagePendingRequestsTable() {
     isLoading,
   } = api.request.getAll.useQuery({});
 
+  console.log(requests);
+
   const filteredRequests = requests.filter((request) => {
-    const matchesStatus = request.status == "Pendente";
+    const matchesStatus = request.status == "Esperando Confirmação";
 
     const matchesDate =
       !date ||
@@ -44,7 +46,7 @@ export default function ManagePendingRequestsTable() {
     const matchesResponsible =
       inputResponsible === "" ||
       request.responsibleName
-        .toLowerCase()
+        ?.toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
     return matchesStatus && matchesDate && matchesResponsible;
@@ -151,7 +153,9 @@ export default function ManagePendingRequestsTable() {
                     {request.requestProducts.length}
                   </TableComponent.Value>
                   <TableComponent.Value>
-                    {request.description ?? "Não informada"}
+                    {request.description === ""
+                      ? "Não informada"
+                      : request.description}
                   </TableComponent.Value>
 
                   <Dialog>

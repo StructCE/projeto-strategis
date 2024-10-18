@@ -101,10 +101,10 @@ export default function PendingRequestDetails(props: RequestType) {
               {product.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] tracking-tighter sm:text-[15px]">
-              {`${product.shelf.cabinet.StockCabinet.map(
+              {product.shelf.cabinet.StockCabinet.map(
                 (stockCabinet) => stockCabinet.stock.name,
-              ).join(", ")}
-              , ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+              )}
+              , {product.shelf.cabinet.name}, {product.shelf.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
               {product.currentStock}

@@ -3,7 +3,7 @@ export type PendentRequestsCount = {
 };
 
 export type Request = {
-  description: string;
+  description: string | null;
   requestDate: Date;
   responsibleId: string;
   status: string;
@@ -15,11 +15,11 @@ export type Request = {
 export type RequestProduct = {
   code: string;
   name: string;
-  unit: string;
+  // unit: string;
   requestedQuantity: number;
   currentStock: number;
   minimunStock: number;
-  releasedQuantity: number;
+  releasedQuantity: number | null;
   shelf: {
     id: string;
     name: string;
@@ -39,13 +39,13 @@ export type RequestProduct = {
 };
 
 export type SerializedRequest = {
-  description: string;
+  description: string | undefined | null;
   requestDate: Date;
-  responsibleName: string;
+  responsibleName: string | undefined;
   status: string;
   statusDate: Date | null;
   statusDescription: string | null;
-  statusResponsible: string;
+  statusResponsible: string | undefined;
   requestProducts: RequestProduct[];
 };
 
