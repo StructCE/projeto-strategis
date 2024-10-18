@@ -13,7 +13,7 @@ export const orderRouter = createTRPCRouter({
           id: order.id,
           date: order.date,
           responsibleName: order.responsible.user.name,
-          stock: { id: order.stock.id, name: order.stock.name },
+          // stock: { id: order.stock.id, name: order.stock.name },
           orderProducts: order.OrderProduct.map((orderProduct) => ({
             id: orderProduct.product.product.id,
             code: orderProduct.product.product.code,

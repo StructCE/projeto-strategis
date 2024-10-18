@@ -22,6 +22,7 @@ import {
 } from "~/components/ui/tooltip";
 import { api } from "~/trpc/react";
 import { default as PurchaseDetails } from "./purchaseDetails/purchaseDetailsTable";
+import { DeleteOrder } from "./useDeleteOrder";
 
 export default function ManagePurchasesTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -129,12 +130,15 @@ export default function ManagePurchasesTable() {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[0.7fr_1fr_2fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[0.7fr_1.2fr_1.5fr_0.7fr_130px] gap-8">
           <TableComponent.ValueTitle>Data do Pedido</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>
             Responsável pelo Pedido
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Fornecedores</TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-center">
+            Produtos
+          </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
@@ -158,7 +162,7 @@ export default function ManagePurchasesTable() {
               .sort((a, b) => b.date.getTime() - a.date.getTime())
               .map((order, index) => (
                 <TableComponent.Line
-                  className={`grid-cols-[0.7fr_1fr_2fr_130px] ${
+                  className={`grid-cols-[0.7fr_1.2fr_1.5fr_0.7fr_130px] gap-8 ${
                     index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                   }`}
                   key={index}
@@ -186,6 +190,9 @@ export default function ManagePurchasesTable() {
                         ? `${displayedSuppliers}...`
                         : displayedSuppliers;
                     })()}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {order.orderProducts.length}
                   </TableComponent.Value>
 
                   <Dialog>
@@ -220,7 +227,9 @@ export default function ManagePurchasesTable() {
 
                         <PurchaseDetails order={order} />
 
-                        <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
+                        <TableButtonComponent className="w-fit justify-between pt-2 sm:pt-4 lg:w-full">
+                          <DeleteOrder orderId={order.id} />
+
                           <TableButtonComponent.Button
                             className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
                             icon={

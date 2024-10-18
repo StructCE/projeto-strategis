@@ -1,7 +1,6 @@
 "use client";
 import {
   CalendarIcon,
-  Download,
   Eraser,
   FilePenLine,
   Info,
@@ -9,21 +8,10 @@ import {
   Trash2,
   UserCog2,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
-import {
-  ProductCategories,
-  SectorsOfUse,
-  TypesOfControl,
-} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
-import {
-  products,
-  type Product,
-} from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
-import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -48,11 +36,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
+import { api } from "~/trpc/react";
+import FinalizeOrder from "./useOrder";
 
 export default function CreatePurchaseOrder() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
-  const [inputResponsible, setInputResponsible] = useState("");
+
+  const session = useSession();
+  const userId = session.data?.user.id;
+  const [selectResponsible, setSelectResponsible] = useState<
+    string | undefined
+  >(userId);
 
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
@@ -65,7 +61,7 @@ export default function CreatePurchaseOrder() {
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
 
-  const [addedProducts, setAddedProducts] = useState<Product[]>([]);
+  const [addedProducts, setAddedProducts] = useState<ProductWithFeatures[]>([]);
   const [quantities, setQuantities] = useState<Record<string, string>>({});
   const [selectedSuppliers, setSelectedSuppliers] = useState<
     Record<string, string>
@@ -83,6 +79,21 @@ export default function CreatePurchaseOrder() {
     selectStatus === "" &&
     selectBuyDay === "";
 
+  const { data: products = [] } = api.product.getAll.useQuery();
+  const { data: sectorsOfUse = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: typesOfControl = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
+  const { data: productCategories = [] } =
+    api.generalParameters.productCategory.getAll.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getCabinetFromStock.useQuery({
+      stockName: selectStock ? selectStock : "",
+    });
+  const { data: users = [] } = api.user.getAll.useQuery();
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+
   // Função para filtrar produtos
   const filteredProducts = areAllFiltersEmpty
     ? []
@@ -94,32 +105,32 @@ export default function CreatePurchaseOrder() {
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesSupplier =
           selectSuppliers.length === 0 ||
-          product.suppliers.some((supplier) =>
-            selectSuppliers.includes(supplier.name),
+          product.ProductSupplier.some((supplier) =>
+            selectSuppliers.includes(supplier.supplier.name),
           );
         const matchesStock =
           selectStock === "" ||
-          `${product.address.stock}`
-            .toLowerCase()
-            .includes(selectStock.toLowerCase());
+          product.shelf.cabinet.StockCabinet.some(
+            (stockCabinet) =>
+              stockCabinet.stock.name.toLowerCase() ===
+              selectStock.toLowerCase(),
+          );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.address.storage}, ${product.address.shelf}`
+          `${product.shelf.cabinet.name} - ${product.shelf.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
           selectControlType === "" ||
-          product.type_of_control?.description === selectControlType;
+          product.controlType?.name === selectControlType;
         const matchesCategory =
-          selectCategory === "" ||
-          product.product_category?.description === selectCategory;
+          selectCategory === "" || product.category?.name === selectCategory;
         const matchesSector =
-          selectSector === "" ||
-          product.sector_of_use?.description === selectSector;
+          selectSector === "" || product.sectorOfUse?.name === selectSector;
         const matchesStatus =
           selectStatus === "" || product.status === selectStatus;
         const matchesBuyDay =
-          selectBuyDay === "" || product.buy_day === selectBuyDay;
+          selectBuyDay === "" || product.buyDay === selectBuyDay;
 
         return (
           matchesCode &&
@@ -136,7 +147,7 @@ export default function CreatePurchaseOrder() {
       });
 
   // Função para adicionar produtos ao pedido
-  const handleAddProduct = (product: Product) => {
+  const handleAddProduct = (product: ProductWithFeatures) => {
     setAddedProducts((prev) => [...prev, product]);
   };
 
@@ -165,49 +176,6 @@ export default function CreatePurchaseOrder() {
       ...prev,
       [productCode]: supplier,
     }));
-  };
-
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}.${month}.${day}`;
-  };
-
-  const formatResponsibleName = (name: string) => {
-    const withoutAccents = name
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
-    const formattedName = withoutAccents.replace(/\s+/g, "");
-    return formattedName;
-  };
-
-  // Função para finalizar o pedido
-  const handleFinalizePurchase = () => {
-    const purchaseData = {
-      responsible: inputResponsible,
-      date: date?.toISOString(),
-      products: addedProducts.map((product) => ({
-        code: product.code,
-        name: product.name,
-        stock_current: product.stock_current,
-        buy_quantity_frd: quantities[product.code] ?? 0,
-        buy_quantity_unt:
-          Number(quantities[product.code] ?? 0) * product.buy_unit.unitsPerPack,
-        supplier: selectedSuppliers[product.code] ?? "",
-      })),
-    };
-
-    console.log(JSON.stringify(purchaseData, null, 2));
-
-    // Exemplo de exportação do pedido como JSON (feito com gpt, verificar se ta tudo certo)
-    // const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-    //   JSON.stringify(purchaseData),
-    // )}`;
-    // const link = document.createElement("a");
-    // link.href = jsonString;
-    // link.download = `PedidoDeCompra_${formatDate(date ?? new Date())}_${formatResponsibleName(inputResponsible)}`;
-    // link.click();
   };
 
   return (
@@ -239,19 +207,31 @@ export default function CreatePurchaseOrder() {
             ></Filter.DatePicker>
           </Filter>
 
-          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[250px]">
-            <Filter.Icon
-              icon={({ className }: { className: string }) => (
-                <UserCog2 className={className} />
-              )}
-            />
-            <Filter.Input
-              className="text-sm sm:text-base"
-              placeholder="Responsável"
-              state={inputResponsible}
-              setState={setInputResponsible}
-            />
-          </Filter>
+          <div className="flex w-full items-start rounded-[12px] bg-filtro bg-opacity-50 py-1.5 lg:w-[225px] lg:items-center">
+            <Select
+              onValueChange={setSelectResponsible}
+              value={selectResponsible}
+              defaultValue={selectResponsible}
+            >
+              <SelectTrigger className="font-inter m-0 h-auto border-0 border-none bg-transparent p-0 px-2 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-[250px]">
+                <UserCog2
+                  className="size-[20px] stroke-[1.5px]"
+                  color="black"
+                />
+                <SelectValue
+                  placeholder="Responsável"
+                  className="w-full text-left"
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {users.map((user, index) => (
+                  <SelectItem value={user.id} key={index}>
+                    {user.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </TableComponent.FiltersLine>
 
         <TableComponent.Subtitle>
@@ -324,7 +304,7 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
-          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
+          <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
@@ -335,30 +315,24 @@ export default function CreatePurchaseOrder() {
               state={selectAddress}
               setState={setSelectAddress}
               className={
-                selectStock === ""
-                  ? "cursor-not-allowed text-sm opacity-50 sm:text-base"
-                  : "text-sm sm:text-base"
+                selectStock === "" ? "cursor-not-allowed opacity-50" : ""
               }
             >
-              {selectStock === ""
-                ? [
+              {selectStock === "" ? (
+                <Filter.SelectItems
+                  key="0"
+                  value="Selecione um estoque primeiro"
+                />
+              ) : (
+                cabinets.flatMap((cabinet) =>
+                  cabinet.shelf.map((shelf) => (
                     <Filter.SelectItems
-                      key="0"
-                      value="Selecione um estoque primeiro"
-                    ></Filter.SelectItems>,
-                  ]
-                : stocks
-                    .filter((stock) => stock.name === selectStock)
-                    .flatMap((stock) =>
-                      stock.address.flatMap((address) =>
-                        address.shelves.map((shelf, index) => (
-                          <Filter.SelectItems
-                            key={index}
-                            value={`${address.description}, ${shelf.description}`}
-                          ></Filter.SelectItems>
-                        )),
-                      ),
-                    )}
+                      key={shelf.id}
+                      value={`${cabinet.name} - ${shelf.name}`}
+                    />
+                  )),
+                )
+              )}
             </Filter.Select>
           </Filter>
         </TableComponent.FiltersLine>
@@ -376,10 +350,10 @@ export default function CreatePurchaseOrder() {
               state={selectControlType}
               setState={setSelectControlType}
             >
-              {TypesOfControl.map((type, index) => (
+              {typesOfControl.map((type, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={type.description}
+                  value={type.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -397,10 +371,10 @@ export default function CreatePurchaseOrder() {
               state={selectCategory}
               setState={setSelectCategory}
             >
-              {ProductCategories.map((category, index) => (
+              {productCategories.map((category, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={category.description}
+                  value={category.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -418,10 +392,10 @@ export default function CreatePurchaseOrder() {
               state={selectSector}
               setState={setSelectSector}
             >
-              {SectorsOfUse.map((sector, index) => (
+              {sectorsOfUse.map((sector, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={sector.description}
+                  value={sector.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -541,16 +515,16 @@ export default function CreatePurchaseOrder() {
                 </TableComponent.Value>
                 <TableComponent.Value>{product.name}</TableComponent.Value>
                 <TableComponent.Value>
-                  {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                  {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center">
-                  {product.stock_current}
+                  {product.currentStock}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center">
-                  {product.stock_min}
+                  {product.minimunStock}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center">
-                  {product.stock_max}
+                  {product.maximumStock}
                 </TableComponent.Value>
                 <Button
                   onClick={() => handleAddProduct(product)}
@@ -633,26 +607,25 @@ export default function CreatePurchaseOrder() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Atual: </span>
-                        {product.stock_current}
+                        {product.currentStock}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Mínimo: </span>
-                        {product.stock_min}
+                        {product.minimunStock}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Máximo: </span>
-                        {product.stock_max}
+                        {product.maximumStock}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">
                           Unidade de Compra (quantidade):{" "}
                         </span>
-                        {product.buy_unit.description} (
-                        {product.buy_unit.unitsPerPack})
+                        {product.unit.name} ({product.unit.unitsPerPack})
                       </p>
                       <div className="text-base">
                         <span className="font-semibold">
@@ -672,7 +645,7 @@ export default function CreatePurchaseOrder() {
                           Quantidade a Comprar (unidade):{" "}
                         </span>
                         {Number(quantities[product.code] ?? 0) *
-                          product.buy_unit.unitsPerPack}
+                          product.unit.unitsPerPack}
                       </p>
                       <div className="text-base">
                         <span className="font-semibold">Fornecedor: </span>
@@ -686,9 +659,9 @@ export default function CreatePurchaseOrder() {
                             <SelectValue placeholder="Selecione um fornecedor" />
                           </SelectTrigger>
                           <SelectContent>
-                            {product.suppliers.map((supplier, i) => (
-                              <SelectItem value={supplier.name} key={i}>
-                                {supplier.name}
+                            {product.ProductSupplier.map((supplier, i) => (
+                              <SelectItem value={supplier.supplier.id} key={i}>
+                                {supplier.supplier.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -766,13 +739,13 @@ export default function CreatePurchaseOrder() {
                   {product.name}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {product.stock_current}
+                  {product.currentStock}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {product.stock_min}
+                  {product.minimunStock}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {`${product.buy_unit.abbreviation} (${product.buy_unit.unitsPerPack})`}
+                  {`${product.unit.abbreviation} (${product.unit.unitsPerPack})`}
                 </TableComponent.Value>
                 <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
                   <Input
@@ -786,7 +759,7 @@ export default function CreatePurchaseOrder() {
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
                   {Number(quantities[product.code] ?? 0) *
-                    product.buy_unit.unitsPerPack}
+                    product.unit.unitsPerPack}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-[13px] sm:text-[15px]">
                   <Select
@@ -799,9 +772,9 @@ export default function CreatePurchaseOrder() {
                       <SelectValue placeholder="Selecione um fornecedor" />
                     </SelectTrigger>
                     <SelectContent>
-                      {product.suppliers.map((supplier, i) => (
-                        <SelectItem value={supplier.name} key={i}>
-                          {supplier.name}
+                      {product.ProductSupplier.map((productSupplier, i) => (
+                        <SelectItem value={productSupplier.id} key={i}>
+                          {productSupplier.supplier.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -882,26 +855,25 @@ export default function CreatePurchaseOrder() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Atual: </span>
-                        {product.stock_current}
+                        {product.currentStock}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Mínimo: </span>
-                        {product.stock_min}
+                        {product.minimunStock}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Máximo: </span>
-                        {product.stock_max}
+                        {product.maximumStock}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">
                           Unidade de Compra (quantidade):{" "}
                         </span>
-                        {product.buy_unit.description} (
-                        {product.buy_unit.unitsPerPack})
+                        {product.unit.name} ({product.unit.unitsPerPack})
                       </p>
                       <div className="text-base">
                         <span className="font-semibold">
@@ -921,7 +893,7 @@ export default function CreatePurchaseOrder() {
                           Quantidade a Comprar (unidade):{" "}
                         </span>
                         {Number(quantities[product.code] ?? 0) *
-                          product.buy_unit.unitsPerPack}
+                          product.unit.unitsPerPack}
                       </p>
                       <div className="text-base">
                         <span className="font-semibold">Fornecedor: </span>
@@ -935,11 +907,13 @@ export default function CreatePurchaseOrder() {
                             <SelectValue placeholder="Selecione um fornecedor" />
                           </SelectTrigger>
                           <SelectContent>
-                            {product.suppliers.map((supplier, i) => (
-                              <SelectItem value={supplier.name} key={i}>
-                                {supplier.name}
-                              </SelectItem>
-                            ))}
+                            {product.ProductSupplier.map(
+                              (productSupplier, i) => (
+                                <SelectItem value={productSupplier.id} key={i}>
+                                  {productSupplier.supplier.name}
+                                </SelectItem>
+                              ),
+                            )}
                           </SelectContent>
                         </Select>
                       </div>
@@ -958,22 +932,13 @@ export default function CreatePurchaseOrder() {
           )}
         </TableComponent.Table>
 
-        <TableButtonComponent className="pt-2 sm:pt-4">
-          <TableButtonComponent.Button
-            className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1"
-            handlePress={handleFinalizePurchase}
-            icon={
-              <Download
-                className="flex h-full cursor-pointer self-center"
-                size={20}
-                strokeWidth={2.2}
-                color="white"
-              />
-            }
-          >
-            Gerar Pedido de Compra
-          </TableButtonComponent.Button>
-        </TableButtonComponent>
+        <FinalizeOrder
+          selectResponsible={selectResponsible}
+          addedProducts={addedProducts}
+          quantities={quantities}
+          selectedSuppliers={selectedSuppliers}
+          date={date ?? new Date()}
+        />
       </TableComponent>
     </div>
   );

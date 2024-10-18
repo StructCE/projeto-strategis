@@ -12,7 +12,7 @@ async function getAll(props: OrderRepositoryInterfaces["GetAllProps"]) {
     // },
     include: {
       responsible: { include: { user: true } },
-      stock: true,
+      // stock: true,
       OrderProduct: {
         include: {
           product: {
@@ -46,34 +46,52 @@ async function getAll(props: OrderRepositoryInterfaces["GetAllProps"]) {
 }
 
 async function register(props: OrderRepositoryInterfaces["RegisterProps"]) {
+  const { orderProducts, responsibleId: userId, ...orderData } = props;
+
+  // Primeiro, você busca o userRole correspondente ao responsável
   const userRole = await db.userRole.findFirst({
     where: {
-      userId: props.responsibleId, // Relacionando o userId recebido do front-end
+      userId: userId, // Relacionando o userId recebido do front-end
     },
   });
 
+  // Verifica se o papel de usuário foi encontrado
   if (!userRole) {
     throw new Error("O usuário não tem um papel associado (UserRole).");
   }
 
+  // Criação do pedido com o 'responsibleId' do userRole
   const createdOrder = await db.order.create({
     data: {
-      date: props.date,
-      responsibleId: userRole.id,
-      stockId: props.stockId,
+      responsibleId: userRole.id, // Usando o id do UserRole encontrado
+      date: orderData.date,
     },
   });
-  const createdOrderProducts = props.orderProducts.map(async (orderProduct) => {
-    const createOrderProduct = await db.orderProduct.create({
-      data: {
-        purchaseQuantity: orderProduct.purchaseQuantity,
-        orderId: createdOrder.id,
-        productSupplierId: orderProduct.productSupplierId,
-      },
-    });
-    return createOrderProduct;
-  });
-  await Promise.all(createdOrderProducts);
+
+  const registeredOrderProducts = await Promise.all(
+    orderProducts.map(async (orderProduct) => {
+      // Criando os registros de ProductInventory
+      const productSupplier = await db.productSupplier.findFirst({
+        where: { id: orderProduct.productSupplierId },
+      });
+
+      if (!productSupplier) {
+        throw new Error("ProductSupplier ID inválido.");
+      }
+
+      const registeredOrderProduct = await db.orderProduct.create({
+        data: {
+          orderId: createdOrder.id,
+          purchaseQuantity: orderProduct.purchaseQuantity,
+          productSupplierId: orderProduct.productSupplierId,
+        },
+      });
+
+      return { registeredOrderProduct };
+    }),
+  );
+
+  await Promise.all(registeredOrderProducts);
 
   return createdOrder;
 }
@@ -87,7 +105,7 @@ async function edit(props: OrderRepositoryInterfaces["EditProps"]) {
     data: {
       date: data.date,
       responsibleId: data.responsibleId,
-      stockId: data.stockId,
+      // stockId: data.stockId,
     },
   });
 
@@ -106,6 +124,12 @@ async function edit(props: OrderRepositoryInterfaces["EditProps"]) {
 }
 
 async function remove(props: OrderRepositoryInterfaces["DeleteProps"]) {
+  await db.orderProduct.deleteMany({
+    where: {
+      orderId: props.id,
+    },
+  });
+
   const deletedOrder = await db.order.delete({
     where: {
       id: props.id,

@@ -12,7 +12,7 @@ type GetAllProps = z.infer<typeof getAllProps>;
 const registerProps = z.object({
   date: z.date(),
   responsibleId: z.string(),
-  stockId: z.string(),
+  // stockId: z.string(),
   orderProducts: z.array(
     z.object({
       purchaseQuantity: z.number(),
@@ -28,7 +28,7 @@ const editProps = z.object({
   data: z.object({
     date: z.date().optional(),
     responsibleId: z.string().optional(),
-    stockId: z.string().optional(),
+    // stockId: z.string().optional(),
     orderProducts: z.array(
       z.object({
         id: z.string(),

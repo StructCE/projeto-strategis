@@ -230,7 +230,7 @@ model Stock {
     legalResponsible UserRole       @relation("StockResponsible", fields: [legalResponsibleId], references: [id])
     StockCabinet     StockCabinet[] // Relação com StockCabinet para associar cabinets ao estoque
     Adjust           Adjust[]
-    Order            Order[]
+    // Order            Order[]
 }
 
 model Unit {
@@ -374,10 +374,10 @@ model Order {
     id            String   @id @default(cuid())
     date          DateTime
     responsibleId String
-    stockId       String
+    // stockId       String
 
     responsible  UserRole       @relation("OrderResponsible", fields: [responsibleId], references: [id])
-    stock        Stock          @relation(fields: [stockId], references: [id])
+    // stock        Stock          @relation(fields: [stockId], references: [id])
     OrderProduct OrderProduct[]
 }
 
