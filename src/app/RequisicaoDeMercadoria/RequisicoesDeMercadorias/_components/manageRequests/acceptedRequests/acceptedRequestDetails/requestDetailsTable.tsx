@@ -1,8 +1,8 @@
 import { TableComponent } from "~/components/table";
-import { type Request } from "../../../requestsData";
+import { type SerializedRequest } from "~/server/interfaces/request/request.route.interfaces";
 
 type RequestType = {
-  request: Request;
+  request: SerializedRequest;
 };
 
 export default function AcceptedRequestDetails(props: RequestType) {
@@ -24,7 +24,7 @@ export default function AcceptedRequestDetails(props: RequestType) {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {props.request.products.map((product, index) => (
+        {props.request.requestProducts.map((product, index) => (
           <TableComponent.Line
             className={`grid-cols-[0.5fr_2fr_1fr_1fr] gap-10 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -38,10 +38,10 @@ export default function AcceptedRequestDetails(props: RequestType) {
               {product.name}
             </TableComponent.Value>
             <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
-              {product.requested_quantity}
+              {product.requestedQuantity}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.released_quantity}
+              {product.releasedQuantity}
             </TableComponent.Value>
           </TableComponent.Line>
         ))}

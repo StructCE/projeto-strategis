@@ -4,10 +4,10 @@ import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Input } from "~/components/ui/input";
-import { type Request } from "../../../requestsData";
+import { type SerializedRequest } from "~/server/interfaces/request/request.route.interfaces";
 
 type RequestType = {
-  request: Request;
+  request: SerializedRequest;
 };
 
 export default function PendingRequestDetails(props: RequestType) {
@@ -26,15 +26,15 @@ export default function PendingRequestDetails(props: RequestType) {
 
   // Definindo o valor inicial do input como o valor solicitado
   useEffect(() => {
-    const initialQuantities = props.request.products.reduce(
+    const initialQuantities = props.request.requestProducts.reduce(
       (acc, product) => ({
         ...acc,
-        [product.code]: product.requested_quantity || "",
+        [product.code]: product.requestedQuantity || "",
       }),
       {},
     );
     setQuantities(initialQuantities);
-  }, [props.request.products]);
+  }, [props.request.requestProducts]);
 
   const handleReject = () => {
     const requestData = (props.request.status = "Rejeitada");
@@ -46,13 +46,13 @@ export default function PendingRequestDetails(props: RequestType) {
     const requestData = {
       // responsible: inputResponsible,
       // date: date?.toISOString(),
-      status_description: statusDescription,
-      products: props.request.products.map((product) => ({
+      statusDescription: statusDescription,
+      requestProducts: props.request.requestProducts.map((product) => ({
         code: product.code,
         name: product.name,
-        stock_current: product.stock_current,
-        stock_min: product.stock_min,
-        requested_quantity: product.requested_quantity,
+        currentStock: product.currentStock,
+        minimunStock: product.minimunStock,
+        requestedQuantity: product.requestedQuantity,
         quantity_to_release: quantities[product.code] ?? 0,
       })),
     };
@@ -87,7 +87,7 @@ export default function PendingRequestDetails(props: RequestType) {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {props.request.products.map((product, index) => (
+        {props.request.requestProducts.map((product, index) => (
           <TableComponent.Line
             className={`grid-cols-[70px_1.3fr_1fr_130px_90px_110px_110px] gap-4 sm:px-[16px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -101,17 +101,19 @@ export default function PendingRequestDetails(props: RequestType) {
               {product.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] tracking-tighter sm:text-[15px]">
-              {product.address.stock}, {product.address.storage},{" "}
-              {product.address.shelf}
+              {`${product.shelf.cabinet.StockCabinet.map(
+                (stockCabinet) => stockCabinet.stock.name,
+              ).join(", ")}
+              , ${product.shelf.cabinet.name}, ${product.shelf.name}`}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.stock_current}
+              {product.currentStock}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.stock_min}
+              {product.minimunStock}
             </TableComponent.Value>
             <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
-              {product.requested_quantity}
+              {product.requestedQuantity}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
               <Input
@@ -173,7 +175,7 @@ export default function PendingRequestDetails(props: RequestType) {
 
         <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
           <TableButtonComponent.Button
-            className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2 max-[425px]:w-full"
+            className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2 max-[425px]:w-full"
             handlePress={handleReject}
           >
             Rejeitar Requisição

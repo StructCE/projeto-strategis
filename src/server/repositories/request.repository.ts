@@ -11,19 +11,40 @@ async function countPendentRequests() {
 }
 
 async function getAll(props: RequestRepositoryInterfaces["GetAllProps"]) {
-  const { filters } = props;
+  // const { filters } = props;
   const requests = await db.request.findMany({
-    where: {
-      AND: [
-        { requestDate: filters.date },
-        { status: filters.status },
-        { responsible: { user: { name: filters.requestResponsible } } },
-      ],
-    },
+    // where: {
+    //   AND: [
+    //     { requestDate: filters.date },
+    //     { status: filters.status },
+    //     { responsible: { user: { name: filters.requestResponsible } } },
+    //   ],
+    // },
     include: {
       responsible: { include: { user: true } },
       statusResponsible: { include: { user: true } },
-      RequestProduct: { include: { product: { include: { unit: true } } } },
+      RequestProduct: {
+        include: {
+          product: {
+            include: {
+              unit: true,
+              shelf: {
+                include: {
+                  cabinet: {
+                    include: {
+                      StockCabinet: {
+                        include: {
+                          stock: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
 

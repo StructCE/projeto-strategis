@@ -1,30 +1,52 @@
-type PendentRequestsCount = {
+export type PendentRequestsCount = {
   pendentRequestsCount: number;
 };
 
-type Request = {
+export type Request = {
   description: string;
   requestDate: Date;
-  statusDescription: string | null;
-  statusDate: Date | null;
-  statusResponsibleId: string | null;
   responsibleId: string;
   status: string;
+  statusDate: Date | null;
+  statusDescription: string | null;
+  statusResponsibleId: string | null;
 };
 
-type SerializedRequest = {
+export type RequestProduct = {
+  code: string;
+  name: string;
+  unit: string;
+  requestedQuantity: number;
+  currentStock: number;
+  minimunStock: number;
+  releasedQuantity: number;
+  shelf: {
+    id: string;
+    name: string;
+    cabinet: {
+      id: string;
+      name: string;
+      StockCabinet: {
+        stock: {
+          id: string;
+          name: string;
+          companyId: string;
+          legalResponsibleId: string;
+        };
+      }[];
+    };
+  };
+};
+
+export type SerializedRequest = {
+  description: string;
   requestDate: Date;
   responsibleName: string;
-  statusDate: Date | null;
-  statusResponsible: string;
   status: string;
-  requestProducts: {
-    code: string;
-    name: string;
-    unit: string;
-    requestedQuantity: number;
-    releasedQuantity: number;
-  }[];
+  statusDate: Date | null;
+  statusDescription: string | null;
+  statusResponsible: string;
+  requestProducts: RequestProduct[];
 };
 
 export type RequestRouteInterfaces = {

@@ -10,6 +10,17 @@ export type Address = {
   shelf: string;
 };
 
+export type Request = {
+  request_date: Date;
+  request_responsible: string;
+  products: Product[];
+  request_description: string;
+  status: "Pendente" | "Confirmada" | "Rejeitada";
+  status_description?: string;
+  status_date?: Date;
+  status_responsible?: string;
+};
+
 export type Product = {
   name: string;
   code: string;
@@ -24,17 +35,6 @@ export type Product = {
   stock_min: string;
   stock_max: string;
   address: Address;
-};
-
-export type Request = {
-  request_date: Date;
-  request_responsible: string;
-  products: Product[];
-  request_description: string;
-  status: "Pendente" | "Confirmada" | "Rejeitada";
-  status_description?: string;
-  status_date?: Date;
-  status_responsible?: string;
 };
 
 export const requests: Request[] = [

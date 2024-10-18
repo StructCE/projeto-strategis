@@ -394,13 +394,13 @@ model OrderProduct {
 
 model Request {
     id                  String    @id @default(cuid())
-    description         String
     requestDate         DateTime
+    responsibleId       String
+    description         String
+    status              String
     statusDescription   String?
     statusDate          DateTime?
     statusResponsibleId String
-    responsibleId       String
-    status              String
 
     responsible       UserRole         @relation("RequestResponsible", fields: [responsibleId], references: [id])
     statusResponsible UserRole         @relation("StatusResponsible", fields: [statusResponsibleId], references: [id])
