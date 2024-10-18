@@ -13,24 +13,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { companies } from "../companiesData";
+import { api } from "~/trpc/react";
 
-export const ManageCompaniesTable = () => {
+export function ManageCompaniesTable() {
   const [inputCnpj, setInputCnpj] = useState("");
   const [inputName, setInputName] = useState("");
   const [selectState, setSelectState] = useState("");
   const [selectTaxRegime, setSelectTaxRegime] = useState("");
 
-  const filteredCompanies = companies.filter((company) => {
-    const matchesCnpj = inputCnpj === "" || company.cnpj.includes(inputCnpj);
-    const matchesName =
-      inputName === "" ||
-      company.name.toLowerCase().includes(inputName.toLowerCase());
-    const matchesState = selectState === "" || company.state === selectState;
-    const matchesTaxRegime =
-      selectTaxRegime === "" || company.tax_regime === selectTaxRegime;
-
-    return matchesCnpj && matchesName && matchesState && matchesTaxRegime;
+  const companies = api.company.getManageCompanies.useQuery({
+    filters: {
+      cnpj: inputCnpj,
+      name: inputName,
+      state: selectState,
+      taxRegime: selectTaxRegime,
+    },
   });
 
   const router = useRouter();
@@ -146,7 +143,7 @@ export const ManageCompaniesTable = () => {
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {filteredCompanies.map((company, index) => (
+        {companies.data?.map((company, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_2fr_1fr_1fr_1fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -156,13 +153,13 @@ export const ManageCompaniesTable = () => {
             <TableComponent.Value>{company.cnpj}</TableComponent.Value>
             <TableComponent.Value>{company.name}</TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {company.registered_products}
+              {company.registeredProductsCount}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {company.suppliers.length}
+              {company.registeredSuppliersCount}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {company.low_stock_products}
+              {company.lowStockProductsCount}
             </TableComponent.Value>
 
             <Button
@@ -180,4 +177,4 @@ export const ManageCompaniesTable = () => {
       </TableComponent.Table>
     </TableComponent>
   );
-};
+}
