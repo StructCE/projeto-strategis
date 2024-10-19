@@ -96,9 +96,9 @@ export function ManageCompaniesTable() {
             state={selectTaxRegime}
             setState={setSelectTaxRegime}
           >
-            <Filter.SelectItems value="Lucro Real (LR)"></Filter.SelectItems>
-            <Filter.SelectItems value="Lucro Presumido (LP)"></Filter.SelectItems>
-            <Filter.SelectItems value="Simples Nacional (SN)"></Filter.SelectItems>
+            <Filter.SelectItems value="Lucro Real"></Filter.SelectItems>
+            <Filter.SelectItems value="Lucro Presumido"></Filter.SelectItems>
+            <Filter.SelectItems value="Simples Nacional"></Filter.SelectItems>
           </Filter.Select>
         </Filter>
 
@@ -115,9 +115,7 @@ export function ManageCompaniesTable() {
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
