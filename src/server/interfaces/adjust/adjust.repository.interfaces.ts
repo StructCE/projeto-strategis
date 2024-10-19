@@ -9,7 +9,6 @@ type GetAllProps = z.infer<typeof getAllProps>;
 const registerProps = z.object({
   date: z.date(),
   responsibleId: z.string(),
-  name: z.string(),
   stockId: z.string(),
   type: z.string(),
   adjustProducts: z.array(

@@ -19,9 +19,13 @@ export const adjustRouter = createTRPCRouter({
           stockName: adjust.stock.name,
           adjustProducts: adjust.ProductAdjust.map((adjustProduct) => ({
             id: adjustProduct.id,
+            currentStock: adjustProduct.product.currentStock,
             oldStock: adjustProduct.oldStock,
             adjustedStock: adjustProduct.adjustedStock,
-            reason: adjustProduct.reason.name,
+            reason: {
+              id: adjustProduct.reason.id,
+              name: adjustProduct.reason.name,
+            },
             name: adjustProduct.product.name,
             code: adjustProduct.product.code,
             unit: adjustProduct.product.unit,

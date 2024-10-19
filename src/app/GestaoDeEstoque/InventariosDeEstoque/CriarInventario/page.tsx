@@ -69,7 +69,11 @@ export default function CreateInventory() {
     selectCategory === "" &&
     selectSector === "";
 
-  const { data: products = [] } = api.product.getAll.useQuery();
+  const {
+    data: products = [],
+    error,
+    isLoading,
+  } = api.product.getAll.useQuery();
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
@@ -191,7 +195,7 @@ export default function CreateInventory() {
               value={selectResponsible}
               defaultValue={selectResponsible}
             >
-              <SelectTrigger className="font-inter m-0 h-auto border-0 border-none bg-transparent p-0 px-2 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-[250px]">
+              <SelectTrigger className="font-inter m-0 h-auto border-0 border-none bg-transparent px-2 py-1.5 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-[250px]">
                 <UserCog2
                   className="size-[20px] stroke-[1.5px]"
                   color="black"
@@ -397,55 +401,88 @@ export default function CreateInventory() {
             <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
 
-          {areAllFiltersEmpty && (
+          {error && (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Utilize os filtros acima para encontrar produtos cadastrados no
-                estoque
+                Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
+          {isLoading && (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
+                Carregando produtos...
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty &&
-            filteredProducts.map((product, index) => (
-              <TableComponent.Line
-                className={`grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="text-center">
-                  {product.code}
-                </TableComponent.Value>
-                <TableComponent.Value>{product.name}</TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.currentStock}
-                </TableComponent.Value>
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length > 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
-                  {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                  Utilize os filtros acima para encontrar produtos cadastrados
+                  no estoque
                 </TableComponent.Value>
-                <Button
-                  onClick={() =>
-                    handleAddProduct({
-                      id: product.id,
-                      code: product.code,
-                      name: product.name,
-                      unit: product.unit,
-                      inventoryQuantity: 0,
-                      stockQuantity: product.currentStock,
-                      shelf: product.shelf,
-                    })
-                  }
-                  className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
-                >
-                  Adicionar
-                </Button>
+              </TableComponent.Line>
+            )}
+          {!areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => a.code.localeCompare(b.code))
+                .map((product, index) => (
+                  <TableComponent.Line
+                    className={`grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16 ${
+                      index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                    }`}
+                    key={index}
+                  >
+                    <TableComponent.Value className="text-center">
+                      {product.code}
+                    </TableComponent.Value>
+                    <TableComponent.Value>{product.name}</TableComponent.Value>
+                    <TableComponent.Value className="text-center">
+                      {product.currentStock}
+                    </TableComponent.Value>
+                    <TableComponent.Value>
+                      {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                    </TableComponent.Value>
+                    <Button
+                      onClick={() =>
+                        handleAddProduct({
+                          id: product.id,
+                          code: product.code,
+                          name: product.name,
+                          unit: product.unit,
+                          inventoryQuantity: 0,
+                          stockQuantity: product.currentStock,
+                          shelf: product.shelf,
+                        })
+                      }
+                      className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                    >
+                      Adicionar
+                    </Button>
+                  </TableComponent.Line>
+                ))
+            ) : (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
@@ -462,119 +499,152 @@ export default function CreateInventory() {
             <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
 
-          {areAllFiltersEmpty && (
-            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          {error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Utilize os filtros acima para encontrar produtos cadastrados no
-                estoque
+                Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
-            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          {isLoading && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
+                Carregando produtos...
               </TableComponent.Value>
             </TableComponent.Line>
           )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length > 0 && (
+              <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Utilize os filtros acima para encontrar produtos cadastrados
+                  no estoque
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
           {!areAllFiltersEmpty &&
-            filteredProducts.map((product, index) => (
-              <TableComponent.Line
-                className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="text-center text-[14px]">
-                  {product.code}
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
-                <TableComponent.Value className="text-[14px]">
-                  {product.name}
-                </TableComponent.Value>
-
-                <Dialog>
-                  <DialogTrigger asChild>
-                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
-              Detalhes
-            </Button> */}
-                    <Info size={24} />
-                  </DialogTrigger>
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="w-full gap-2 p-5"
+              </TableComponent.Line>
+            )}
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => a.code.localeCompare(b.code))
+                .map((product, index) => (
+                  <TableComponent.Line
+                    className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
+                      index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                    }`}
+                    key={index}
                   >
-                    <DialogHeader>
-                      <DialogTitle className="text-left text-xl">
-                        Inventário do Produto
-                      </DialogTitle>
-                    </DialogHeader>
-                    <DialogDescription className="flex flex-col gap-1 text-left text-black">
-                      <p className="text-base">
-                        <span className="font-semibold">Código: </span>{" "}
-                        {product.code}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Produto: </span>{" "}
-                        {product.name}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">
-                          Endereço de Estoque:
-                        </span>{" "}
-                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">
-                          Quantidade em Estoque:{" "}
-                        </span>
-                        {product.currentStock}
-                      </p>
-                      <div className="my-1 text-base">
-                        <span className="font-semibold">
-                          Quantidade em Inventário:{" "}
-                        </span>
-                        <Input
-                          type="number"
-                          value={quantities[product.code] ?? ""}
-                          onChange={(e) =>
-                            handleQuantityChange(product.code, e.target.value)
-                          }
-                          className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
-                        ></Input>
-                      </div>
-                      <p className="text-base">
-                        <span className="font-semibold">Diferença: </span>
-                        {Number(quantities[product.code] ?? 0) -
-                          Number(product.currentStock)}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Descrição: </span>
-                        {handleProductDescription(
-                          Number(product.currentStock),
-                          Number(quantities[product.code]),
-                        )}
-                      </p>
-                      <div className="mt-1 flex w-full justify-end">
-                        <Button
-                          onClick={() =>
-                            handleAddProduct({
-                              id: product.id,
-                              code: product.code,
-                              name: product.name,
-                              unit: product.unit,
-                              inventoryQuantity: 0,
-                              stockQuantity: product.currentStock,
-                              shelf: product.shelf,
-                            })
-                          }
-                          className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
-                        >
-                          Adicionar
-                        </Button>
-                      </div>
-                    </DialogDescription>
-                  </DialogContent>
-                </Dialog>
+                    <TableComponent.Value className="text-center text-[14px]">
+                      {product.code}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-[14px]">
+                      {product.name}
+                    </TableComponent.Value>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Info size={24} />
+                      </DialogTrigger>
+                      <DialogContent
+                        aria-describedby={undefined}
+                        className="w-full gap-2 p-5"
+                      >
+                        <DialogHeader>
+                          <DialogTitle className="text-left text-xl">
+                            Inventário do Produto
+                          </DialogTitle>
+                        </DialogHeader>
+                        <DialogDescription className="flex flex-col gap-1 text-left text-black">
+                          <p className="text-base">
+                            <span className="font-semibold">Código: </span>{" "}
+                            {product.code}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">Produto: </span>{" "}
+                            {product.name}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Endereço de Estoque:
+                            </span>{" "}
+                            {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Quantidade em Estoque:{" "}
+                            </span>
+                            {product.currentStock}
+                          </p>
+                          <div className="my-1 text-base">
+                            <span className="font-semibold">
+                              Quantidade em Inventário:{" "}
+                            </span>
+                            <Input
+                              type="number"
+                              value={quantities[product.code] ?? ""}
+                              onChange={(e) =>
+                                handleQuantityChange(
+                                  product.code,
+                                  e.target.value,
+                                )
+                              }
+                              className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                            ></Input>
+                          </div>
+                          <p className="text-base">
+                            <span className="font-semibold">Diferença: </span>
+                            {Number(quantities[product.code] ?? 0) -
+                              Number(product.currentStock)}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">Descrição: </span>
+                            {handleProductDescription(
+                              Number(product.currentStock),
+                              Number(quantities[product.code]),
+                            )}
+                          </p>
+                          <div className="mt-1 flex w-full justify-end">
+                            <Button
+                              onClick={() =>
+                                handleAddProduct({
+                                  id: product.id,
+                                  code: product.code,
+                                  name: product.name,
+                                  unit: product.unit,
+                                  inventoryQuantity: 0,
+                                  stockQuantity: product.currentStock,
+                                  shelf: product.shelf,
+                                })
+                              }
+                              className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                            >
+                              Adicionar
+                            </Button>
+                          </div>
+                        </DialogDescription>
+                      </DialogContent>
+                    </Dialog>
+                  </TableComponent.Line>
+                ))
+            ) : (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>

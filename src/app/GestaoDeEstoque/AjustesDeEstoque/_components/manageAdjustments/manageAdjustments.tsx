@@ -1,4 +1,4 @@
-import { Calendar, Eraser, UserCog2 } from "lucide-react";
+import { Calendar, Eraser, Search, UserCog2 } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -24,6 +24,7 @@ export default function ManageAdjustmentsTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
+  const [selectType, setSelectType] = useState("");
 
   const {
     data: adjusts = [],
@@ -44,7 +45,9 @@ export default function ManageAdjustmentsTable() {
         .toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
-    return matchesDate && matchesResponsible;
+    const matchesType = selectType === "" || adjustment.type === selectType;
+
+    return matchesDate && matchesResponsible && matchesType;
   });
 
   return (
@@ -81,6 +84,20 @@ export default function ManageAdjustmentsTable() {
           />
         </Filter>
 
+        <Filter>
+          <Filter.Icon
+            icon={({ className }) => <Search className={className}> </Search>}
+          />
+          <Filter.Select
+            placeholder="Tipo de ajuste"
+            state={selectType}
+            setState={setSelectType}
+          >
+            <Filter.SelectItems value="Manual"></Filter.SelectItems>
+            <Filter.SelectItems value="Automático"></Filter.SelectItems>
+          </Filter.Select>
+        </Filter>
+
         <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger className="flex h-full cursor-pointer self-center">
@@ -89,18 +106,17 @@ export default function ManageAdjustmentsTable() {
                 onClick={() => {
                   setDate(undefined);
                   setInputResponsible("");
+                  setSelectType("");
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1fr_1.5fr_1.3fr_1.2fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[1fr_1.5fr_1.3fr_0.8fr_130px] gap-8">
           <TableComponent.ValueTitle>Data do Ajuste</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>
             Responsável pelo Ajuste
@@ -130,7 +146,7 @@ export default function ManageAdjustmentsTable() {
               .sort((a, b) => b.date.getTime() - a.date.getTime())
               .map((adjustment, index) => (
                 <TableComponent.Line
-                  className={`grid-cols-[1fr_1.5fr_1.3fr_1.2fr_130px] ${
+                  className={`grid-cols-[1fr_1.5fr_1.3fr_0.8fr_130px] gap-8 ${
                     index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                   }`}
                   key={index}

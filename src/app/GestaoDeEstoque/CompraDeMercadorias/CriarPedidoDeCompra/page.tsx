@@ -79,7 +79,11 @@ export default function CreatePurchaseOrder() {
     selectStatus === "" &&
     selectBuyDay === "";
 
-  const { data: products = [] } = api.product.getAll.useQuery();
+  const {
+    data: products = [],
+    error,
+    isLoading,
+  } = api.product.getAll.useQuery();
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
@@ -487,51 +491,84 @@ export default function CreatePurchaseOrder() {
             <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
 
-          {areAllFiltersEmpty && (
+          {error && (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Utilize os filtros acima para encontrar produtos cadastrados no
-                estoque
+                Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
+          {isLoading && (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
+                Carregando produtos...
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty &&
-            filteredProducts.map((product, index) => (
-              <TableComponent.Line
-                className={`grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="text-center">
-                  {product.code}
-                </TableComponent.Value>
-                <TableComponent.Value>{product.name}</TableComponent.Value>
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length > 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
-                  {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                  Utilize os filtros acima para encontrar produtos cadastrados
+                  no estoque
                 </TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.currentStock}
+              </TableComponent.Line>
+            )}
+          {!areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.minimunStock}
+              </TableComponent.Line>
+            )}
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => a.code.localeCompare(b.code))
+                .map((product, index) => (
+                  <TableComponent.Line
+                    className={`grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8 ${
+                      index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                    }`}
+                    key={index}
+                  >
+                    <TableComponent.Value className="text-center">
+                      {product.code}
+                    </TableComponent.Value>
+                    <TableComponent.Value>{product.name}</TableComponent.Value>
+                    <TableComponent.Value>
+                      {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-center">
+                      {product.currentStock}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-center">
+                      {product.minimunStock}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-center">
+                      {product.maximumStock}
+                    </TableComponent.Value>
+                    <Button
+                      onClick={() => handleAddProduct(product)}
+                      className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                    >
+                      Adicionar
+                    </Button>
+                  </TableComponent.Line>
+                ))
+            ) : (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.maximumStock}
-                </TableComponent.Value>
-                <Button
-                  onClick={() => handleAddProduct(product)}
-                  className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
-                >
-                  Adicionar
-                </Button>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
@@ -563,121 +600,145 @@ export default function CreatePurchaseOrder() {
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty &&
-            filteredProducts.map((product, index) => (
-              <TableComponent.Line
-                className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="text-center text-[14px]">
-                  {product.code}
-                </TableComponent.Value>
-                <TableComponent.Value className="text-[14px]">
-                  {product.name}
-                </TableComponent.Value>
-
-                <Dialog>
-                  <DialogTrigger asChild>
-                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
-              Detalhes
-            </Button> */}
-                    <Info size={24} />
-                  </DialogTrigger>
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="w-full gap-2 p-5"
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => a.code.localeCompare(b.code))
+                .map((product, index) => (
+                  <TableComponent.Line
+                    className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
+                      index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                    }`}
+                    key={index}
                   >
-                    <DialogHeader>
-                      <DialogTitle className="text-left text-xl">
-                        Comprar Produto
-                      </DialogTitle>
-                    </DialogHeader>
-                    <DialogDescription className="flex flex-col gap-1 text-left text-black">
-                      <p className="text-base">
-                        <span className="font-semibold">Código: </span>{" "}
-                        {product.code}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Produto: </span>{" "}
-                        {product.name}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">
-                          Endereço de Estoque:
-                        </span>{" "}
-                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Estoque Atual: </span>
-                        {product.currentStock}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Estoque Mínimo: </span>
-                        {product.minimunStock}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Estoque Máximo: </span>
-                        {product.maximumStock}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">
-                          Unidade de Compra (quantidade):{" "}
-                        </span>
-                        {product.unit.name} ({product.unit.unitsPerPack})
-                      </p>
-                      <div className="text-base">
-                        <span className="font-semibold">
-                          Quantidade a Comprar (fardo):{" "}
-                        </span>
-                        <Input
-                          type="number"
-                          value={quantities[product.code] ?? ""}
-                          onChange={(e) =>
-                            handleQuantityChange(product.code, e.target.value)
-                          }
-                          className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
-                        ></Input>
-                      </div>
-                      <p className="text-base">
-                        <span className="font-semibold">
-                          Quantidade a Comprar (unidade):{" "}
-                        </span>
-                        {Number(quantities[product.code] ?? 0) *
-                          product.unit.unitsPerPack}
-                      </p>
-                      <div className="text-base">
-                        <span className="font-semibold">Fornecedor: </span>
-                        <Select
-                          onValueChange={(value) =>
-                            handleSupplierChange(product.code, value)
-                          }
-                          defaultValue={selectedSuppliers[product.code] ?? ""}
-                        >
-                          <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
-                            <SelectValue placeholder="Selecione um fornecedor" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {product.ProductSupplier.map((supplier, i) => (
-                              <SelectItem value={supplier.supplier.id} key={i}>
-                                {supplier.supplier.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="mt-3 flex w-full justify-end">
-                        <Button
-                          onClick={() => handleAddProduct(product)}
-                          className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
-                        >
-                          Adicionar
-                        </Button>
-                      </div>
-                    </DialogDescription>
-                  </DialogContent>
-                </Dialog>
+                    <TableComponent.Value className="text-center text-[14px]">
+                      {product.code}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-[14px]">
+                      {product.name}
+                    </TableComponent.Value>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Info size={24} />
+                      </DialogTrigger>
+                      <DialogContent
+                        aria-describedby={undefined}
+                        className="w-full gap-2 p-5"
+                      >
+                        <DialogHeader>
+                          <DialogTitle className="text-left text-xl">
+                            Comprar Produto
+                          </DialogTitle>
+                        </DialogHeader>
+                        <DialogDescription className="flex flex-col gap-1 text-left text-black">
+                          <p className="text-base">
+                            <span className="font-semibold">Código: </span>{" "}
+                            {product.code}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">Produto: </span>{" "}
+                            {product.name}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Endereço de Estoque:
+                            </span>{" "}
+                            {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Estoque Atual:{" "}
+                            </span>
+                            {product.currentStock}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Estoque Mínimo:{" "}
+                            </span>
+                            {product.minimunStock}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Estoque Máximo:{" "}
+                            </span>
+                            {product.maximumStock}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Unidade de Compra (quantidade):{" "}
+                            </span>
+                            {product.unit.name} ({product.unit.unitsPerPack})
+                          </p>
+                          <div className="text-base">
+                            <span className="font-semibold">
+                              Quantidade a Comprar (fardo):{" "}
+                            </span>
+                            <Input
+                              type="number"
+                              value={quantities[product.code] ?? ""}
+                              onChange={(e) =>
+                                handleQuantityChange(
+                                  product.code,
+                                  e.target.value,
+                                )
+                              }
+                              className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                            ></Input>
+                          </div>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Quantidade a Comprar (unidade):{" "}
+                            </span>
+                            {Number(quantities[product.code] ?? 0) *
+                              product.unit.unitsPerPack}
+                          </p>
+                          <div className="text-base">
+                            <span className="font-semibold">Fornecedor: </span>
+                            <Select
+                              onValueChange={(value) =>
+                                handleSupplierChange(product.code, value)
+                              }
+                              defaultValue={
+                                selectedSuppliers[product.code] ?? ""
+                              }
+                            >
+                              <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
+                                <SelectValue placeholder="Selecione um fornecedor" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {product.ProductSupplier.map((supplier, i) => (
+                                  <SelectItem
+                                    value={supplier.supplier.id}
+                                    key={i}
+                                  >
+                                    {supplier.supplier.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="mt-3 flex w-full justify-end">
+                            <Button
+                              onClick={() => handleAddProduct(product)}
+                              className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                            >
+                              Adicionar
+                            </Button>
+                          </div>
+                        </DialogDescription>
+                      </DialogContent>
+                    </Dialog>
+                  </TableComponent.Line>
+                ))
+            ) : (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
@@ -828,9 +889,6 @@ export default function CreatePurchaseOrder() {
 
                 <Dialog>
                   <DialogTrigger asChild>
-                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
-              Detalhes
-            </Button> */}
                     <FilePenLine size={24} />
                   </DialogTrigger>
                   <DialogContent

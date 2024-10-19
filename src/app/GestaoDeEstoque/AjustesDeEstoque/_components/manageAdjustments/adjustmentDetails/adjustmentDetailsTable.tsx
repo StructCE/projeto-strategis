@@ -65,7 +65,7 @@ export default function AdjustmentDetails(props: AdjustmentType) {
               )}
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] sm:text-[15px]">
-              {product.reason}
+              {product.reason.name ?? "Motivo não informado"}
             </TableComponent.Value>
           </TableComponent.Line>
         ))}

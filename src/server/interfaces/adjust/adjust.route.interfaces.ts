@@ -10,9 +10,10 @@ export type AdjustProduct = {
   id: string;
   code: string;
   name: string;
+  currentStock: number;
   oldStock: number;
   adjustedStock: number;
-  reason: string;
+  reason: { id: string; name: string };
   unit: {
     id: string;
     name: string;
