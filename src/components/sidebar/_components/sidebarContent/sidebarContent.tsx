@@ -1,4 +1,6 @@
 "use client";
+import { useSession } from "next-auth/react";
+import { api } from "~/trpc/react";
 import {
   Accordion,
   AccordionContent,
@@ -12,6 +14,19 @@ import { useSidebarButtons } from "./button/useSidebarButtons";
 
 export function SidebarContent() {
   const buttons = useSidebarButtons();
+
+  const session = useSession();
+  const userId = session.data?.user.id;
+
+  // Busca os dados do usuário, incluindo cargos e permissões
+  const { data: user } = api.user.getUserById.useQuery({ id: userId });
+
+  // Extrair os códigos dos módulos permitidos para o usuário
+  const userPermissions =
+    user?.UserRole?.flatMap((userRole) =>
+      userRole.role?.modules.map((mod) => mod.pagePath),
+    ) ?? [];
+
   return (
     <ScrollArea className="w-fill h-[90%]">
       <Accordion type="multiple" className="mb-0 w-full">
@@ -21,20 +36,24 @@ export function SidebarContent() {
               {category}
             </AccordionTrigger>
 
-            {items.map((item, itemIndex) => (
-              <AccordionContent
-                className="flex-row p-[5px] pb-2 pt-[3px]"
-                key={itemIndex}
-              >
-                <SidebarButton
-                  {...buttons}
-                  icon={item.icon}
-                  refLink={item.refLink}
-                  name={item.name}
-                  disabled={false} //TODO: logica para habilitar o botão
-                />
-              </AccordionContent>
-            ))}
+            {items.map((item, itemIndex) => {
+              const isDisabled = !userPermissions.includes(item.refLink);
+
+              return (
+                <AccordionContent
+                  className="flex-row p-[5px] pb-2 pt-[3px]"
+                  key={itemIndex}
+                >
+                  <SidebarButton
+                    {...buttons}
+                    icon={item.icon}
+                    refLink={item.refLink}
+                    name={item.name}
+                    disabled={isDisabled} // Desabilita o botão com base na permissão
+                  />
+                </AccordionContent>
+              );
+            })}
           </AccordionItem>
         ))}
       </Accordion>

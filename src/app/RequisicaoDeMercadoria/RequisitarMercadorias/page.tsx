@@ -220,6 +220,20 @@ export default function CreatePurchaseOrder() {
               </SelectContent>
             </Select>
           </div>
+
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-full">
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Text className={className} />
+              )}
+            />
+            <Filter.Input
+              className="text-sm sm:text-base"
+              placeholder="Insira uma descrição para requisição"
+              state={requestDescription}
+              setState={setRequestDescription}
+            />
+          </Filter>
         </TableComponent.FiltersLine>
 
         <TableComponent.Subtitle>
@@ -276,7 +290,7 @@ export default function CreatePurchaseOrder() {
             </Filter.Select>
           </Filter>
 
-          <Filter>
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Search className={className} />
@@ -482,7 +496,6 @@ export default function CreatePurchaseOrder() {
                       {product.maximumStock}
                     </TableComponent.Value>
 
-                    {/* Ver como vai funcionar essa lógica de permissão */}
                     {hasPermission(product, user) ? (
                       <Button
                         onClick={() => handleAddProduct(product)}
@@ -576,9 +589,6 @@ export default function CreatePurchaseOrder() {
 
                     <Dialog>
                       <DialogTrigger asChild>
-                        {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
-                      Detalhes
-                    </Button> */}
                         <Info size={24} />
                       </DialogTrigger>
                       <DialogContent
@@ -847,22 +857,6 @@ export default function CreatePurchaseOrder() {
             ))
           )}
         </TableComponent.Table>
-
-        <div className="pt-1 sm:pt-2">
-          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-full">
-            <Filter.Icon
-              icon={({ className }: { className: string }) => (
-                <Text className={className} />
-              )}
-            />
-            <Filter.Input
-              className="text-sm sm:text-base"
-              placeholder="Insira uma descrição para requisição"
-              state={requestDescription}
-              setState={setRequestDescription}
-            />
-          </Filter>
-        </div>
 
         <FinalizeRequest
           requestDate={date ?? new Date()}

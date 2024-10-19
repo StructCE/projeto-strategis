@@ -8,7 +8,7 @@ async function getUserById(props: UserRepositoryInterfaces["GetUserById"]) {
       UserRole: {
         include: {
           company: true, // Inclui os dados da empresa relacionada ao cargo
-          role: true, // Inclui os dados do cargo
+          role: { include: { RoleModule: { include: { module: true } } } }, // Inclui os dados do cargo
         },
       },
       // Caso tenha outras relações, você pode incluí-las aqui
@@ -25,7 +25,7 @@ async function getAll() {
       UserRole: {
         include: {
           company: true,
-          role: true,
+          role: { include: { RoleModule: { include: { module: true } } } },
         },
       },
     },

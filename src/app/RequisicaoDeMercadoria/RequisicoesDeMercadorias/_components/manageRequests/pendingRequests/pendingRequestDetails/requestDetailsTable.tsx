@@ -34,6 +34,8 @@ export default function PendingRequestDetails(props: RequestType) {
   const [quantities, setQuantities] = useState<Record<string, string>>({});
   const [statusDescription, setStatusDescription] = useState("");
 
+  const { data: users = [] } = api.user.getAll.useQuery();
+
   const handleQuantityChange = (productCode: string, value: string) => {
     setQuantities((prev) => ({
       ...prev,
@@ -52,14 +54,6 @@ export default function PendingRequestDetails(props: RequestType) {
     );
     setQuantities(initialQuantities);
   }, [props.request.requestProducts]);
-
-  const handleReject = () => {
-    const requestData = (props.request.status = "Rejeitada");
-
-    console.log(JSON.stringify(requestData, null, 2));
-  };
-
-  const { data: users = [] } = api.user.getAll.useQuery();
 
   return (
     <TableComponent className="gap-3 text-left">

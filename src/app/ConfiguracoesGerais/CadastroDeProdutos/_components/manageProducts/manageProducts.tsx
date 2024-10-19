@@ -177,7 +177,7 @@ export default function ManageProductsTable() {
           </Filter.Select>
         </Filter>
 
-        <Filter>
+        <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
           <Filter.Icon
             icon={({ className }: { className: string }) => (
               <Search className={className} />
