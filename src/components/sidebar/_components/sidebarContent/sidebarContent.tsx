@@ -16,16 +16,6 @@ export function SidebarContent() {
   const buttons = useSidebarButtons();
 
   const session = useSession();
-  const userId = session.data?.user.id;
-
-  // Busca os dados do usuário, incluindo cargos e permissões
-  const { data: user } = api.user.getUserById.useQuery({ id: userId });
-
-  // Extrair os códigos dos módulos permitidos para o usuário
-  const userPermissions =
-    user?.UserRole?.flatMap((userRole) =>
-      userRole.role?.modules.map((mod) => mod.pagePath),
-    ) ?? [];
 
   return (
     <ScrollArea className="w-fill h-[90%]">
@@ -37,7 +27,9 @@ export function SidebarContent() {
             </AccordionTrigger>
 
             {items.map((item, itemIndex) => {
-              const isDisabled = !userPermissions.includes(item.refLink);
+              const isDisabled = !session.data?.user.allowedPagesPath.includes(
+                item.refLink,
+              );
 
               return (
                 <AccordionContent
