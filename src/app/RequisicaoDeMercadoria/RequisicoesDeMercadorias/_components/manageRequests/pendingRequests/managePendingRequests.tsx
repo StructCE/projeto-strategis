@@ -32,8 +32,6 @@ export default function ManagePendingRequestsTable() {
     isLoading,
   } = api.request.getAll.useQuery({});
 
-  console.log(requests);
-
   const filteredRequests = requests.filter((request) => {
     const matchesStatus = request.status == "Esperando Confirmação";
 

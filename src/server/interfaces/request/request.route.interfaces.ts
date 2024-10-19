@@ -13,6 +13,8 @@ export type Request = {
 };
 
 export type RequestProduct = {
+  id: string;
+  productId: string;
   code: string;
   name: string;
   // unit: string;
@@ -39,6 +41,7 @@ export type RequestProduct = {
 };
 
 export type SerializedRequest = {
+  id: string;
   description: string | undefined | null;
   requestDate: Date;
   responsibleName: string | undefined;

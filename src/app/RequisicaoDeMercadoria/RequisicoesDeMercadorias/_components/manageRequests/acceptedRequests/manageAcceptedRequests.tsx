@@ -44,7 +44,7 @@ export default function ManageAcceptedRequestsTable() {
     const matchesResponsible =
       inputResponsible === "" ||
       request.responsibleName
-        .toLowerCase()
+        ?.toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
     return matchesStatus && matchesDate && matchesResponsible;
@@ -151,7 +151,9 @@ export default function ManageAcceptedRequestsTable() {
                     {request.requestProducts.length}
                   </TableComponent.Value>
                   <TableComponent.Value>
-                    {request.description ?? "Não informada"}
+                    {request.description === ""
+                      ? "Não informada"
+                      : request.description}
                   </TableComponent.Value>
 
                   <Dialog>

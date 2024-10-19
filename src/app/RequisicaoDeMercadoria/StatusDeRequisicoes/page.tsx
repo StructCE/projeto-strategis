@@ -46,7 +46,7 @@ export default function ManageRequestsTable() {
     const matchesResponsible =
       inputResponsible === "" ||
       request.responsibleName
-        .toLowerCase()
+        ?.toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
     const matchesStuatus =
@@ -56,8 +56,8 @@ export default function ManageRequestsTable() {
   });
 
   function handleRequestStatus(status: string) {
-    if (status == "Pendente")
-      return <span className="text-amarelo_botao">Esperando confirmação</span>;
+    if (status == "Esperando Confirmação")
+      return <span className="text-amarelo_botao">Esperando Confirmação</span>;
     if (status == "Confirmada")
       return <span className="text-verde_botao">Confirmada</span>;
     if (status == "Rejeitada")
@@ -68,7 +68,7 @@ export default function ManageRequestsTable() {
     status: string,
     request: SerializedRequest,
   ) {
-    if (status == "Pendente")
+    if (status == "Esperando Confirmação")
       return <PendingRequestDetails request={request} />;
     if (status == "Confirmada")
       return <AcceptedRequestDetails request={request} />;

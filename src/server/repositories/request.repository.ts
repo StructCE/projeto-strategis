@@ -122,8 +122,87 @@ async function register(props: RequestRepositoryInterfaces["RegisterProps"]) {
   return createdRequest;
 }
 
+async function edit(props: RequestRepositoryInterfaces["EditProps"]) {
+  const {
+    id,
+    requestData: { statusResponsibleId: userId, ...requestData },
+  } = props;
+
+  // Verificar se o request existe
+  const requestExists = await db.request.findUnique({ where: { id } });
+  if (!requestExists) {
+    throw new Error("Requisição não encontrada");
+  }
+
+  const userRole = await db.userRole.findFirst({
+    where: {
+      userId: userId, // Relacionando o userId recebido do front-end
+    },
+  });
+
+  // Verifica se o papel de usuário foi encontrado
+  if (!userRole) {
+    throw new Error("O usuário não tem um papel associado (UserRole).");
+  }
+
+  // Atualizar os dados da request
+  const editedRequest = await db.request.update({
+    where: { id }, // Procurar pela requisição usando o ID
+    data: {
+      status: requestData.status, // Atualizar o status
+      statusDescription: requestData.statusDescription ?? null,
+      statusDate: requestData.statusDate ?? null,
+      statusResponsibleId: userRole.id ?? null,
+    },
+  });
+
+  // Atualizar os produtos da requisição
+  if (requestData.requestProducts && requestData.requestProducts.length > 0) {
+    await Promise.all(
+      requestData.requestProducts.map(async (requestProduct) => {
+        // Verificar se o requestProduct existe antes de atualizar
+        const existingRequestProduct = await db.requestProduct.findUnique({
+          where: { id: requestProduct.id }, // Usar o id correto do produto
+        });
+
+        if (!existingRequestProduct) {
+          throw new Error(
+            `Produto de requisição não encontrado: ${requestProduct.id}`,
+          );
+        }
+
+        return db.requestProduct.update({
+          where: { id: requestProduct.id }, // Usar o id do produto da requisição
+          data: {
+            releasedQuantity: requestProduct.releasedQuantity ?? null, // Atualizar a quantidade liberada
+          },
+        });
+      }),
+    );
+  }
+
+  return editedRequest; // Retornar a requisição atualizada
+}
+
+async function remove(props: RequestRepositoryInterfaces["DeleteProps"]) {
+  await db.requestProduct.deleteMany({
+    where: {
+      requestId: props.id,
+    },
+  });
+
+  const deletedRequest = await db.request.delete({
+    where: {
+      id: props.id,
+    },
+  });
+  return deletedRequest;
+}
+
 export const requestRepository = {
   getAll,
   register,
+  edit,
+  remove,
   countPendentRequests,
 };
