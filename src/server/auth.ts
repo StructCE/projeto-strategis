@@ -13,17 +13,27 @@ function customPrismaAdapter(p: typeof db) {
   return {
     ...PrismaAdapter(p),
     createUser: undefined,
-    getUser: (id: string) =>
-      p.user.findUnique({
-        where: { id },
+    async getSessionAndUser(sessionToken: string) {
+      const userAndSession = await p.session.findUnique({
+        where: { sessionToken },
         include: {
-          UserRole: {
+          user: {
             include: {
-              role: { include: { RoleModule: { include: { module: true } } } },
+              UserRole: {
+                include: {
+                  role: {
+                    include: { RoleModule: { include: { module: true } } },
+                  },
+                },
+              },
             },
           },
         },
-      }),
+      });
+      if (!userAndSession) return null;
+      const { user, ...session } = userAndSession;
+      return { user, session };
+    },
   };
 }
 
@@ -74,42 +84,44 @@ export const authOptions: NextAuthOptions = {
   //   signIn: "/login",
   // },
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        allowedPagesPath: user?.UserRole
-          ? [
-              ...new Set(
-                user.UserRole.flatMap((userRole) =>
-                  userRole?.role?.RoleModule
-                    ? userRole.role.RoleModule.map(
-                        (roleModule) => roleModule?.module?.pagePath,
-                      )
-                    : [],
+    session: ({ session, user }) => {
+      return {
+        ...session,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          allowedPagesPath: user?.UserRole
+            ? [
+                ...new Set(
+                  user.UserRole.flatMap((userRole) =>
+                    userRole?.role?.RoleModule
+                      ? userRole.role.RoleModule.map(
+                          (roleModule) => roleModule?.module?.pagePath,
+                        )
+                      : [],
+                  ),
                 ),
-              ),
-            ]
-          : [],
+              ]
+            : [],
 
-        allowedRouters: user?.UserRole
-          ? [
-              ...new Set(
-                user.UserRole.flatMap((userRole) =>
-                  userRole?.role?.RoleModule
-                    ? userRole.role.RoleModule.map(
-                        (roleModule) => roleModule?.module?.allowedRouter,
-                      )
-                    : [],
+          allowedRouters: user?.UserRole
+            ? [
+                ...new Set(
+                  user.UserRole.flatMap((userRole) =>
+                    userRole?.role?.RoleModule
+                      ? userRole.role.RoleModule.map(
+                          (roleModule) => roleModule?.module?.allowedRouter,
+                        )
+                      : [],
+                  ),
                 ),
-              ),
-            ]
-          : [],
-      },
-    }),
+              ]
+            : [],
+        },
+      };
+    },
   },
   adapter: customPrismaAdapter(db) as Adapter,
   providers: [

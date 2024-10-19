@@ -1,9 +1,78 @@
 import { db } from "../db";
 import type { CompanyRepositoryInterfaces } from "../interfaces/company/company.repository.interfaces";
 
-async function getAll() {
-  const companies = await db.company.findMany();
+async function getAll(props: CompanyRepositoryInterfaces["GetAllProps"]) {
+  const { filters } = props;
+  const companies = await db.company.findMany({
+    where: {
+      AND: [
+        { cnpj: { contains: filters.cnpj } },
+        { name: { contains: filters.name } },
+        { federativeUnit: { contains: filters.state } },
+        { taxRegime: { contains: filters.taxRegime } },
+      ],
+    },
+  });
   return companies;
+}
+
+async function countRegisteredProducts(
+  props: CompanyRepositoryInterfaces["CountRegisteredProducts"],
+) {
+  const registeredProducts = await db.product.count({
+    where: {
+      shelf: {
+        cabinet: {
+          StockCabinet: {
+            every: {
+              stock: {
+                companyId: props.id,
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return registeredProducts;
+}
+
+async function countRegisteredSuppliers(
+  props: CompanyRepositoryInterfaces["CountRegisteredProducts"],
+) {
+  // const registeredSuppliers = await db.contact.count({
+  //   where: {
+  //     companyId: props.id, // companyId esta comentado no bd
+  //   },
+  //   select: {
+  //     supplierId: true,
+  //   },
+  // });
+  return 10;
+}
+
+async function countLowStockProducts(
+  props: CompanyRepositoryInterfaces["CountRegisteredProducts"],
+) {
+  const products = await db.product.findMany({
+    where: {
+      shelf: {
+        cabinet: {
+          StockCabinet: {
+            every: {
+              stock: {
+                companyId: props.id,
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return products.filter(
+    (product) => product.currentStock / product.minimunStock <= 1.2,
+  ).length; // Considerando 'baixo estoque' como até 120% do estoque minimo TODO verificar parametro correto
 }
 
 async function getOne(props: CompanyRepositoryInterfaces["GetOneProps"]) {
@@ -105,4 +174,7 @@ export const CompanyRepository = {
   getCompanyUsers,
   getCompanySuppliers,
   getCompanyStocks,
+  countRegisteredProducts,
+  countRegisteredSuppliers,
+  countLowStockProducts,
 };

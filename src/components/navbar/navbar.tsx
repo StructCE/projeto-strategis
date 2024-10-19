@@ -23,7 +23,9 @@ export default function Navbar({ session }: { session: Session | null }) {
     id: session?.user.id,
   });
 
-  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery({
+    filters: {},
+  });
   const { data: roles = [] } = api.role.getAll.useQuery();
 
   const getCompanyNameById = (companyId: string) => {
@@ -36,7 +38,7 @@ export default function Navbar({ session }: { session: Session | null }) {
     return role ? role.name : "Cargo não encontrado";
   };
 
-  const [selectCompanyId, setSelectCompanyId] = useState<string>("");
+  const [selectCompanyId, setSelectCompanyId] = useState<string | null>(null);
 
   useEffect(() => {
     // Verificar se o window existe (somente no client-side)
@@ -62,7 +64,7 @@ export default function Navbar({ session }: { session: Session | null }) {
       ) && (
         <Select
           onValueChange={setSelectCompanyId}
-          defaultValue={selectCompanyId}
+          value={selectCompanyId ?? ""}
         >
           <SelectTrigger className="h-fit w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-3 py-1.5 text-[12px] text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-4 sm:py-2 sm:text-base">
             <SelectValue placeholder="Empresa a Operar" />
