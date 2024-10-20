@@ -150,6 +150,22 @@ async function edit(props: ProductRepositoryInterfaces["EditProps"]) {
   return editedProduct;
 }
 
+async function updateCurrentStock(
+  props: ProductRepositoryInterfaces["UpdateCurrentStockProps"],
+) {
+  const updateOperations = props.map((product) => {
+    const { id, data } = product;
+    return db.product.update({
+      where: { id },
+      data: { currentStock: data.currentStock },
+    });
+  });
+
+  const editedProducts = await db.$transaction(updateOperations);
+
+  return editedProducts;
+}
+
 async function remove(props: ProductRepositoryInterfaces["RemoveProps"]) {
   const deletedProduct = await db.product.delete({
     where: {
@@ -165,5 +181,6 @@ export const ProductRepository = {
   getAllWhere,
   create,
   edit,
+  updateCurrentStock,
   remove,
 };

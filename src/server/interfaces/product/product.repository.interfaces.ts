@@ -59,6 +59,17 @@ const editProps = z.object({
 
 type EditProps = z.infer<typeof editProps>;
 
+const updateCurrentStockProps = z.array(
+  z.object({
+    id: z.string(),
+    data: z.object({
+      currentStock: z.number(),
+    }),
+  }),
+);
+
+type UpdateCurrentStockProps = z.infer<typeof updateCurrentStockProps>;
+
 const removeProps = z.object({
   id: z.string(),
 });
@@ -69,6 +80,7 @@ export const productRepositorySchema = {
   getAllProps,
   createProps,
   editProps,
+  updateCurrentStockProps,
   removeProps,
 };
 
@@ -76,5 +88,6 @@ export type ProductRepositoryInterfaces = {
   GetAllProps: GetAllProps;
   CreateProps: CreateProps;
   EditProps: EditProps;
+  UpdateCurrentStockProps: UpdateCurrentStockProps;
   RemoveProps: RemoveProps;
 };
