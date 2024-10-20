@@ -1,3 +1,4 @@
+import { createCompanyFormSchema } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/createCompany/companyRegisterFormSchema";
 import { db } from "../db";
 import type { CompanyRepositoryInterfaces } from "../interfaces/company/company.repository.interfaces";
 
@@ -107,16 +108,9 @@ async function getCompanyUsers(
 async function getCompanySuppliers(
   props: CompanyRepositoryInterfaces["GetCompanySuppliersProps"],
 ) {
-  const companySuppliers = await db.supplier.findMany({
+  const companySuppliers = await db.companySupplier.findMany({
     where: {
-      Contact: {
-        every: {
-          companyId: props.id,
-        },
-      },
-    },
-    include: {
-      Contact: true,
+      companyId: props.id,
     },
   });
 
@@ -135,11 +129,24 @@ async function getCompanyStocks(
 }
 
 async function register(props: CompanyRepositoryInterfaces["RegisterProps"]) {
+  const { suppliers, ...data } = props;
   const registeredCompany = await db.company.create({
     data: {
-      ...props,
+      ...data,
     },
   });
+
+  const createdCompanySuppliers = suppliers.map(async (supplier) => {
+    const createdCompanySupplier = await db.companySupplier.create({
+      data: {
+        companyId: registeredCompany.id,
+        supplierId: supplier,
+      },
+    });
+    return createdCompanySupplier;
+  });
+
+  await Promise.all(createdCompanySuppliers);
   return registeredCompany;
 }
 

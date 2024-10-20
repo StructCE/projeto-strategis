@@ -1,12 +1,14 @@
 import { z } from "zod";
 
-const getAll = z.object({
-  // filters: z.object({
-  //   name: z.string().optional(),
-  //   email: z.string().optional(),
-  //   federativeUnit: z.string().optional(),
-  // }),
-});
+const getAll = z
+  .object({
+    filters: z.object({
+      name: z.string().optional(),
+      email: z.string().optional(),
+      federativeUnit: z.string().optional(),
+    }),
+  })
+  .optional();
 
 type GetAll = z.infer<typeof getAll>;
 

@@ -54,6 +54,7 @@ model User {
     sessions           Session[]
     UserRole           UserRole[]
     productPermissions ProductPermission[]
+    Company            Company[]           @relation("CompanyResponsible")
 
     @@map("users")
 }
@@ -83,10 +84,11 @@ model Company {
     cep                String
     legalResponsibleId String?
 
-    legaResponsible UserRole?  @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
-    UserRole        UserRole[] @relation("CompanyEmployees")
-    Stock           Stock[]
+    legalResponsible User?             @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
+    UserRole         UserRole[]        @relation("CompanyEmployees")
+    Stock            Stock[]
     // Contact         Contact[]
+    CompanySupplier  CompanySupplier[]
 }
 
 model UserRole {
@@ -98,7 +100,6 @@ model UserRole {
     user                       User        @relation(fields: [userId], references: [id])
     company                    Company     @relation("CompanyEmployees", fields: [companyId], references: [id])
     role                       Role        @relation(fields: [roleId], references: [id])
-    CompanyResponsible         Company[]   @relation("CompanyResponsible")
     StockResponsible           Stock[]     @relation("StockResponsible")
     OutputResponsible          Output[]    @relation("OutputResponsible")
     OutputApplicant            Output[]    @relation("OutputApplicant")
@@ -149,6 +150,7 @@ model Supplier {
     contacts          Contact[]
     ProductSupplier   ProductSupplier[]
     ProductOutput     ProductOutput[]
+    CompanySupplier   CompanySupplier[]
 }
 
 model Contact {
@@ -157,9 +159,16 @@ model Contact {
     email      String
     phone      String
     supplierId String
-    // companyId  String
 
-    // company  Company  @relation(fields: [companyId], references: [id])
+    supplier Supplier @relation(fields: [supplierId], references: [id])
+}
+
+model CompanySupplier {
+    id         String @id @default(cuid())
+    companyId  String
+    supplierId String
+
+    company  Company  @relation(fields: [companyId], references: [id])
     supplier Supplier @relation(fields: [supplierId], references: [id])
 }
 
