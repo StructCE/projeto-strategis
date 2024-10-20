@@ -46,66 +46,11 @@ import { adjustment_reasons } from "../_components/adjustmentsData";
 
 import type {
   ProductWithFeatures as Product,
+  FlatProductWithFeatures,
   ProductWithFeatures,
 } from "~/server/interfaces/product/product.route.interfaces";
 
-type FlatProductWithFeatures = {
-  id: string;
-  code: string;
-  name: string;
-  status: string;
-  buyQuantity: number;
-  buyDay: string;
-  currentStock: number;
-  minimunStock: number;
-  maximumStock: number;
-  lastInventory: number;
-  unitId: string;
-  controlTypeId: string;
-  categoryId: string;
-  sectorOfUseId: string;
-  shelfId: string;
-  parentProductId?: string | null;
-
-  // Relations
-  parentProduct?: Product | null;
-  unit: {
-    id: string;
-    name: string;
-    abbreviation: string;
-    unitsPerPack: number;
-  };
-  controlType: {
-    id: string;
-    name: string;
-  };
-  category: {
-    id: string;
-    name: string;
-  };
-  sectorOfUse: {
-    id: string;
-    name: string;
-  };
-  address: {
-    shelf: {
-      id: string;
-      name: string;
-    };
-    cabinet: {
-      id: string;
-      name: string;
-    };
-    stock: {
-      id: string;
-      name: string;
-      companyId: string;
-      legalResponsibleId: string;
-    };
-  };
-};
-
-function convertToFlatProductWithFeatures(
+function flatProducts(
   products: ProductWithFeatures[],
 ): FlatProductWithFeatures[] {
   return products.map((product) => {
@@ -143,7 +88,7 @@ export default function CreateAdjustment() {
     api.generalParameters.controlType.getAll.useQuery();
 
   const { data: productsRawData = [] } = api.product.getAll.useQuery();
-  const products = convertToFlatProductWithFeatures(productsRawData);
+  const products = flatProducts(productsRawData);
 
   const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
 
@@ -279,15 +224,58 @@ export default function CreateAdjustment() {
     const adjustmentData = {
       responsible: inputResponsible,
       date: date?.toISOString(),
-      products: addedProducts.map((product) => ({
-        code: product.code,
-        name: product.name,
-        currentStock: product.currentStock,
-        stock_adjusted: adjustedStock[product.code] ?? 0,
-        adjustment_reason:
-          adjustmentReasons[product.code] ?? "Sem motivo informado",
-      })),
     };
+
+    // const productsData = addedProducts.map((product) => ({
+    //   id: product.id,
+    //   code: product.code,
+    //   name: product.name,
+    //   currentStock: product.currentStock,
+    //   stock_adjusted: adjustedStock[product.code] ?? 0,
+    //   adjustment_reason:
+    //     adjustmentReasons[product.code] ?? "Sem motivo informado",
+    // }));
+
+    const productsData = addedProducts.map((product) => ({
+      id: product.id,
+      data: {
+        currentStock: product.currentStock,
+      },
+    }));
+
+    // REGISTRAR AJUSTE
+    // const adjustMutation = api.adjust.create.useMutation({
+    //   onSuccess: (newStock) => {
+    //     console.log("Adjustment created successfully:", newStock);
+    //     alert("Ajuste criado com sucesso.");
+    //     setTimeout(function () {
+    //       location.reload();
+    //     }, 500);
+    //   },
+    //   onError: (error) => {
+    //     console.error("Error creating adjustment:", error);
+    //     alert("Erro ao criar ajuste.");
+    //   },
+    // });
+
+    // REGISTRAR O AJUSTE DE CADA PRODUTO
+
+    // ATUALIZAR OS VALORES DE CADA PRODUTO
+    const editProductMutation = api.product.updateCurrentStock.useMutation({
+      onSuccess: (updatedProduct) => {
+        console.log("Products updated successfully:", updatedProduct);
+
+        setTimeout(function () {
+          location.reload();
+        }, 500);
+      },
+      onError: (error) => {
+        console.error("Error updating products:", error);
+        alert("Erro ao atualizar produtos.");
+      },
+    });
+
+    editProductMutation.mutate(productsData);
 
     console.log(JSON.stringify(adjustmentData, null, 2));
 

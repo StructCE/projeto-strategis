@@ -43,6 +43,13 @@ export const productRouter = createTRPCRouter({
       return editedProduct;
     }),
 
+  updateCurrentStock: protectedProcedure
+    .input(productRepositorySchema.updateCurrentStockProps)
+    .mutation(async ({ input }): Promise<ProductRouteInterfaces["Product"][]> => {
+      const editedProducts = await ProductRepository.updateCurrentStock(input);
+      return editedProducts;
+    }),
+
   deleteProduct: protectedProcedure
     .input(productRepositorySchema.removeProps)
     .mutation(async ({ input }): Promise<ProductRouteInterfaces["Product"]> => {

@@ -107,8 +107,65 @@ export type ProductWithFeatures = {
   }[];
 };
 
+export type FlatProductWithFeatures = {
+  id: string;
+  code: string;
+  name: string;
+  status: string;
+  buyQuantity: number;
+  buyDay: string;
+  currentStock: number;
+  minimunStock: number;
+  maximumStock: number;
+  lastInventory: number;
+  unitId: string;
+  controlTypeId: string;
+  categoryId: string;
+  sectorOfUseId: string;
+  shelfId: string;
+  parentProductId?: string | null;
+
+  // Relations
+  parentProduct?: Product | null;
+  unit: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    unitsPerPack: number;
+  };
+  controlType: {
+    id: string;
+    name: string;
+  };
+  category: {
+    id: string;
+    name: string;
+  };
+  sectorOfUse: {
+    id: string;
+    name: string;
+  };
+  address: {
+    shelf: {
+      id: string;
+      name: string;
+    };
+    cabinet: {
+      id: string;
+      name: string;
+    };
+    stock: {
+      id: string;
+      name: string;
+      companyId: string;
+      legalResponsibleId: string;
+    };
+  };
+};
+
 export type ProductRouteInterfaces = {
   ProductsCount: ProductsCount;
   Product: Product;
   ProductWithFeatures: ProductWithFeatures;
+  FlatProductWithFeatures: FlatProductWithFeatures;
 };
