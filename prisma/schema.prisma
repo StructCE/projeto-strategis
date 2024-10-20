@@ -86,6 +86,7 @@ model Company {
     legaResponsible UserRole?  @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
     UserRole        UserRole[] @relation("CompanyEmployees")
     Stock           Stock[]
+    Invoice         Invoice[]
     // Contact         Contact[]
 }
 
@@ -240,7 +241,8 @@ model Unit {
     abbreviation String
     unitsPerPack Float
 
-    Product Product[]
+    Product        Product[]
+    InvoiceProduct InvoiceProduct[]
     // RequestProduct RequestProduct[]
 }
 
@@ -435,18 +437,22 @@ model Operation {
 model Bank {
     id      String    @id @default(cuid())
     name    String
-    Payment Payment[]
-}
-
-model BankAccount {
-    id   String @id @default(cuid())
-    name String
-}
-
-model BankAccountPlan {
-    id      String    @id @default(cuid())
-    name    String
     Invoice Invoice[]
+}
+
+model InvoiceAccount {
+    id            String              @id @default(cuid())
+    name          String
+    accountPlanId String?
+    accountPlan   InvoiceAccountPlan? @relation(fields: [accountPlanId], references: [id])
+}
+
+model InvoiceAccountPlan {
+    id           String           @id @default(cuid())
+    name         String
+    abbreviation String
+    Invoice      Invoice[]
+    accounts     InvoiceAccount[]
 }
 
 model DocumentType {
@@ -467,48 +473,46 @@ model Group {
     Invoice Invoice[]
 }
 
-model Payment {
-    id          String   @id @default(cuid())
-    invoiceId   String
-    bankId      String
-    payedValue  String
-    paymentDate DateTime
-    payedStatus String
-
-    invoice Invoice @relation(fields: [invoiceId], references: [id])
-    bank    Bank    @relation(fields: [bankId], references: [id])
-}
-
 model Invoice {
-    id             String   @id @default(cuid())
-    documentNumber String
-    documentDate   DateTime
-    expenseType    String
-    installment    String
-    deadlineDate   DateTime
-    status         String
-    groupId        String?
-    documentTypeId String?
-    accountPlanId  String?
-    projectId      String?
+    id              String   @id @default(cuid())
+    documentNumber  String // Número da nota
+    documentDate    DateTime // Data de emissão
+    companyId       String // Empresa
+    expenseType     String // "Despesa Fixa" | "Despesa Variável" | "Receita" | undefined;
+    recurrance      String // "Recorrente" | "Avulsa" | "Parcelas" | undefined;
+    installment     String // Parcela (Pode ser 'única' ou o numero da parcela incluindo a data ou não)
+    deadlineDate    DateTime // Data de vencimento
+    confirmedStatus String // "Pendente" | "Confirmada" | "Cancelada"
+    accountPlanId   String? // Plano de contas com nome, sigla e conta
+    projectId       String? // Projeto
+    groupId         String? // Grupo
+    documentTypeId  String? // Tipo de documento
 
-    group          Group?           @relation(fields: [groupId], references: [id])
-    documentType   DocumentType?    @relation(fields: [documentTypeId], references: [id])
-    accountPlan    BankAccountPlan? @relation(fields: [accountPlanId], references: [id])
-    project        Project?         @relation(fields: [projectId], references: [id])
-    Payment        Payment[]
+    bankId      String? // Banco do pagamento
+    payedValue  String? // Valor pago
+    paymentDate DateTime? // Data do pagamento
+    payedStatus String? // "Pago" | "Em Aberto" | "Cancelado"
+
+    company        Company             @relation(fields: [companyId], references: [id])
+    group          Group?              @relation(fields: [groupId], references: [id])
+    documentType   DocumentType?       @relation(fields: [documentTypeId], references: [id])
+    accountPlan    InvoiceAccountPlan? @relation(fields: [accountPlanId], references: [id])
+    project        Project?            @relation(fields: [projectId], references: [id])
     InvoiceProduct InvoiceProduct[]
+    bank           Bank?               @relation(fields: [bankId], references: [id])
 }
 
 model InvoiceProduct {
     id                String @id @default(cuid())
     ncm               Int
     cfop              Int
+    purchaseQuantity  Int // Quantidade comprada
+    unitValue         Float // Valor por unidade de compra
+    unitId            String // Unidade de compra
     invoiceId         String
     productSupplierId String
-    purchaseQuantity  Int
-    unitValue         Float
 
+    unit            Unit            @relation(fields: [unitId], references: [id])
     productSupplier ProductSupplier @relation(fields: [productSupplierId], references: [id])
     invoice         Invoice         @relation(fields: [invoiceId], references: [id])
 }
