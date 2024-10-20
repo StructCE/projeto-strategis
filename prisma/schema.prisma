@@ -445,13 +445,13 @@ model InvoiceAccount {
     name          String
     accountPlanId String?
     accountPlan   InvoiceAccountPlan? @relation(fields: [accountPlanId], references: [id])
+    Invoice       Invoice[]
 }
 
 model InvoiceAccountPlan {
     id           String           @id @default(cuid())
     name         String
     abbreviation String
-    Invoice      Invoice[]
     accounts     InvoiceAccount[]
 }
 
@@ -483,7 +483,7 @@ model Invoice {
     installment     String // Parcela (Pode ser 'única' ou o numero da parcela incluindo a data ou não)
     deadlineDate    DateTime // Data de vencimento
     confirmedStatus String // "Pendente" | "Confirmada" | "Cancelada"
-    accountPlanId   String? // Plano de contas com nome, sigla e conta
+    accountId       String? // Conta relacionada a um accoutn plan com nome e sigla
     projectId       String? // Projeto
     groupId         String? // Grupo
     documentTypeId  String? // Tipo de documento
@@ -493,13 +493,13 @@ model Invoice {
     paymentDate DateTime? // Data do pagamento
     payedStatus String? // "Pago" | "Em Aberto" | "Cancelado"
 
-    company        Company             @relation(fields: [companyId], references: [id])
-    group          Group?              @relation(fields: [groupId], references: [id])
-    documentType   DocumentType?       @relation(fields: [documentTypeId], references: [id])
-    accountPlan    InvoiceAccountPlan? @relation(fields: [accountPlanId], references: [id])
-    project        Project?            @relation(fields: [projectId], references: [id])
+    company        Company          @relation(fields: [companyId], references: [id])
+    group          Group?           @relation(fields: [groupId], references: [id])
+    documentType   DocumentType?    @relation(fields: [documentTypeId], references: [id])
+    account        InvoiceAccount?  @relation(fields: [accountId], references: [id])
+    project        Project?         @relation(fields: [projectId], references: [id])
     InvoiceProduct InvoiceProduct[]
-    bank           Bank?               @relation(fields: [bankId], references: [id])
+    bank           Bank?            @relation(fields: [bankId], references: [id])
 }
 
 model InvoiceProduct {

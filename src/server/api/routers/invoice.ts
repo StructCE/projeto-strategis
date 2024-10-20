@@ -1,7 +1,7 @@
 import { invoiceRepositorySchema } from "~/server/interfaces/invoice/invoice.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
 import type { InvoiceRouteInterfaces } from "~/server/interfaces/invoice/invoice.route.interfaces";
 import { invoiceRepository } from "~/server/repositories/invoice.repository";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const invoiceRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -14,21 +14,38 @@ export const invoiceRouter = createTRPCRouter({
         const SerializedInvoices = invoices.map((invoice) => ({
           documentNumber: invoice.documentNumber,
           documentDate: invoice.documentDate,
+          company: { id: invoice.company.id, name: invoice.company.name },
           expenseType: invoice.expenseType,
+          recurrance: invoice.recurrance,
           installment: invoice.installment,
           deadlineDate: invoice.deadlineDate,
-          status: invoice.status,
-          groupName: invoice.group?.name,
-          documentTypeName: invoice.documentType?.name,
-          accountPlanName: invoice.accountPlan?.name,
-          projectName: invoice.project?.name,
+          confirmedStatus: invoice.confirmedStatus,
+          group: { id: invoice.group?.id, name: invoice.group?.name },
+          documentType: {
+            id: invoice.documentType?.id,
+            name: invoice.documentType?.name,
+          },
+          account: {
+            id: invoice.account?.id ?? "",
+            name: invoice.account?.name ?? "",
+          },
+          accountPlan: invoice.account?.accountPlan
+            ? {
+                id: invoice.account?.accountPlan?.id ?? "",
+                name: invoice.account?.accountPlan?.name ?? "",
+                abbreviation: invoice.account?.accountPlan?.abbreviation ?? "",
+              }
+            : undefined,
+          project: { id: invoice.project?.id, name: invoice.project?.name },
           invoiceProducts: invoice.InvoiceProduct.map(
             (invoiceProductSupplier) => ({
+              id: invoiceProductSupplier.productSupplier.id,
+              productId: invoiceProductSupplier.productSupplier.product.id,
               name: invoiceProductSupplier.productSupplier.product.name,
-              code: invoiceProductSupplier.productSupplier.product.id,
+              code: invoiceProductSupplier.productSupplier.product.code,
               ncm: invoiceProductSupplier.ncm,
               cfop: invoiceProductSupplier.cfop,
-              unit: invoiceProductSupplier.productSupplier.product.unit.name,
+              unit: invoiceProductSupplier.productSupplier.product.unit,
               purchaseQuantity: invoiceProductSupplier.purchaseQuantity,
               unitValue: invoiceProductSupplier.unitValue,
               controlType:
@@ -37,13 +54,7 @@ export const invoiceRouter = createTRPCRouter({
                 invoiceProductSupplier.productSupplier.product.category.name,
               useSector:
                 invoiceProductSupplier.productSupplier.product.sectorOfUse.name,
-              stockName:
-                invoiceProductSupplier.productSupplier.product.stock.name,
-              cabinetName:
-                invoiceProductSupplier.productSupplier.product.cabinet.cabinet
-                  .name,
-              shelfName:
-                invoiceProductSupplier.productSupplier.product.shelf.shelf.name,
+              shelf: invoiceProductSupplier.productSupplier.product.shelf,
             }),
           ),
         }));

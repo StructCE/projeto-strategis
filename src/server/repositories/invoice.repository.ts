@@ -2,30 +2,31 @@ import { db } from "../db";
 import type { InvoiceRepositoryInterfaces } from "../interfaces/invoice/invoice.repository.interfaces";
 
 async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
-  const { filters } = props;
+  // const { filters } = props;
   const invoices = await db.invoice.findMany({
-    where: {
-      AND: [
-        {
-          documentDate: {
-            gte: filters.startDate,
-            lte: filters.endDate,
-          },
-        },
-        {
-          InvoiceProduct: {
-            every: {
-              productSupplier: { supplier: { name: filters.supplier } },
-            },
-          },
-        },
-      ],
-    },
+    // where: {
+    //   AND: [
+    //     {
+    //       documentDate: {
+    //         gte: filters.startDate,
+    //         lte: filters.endDate,
+    //       },
+    //     },
+    //     {
+    //       InvoiceProduct: {
+    //         every: {
+    //           productSupplier: { supplier: { name: filters.supplier } },
+    //         },
+    //       },
+    //     },
+    //   ],
+    // },
     include: {
-      accountPlan: true,
+      account: { include: { accountPlan: true } },
       documentType: true,
       group: true,
       project: true,
+      company: true,
       InvoiceProduct: {
         include: {
           productSupplier: {
@@ -33,14 +34,22 @@ async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
               product: {
                 include: {
                   unit: true,
-                  cabinet: {
-                    include: { cabinet: true },
-                  },
-                  stock: true,
                   category: true,
                   controlType: true,
                   sectorOfUse: true,
-                  shelf: { include: { shelf: true } },
+                  shelf: {
+                    include: {
+                      cabinet: {
+                        include: {
+                          StockCabinet: {
+                            include: {
+                              stock: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
                 },
               },
               supplier: true,
@@ -55,21 +64,26 @@ async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
 
 async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
   const { invoiceProducts, ...invoiceData } = props;
+
+  // Cria a fatura (Invoice)
   const registeredInvoice = await db.invoice.create({
     data: {
       ...invoiceData,
     },
   });
 
+  // Mapeia e registra os produtos da fatura
   const registeredInvoiceProducts = invoiceProducts.map(
     async (invoiceProduct) => {
+      // Cria o produto vinculado à fatura
       const registeredInvoiceProduct = await db.invoiceProduct.create({
         data: {
           ...invoiceProduct,
-          invoiceId: registeredInvoice.id,
+          invoiceId: registeredInvoice.id, // Vincula o ID da fatura
         },
       });
 
+      // Busca o produto relacionado ao fornecedor
       const productToBeUpdated = await db.productSupplier.findFirst({
         where: {
           id: invoiceProduct.productSupplierId,
@@ -79,24 +93,27 @@ async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
         },
       });
 
+      // Se o produto for encontrado, atualiza o estoque
       if (productToBeUpdated) {
         await db.product.update({
           where: {
-            id: productToBeUpdated.id,
+            id: productToBeUpdated.product.id, // Corrige a referência para o produto
           },
           data: {
             currentStock:
               productToBeUpdated.product.currentStock +
-              invoiceProduct.purchaseQuantity,
+              invoiceProduct.purchaseQuantity, // Atualiza o estoque
           },
         });
       }
       return registeredInvoiceProduct;
     },
   );
+
+  // Aguarda o registro de todos os produtos
   await Promise.all(registeredInvoiceProducts);
 
-  return registeredInvoice;
+  return registeredInvoice; // Retorna a fatura registrada
 }
 
 export const invoiceRepository = {
