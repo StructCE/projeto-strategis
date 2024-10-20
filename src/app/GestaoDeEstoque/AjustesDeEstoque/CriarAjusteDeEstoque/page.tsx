@@ -42,7 +42,7 @@ import {
 
 // API and data imports
 import { api } from "~/trpc/react";
-import { adjustment_reasons } from "../_components/adjustmentsData";
+// import { adjustmentReasons } from "../_components/adjustmentsData";
 
 import type {
   ProductWithFeatures as Product,
@@ -91,6 +91,8 @@ export default function CreateAdjustment() {
   const products = flatProducts(productsRawData);
 
   const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: adjustmentReasons = [] } =
+    api.generalParameters.adjustReason.getAll.useQuery();
 
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
@@ -110,7 +112,9 @@ export default function CreateAdjustment() {
   const [adjustedStock, setAdjustedStock] = useState<Record<string, string>>(
     {},
   );
-  const [adjustmentReasons, setAdjustmentReasons] = useState<
+
+  // associates a product code to an adjust reason id
+  const [adjustmentReasonsHash, setadjustmentReasonsHash] = useState<
     Record<string, string>
   >({});
 
@@ -198,7 +202,7 @@ export default function CreateAdjustment() {
   };
 
   const handleAdjustmentReasonChange = (productCode: string, value: string) => {
-    setAdjustmentReasons((prev) => ({
+    setadjustmentReasonsHash((prev) => ({
       ...prev,
       [productCode]: value,
     }));
@@ -221,50 +225,27 @@ export default function CreateAdjustment() {
 
   // Função para finalizar o ajuste
   const handleFinalizeAdjustment = () => {
-    const adjustmentData = {
-      responsible: inputResponsible,
-      date: date?.toISOString(),
-    };
-
-    // const productsData = addedProducts.map((product) => ({
-    //   id: product.id,
-    //   code: product.code,
-    //   name: product.name,
-    //   currentStock: product.currentStock,
-    //   stock_adjusted: adjustedStock[product.code] ?? 0,
-    //   adjustment_reason:
-    //     adjustmentReasons[product.code] ?? "Sem motivo informado",
-    // }));
-
-    const productsData = addedProducts.map((product) => ({
-      id: product.id,
-      data: {
-        currentStock: product.currentStock,
-      },
+    // SEPARAR OS DADOS
+    const productsAdjustData = addedProducts.map((product) => ({
+      productId: product.id,
+      oldStock: product.currentStock,
+      adjustedStock: adjustedStock[product.code] ?? 0,
+      reasonId: adjustmentReasonsHash[product.code],
+      // adjustId: undefined,
     }));
 
-    // REGISTRAR AJUSTE
-    // const adjustMutation = api.adjust.create.useMutation({
-    //   onSuccess: (newStock) => {
-    //     console.log("Adjustment created successfully:", newStock);
-    //     alert("Ajuste criado com sucesso.");
-    //     setTimeout(function () {
-    //       location.reload();
-    //     }, 500);
-    //   },
-    //   onError: (error) => {
-    //     console.error("Error creating adjustment:", error);
-    //     alert("Erro ao criar ajuste.");
-    //   },
-    // });
+    const adjustmentData = {
+      stockId: undefined, // TODO: add field to select stock and filter products
+      date: date?.toISOString(),
+      type: undefined, 
+      responsibleId: inputResponsible, // TODO
+      adjustProducts: productsAdjustData,
+    };
 
-    // REGISTRAR O AJUSTE DE CADA PRODUTO
-
-    // ATUALIZAR OS VALORES DE CADA PRODUTO
-    const editProductMutation = api.product.updateCurrentStock.useMutation({
+    // REGISTRAR O AJUSTE E ATUALIZAR OS VALORES DE CADA PRODUTO
+    const registerAdjustMutation = api.adjust.registerAdjust.useMutation({
       onSuccess: (updatedProduct) => {
         console.log("Products updated successfully:", updatedProduct);
-
         setTimeout(function () {
           location.reload();
         }, 500);
@@ -275,10 +256,9 @@ export default function CreateAdjustment() {
       },
     });
 
-    editProductMutation.mutate(productsData);
+    registerAdjustMutation.mutate(adjustmentData);
 
-    console.log(JSON.stringify(adjustmentData, null, 2));
-
+    // console.log(JSON.stringify(adjustmentData, null, 2));
     // const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
     //   JSON.stringify(adjustmentData),
     // )}`;
@@ -665,18 +645,17 @@ export default function CreateAdjustment() {
                           onValueChange={(value) =>
                             handleAdjustmentReasonChange(product.code, value)
                           }
-                          defaultValue={adjustmentReasons[product.code] ?? ""}
+                          defaultValue={
+                            adjustmentReasonsHash[product.code] ?? "0"
+                          }
                         >
                           <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
                             <SelectValue placeholder="Motivo do ajuste" />
                           </SelectTrigger>
                           <SelectContent>
-                            {adjustment_reasons.map((reason, index) => (
-                              <SelectItem
-                                key={index}
-                                value={reason.description}
-                              >
-                                {reason.description}
+                            {adjustmentReasons.map((reason, index) => (
+                              <SelectItem key={index} value={reason.id}>
+                                {reason.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -774,9 +753,9 @@ export default function CreateAdjustment() {
                       <SelectValue placeholder="Motivo do ajuste" />
                     </SelectTrigger>
                     <SelectContent>
-                      {adjustment_reasons.map((reason, index) => (
-                        <SelectItem key={index} value={reason.description}>
-                          {reason.description}
+                      {adjustmentReasons.map((reason, index) => (
+                        <SelectItem key={index} value={reason.id}>
+                          {reason.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -889,18 +868,17 @@ export default function CreateAdjustment() {
                           onValueChange={(value) =>
                             handleAdjustmentReasonChange(product.code, value)
                           }
-                          defaultValue={adjustmentReasons[product.code] ?? ""}
+                          defaultValue={
+                            adjustmentReasonsHash[product.code] ?? ""
+                          }
                         >
                           <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
                             <SelectValue placeholder="Motivo do ajuste" />
                           </SelectTrigger>
                           <SelectContent>
-                            {adjustment_reasons.map((reason, index) => (
-                              <SelectItem
-                                key={index}
-                                value={reason.description}
-                              >
-                                {reason.description}
+                            {adjustmentReasons.map((reason, index) => (
+                              <SelectItem key={index} value={reason.id}>
+                                {reason.name}
                               </SelectItem>
                             ))}
                           </SelectContent>

@@ -191,7 +191,7 @@ model Product {
     category      ProductCategory @relation(fields: [categoryId], references: [id])
     sectorOfUse   UseSector       @relation(fields: [sectorOfUseId], references: [id])
     shelf         Shelf           @relation(fields: [shelfId], references: [id], onDelete: Cascade)
-    stock         Stock           @relation(fields: [stockId],references: [id])
+    // stock         Stock           @relation(fields: [stockId],references: [id])
 
     childProducts    Product[]          @relation("ProductToParent")
     ProductSupplier  ProductSupplier[]
