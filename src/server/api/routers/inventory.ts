@@ -16,6 +16,7 @@ export const inventoryRouter = createTRPCRouter({
           date: inventory.date,
           responsibleName: inventory.responsible.user.name,
           stockId: inventory.stock.id,
+          status: inventory.status,
           inventoryProducts: inventory.ProductInventory.map(
             (inventoryProduct) => ({
               id: inventoryProduct.id,
@@ -39,6 +40,15 @@ export const inventoryRouter = createTRPCRouter({
       async ({ input }): Promise<InventoryRouteInterfaces["Inventory"]> => {
         const registeredInventory = await inventoryRepository.register(input);
         return registeredInventory;
+      },
+    ),
+
+  editInventory: protectedProcedure
+    .input(inventoryRepositorySchema.editProps)
+    .mutation(
+      async ({ input }): Promise<InventoryRouteInterfaces["Inventory"]> => {
+        const editedInventory = await inventoryRepository.edit(input);
+        return editedInventory;
       },
     ),
 });

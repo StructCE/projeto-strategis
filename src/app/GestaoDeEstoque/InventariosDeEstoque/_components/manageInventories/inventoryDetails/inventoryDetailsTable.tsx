@@ -90,6 +90,7 @@ export default function InventoryDetails(props: InventoryType) {
       </TableComponent.Table>
 
       <FinalizeAutoAdjust
+        inventory={props.inventory}
         date={new Date()}
         selectResponsible={userId}
         stockId={props.inventory.stockId}

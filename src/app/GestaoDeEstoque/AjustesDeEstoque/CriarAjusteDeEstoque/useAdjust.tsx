@@ -23,9 +23,9 @@ const FinalizeAdjust: React.FC<FinalizeAdjustProps> = ({
     onSuccess: (newAdjust) => {
       console.log("Ajuste de estoque criado com sucesso:", newAdjust);
       alert("Ajuste de estoque criado com sucesso.");
-      // setTimeout(() => {
-      //   location.reload(); // Atualiza a página após criar o Ajuste de estoque
-      // }, 500);
+      setTimeout(() => {
+        location.reload(); // Atualiza a página após criar o Ajuste de estoque
+      }, 500);
     },
     onError: (error) => {
       console.error("Erro ao criar ajuste de estoque:", error);

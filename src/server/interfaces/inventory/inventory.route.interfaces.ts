@@ -3,6 +3,7 @@ export type Inventory = {
   date: Date;
   responsibleId: string;
   stockId: string;
+  status: string;
 };
 
 export type InventoryProduct = {
@@ -41,6 +42,7 @@ export type SerializedInventory = {
   date: Date;
   responsibleName: string;
   stockId: string;
+  status: string;
   inventoryProducts: InventoryProduct[];
 };
 

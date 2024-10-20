@@ -472,6 +472,7 @@ export default function CreateInventory() {
                       onClick={() =>
                         handleAddProduct({
                           id: product.id,
+                          productId: product.id,
                           code: product.code,
                           name: product.name,
                           unit: product.unit,
@@ -630,6 +631,7 @@ export default function CreateInventory() {
                               onClick={() =>
                                 handleAddProduct({
                                   id: product.id,
+                                  productId: product.id,
                                   code: product.code,
                                   name: product.name,
                                   unit: product.unit,

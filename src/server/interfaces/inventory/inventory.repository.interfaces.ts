@@ -13,6 +13,7 @@ const registerProps = z.object({
   responsibleId: z.string(),
   date: z.date(),
   stockId: z.string(),
+  status: z.string(),
   inventoryProducts: z.array(
     z.object({
       inventoryQuantity: z.number(),
@@ -24,12 +25,23 @@ const registerProps = z.object({
 
 type RegisterProps = z.infer<typeof registerProps>;
 
+const editProps = z.object({
+  id: z.string(),
+  inventoryData: z.object({
+    status: z.string(),
+  }),
+});
+
+type EditProps = z.infer<typeof editProps>;
+
 export const inventoryRepositorySchema = {
   getAllProps,
   registerProps,
+  editProps,
 };
 
 export type InventoryRepositoryInterfaces = {
   GetAllProps: GetAllProps;
   RegisterProps: RegisterProps;
+  EditProps: EditProps;
 };

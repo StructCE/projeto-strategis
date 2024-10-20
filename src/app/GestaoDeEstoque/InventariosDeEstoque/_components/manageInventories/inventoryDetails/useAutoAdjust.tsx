@@ -1,8 +1,12 @@
 import { TableButtonComponent } from "~/components/tableButton";
-import { type InventoryProduct } from "~/server/interfaces/inventory/inventory.route.interfaces";
+import {
+  type InventoryProduct,
+  type SerializedInventory,
+} from "~/server/interfaces/inventory/inventory.route.interfaces";
 import { api } from "~/trpc/react";
 
 interface FinalizeAutoAdjustProps {
+  inventory: SerializedInventory;
   date?: Date;
   selectResponsible: string | undefined;
   stockId: string;
@@ -11,6 +15,7 @@ interface FinalizeAutoAdjustProps {
 }
 
 const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
+  inventory,
   date,
   selectResponsible,
   stockId,
@@ -20,6 +25,12 @@ const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
   const adjustMutation = api.adjust.registerAdjust.useMutation({
     onSuccess: (newAdjust) => {
       console.log("Ajuste de estoque realizado com sucesso:", newAdjust);
+      // Chama a função para atualizar o status do inventário para "Ajuste realizado"
+      editInventoryMutation.mutate({
+        id: inventory.id,
+        inventoryData: { status: "Ajuste realizado" },
+      });
+
       alert("Ajuste de estoque realizado com sucesso.");
       setTimeout(() => {
         location.reload(); // Atualiza a página após criar o Ajuste de estoque
@@ -28,6 +39,16 @@ const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
     onError: (error) => {
       console.error("Erro ao realizar ajuste de estoque:", error);
       alert("Erro ao realizar ajuste de estoque.");
+    },
+  });
+
+  // Mutação para editar o inventário
+  const editInventoryMutation = api.inventory.editInventory.useMutation({
+    onSuccess: (editedInventory) => {
+      console.log("Inventário atualizado com sucesso:", editedInventory);
+    },
+    onError: (error) => {
+      console.error("Erro ao atualizar o status do inventário:", error);
     },
   });
 

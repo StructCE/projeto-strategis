@@ -149,17 +149,16 @@ export default function ManageInventoriesTable() {
                   <TableComponent.Value className="text-center">
                     {inventory.inventoryProducts.length}
                   </TableComponent.Value>
-                  <TableComponent.Value className="text-center">
-                    {inventory.inventoryProducts.some(
-                      (product) =>
-                        product.inventoryQuantity !== product.stockQuantity,
-                    ) ? (
-                      <span className="text-vermelho_botao_2">
-                        Ajuste Necessário
-                      </span>
-                    ) : (
-                      <span className="text-verde_botao">Estoque Ok</span>
-                    )}
+                  <TableComponent.Value
+                    className={`text-center ${
+                      inventory.status === "Ajuste necessário"
+                        ? "text-vermelho_botao_2"
+                        : inventory.status === "Estoque OK"
+                          ? "text-verde_botao"
+                          : "text-azul_botao"
+                    }`}
+                  >
+                    {inventory.status}
                   </TableComponent.Value>
                   <Dialog>
                     <DialogTrigger asChild>

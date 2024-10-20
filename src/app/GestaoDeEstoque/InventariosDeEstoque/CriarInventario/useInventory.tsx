@@ -39,10 +39,23 @@ const FinalizeInventory: React.FC<FinalizeInventoryProps> = ({
       return;
     }
 
+    let status = "";
+    const hasDiscrepancy = addedProducts.some((product) => {
+      const inventoryQuantity = Number(quantities[product.code] ?? "0"); // Quantidade registrada no inventário
+      return inventoryQuantity !== product.stockQuantity; // Verifica se há diferença
+    });
+
+    if (hasDiscrepancy) {
+      status = "Ajuste necessário";
+    } else {
+      status = "Estoque OK";
+    }
+
     const inventoryData = {
       responsibleId: selectResponsible,
       date: date ?? new Date(),
       stockId: stockId,
+      status: status,
       inventoryProducts: addedProducts.map((product) => ({
         productId: product.id,
         stockQuantity: product.stockQuantity, // Quantidade em estoque

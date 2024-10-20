@@ -60,6 +60,7 @@ async function register(props: InventoryRepositoryInterfaces["RegisterProps"]) {
       responsibleId: userRole.id, // Usando o id do UserRole encontrado
       date: inventoryData.date,
       stockId: inventoryData.stockId,
+      status: inventoryData.status,
     },
   });
 
@@ -100,7 +101,30 @@ async function register(props: InventoryRepositoryInterfaces["RegisterProps"]) {
   return registeredInventory;
 }
 
+async function edit(props: InventoryRepositoryInterfaces["EditProps"]) {
+  const {
+    id,
+    inventoryData: { ...inventoryData },
+  } = props;
+
+  // Verificar se o request existe
+  const inventoryExists = await db.inventory.findUnique({ where: { id } });
+  if (!inventoryExists) {
+    throw new Error("Inventário não encontrado");
+  }
+
+  const editedInventory = await db.inventory.update({
+    where: { id },
+    data: {
+      status: inventoryData.status,
+    },
+  });
+
+  return editedInventory;
+}
+
 export const inventoryRepository = {
   getAll,
   register,
+  edit,
 };
