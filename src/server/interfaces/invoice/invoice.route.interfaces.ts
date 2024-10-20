@@ -3,6 +3,7 @@ export type Invoice = {
   documentNumber: string;
   documentDate: Date;
   companyId: string;
+  supplierId: string;
   expenseType: string;
   recurrance: string;
   installment: string;
@@ -33,31 +34,34 @@ export type InvoiceProduct = {
   };
   purchaseQuantity: number;
   unitValue: number;
-  controlType: string;
-  category: string;
-  useSector: string;
-  shelf: {
-    id: string;
-    name: string;
-    cabinet: {
-      id: string;
-      name: string;
-      StockCabinet: {
-        stock: {
+  controlType: string | undefined;
+  category: string | undefined;
+  useSector: string | undefined;
+  shelf:
+    | {
+        id: string;
+        name: string;
+        cabinet: {
           id: string;
           name: string;
-          companyId: string;
-          legalResponsibleId: string;
+          StockCabinet: {
+            stock: {
+              id: string;
+              name: string;
+              companyId: string;
+              legalResponsibleId: string;
+            };
+          }[];
         };
-      }[];
-    };
-  };
+      }
+    | undefined;
 };
 
 export type SerializedInvoice = {
   documentNumber: string;
   documentDate: Date;
   company: { id: string; name: string };
+  supplier: { id: string; name: string };
   expenseType: string;
   recurrance: string;
   installment: string;

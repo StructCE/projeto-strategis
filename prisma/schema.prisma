@@ -150,6 +150,7 @@ model Supplier {
     contacts          Contact[]
     ProductSupplier   ProductSupplier[]
     ProductOutput     ProductOutput[]
+    Invoice           Invoice[]
 }
 
 model Contact {
@@ -487,12 +488,14 @@ model Invoice {
     projectId       String? // Projeto
     groupId         String? // Grupo
     documentTypeId  String? // Tipo de documento
+    supplierId      String
 
     bankId      String? // Banco do pagamento
     payedValue  String? // Valor pago
     paymentDate DateTime? // Data do pagamento
     payedStatus String? // "Pago" | "Em Aberto" | "Cancelado"
 
+    supplier       Supplier         @relation(fields: [supplierId], references: [id])
     company        Company          @relation(fields: [companyId], references: [id])
     group          Group?           @relation(fields: [groupId], references: [id])
     documentType   DocumentType?    @relation(fields: [documentTypeId], references: [id])

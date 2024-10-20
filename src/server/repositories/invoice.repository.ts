@@ -27,6 +27,7 @@ async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
       group: true,
       project: true,
       company: true,
+      supplier: true,
       InvoiceProduct: {
         include: {
           productSupplier: {

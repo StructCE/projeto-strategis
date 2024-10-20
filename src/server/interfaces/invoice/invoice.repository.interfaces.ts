@@ -14,6 +14,7 @@ const registerProps = z.object({
   documentNumber: z.string(),
   documentDate: z.date(),
   companyId: z.string(),
+  supplierId: z.string(),
   expenseType: z.string(),
   recurrance: z.string(),
   installment: z.string(),

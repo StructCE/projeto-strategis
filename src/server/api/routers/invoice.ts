@@ -15,6 +15,7 @@ export const invoiceRouter = createTRPCRouter({
           documentNumber: invoice.documentNumber,
           documentDate: invoice.documentDate,
           company: { id: invoice.company.id, name: invoice.company.name },
+          supplier: { id: invoice.supplier.id, name: invoice.supplier.name },
           expenseType: invoice.expenseType,
           recurrance: invoice.recurrance,
           installment: invoice.installment,
