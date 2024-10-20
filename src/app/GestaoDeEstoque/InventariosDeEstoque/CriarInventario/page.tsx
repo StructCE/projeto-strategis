@@ -51,7 +51,7 @@ export default function CreateInventory() {
 
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
-  const [selectStock, setSelectStock] = useState("");
+  const [selectStockId, setSelectStockId] = useState("");
   const [selectAddress, setSelectAddress] = useState("");
   const [selectControlType, setSelectControlType] = useState("");
   const [selectCategory, setSelectCategory] = useState("");
@@ -63,7 +63,7 @@ export default function CreateInventory() {
   const areAllFiltersEmpty =
     inputCode === "" &&
     inputProduct === "" &&
-    selectStock === "" &&
+    selectStockId === "" &&
     selectAddress === "" &&
     selectControlType === "" &&
     selectCategory === "" &&
@@ -83,7 +83,7 @@ export default function CreateInventory() {
   const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
-      stockName: selectStock ? selectStock : "",
+      stockId: selectStockId ? selectStockId : "",
     });
   const { data: users = [] } = api.user.getAll.useQuery();
 
@@ -97,11 +97,11 @@ export default function CreateInventory() {
           inputProduct === "" ||
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
-          selectStock === "" ||
+          selectStockId === "" ||
           product.shelf.cabinet.StockCabinet.some(
             (stockCabinet) =>
-              stockCabinet.stock.name.toLowerCase() ===
-              selectStock.toLowerCase(),
+              stockCabinet.stock.id.toLowerCase() ===
+              selectStockId.toLowerCase(),
           );
         const matchesAddress =
           selectAddress === "" ||
@@ -162,6 +162,12 @@ export default function CreateInventory() {
     }
   }
 
+  const handleStockChange = (stockId: string) => {
+    setSelectStockId(stockId);
+    setAddedProducts([]); // Limpar produtos ao mudar o estoque
+    setQuantities({});
+  };
+
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
       <TableComponent className="gap-2">
@@ -213,9 +219,32 @@ export default function CreateInventory() {
           </div>
         </TableComponent.FiltersLine>
 
-        <TableComponent.Subtitle>
-          Selecione produtos do estoque para fazer invetário.
-        </TableComponent.Subtitle>
+        <div className="my-2 flex flex-col items-center gap-1 sm:flex-row sm:gap-3">
+          <div className="font-inter text-[13px] font-normal sm:text-[15px]">
+            Selecione um estoque e produtos dele para fazer um inventário <br />
+            (só é possível fazer inventário de um estoque de cada vez):
+          </div>
+
+          <div className="flex w-full items-center rounded-[12px] bg-filtro bg-opacity-50 lg:w-fit">
+            <Select
+              onValueChange={handleStockChange}
+              value={selectStockId}
+              defaultValue={selectStockId}
+            >
+              <SelectTrigger className="font-inter m-0 h-auto gap-3 border-0 border-none bg-transparent px-2 py-1.5 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-fit">
+                <Search className="size-[16px] stroke-[1.5px]" color="black" />
+                <SelectValue placeholder="Estoque" />
+              </SelectTrigger>
+              <SelectContent>
+                {stocks.map((stock, index) => (
+                  <SelectItem key={index} value={stock.id}>
+                    {stock.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
         <TableComponent.FiltersLine>
           <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[130px]">
@@ -253,35 +282,14 @@ export default function CreateInventory() {
               )}
             />
             <Filter.Select
-              className="text-sm sm:text-base"
-              placeholder="Estoque"
-              state={selectStock}
-              setState={setSelectStock}
-            >
-              {stocks.map((stock, index) => (
-                <Filter.SelectItems
-                  key={index}
-                  value={stock.name}
-                ></Filter.SelectItems>
-              ))}
-            </Filter.Select>
-          </Filter>
-
-          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
-            <Filter.Icon
-              icon={({ className }: { className: string }) => (
-                <Search className={className} />
-              )}
-            />
-            <Filter.Select
               placeholder="Endereço"
               state={selectAddress}
               setState={setSelectAddress}
               className={
-                selectStock === "" ? "cursor-not-allowed opacity-50" : ""
+                selectStockId === "" ? "cursor-not-allowed opacity-50" : ""
               }
             >
-              {selectStock === "" ? (
+              {selectStockId === "" ? (
                 <Filter.SelectItems
                   key="0"
                   value="Selecione um estoque primeiro"
@@ -372,7 +380,7 @@ export default function CreateInventory() {
                   onClick={() => {
                     setInputCode("");
                     setInputProduct("");
-                    setSelectStock("");
+                    setSelectStockId("");
                     setSelectAddress("");
                     setSelectControlType("");
                     setSelectCategory("");
@@ -840,10 +848,11 @@ export default function CreateInventory() {
         </TableComponent.Table>
 
         <FinalizeInventory
+          date={date ?? new Date()}
           selectResponsible={selectResponsible}
+          stockId={selectStockId}
           addedProducts={addedProducts}
           quantities={quantities}
-          date={date ?? new Date()}
         />
       </TableComponent>
     </div>

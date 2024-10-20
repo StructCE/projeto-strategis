@@ -36,7 +36,14 @@ export const ManageStocksTable = () => {
     //   name: inputStockName,
     // },
   });
-  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery({
+    // filters: {
+    // cnpj: "",
+    // name: "",
+    // state: "",
+    // taxRegime: "",
+    // },
+  });
 
   const filteredStocks = stocks.filter((stock) => {
     const stockNameMatches = stock.name

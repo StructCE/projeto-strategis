@@ -4,6 +4,19 @@ import { adjustReasonRepository } from "~/server/repositories/adjustReason.repos
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const adjustReasonRouter = createTRPCRouter({
+  getReasonByName: protectedProcedure
+    .input(adjustReasonRepositorySchema.getReasonByNameProps)
+    .query(
+      async ({
+        input,
+      }): Promise<AdjustReasonRouteInterfaces["AdjustReason"] | null> => {
+        const adjustReason = await adjustReasonRepository.getReasonByName({
+          name: input.name,
+        });
+        return adjustReason;
+      },
+    ),
+
   getAll: protectedProcedure.query(
     async (): Promise<AdjustReasonRouteInterfaces["AdjustReason"][]> => {
       const adjustReasons = await adjustReasonRepository.getAll();

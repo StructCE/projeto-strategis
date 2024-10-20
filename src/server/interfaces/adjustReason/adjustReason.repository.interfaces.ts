@@ -1,5 +1,11 @@
 import z from "zod";
 
+const getReasonByNameProps = z.object({
+  name: z.string(),
+});
+
+type GetReasonByNameProps = z.infer<typeof getReasonByNameProps>;
+
 const registerProps = z.object({
   name: z.string(),
 });
@@ -22,12 +28,14 @@ const removeProps = z.object({
 type RemoveProps = z.infer<typeof removeProps>;
 
 export const adjustReasonRepositorySchema = {
+  getReasonByNameProps,
   registerProps,
   editProps,
   removeProps,
 };
 
 export type AdjustReasonRepositoryInterfaces = {
+  GetReasonByNameProps: GetReasonByNameProps;
   RegisterProps: RegisterProps;
   EditProps: EditProps;
   RemoveProps: RemoveProps;

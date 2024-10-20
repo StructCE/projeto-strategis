@@ -2,16 +2,16 @@ import { db } from "../db";
 import type { CompanyRepositoryInterfaces } from "../interfaces/company/company.repository.interfaces";
 
 async function getAll(props: CompanyRepositoryInterfaces["GetAllProps"]) {
-  const { filters } = props;
+  // const { filters } = props;
   const companies = await db.company.findMany({
-    where: {
-      AND: [
-        { cnpj: { contains: filters.cnpj } },
-        { name: { contains: filters.name } },
-        { federativeUnit: { contains: filters.state } },
-        { taxRegime: { contains: filters.taxRegime } },
-      ],
-    },
+    // where: {
+    //   AND: [
+    //     { cnpj: { contains: filters.cnpj } },
+    //     { name: { contains: filters.name } },
+    //     { federativeUnit: { contains: filters.state } },
+    //     { taxRegime: { contains: filters.taxRegime } },
+    //   ],
+    // },
   });
   return companies;
 }

@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 const getAllProps = z.object({
-  filters: z.object({
-    cnpj: z.string().optional(),
-    name: z.string().optional(),
-    state: z.string().optional(),
-    taxRegime: z.string().optional(),
-  }),
+  // filters: z.object({
+  //   cnpj: z.string().optional(),
+  //   name: z.string().optional(),
+  //   state: z.string().optional(),
+  //   taxRegime: z.string().optional(),
+  // }),
 });
 
 type GetAllProps = z.infer<typeof getAllProps>;

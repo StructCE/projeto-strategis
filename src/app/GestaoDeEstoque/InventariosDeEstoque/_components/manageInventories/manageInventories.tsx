@@ -3,7 +3,6 @@ import { Calendar, Eraser, UserCog2 } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
-import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -193,12 +192,6 @@ export default function ManageInventoriesTable() {
                         </DialogDescription>
 
                         <InventoryDetails inventory={inventory} />
-
-                        <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
-                          <TableButtonComponent.Button className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full">
-                            Realizar Ajuste de Estoque Automático
-                          </TableButtonComponent.Button>
-                        </TableButtonComponent>
                       </DialogHeader>
                     </DialogContent>
                   </Dialog>

@@ -3,17 +3,19 @@ import { type InventoryProduct } from "~/server/interfaces/inventory/inventory.r
 import { api } from "~/trpc/react";
 
 interface FinalizeInventoryProps {
+  date?: Date;
   selectResponsible: string | undefined;
+  stockId: string;
   addedProducts: InventoryProduct[];
   quantities: Record<string, string>;
-  date?: Date;
 }
 
 const FinalizeInventory: React.FC<FinalizeInventoryProps> = ({
+  date,
   selectResponsible,
+  stockId,
   addedProducts,
   quantities,
-  date,
 }) => {
   const inventoryMutation = api.inventory.registerInventory.useMutation({
     onSuccess: (newInventory) => {
@@ -40,6 +42,7 @@ const FinalizeInventory: React.FC<FinalizeInventoryProps> = ({
     const inventoryData = {
       responsibleId: selectResponsible,
       date: date ?? new Date(),
+      stockId: stockId,
       inventoryProducts: addedProducts.map((product) => ({
         productId: product.id,
         stockQuantity: product.stockQuantity, // Quantidade em estoque

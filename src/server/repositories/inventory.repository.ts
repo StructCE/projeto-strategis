@@ -11,6 +11,7 @@ async function getAll(props: InventoryRepositoryInterfaces["GetAllProps"]) {
     //   ],
     // },
     include: {
+      stock: true,
       responsible: { include: { user: true } },
       ProductInventory: {
         include: {
@@ -58,6 +59,7 @@ async function register(props: InventoryRepositoryInterfaces["RegisterProps"]) {
     data: {
       responsibleId: userRole.id, // Usando o id do UserRole encontrado
       date: inventoryData.date,
+      stockId: inventoryData.stockId,
     },
   });
 

@@ -1,6 +1,16 @@
 import { db } from "../db";
 import { type AdjustReasonRepositoryInterfaces } from "../interfaces/adjustReason/adjustReason.repository.interfaces";
 
+async function getReasonByName(
+  props: AdjustReasonRepositoryInterfaces["GetReasonByNameProps"],
+) {
+  const adjustReason = await db.adjustReason.findFirst({
+    where: { name: props.name },
+  });
+
+  return adjustReason;
+}
+
 async function getAll() {
   const adjustReasons = await db.adjustReason.findMany();
   return adjustReasons;
@@ -36,6 +46,7 @@ async function remove(props: AdjustReasonRepositoryInterfaces["RemoveProps"]) {
 }
 
 export const adjustReasonRepository = {
+  getReasonByName,
   getAll,
   register,
   edit,

@@ -1,5 +1,8 @@
+import { useSession } from "next-auth/react";
 import { TableComponent } from "~/components/table";
 import { type SerializedInventory } from "~/server/interfaces/inventory/inventory.route.interfaces";
+import { api } from "~/trpc/react";
+import FinalizeAutoAdjust from "./useAutoAdjust";
 
 type InventoryType = {
   inventory: SerializedInventory;
@@ -14,6 +17,21 @@ export default function InventoryDetails(props: InventoryType) {
       return "Ajuste de estoque necessário.";
     }
   }
+
+  const session = useSession();
+  const userId = session.data?.user.id;
+
+  const { data: adjustReason } =
+    api.generalParameters.adjustReason.getReasonByName.useQuery({
+      name: "Outro",
+    });
+
+  const productsNeedingAdjustment = props.inventory.inventoryProducts
+    .filter((product) => product.stockQuantity !== product.inventoryQuantity)
+    .map((product) => ({
+      ...product,
+      productId: product.productId, // Aqui você usa o productId correto de ProductInventory
+    }));
 
   return (
     <TableComponent className="gap-3 text-left">
@@ -70,6 +88,14 @@ export default function InventoryDetails(props: InventoryType) {
           </TableComponent.Line>
         ))}
       </TableComponent.Table>
+
+      <FinalizeAutoAdjust
+        date={new Date()}
+        selectResponsible={userId}
+        stockId={props.inventory.stockId}
+        addedProducts={productsNeedingAdjustment}
+        adjustReasonId={adjustReason?.id}
+      />
     </TableComponent>
   );
 }

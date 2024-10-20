@@ -15,11 +15,13 @@ export const inventoryRouter = createTRPCRouter({
           id: inventory.id,
           date: inventory.date,
           responsibleName: inventory.responsible.user.name,
+          stockId: inventory.stock.id,
           inventoryProducts: inventory.ProductInventory.map(
             (inventoryProduct) => ({
               id: inventoryProduct.id,
               code: inventoryProduct.product.code,
               name: inventoryProduct.product.name,
+              productId: inventoryProduct.product.id,
               unit: inventoryProduct.product.unit,
               inventoryQuantity: inventoryProduct.inventoryQuantity,
               stockQuantity: inventoryProduct.stockQuantity,

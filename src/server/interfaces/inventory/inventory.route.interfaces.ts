@@ -2,20 +2,22 @@ export type Inventory = {
   id: string;
   date: Date;
   responsibleId: string;
+  stockId: string;
 };
 
 export type InventoryProduct = {
   id: string;
+  productId: string;
   code: string;
   name: string;
+  stockQuantity: number;
+  inventoryQuantity: number;
   unit: {
     id: string;
     name: string;
     abbreviation: string;
     unitsPerPack: number;
   };
-  inventoryQuantity: number;
-  stockQuantity: number;
   shelf: {
     id: string;
     name: string;
@@ -38,6 +40,7 @@ export type SerializedInventory = {
   id: string;
   date: Date;
   responsibleName: string;
+  stockId: string;
   inventoryProducts: InventoryProduct[];
 };
 
