@@ -177,7 +177,7 @@ export default function ManageProductsTable() {
           </Filter.Select>
         </Filter>
 
-        <Filter>
+        <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
           <Filter.Icon
             icon={({ className }: { className: string }) => (
               <Search className={className} />
@@ -368,67 +368,69 @@ export default function ManageProductsTable() {
         )}
         {products?.length > 0 && !isLoading && !error ? (
           filteredProducts?.length > 0 ? (
-            filteredProducts?.map((product, index) => (
-              <TableComponent.Line
-                className={`grid-cols-[70px_1fr_100px_100px_100px_100px_130px] gap-8 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="items-center justify-center text-center">
-                  {product.code}
-                </TableComponent.Value>
-                <TableComponent.Value>
-                  <Input
-                    defaultValue={product.name}
-                    className="h-7 bg-cinza_destaque sm:h-8"
-                  />
-                </TableComponent.Value>
-                <TableComponent.Value className="items-center justify-center text-center">
-                  {product.unit.abbreviation}
-                </TableComponent.Value>
-                <TableComponent.Value className="items-center justify-center text-center">
-                  <Input
-                    defaultValue={product.currentStock}
-                    className="h-7 bg-cinza_destaque text-center sm:h-8"
-                  />
-                </TableComponent.Value>
-                <TableComponent.Value className="items-center justify-center text-center">
-                  <Input
-                    defaultValue={product.minimunStock}
-                    className="h-7 bg-cinza_destaque text-center sm:h-8"
-                  />
-                </TableComponent.Value>
-                <TableComponent.Value className="items-center justify-center text-center">
-                  <Input
-                    defaultValue={product.maximumStock}
-                    className="h-7 bg-cinza_destaque text-center sm:h-8"
-                  />
-                </TableComponent.Value>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                      Detalhes
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="sm:max-w-7xl"
-                  >
-                    <DialogHeader>
-                      <DialogTitle className="pb-1.5">
-                        Utilize os campos abaixo para editar os dados do produto
-                        ou o botão para remover
-                      </DialogTitle>
+            filteredProducts
+              ?.sort((a, b) => a.code.localeCompare(b.code))
+              .map((product, index) => (
+                <TableComponent.Line
+                  className={`grid-cols-[70px_1fr_100px_100px_100px_100px_130px] gap-8 ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value className="items-center justify-center text-center">
+                    {product.code}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    <Input
+                      defaultValue={product.name}
+                      className="h-7 bg-cinza_destaque sm:h-8"
+                    />
+                  </TableComponent.Value>
+                  <TableComponent.Value className="items-center justify-center text-center">
+                    {product.unit.abbreviation}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="items-center justify-center text-center">
+                    <Input
+                      defaultValue={product.currentStock}
+                      className="h-7 bg-cinza_destaque text-center sm:h-8"
+                    />
+                  </TableComponent.Value>
+                  <TableComponent.Value className="items-center justify-center text-center">
+                    <Input
+                      defaultValue={product.minimunStock}
+                      className="h-7 bg-cinza_destaque text-center sm:h-8"
+                    />
+                  </TableComponent.Value>
+                  <TableComponent.Value className="items-center justify-center text-center">
+                    <Input
+                      defaultValue={product.maximumStock}
+                      className="h-7 bg-cinza_destaque text-center sm:h-8"
+                    />
+                  </TableComponent.Value>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="sm:max-w-7xl"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="pb-1.5">
+                          Utilize os campos abaixo para editar os dados do
+                          produto ou o botão para remover
+                        </DialogTitle>
 
-                      <DialogDescription className="text-black">
-                        <ProductEdit product={product} />
-                      </DialogDescription>
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
-              </TableComponent.Line>
-            ))
+                        <DialogDescription className="text-black">
+                          <ProductEdit product={product} />
+                        </DialogDescription>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
           ) : (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>

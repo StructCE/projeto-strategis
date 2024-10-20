@@ -1,7 +1,7 @@
 import { inventoryRepositorySchema } from "~/server/interfaces/inventory/inventory.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { inventoryRepository } from "~/server/repositories/inventory.repository";
 import type { InventoryRouteInterfaces } from "~/server/interfaces/inventory/inventory.route.interfaces";
+import { inventoryRepository } from "~/server/repositories/inventory.repository";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const inventoryRouter = createTRPCRouter({
   getAllInventories: protectedProcedure
@@ -13,17 +13,20 @@ export const inventoryRouter = createTRPCRouter({
         const inventories = await inventoryRepository.getAll(input);
         const serializedInventories = inventories.map((inventory) => ({
           id: inventory.id,
-          name: inventory.name,
           date: inventory.date,
           responsibleName: inventory.responsible.user.name,
+          stockId: inventory.stock.id,
+          status: inventory.status,
           inventoryProducts: inventory.ProductInventory.map(
             (inventoryProduct) => ({
               id: inventoryProduct.id,
-              code: inventoryProduct.product.id,
-              product: inventoryProduct.product.name,
-              unit: inventoryProduct.product.unit.name,
+              code: inventoryProduct.product.code,
+              name: inventoryProduct.product.name,
+              productId: inventoryProduct.product.id,
+              unit: inventoryProduct.product.unit,
               inventoryQuantity: inventoryProduct.inventoryQuantity,
               stockQuantity: inventoryProduct.stockQuantity,
+              shelf: inventoryProduct.product.shelf,
             }),
           ),
         }));
@@ -37,6 +40,15 @@ export const inventoryRouter = createTRPCRouter({
       async ({ input }): Promise<InventoryRouteInterfaces["Inventory"]> => {
         const registeredInventory = await inventoryRepository.register(input);
         return registeredInventory;
+      },
+    ),
+
+  editInventory: protectedProcedure
+    .input(inventoryRepositorySchema.editProps)
+    .mutation(
+      async ({ input }): Promise<InventoryRouteInterfaces["Inventory"]> => {
+        const editedInventory = await inventoryRepository.edit(input);
+        return editedInventory;
       },
     ),
 });

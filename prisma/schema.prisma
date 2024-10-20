@@ -232,8 +232,8 @@ model Stock {
     legalResponsible UserRole       @relation("StockResponsible", fields: [legalResponsibleId], references: [id])
     StockCabinet     StockCabinet[] // Relação com StockCabinet para associar cabinets ao estoque
     Adjust           Adjust[]
-    Order            Order[]
-    Product          Product[]
+    Inventory        Inventory[]
+    // Order            Order[]
 }
 
 model Unit {
@@ -242,8 +242,8 @@ model Unit {
     abbreviation String
     unitsPerPack Float
 
-    Product        Product[]
-    RequestProduct RequestProduct[]
+    Product Product[]
+    // RequestProduct RequestProduct[]
 }
 
 model Cabinet {
@@ -321,10 +321,13 @@ model ProductOutput {
 
 model Inventory {
     id            String   @id @default(cuid())
-    name          String
+    stockId       String
+    // name          String
     date          DateTime
+    status        String
     responsibleId String
 
+    stock            Stock              @relation(fields: [stockId], references: [id])
     responsible      UserRole           @relation(fields: [responsibleId], references: [id])
     ProductInventory ProductInventory[]
 }
@@ -343,7 +346,7 @@ model ProductInventory {
 model Adjust {
     id            String   @id @default(cuid())
     stockId       String
-    name          String
+    // name          String
     date          DateTime
     type          String
     responsibleId String
@@ -377,17 +380,18 @@ model Order {
     id            String   @id @default(cuid())
     date          DateTime
     responsibleId String
-    stockId       String
+    status        Boolean  @default(false)
+    // stockId       String
 
     responsible  UserRole       @relation("OrderResponsible", fields: [responsibleId], references: [id])
-    stock        Stock          @relation(fields: [stockId], references: [id])
+    // stock        Stock          @relation(fields: [stockId], references: [id])
     OrderProduct OrderProduct[]
 }
 
 model OrderProduct {
     id                String @id @default(cuid())
     orderId           String
-    buyQuantity       Int
+    purchaseQuantity  Int
     productSupplierId String
 
     order   Order           @relation(fields: [orderId], references: [id])
@@ -396,30 +400,30 @@ model OrderProduct {
 
 model Request {
     id                  String    @id @default(cuid())
-    description         String
     requestDate         DateTime
+    responsibleId       String
+    description         String?
+    status              String    @default("Esperando Confirmação")
     statusDescription   String?
     statusDate          DateTime?
-    statusResponsibleId String
-    responsibleId       String
-    status              String
+    statusResponsibleId String?
 
     responsible       UserRole         @relation("RequestResponsible", fields: [responsibleId], references: [id])
-    statusResponsible UserRole         @relation("StatusResponsible", fields: [statusResponsibleId], references: [id])
+    statusResponsible UserRole?        @relation("StatusResponsible", fields: [statusResponsibleId], references: [id])
     RequestProduct    RequestProduct[]
 }
 
 model RequestProduct {
     id                String @id @default(cuid())
     requestedQuantity Int
-    releasedQuantity  Int
+    releasedQuantity  Int?
     requestId         String
     productId         String
-    unitId            String
+    // unitId            String
 
     request Request @relation(fields: [requestId], references: [id])
     product Product @relation(fields: [productId], references: [id])
-    unit    Unit    @relation(fields: [unitId], references: [id])
+    // unit    Unit    @relation(fields: [unitId], references: [id])
 }
 
 model Operation {

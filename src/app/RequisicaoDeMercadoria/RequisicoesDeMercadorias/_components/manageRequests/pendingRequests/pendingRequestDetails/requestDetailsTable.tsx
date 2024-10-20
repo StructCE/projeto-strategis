@@ -1,21 +1,40 @@
 import { CalendarIcon, Text, UserCog2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Input } from "~/components/ui/input";
-import { type Request } from "../../../requestsData";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import { type SerializedRequest } from "~/server/interfaces/request/request.route.interfaces";
+import { api } from "~/trpc/react";
+import { default as ConfirmRequest } from "./useConfirmRequest";
+import RejectRequest from "./useRejectRequest";
 
 type RequestType = {
-  request: Request;
+  request: SerializedRequest;
 };
 
 export default function PendingRequestDetails(props: RequestType) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
-  const [inputResponsible, setInputResponsible] = useState("");
+
+  const session = useSession();
+  const userId = session.data?.user.id;
+  const [selectResponsible, setSelectResponsible] = useState<
+    string | undefined
+  >(userId);
+
   const [quantities, setQuantities] = useState<Record<string, string>>({});
   const [statusDescription, setStatusDescription] = useState("");
+
+  const { data: users = [] } = api.user.getAll.useQuery();
 
   const handleQuantityChange = (productCode: string, value: string) => {
     setQuantities((prev) => ({
@@ -26,39 +45,15 @@ export default function PendingRequestDetails(props: RequestType) {
 
   // Definindo o valor inicial do input como o valor solicitado
   useEffect(() => {
-    const initialQuantities = props.request.products.reduce(
+    const initialQuantities = props.request.requestProducts.reduce(
       (acc, product) => ({
         ...acc,
-        [product.code]: product.requested_quantity || "",
+        [product.code]: product.requestedQuantity || "",
       }),
       {},
     );
     setQuantities(initialQuantities);
-  }, [props.request.products]);
-
-  const handleReject = () => {
-    const requestData = (props.request.status = "Rejeitada");
-
-    console.log(JSON.stringify(requestData, null, 2));
-  };
-
-  const handleConfirm = () => {
-    const requestData = {
-      // responsible: inputResponsible,
-      // date: date?.toISOString(),
-      status_description: statusDescription,
-      products: props.request.products.map((product) => ({
-        code: product.code,
-        name: product.name,
-        stock_current: product.stock_current,
-        stock_min: product.stock_min,
-        requested_quantity: product.requested_quantity,
-        quantity_to_release: quantities[product.code] ?? 0,
-      })),
-    };
-
-    console.log(JSON.stringify(requestData, null, 2));
-  };
+  }, [props.request.requestProducts]);
 
   return (
     <TableComponent className="gap-3 text-left">
@@ -87,7 +82,7 @@ export default function PendingRequestDetails(props: RequestType) {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {props.request.products.map((product, index) => (
+        {props.request.requestProducts.map((product, index) => (
           <TableComponent.Line
             className={`grid-cols-[70px_1.3fr_1fr_130px_90px_110px_110px] gap-4 sm:px-[16px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -101,17 +96,19 @@ export default function PendingRequestDetails(props: RequestType) {
               {product.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] tracking-tighter sm:text-[15px]">
-              {product.address.stock}, {product.address.storage},{" "}
-              {product.address.shelf}
+              {product.shelf.cabinet.StockCabinet.map(
+                (stockCabinet) => stockCabinet.stock.name,
+              )}
+              , {product.shelf.cabinet.name}, {product.shelf.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.stock_current}
+              {product.currentStock}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.stock_min}
+              {product.minimunStock}
             </TableComponent.Value>
             <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
-              {product.requested_quantity}
+              {product.requestedQuantity}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
               <Input
@@ -126,7 +123,7 @@ export default function PendingRequestDetails(props: RequestType) {
           </TableComponent.Line>
         ))}
 
-        <div className="flex flex-col gap-1">
+        <div className="mt-2 flex flex-col gap-1">
           <p>
             Preencha os campos abaixo para confirmar ou rejeitar a requisição
           </p>
@@ -144,18 +141,33 @@ export default function PendingRequestDetails(props: RequestType) {
                 setOpen={setOpen}
               ></Filter.DatePicker>
             </Filter>
-            <Filter className="lg:w-[250px]">
-              <Filter.Icon
-                icon={({ className }: { className: string }) => (
-                  <UserCog2 className={className} />
-                )}
-              />
-              <Filter.Input
-                placeholder="Responsável"
-                state={inputResponsible}
-                setState={setInputResponsible}
-              />
-            </Filter>
+
+            <div className="flex w-full items-start rounded-[12px] bg-filtro bg-opacity-50 py-1.5 lg:w-[225px] lg:items-center">
+              <Select
+                onValueChange={setSelectResponsible}
+                value={selectResponsible}
+                defaultValue={selectResponsible}
+              >
+                <SelectTrigger className="font-inter m-0 h-auto border-0 border-none bg-transparent p-0 px-2 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-[250px]">
+                  <UserCog2
+                    className="size-[20px] stroke-[1.5px]"
+                    color="black"
+                  />
+                  <SelectValue
+                    placeholder="Responsável"
+                    className="w-full text-left"
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {users.map((user, index) => (
+                    <SelectItem value={user.id} key={index}>
+                      {user.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <Filter className="lg:w-full">
               <Filter.Icon
                 icon={({ className }: { className: string }) => (
@@ -172,19 +184,20 @@ export default function PendingRequestDetails(props: RequestType) {
         </div>
 
         <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
-          <TableButtonComponent.Button
-            className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2 max-[425px]:w-full"
-            handlePress={handleReject}
-          >
-            Rejeitar Requisição
-          </TableButtonComponent.Button>
+          <RejectRequest
+            statusDate={date}
+            statusResponsibleId={selectResponsible}
+            statusDescription={statusDescription}
+            request={props.request}
+          />
 
-          <TableButtonComponent.Button
-            className="bg-verde_botao hover:bg-hover_verde_botao max-[425px]:w-full"
-            handlePress={handleConfirm}
-          >
-            Confirmar Requisição
-          </TableButtonComponent.Button>
+          <ConfirmRequest
+            statusDate={date}
+            statusResponsibleId={selectResponsible}
+            statusDescription={statusDescription}
+            quantities={quantities}
+            request={props.request}
+          />
         </TableButtonComponent>
       </TableComponent.Table>
     </TableComponent>

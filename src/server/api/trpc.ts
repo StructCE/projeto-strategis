@@ -29,7 +29,6 @@ import { db } from "~/server/db";
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await getServerAuthSession();
-
   return {
     db,
     session,
@@ -145,30 +144,8 @@ export const publicProcedure = errorHandledProcedure;
  */
 export const protectedProcedure = errorHandledProcedure.use(
   async ({ ctx, next, path }) => {
-    // async
-    const user = await db.user.findUnique({
-      where: { id: ctx.session?.user.id },
-      include: {
-        UserRole: {
-          include: {
-            role: { include: { RoleModule: { include: { module: true } } } },
-          },
-        },
-      },
-    });
-    const routes = user?.UserRole
-      ? [
-          ...new Set(
-            user.UserRole.flatMap((userRole) =>
-              userRole.role.RoleModule.map(
-                (roleModule) => roleModule.module.allowedRouter,
-              ),
-            ),
-          ),
-        ]
-      : [];
     const router = path.split(".")[0] ?? "";
-    if (!routes.includes(router)) {
+    if (!ctx.session?.user.allowedRouters.includes(router)) {
       // !ctx.session?.user.allowedRouters.includes(router)
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }

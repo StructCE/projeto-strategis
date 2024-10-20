@@ -26,7 +26,7 @@ type StockEditProps = {
 export const StockEdit = (props: StockEditProps) => {
   const stockForm = useStockForm(props.stock);
 
-  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery({});
   const { data: users = [] } = api.user.getAll.useQuery();
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getAll.useQuery();

@@ -1,11 +1,11 @@
 import { TableComponent } from "~/components/table";
-import { type Purchase } from "../../purchasesData";
+import { type SerializedOrder } from "~/server/interfaces/order/order.route.interfaces";
 
-type PurchaseType = {
-  purchase: Purchase;
+type OrderType = {
+  order: SerializedOrder;
 };
 
-export default function PurchaseDetails(props: PurchaseType) {
+export default function PurchaseDetails(props: OrderType) {
   return (
     <TableComponent className="gap-3 text-left">
       <TableComponent.Table>
@@ -36,7 +36,7 @@ export default function PurchaseDetails(props: PurchaseType) {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {props.purchase.products.map((product, index) => (
+        {props.order.orderProducts.map((product, index) => (
           <TableComponent.Line
             className={`grid-cols-[70px_1.5fr_130px_90px_120px_110px_110px_1fr] gap-6 sm:px-[16px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -50,22 +50,22 @@ export default function PurchaseDetails(props: PurchaseType) {
               {product.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.stock_current}
+              {product.currentStock}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.stock_min}
+              {product.minimunStock}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {`${product.buy_unit.abbreviation} (${product.buy_unit.unitsPerPack})`}
+              {`${product.unit.abbreviation} (${product.unit.unitsPerPack})`}
             </TableComponent.Value>
             <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
-              {product.buy_quantity}
+              {product.purchaseQuantity}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {Number(product.buy_quantity) * product.buy_unit.unitsPerPack}
+              {Number(product.purchaseQuantity) * product.unit.unitsPerPack}
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] sm:text-[15px]">
-              {product.supplier.name}
+              {product.ProductSupplier.supplier.name}
             </TableComponent.Value>
           </TableComponent.Line>
         ))}

@@ -1,10 +1,10 @@
 import z from "zod";
 
 const getAllProps = z.object({
-  filters: z.object({
-    date: z.date(),
-    responsibleName: z.string(),
-  }),
+  // filters: z.object({
+  //   date: z.date().optional(),
+  //   responsibleName: z.string().optional(),
+  // }),
 });
 
 type GetAllProps = z.infer<typeof getAllProps>;
@@ -12,10 +12,11 @@ type GetAllProps = z.infer<typeof getAllProps>;
 const registerProps = z.object({
   date: z.date(),
   responsibleId: z.string(),
-  stockId: z.string(),
+  status: z.boolean(),
+  // stockId: z.string(),
   orderProducts: z.array(
     z.object({
-      buyQuantity: z.number(),
+      purchaseQuantity: z.number(),
       productSupplierId: z.string(),
     }),
   ),
@@ -26,18 +27,19 @@ type RegisterProps = z.infer<typeof registerProps>;
 const editProps = z.object({
   id: z.string(),
   data: z.object({
-    date: z.date().optional(),
-    responsibleId: z.string().optional(),
-    stockId: z.string().optional(),
-    orderProducts: z.array(
-      z.object({
-        id: z.string(),
-        data: z.object({
-          buyQuantity: z.number().optional(),
-          productSupplierId: z.string().optional(),
-        }),
-      }),
-    ),
+    // date: z.date(),
+    // responsibleId: z.string(),
+    status: z.boolean(),
+    // stockId: z.string(),
+    // orderProducts: z.array(
+    //   z.object({
+    //     id: z.string(),
+    //     data: z.object({
+    //       purchaseQuantity: z.number(),
+    //       productSupplierId: z.string(),
+    //     }),
+    //   }),
+    // ),
   }),
 });
 

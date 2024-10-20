@@ -6,17 +6,43 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 export const companyRouter = createTRPCRouter({
   getOneCompany: protectedProcedure
     .input(companyRepositorySchema.getOneProps)
-    .query(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
-      const company = await CompanyRepository.getOne(input);
-      return company;
+    .query(
+      async ({ input }): Promise<CompanyRouteInterfaces["Company"] | null> => {
+        const company = await CompanyRepository.getOne(input);
+        return company;
+      },
+    ),
+
+  getAllCompanies: protectedProcedure
+    .input(companyRepositorySchema.getAllProps)
+    .query(async ({ input }): Promise<CompanyRouteInterfaces["Company"][]> => {
+      const companies = await CompanyRepository.getAll(input);
+      return companies;
     }),
 
-  getAllCompanies: protectedProcedure.query(
-    async (): Promise<CompanyRouteInterfaces["Company"][]> => {
-      const companies = await CompanyRepository.getAll();
-      return companies;
-    },
-  ),
+  getManageCompanies: protectedProcedure
+    .input(companyRepositorySchema.getAllProps)
+    .query(
+      async ({ input }): Promise<CompanyRouteInterfaces["ManageCompany"][]> => {
+        const companies = await CompanyRepository.getAll(input);
+        const serializedManageCompanies = companies.map(async (company) => ({
+          id: company.id,
+          name: company.name,
+          cnpj: company.cnpj,
+          taxRegime: company.taxRegime,
+          registeredProductsCount:
+            await CompanyRepository.countRegisteredProducts({ id: company.id }),
+          registeredSuppliersCount:
+            await CompanyRepository.countRegisteredSuppliers({
+              id: company.id,
+            }),
+          lowStockProductsCount: await CompanyRepository.countLowStockProducts({
+            id: company.id,
+          }),
+        }));
+        return await Promise.all(serializedManageCompanies);
+      },
+    ),
 
   getCompanySuppliers: protectedProcedure
     .input(companyRepositorySchema.getCompanySuppliersProps)

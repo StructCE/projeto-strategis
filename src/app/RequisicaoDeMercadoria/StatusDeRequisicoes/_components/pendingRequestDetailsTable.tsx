@@ -1,8 +1,8 @@
 import { TableComponent } from "~/components/table";
-import { type Request } from "../../RequisicoesDeMercadorias/_components/requestsData";
+import { type SerializedRequest } from "~/server/interfaces/request/request.route.interfaces";
 
 type RequestType = {
-  request: Request;
+  request: SerializedRequest;
 };
 
 export default function PendingRequestDetails(props: RequestType) {
@@ -27,7 +27,7 @@ export default function PendingRequestDetails(props: RequestType) {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {props.request.products.map((product, index) => (
+        {props.request.requestProducts.map((product, index) => (
           <TableComponent.Line
             className={`grid-cols-[70px_1.5fr_130px_90px_110px] gap-16 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -41,13 +41,13 @@ export default function PendingRequestDetails(props: RequestType) {
               {product.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.stock_current}
+              {product.currentStock}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.stock_min}
+              {product.minimunStock}
             </TableComponent.Value>
             <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
-              {product.requested_quantity}
+              {product.requestedQuantity}
             </TableComponent.Value>
           </TableComponent.Line>
         ))}

@@ -4,7 +4,7 @@ import "jspdf-autotable";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
 import { useState } from "react";
 import * as XLSX from "xlsx";
-import { Product } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
+import { type Product } from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -595,7 +595,7 @@ export default function CustomReports() {
           </Filter.Select>
         </Filter>
 
-        <Filter>
+        <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
           <Filter.Icon
             icon={({ className }: { className: string }) => (
               <Search className={className} />

@@ -14,6 +14,12 @@ export type SidebarButtonProps = {
 export default function SidebarButton(props: SidebarButtonProps) {
   const isActive = props.pathname.startsWith(props.refLink);
 
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (props.disabled) {
+      event.preventDefault(); // Impede a navegação
+    }
+  };
+
   return (
     <Link
       ref={props.buttonRef}
@@ -22,7 +28,8 @@ export default function SidebarButton(props: SidebarButtonProps) {
           ? "opacity-40 hover:!bg-transparent"
           : "hover:!bg-vermelho_strategis"
       } ${isActive ? "bg-vermelho_strategis" : ""}`}
-      href={props.refLink}
+      href={props.disabled ? "#" : props.refLink} // Previne navegação quando desativado
+      onClick={handleClick} // Impede navegação ao clicar se desativado
     >
       <span>
         <props.icon size={20}></props.icon>

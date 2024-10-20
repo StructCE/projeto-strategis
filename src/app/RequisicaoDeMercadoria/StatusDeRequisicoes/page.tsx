@@ -18,10 +18,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import {
-  type Request,
-  requests,
-} from "../RequisicoesDeMercadorias/_components/requestsData";
+import { type SerializedRequest } from "~/server/interfaces/request/request.route.interfaces";
+import { api } from "~/trpc/react";
 import AcceptedRequestDetails from "./_components/acceptedRequestDetailsTable";
 import PendingRequestDetails from "./_components/pendingRequestDetailsTable";
 import RejectedRequestDetails from "./_components/rejectedRequestDetailsTable";
@@ -32,17 +30,23 @@ export default function ManageRequestsTable() {
   const [inputResponsible, setInputResponsible] = useState("");
   const [selectStatus, setSelectStatus] = useState("");
 
+  const {
+    data: requests = [],
+    error,
+    isLoading,
+  } = api.request.getAll.useQuery({});
+
   const filteredRequests = requests.filter((request) => {
     const matchesDate =
       !date ||
-      (request.request_date.getDate() === date.getDate() &&
-        request.request_date.getMonth() === date.getMonth() + 1 &&
-        request.request_date.getFullYear() === date.getFullYear());
+      (request.requestDate.getDate() === date.getDate() &&
+        request.requestDate.getMonth() === date.getMonth() + 1 &&
+        request.requestDate.getFullYear() === date.getFullYear());
 
     const matchesResponsible =
       inputResponsible === "" ||
-      request.request_responsible
-        .toLowerCase()
+      request.responsibleName
+        ?.toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
     const matchesStuatus =
@@ -52,16 +56,19 @@ export default function ManageRequestsTable() {
   });
 
   function handleRequestStatus(status: string) {
-    if (status == "Pendente")
-      return <span className="text-amarelo_botao">Esperando confirmação</span>;
+    if (status == "Esperando Confirmação")
+      return <span className="text-amarelo_botao">Esperando Confirmação</span>;
     if (status == "Confirmada")
       return <span className="text-verde_botao">Confirmada</span>;
     if (status == "Rejeitada")
       return <span className="text-vermelho_botao_2">Rejeitada</span>;
   }
 
-  function handleRequestDetailsPage(status: string, request: Request) {
-    if (status == "Pendente")
+  function handleRequestDetailsPage(
+    status: string,
+    request: SerializedRequest,
+  ) {
+    if (status == "Esperando Confirmação")
       return <PendingRequestDetails request={request} />;
     if (status == "Confirmada")
       return <AcceptedRequestDetails request={request} />;
@@ -113,7 +120,9 @@ export default function ManageRequestsTable() {
             state={selectStatus}
             setState={setSelectStatus}
           >
-            <Filter.SelectItems value={"Pendente"}></Filter.SelectItems>
+            <Filter.SelectItems
+              value={"Esperando Confirmação"}
+            ></Filter.SelectItems>
             <Filter.SelectItems value={"Confirmada"}></Filter.SelectItems>
             <Filter.SelectItems value={"Rejeitada"}></Filter.SelectItems>
           </Filter.Select>
@@ -151,61 +160,100 @@ export default function ManageRequestsTable() {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {filteredRequests.map((request, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[0.7fr_1fr_0.5fr_1fr_130px] gap-8 ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
-              {`${request.request_date.getDate()}/${request.request_date.getMonth()}/${request.request_date.getFullYear()}`}
+              Erro ao mostrar requisições: {error.message}
             </TableComponent.Value>
-            <TableComponent.Value>
-              {request.request_responsible}
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {request.products.length}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {handleRequestStatus(request.status)}
-            </TableComponent.Value>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
-                aria-describedby={undefined}
-              >
-                <DialogHeader>
-                  <DialogTitle className="w-fit pb-1.5">
-                    Informações da Requisição de Mercadorias
-                  </DialogTitle>
-                  <DialogDescription className="w-fit text-base text-black">
-                    <p className="w-fit">
-                      <span className="font-semibold">Data da Requisição:</span>{" "}
-                      {`${request.request_date.getDate()}/${request.request_date.getMonth()}/${request.request_date.getFullYear()}`}
-                    </p>
-                    <p className="w-fit">
-                      <span className="font-semibold">
-                        Responsável pela Requisição:
-                      </span>{" "}
-                      {request.request_responsible}
-                    </p>
-                    <p className="w-fit font-semibold">Produtos solicitados:</p>
-                  </DialogDescription>
-
-                  {/* Renderiza uma página diferente dependendo do status da requisição */}
-                  {handleRequestDetailsPage(request.status, request)}
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
           </TableComponent.Line>
-        ))}
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando requisições...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {requests.length > 0 && !isLoading && !error ? (
+          filteredRequests.length > 0 ? (
+            filteredRequests
+              .sort((a, b) => b.requestDate.getTime() - a.requestDate.getTime())
+              .map((request, index) => (
+                <TableComponent.Line
+                  className={`grid-cols-[0.7fr_1fr_0.5fr_1fr_130px] gap-8 ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value>
+                    {`${request.requestDate.getDate()}/${request.requestDate.getMonth()}/${request.requestDate.getFullYear()}`}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {request.responsibleName}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {request.requestProducts.length}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {handleRequestStatus(request.status)}
+                  </TableComponent.Value>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
+                      aria-describedby={undefined}
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="w-fit pb-1.5">
+                          Informações da Requisição de Mercadorias
+                        </DialogTitle>
+                        <DialogDescription className="w-fit text-base text-black">
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Data da Requisição:
+                            </span>{" "}
+                            {`${request.requestDate.getDate()}/${request.requestDate.getMonth()}/${request.requestDate.getFullYear()}`}
+                          </p>
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Responsável pela Requisição:
+                            </span>{" "}
+                            {request.responsibleName}
+                          </p>
+                          <p className="w-fit font-semibold">
+                            Produtos solicitados:
+                          </p>
+                        </DialogDescription>
+
+                        {/* Renderiza uma página diferente dependendo do status da requisição */}
+                        {handleRequestDetailsPage(request.status, request)}
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhuma requisição encontrada com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhuma requisição encontrada
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
     </TableComponent>
   );

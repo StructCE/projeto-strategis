@@ -1,5 +1,6 @@
 "use client";
 import { type Session } from "next-auth";
+import { SessionProvider } from "next-auth/react";
 import { redirect, usePathname } from "next/navigation";
 import React from "react";
 import Navbar from "~/components/navbar/navbar";
@@ -22,7 +23,7 @@ export default function LayoutSelector({
   }
 
   return (
-    <>
+    <SessionProvider>
       <SidebarContainer />
       <div className="ml-0 flex min-h-screen w-full flex-col overflow-x-hidden xl:ml-[330px]">
         <div className="hidden xl:block">
@@ -33,6 +34,6 @@ export default function LayoutSelector({
         </div>
         <div className="w-full p-4 sm:p-6 lg:p-8">{children}</div>
       </div>
-    </>
+    </SessionProvider>
   );
 }

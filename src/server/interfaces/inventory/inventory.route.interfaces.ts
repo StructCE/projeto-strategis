@@ -1,23 +1,49 @@
 export type Inventory = {
   id: string;
-  name: string;
   date: Date;
   responsibleId: string;
+  stockId: string;
+  status: string;
+};
+
+export type InventoryProduct = {
+  id: string;
+  productId: string;
+  code: string;
+  name: string;
+  stockQuantity: number;
+  inventoryQuantity: number;
+  unit: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    unitsPerPack: number;
+  };
+  shelf: {
+    id: string;
+    name: string;
+    cabinet: {
+      id: string;
+      name: string;
+      StockCabinet: {
+        stock: {
+          id: string;
+          name: string;
+          companyId: string;
+          legalResponsibleId: string;
+        };
+      }[];
+    };
+  };
 };
 
 export type SerializedInventory = {
   id: string;
-  name: string;
   date: Date;
   responsibleName: string;
-  inventoryProducts: {
-    id: string;
-    code: string;
-    product: string;
-    unit: string;
-    inventoryQuantity: number;
-    stockQuantity: number;
-  }[];
+  stockId: string;
+  status: string;
+  inventoryProducts: InventoryProduct[];
 };
 
 export type InventoryRouteInterfaces = {

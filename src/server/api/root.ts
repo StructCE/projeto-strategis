@@ -1,10 +1,12 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+import { adjustRouter } from "./routers/adjust";
 import { adjustReasonRouter } from "./routers/adjustReason";
 import { cabinetRouter } from "./routers/cabinet";
 import { companyRouter } from "./routers/company";
 import { controlTypeRouter } from "./routers/controlType";
 import { inventoryRouter } from "./routers/inventory";
 import { operationRouter } from "./routers/operation";
+import { orderRouter } from "./routers/order";
 import { productRouter } from "./routers/product";
 import { productCategoryRouter } from "./routers/productCategory";
 import { requestRouter } from "./routers/request";
@@ -23,6 +25,7 @@ import { useSectorRouter } from "./routers/useSector";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+  adjust: adjustRouter,
   company: companyRouter,
   operation: operationRouter,
   product: productRouter,
@@ -33,6 +36,7 @@ export const appRouter = createTRPCRouter({
   userRole: userRoleRouter,
   user: userRouter,
   inventory: inventoryRouter,
+  order: orderRouter,
   generalParameters: {
     cabinet: cabinetRouter,
     controlType: controlTypeRouter,

@@ -16,6 +16,15 @@ type Company = {
   legalResponsibleId: string | null;
 };
 
+type ManageCompany = {
+  id: string;
+  name: string;
+  cnpj: string;
+  registeredProductsCount: number;
+  registeredSuppliersCount: number;
+  lowStockProductsCount: number;
+};
+
 type CompanySuppliers = {
   cnpj: string;
   name: string;
@@ -54,4 +63,5 @@ export type CompanyRouteInterfaces = {
   CompanySuppliers: CompanySuppliers;
   CompanyUsers: CompanyUsers;
   CompanyStocks: CompanyStocks;
+  ManageCompany: ManageCompany;
 };

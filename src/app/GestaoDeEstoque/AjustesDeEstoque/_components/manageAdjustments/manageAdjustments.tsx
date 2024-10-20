@@ -1,4 +1,4 @@
-import { Calendar, Eraser, UserCog2 } from "lucide-react";
+import { Calendar, Eraser, Search, UserCog2 } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -17,15 +17,22 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { adjustments } from "../adjustmentsData";
+import { api } from "~/trpc/react";
 import AdjustmentDetails from "./adjustmentDetails/adjustmentDetailsTable";
 
 export default function ManageAdjustmentsTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
+  const [selectType, setSelectType] = useState("");
 
-  const filteredAdjustments = adjustments.filter((adjustment) => {
+  const {
+    data: adjusts = [],
+    error,
+    isLoading,
+  } = api.adjust.getAll.useQuery({});
+
+  const filteredAdjustments = adjusts.filter((adjustment) => {
     const matchesDate =
       !date ||
       (adjustment.date.getDate() === date.getDate() &&
@@ -34,11 +41,13 @@ export default function ManageAdjustmentsTable() {
 
     const matchesResponsible =
       inputResponsible === "" ||
-      adjustment.responsible
+      adjustment.responsibleName
         .toLowerCase()
         .includes(inputResponsible.toLowerCase());
 
-    return matchesDate && matchesResponsible;
+    const matchesType = selectType === "" || adjustment.type === selectType;
+
+    return matchesDate && matchesResponsible && matchesType;
   });
 
   return (
@@ -46,6 +55,7 @@ export default function ManageAdjustmentsTable() {
       <TableComponent.Title>
         Histórico de Ajustes de Estoque
       </TableComponent.Title>
+
       <TableComponent.FiltersLine>
         <Filter>
           <Filter.Icon
@@ -74,6 +84,20 @@ export default function ManageAdjustmentsTable() {
           />
         </Filter>
 
+        <Filter>
+          <Filter.Icon
+            icon={({ className }) => <Search className={className}> </Search>}
+          />
+          <Filter.Select
+            placeholder="Tipo de ajuste"
+            state={selectType}
+            setState={setSelectType}
+          >
+            <Filter.SelectItems value="Manual"></Filter.SelectItems>
+            <Filter.SelectItems value="Automático"></Filter.SelectItems>
+          </Filter.Select>
+        </Filter>
+
         <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger className="flex h-full cursor-pointer self-center">
@@ -82,73 +106,112 @@ export default function ManageAdjustmentsTable() {
                 onClick={() => {
                   setDate(undefined);
                   setInputResponsible("");
+                  setSelectType("");
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1fr_2.5fr_1.5fr_1.5fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[1fr_1.5fr_1.3fr_0.8fr_130px] gap-8">
           <TableComponent.ValueTitle>Data do Ajuste</TableComponent.ValueTitle>
-          <TableComponent.ValueTitle>Nome do Ajuste</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>
             Responsável pelo Ajuste
           </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle>Estoque</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Tipo de Ajuste</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {filteredAdjustments.map((adjustment, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[1fr_2.5fr_1.5fr_1.5fr_130px] ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
-            <TableComponent.Value>{`${adjustment.date.getDate()}/${adjustment.date.getMonth()}/${adjustment.date.getFullYear()}`}</TableComponent.Value>
-            <TableComponent.Value>{adjustment.name}</TableComponent.Value>
-            <TableComponent.Value>
-              {adjustment.responsible}
-            </TableComponent.Value>
-            <TableComponent.Value>{adjustment.type}</TableComponent.Value>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
-              >
-                <DialogHeader>
-                  <DialogTitle className="w-fit pb-1.5">
-                    Informações do {adjustment.name}
-                  </DialogTitle>
-                  <DialogDescription className="w-fit text-base text-black">
-                    <p className="w-fit">
-                      <span className="font-semibold">Data do Ajuste:</span>{" "}
-                      {`${adjustment.date.getDate()}/${adjustment.date.getMonth()}/${adjustment.date.getFullYear()}`}
-                    </p>
-                    <p className="w-fit">
-                      <span className="font-semibold">
-                        Responsável pelo Ajuste:
-                      </span>{" "}
-                      {adjustment.responsible}
-                    </p>
-                    <p className="w-fit font-semibold">Ajustes:</p>
-                  </DialogDescription>
 
-                  <AdjustmentDetails adjustment={adjustment} />
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Erro ao mostrar ajustes de estoque: {error.message}
+            </TableComponent.Value>
           </TableComponent.Line>
-        ))}
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando ajustes de estoque...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {adjusts.length > 0 && !isLoading && !error ? (
+          filteredAdjustments.length > 0 ? (
+            filteredAdjustments
+              .sort((a, b) => b.date.getTime() - a.date.getTime())
+              .map((adjustment, index) => (
+                <TableComponent.Line
+                  className={`grid-cols-[1fr_1.5fr_1.3fr_0.8fr_130px] gap-8 ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value>{`${adjustment.date.getDate()}/${adjustment.date.getMonth()}/${adjustment.date.getFullYear()}`}</TableComponent.Value>
+                  <TableComponent.Value>
+                    {adjustment.responsibleName}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {adjustment.stockName}
+                  </TableComponent.Value>
+                  <TableComponent.Value>{adjustment.type}</TableComponent.Value>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="w-fit pb-1.5">
+                          Informações do ajuste de estoque
+                        </DialogTitle>
+                        <DialogDescription className="w-fit text-base text-black">
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Data do Ajuste:
+                            </span>{" "}
+                            {`${adjustment.date.getDate()}/${adjustment.date.getMonth()}/${adjustment.date.getFullYear()}`}
+                          </p>
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Responsável pelo Ajuste:
+                            </span>{" "}
+                            {adjustment.responsibleName}
+                          </p>
+                          <p className="w-fit font-semibold">Ajustes:</p>
+                        </DialogDescription>
+
+                        <AdjustmentDetails adjustment={adjustment} />
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum ajuste de estoque encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum ajuste de estoque encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
     </TableComponent>
   );

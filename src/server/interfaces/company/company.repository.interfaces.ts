@@ -1,5 +1,34 @@
 import { z } from "zod";
 
+const getAllProps = z.object({
+  // filters: z.object({
+  //   cnpj: z.string().optional(),
+  //   name: z.string().optional(),
+  //   state: z.string().optional(),
+  //   taxRegime: z.string().optional(),
+  // }),
+});
+
+type GetAllProps = z.infer<typeof getAllProps>;
+
+const countRegisteredProducts = z.object({
+  id: z.string(),
+});
+
+type CountRegisteredProducts = z.infer<typeof countRegisteredProducts>;
+
+const countRegisteredSuppliers = z.object({
+  id: z.string(),
+});
+
+type CountRegisteredSuppliers = z.infer<typeof countRegisteredProducts>;
+
+const countLowStockProducts = z.object({
+  id: z.string(),
+});
+
+type CountLowStockProducts = z.infer<typeof countLowStockProducts>;
+
 const getOneProps = z.object({
   id: z.string(),
 });
@@ -79,9 +108,14 @@ export const companyRepositorySchema = {
   getCompanyUsersProps,
   getCompanySuppliersProps,
   getCompanyStocksProps,
+  getAllProps,
+  countRegisteredProducts,
+  countRegisteredSuppliers,
+  countLowStockProducts,
 };
 
 export type CompanyRepositoryInterfaces = {
+  GetAllProps: GetAllProps;
   GetOneProps: GetOneProps;
   RegisterProps: RegisterProps;
   DeleteProps: DeleteProps;
@@ -89,4 +123,7 @@ export type CompanyRepositoryInterfaces = {
   GetCompanyUsersProps: GetCompanyUsersProps;
   GetCompanySuppliersProps: GetCompanySuppliersProps;
   GetCompanyStocksProps: GetCompanyStocksProps;
+  CountRegisteredProducts: CountRegisteredProducts;
+  CountRegisteredSuppliers: CountRegisteredSuppliers;
+  CountLowStockProducts: CountLowStockProducts;
 };

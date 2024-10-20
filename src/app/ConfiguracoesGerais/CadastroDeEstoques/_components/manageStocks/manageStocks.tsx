@@ -36,7 +36,14 @@ export const ManageStocksTable = () => {
     //   name: inputStockName,
     // },
   });
-  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery({
+    // filters: {
+    // cnpj: "",
+    // name: "",
+    // state: "",
+    // taxRegime: "",
+    // },
+  });
 
   const filteredStocks = stocks.filter((stock) => {
     const stockNameMatches = stock.name
@@ -128,16 +135,14 @@ export const ManageStocksTable = () => {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1.7fr_1fr_1fr_2fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[1.25fr_0.6fr_1.5fr_1.5fr_130px]">
           <TableComponent.ValueTitle>Nome</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Sigla</TableComponent.ValueTitle>
-          <TableComponent.ValueTitle className="text-center leading-6">
-            Nome do <br />
-            Responsável
+          <TableComponent.ValueTitle className="leading-6">
+            Nome do Responsável
           </TableComponent.ValueTitle>
-          <TableComponent.ValueTitle className="text-center leading-6">
-            Email do <br />
-            Responsável
+          <TableComponent.ValueTitle className="leading-6">
+            Email do Responsável
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
@@ -160,7 +165,7 @@ export const ManageStocksTable = () => {
               .sort((a, b) => a.name.localeCompare(b.name))
               .map((stock, index) => (
                 <TableComponent.Line
-                  className={`grid-cols-[1.7fr_1fr_1fr_2fr_130px] ${
+                  className={`grid-cols-[1.25fr_0.6fr_1.5fr_1.5fr_130px] ${
                     index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                   }`}
                   key={index}
@@ -172,10 +177,10 @@ export const ManageStocksTable = () => {
                       .map((word) => word.charAt(0).toUpperCase())
                       .join("")}-${stock.company.name.split(" ")[0]}`}
                   </TableComponent.Value>
-                  <TableComponent.Value className="text-center">
+                  <TableComponent.Value>
                     {stock.legalResponsible.name}
                   </TableComponent.Value>
-                  <TableComponent.Value className="text-center">
+                  <TableComponent.Value>
                     {stock.legalResponsible.email}
                   </TableComponent.Value>
                   <Dialog>

@@ -9,21 +9,10 @@ import {
   Trash2,
   UserCog2,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import React, { useState } from "react";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import {
-  ProductCategories,
-  SectorsOfUse,
-  TypesOfControl,
-} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
-import {
-  products,
-  type Product,
-} from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 import { Filter } from "~/components/filter";
-import { type User } from "~/components/navbar/_components/userData";
 import { TableComponent } from "~/components/table";
-import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -35,16 +24,32 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
+import { type UserWithRoles } from "~/server/interfaces/user/user.route.interfaces";
+import { api } from "~/trpc/react";
+import FinalizeRequest from "./useRequest";
 
 export default function CreatePurchaseOrder() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
-  const [inputResponsible, setInputResponsible] = useState("");
+
+  const session = useSession();
+  const userId = session.data?.user.id;
+  const [selectResponsible, setSelectResponsible] = useState<
+    string | undefined
+  >(userId);
 
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
@@ -54,9 +59,27 @@ export default function CreatePurchaseOrder() {
   const [selectCategory, setSelectCategory] = useState("");
   const [selectSector, setSelectSector] = useState("");
 
-  const [addedProducts, setAddedProducts] = useState<Product[]>([]);
+  const [addedProducts, setAddedProducts] = useState<ProductWithFeatures[]>([]);
   const [quantities, setQuantities] = useState<Record<string, string>>({});
   const [requestDescription, setRequestDescription] = useState("");
+
+  const {
+    data: products = [],
+    error,
+    isLoading,
+  } = api.product.getAll.useQuery();
+  const { data: sectorsOfUse = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: typesOfControl = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
+  const { data: productCategories = [] } =
+    api.generalParameters.productCategory.getAll.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getCabinetFromStock.useQuery({
+      stockName: selectStock ? selectStock : "",
+    });
+  const { data: users = [] } = api.user.getAll.useQuery();
 
   const areAllFiltersEmpty =
     inputCode === "" &&
@@ -78,23 +101,23 @@ export default function CreatePurchaseOrder() {
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
           selectStock === "" ||
-          `${product.address.stock}`
-            .toLowerCase()
-            .includes(selectStock.toLowerCase());
+          product.shelf.cabinet.StockCabinet.some(
+            (stockCabinet) =>
+              stockCabinet.stock.name.toLowerCase() ===
+              selectStock.toLowerCase(),
+          );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.address.storage}, ${product.address.shelf}`
+          `${product.shelf.cabinet.name} - ${product.shelf.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
           selectControlType === "" ||
-          product.type_of_control?.description === selectControlType;
+          product.controlType?.name === selectControlType;
         const matchesCategory =
-          selectCategory === "" ||
-          product.product_category?.description === selectCategory;
+          selectCategory === "" || product.category?.name === selectCategory;
         const matchesSector =
-          selectSector === "" ||
-          product.sector_of_use?.description === selectSector;
+          selectSector === "" || product.sectorOfUse?.name === selectSector;
 
         return (
           matchesCode &&
@@ -108,7 +131,7 @@ export default function CreatePurchaseOrder() {
       });
 
   // Função para adicionar produtos a requisição
-  const handleAddProduct = (product: Product) => {
+  const handleAddProduct = (product: ProductWithFeatures) => {
     setAddedProducts((prev) => [...prev, product]);
   };
 
@@ -132,34 +155,14 @@ export default function CreatePurchaseOrder() {
     }));
   };
 
-  // Função para finalizar a requisição
-  const handleFinalizePurchase = () => {
-    const requestData = {
-      responsible: inputResponsible,
-      date: date?.toISOString(),
-      products: addedProducts.map((product) => ({
-        code: product.code,
-        name: product.name,
-        stock_current: product.stock_current,
-        request_quantity: quantities[product.code] ?? 0,
-      })),
-    };
+  const { data: user } = api.user.getUserById.useQuery({ id: userId });
 
-    // Exemplo de exportação da requisição como JSON (feito com gpt, verificar se ta tudo certo)
-    console.log(JSON.stringify(requestData, null, 2));
-  };
-
-  // Exemplo da lógica de permissão (Usuário 1 tem permissão pra produtos líquidos, e Usuário 2 outros produtos)
-  const LoggedUser: User = {
-    name: "Nome do Usuário 1",
-    role: "Requisitante",
-    company: "Alimentos WCW",
-    phone: "(61) 99999-9999",
-  };
-
-  function hasPermission(product: Product, user: User) {
-    return product.users_with_permission?.some(
-      (permittedUser) => permittedUser.name === user.name,
+  function hasPermission(
+    product: ProductWithFeatures,
+    user: UserWithRoles | null | undefined,
+  ) {
+    return product.usersWithPermission?.some(
+      (permittedUser) => permittedUser.user.id === user?.id,
     );
   }
 
@@ -192,17 +195,43 @@ export default function CreatePurchaseOrder() {
             ></Filter.DatePicker>
           </Filter>
 
-          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[250px]">
+          <div className="flex w-full items-start rounded-[12px] bg-filtro bg-opacity-50 py-1.5 lg:w-[225px] lg:items-center">
+            <Select
+              onValueChange={setSelectResponsible}
+              value={selectResponsible}
+              defaultValue={selectResponsible}
+            >
+              <SelectTrigger className="font-inter m-0 h-auto border-0 border-none bg-transparent p-0 px-2 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-[250px]">
+                <UserCog2
+                  className="size-[20px] stroke-[1.5px]"
+                  color="black"
+                />
+                <SelectValue
+                  placeholder="Responsável"
+                  className="w-full text-left"
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {users.map((user, index) => (
+                  <SelectItem value={user.id} key={index}>
+                    {user.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-full">
             <Filter.Icon
               icon={({ className }: { className: string }) => (
-                <UserCog2 className={className} />
+                <Text className={className} />
               )}
             />
             <Filter.Input
               className="text-sm sm:text-base"
-              placeholder="Responsável"
-              state={inputResponsible}
-              setState={setInputResponsible}
+              placeholder="Insira uma descrição para requisição"
+              state={requestDescription}
+              setState={setRequestDescription}
             />
           </Filter>
         </TableComponent.FiltersLine>
@@ -272,30 +301,24 @@ export default function CreatePurchaseOrder() {
               state={selectAddress}
               setState={setSelectAddress}
               className={
-                selectStock === ""
-                  ? "cursor-not-allowed text-sm opacity-50 sm:text-base"
-                  : "text-sm sm:text-base"
+                selectStock === "" ? "cursor-not-allowed opacity-50" : ""
               }
             >
-              {selectStock === ""
-                ? [
+              {selectStock === "" ? (
+                <Filter.SelectItems
+                  key="0"
+                  value="Selecione um estoque primeiro"
+                />
+              ) : (
+                cabinets.flatMap((cabinet) =>
+                  cabinet.shelf.map((shelf) => (
                     <Filter.SelectItems
-                      key="0"
-                      value="Selecione um estoque primeiro"
-                    ></Filter.SelectItems>,
-                  ]
-                : stocks
-                    .filter((stock) => stock.name === selectStock)
-                    .flatMap((stock) =>
-                      stock.address.flatMap((address) =>
-                        address.shelves.map((shelf, index) => (
-                          <Filter.SelectItems
-                            key={index}
-                            value={`${address.description}, ${shelf.description}`}
-                          ></Filter.SelectItems>
-                        )),
-                      ),
-                    )}
+                      key={shelf.id}
+                      value={`${cabinet.name} - ${shelf.name}`}
+                    />
+                  )),
+                )
+              )}
             </Filter.Select>
           </Filter>
         </TableComponent.FiltersLine>
@@ -313,10 +336,10 @@ export default function CreatePurchaseOrder() {
               state={selectControlType}
               setState={setSelectControlType}
             >
-              {TypesOfControl.map((type, index) => (
+              {typesOfControl.map((type, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={type.description}
+                  value={type.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -334,10 +357,10 @@ export default function CreatePurchaseOrder() {
               state={selectCategory}
               setState={setSelectCategory}
             >
-              {ProductCategories.map((category, index) => (
+              {productCategories.map((category, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={category.description}
+                  value={category.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -355,10 +378,10 @@ export default function CreatePurchaseOrder() {
               state={selectSector}
               setState={setSelectSector}
             >
-              {SectorsOfUse.map((sector, index) => (
+              {sectorsOfUse.map((sector, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={sector.description}
+                  value={sector.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -407,59 +430,91 @@ export default function CreatePurchaseOrder() {
             <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
 
-          {areAllFiltersEmpty && (
+          {error && (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Utilize os filtros acima para encontrar produtos cadastrados no
-                estoque
+                Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
+          {isLoading && (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
+                Carregando produtos...
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty &&
-            filteredProducts.map((product, index) => (
-              <TableComponent.Line
-                className={`grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="text-center">
-                  {product.code}
-                </TableComponent.Value>
-                <TableComponent.Value>{product.name}</TableComponent.Value>
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length > 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
-                  {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                  Utilize os filtros acima para encontrar produtos cadastrados
+                  no estoque
                 </TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.stock_current}
+              </TableComponent.Line>
+            )}
+          {!areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.stock_min}
-                </TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.stock_max}
-                </TableComponent.Value>
-
-                {/* Ver como vai funcionar essa lógica de permissão */}
-                {hasPermission(product, LoggedUser) ? (
-                  <Button
-                    onClick={() => handleAddProduct(product)}
-                    className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+              </TableComponent.Line>
+            )}
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => a.code.localeCompare(b.code))
+                .map((product, index) => (
+                  <TableComponent.Line
+                    className={`grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8 ${
+                      index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                    }`}
+                    key={index}
                   >
-                    Adicionar
-                  </Button>
-                ) : (
-                  <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]">
-                    Sem Permissão
-                  </Button>
-                )}
+                    <TableComponent.Value className="text-center">
+                      {product.code}
+                    </TableComponent.Value>
+                    <TableComponent.Value>{product.name}</TableComponent.Value>
+                    <TableComponent.Value>
+                      {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-center">
+                      {product.currentStock}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-center">
+                      {product.minimunStock}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-center">
+                      {product.maximumStock}
+                    </TableComponent.Value>
+
+                    {hasPermission(product, user) ? (
+                      <Button
+                        onClick={() => handleAddProduct(product)}
+                        className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                      >
+                        Adicionar
+                      </Button>
+                    ) : (
+                      <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]">
+                        Sem Permissão
+                      </Button>
+                    )}
+                  </TableComponent.Line>
+                ))
+            ) : (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
@@ -476,109 +531,148 @@ export default function CreatePurchaseOrder() {
             <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
 
-          {areAllFiltersEmpty && (
-            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          {error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Utilize os filtros acima para encontrar produtos cadastrados no
-                estoque
+                Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
-            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          {isLoading && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
+                Carregando produtos...
               </TableComponent.Value>
             </TableComponent.Line>
           )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length > 0 && (
+              <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Utilize os filtros acima para encontrar produtos cadastrados
+                  no estoque
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
           {!areAllFiltersEmpty &&
-            filteredProducts.map((product, index) => (
-              <TableComponent.Line
-                className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="text-center text-[14px]">
-                  {product.code}
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
-                <TableComponent.Value className="text-[14px]">
-                  {product.name}
-                </TableComponent.Value>
-
-                <Dialog>
-                  <DialogTrigger asChild>
-                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
-                      Detalhes
-                    </Button> */}
-                    <Info size={24} />
-                  </DialogTrigger>
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="w-full gap-2 p-5"
+              </TableComponent.Line>
+            )}
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => a.code.localeCompare(b.code))
+                .map((product, index) => (
+                  <TableComponent.Line
+                    className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
+                      index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                    }`}
+                    key={index}
                   >
-                    <DialogHeader>
-                      <DialogTitle className="text-left text-xl">
-                        Requisitar Produto
-                      </DialogTitle>
-                    </DialogHeader>
-                    <DialogDescription className="flex flex-col gap-1 text-left text-black">
-                      <p className="text-base">
-                        <span className="font-semibold">Código: </span>{" "}
-                        {product.code}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Produto: </span>{" "}
-                        {product.name}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Estoque Atual: </span>
-                        {product.stock_current}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Estoque Mínimo: </span>
-                        {product.stock_min}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Estoque Máximo: </span>
-                        {product.stock_max}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">
-                          Endereço de Estoque:
-                        </span>{" "}
-                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
-                      </p>
-                      <div className="text-base">
-                        <span className="font-semibold">
-                          Quantidade a Solicitar:{" "}
-                        </span>
-                        <Input
-                          type="number"
-                          value={quantities[product.code] ?? ""}
-                          onChange={(e) =>
-                            handleQuantityChange(product.code, e.target.value)
-                          }
-                          className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
-                        ></Input>
-                      </div>
-                      <div className="mt-3 flex w-full justify-end">
-                        {hasPermission(product, LoggedUser) ? (
-                          <Button
-                            onClick={() => handleAddProduct(product)}
-                            className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
-                          >
-                            Adicionar
-                          </Button>
-                        ) : (
-                          <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]">
-                            Sem Permissão
-                          </Button>
-                        )}
-                      </div>
-                    </DialogDescription>
-                  </DialogContent>
-                </Dialog>
+                    <TableComponent.Value className="text-center text-[14px]">
+                      {product.code}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-[14px]">
+                      {product.name}
+                    </TableComponent.Value>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Info size={24} />
+                      </DialogTrigger>
+                      <DialogContent
+                        aria-describedby={undefined}
+                        className="w-full gap-2 p-5"
+                      >
+                        <DialogHeader>
+                          <DialogTitle className="text-left text-xl">
+                            Requisitar Produto
+                          </DialogTitle>
+                        </DialogHeader>
+                        <DialogDescription className="flex flex-col gap-1 text-left text-black">
+                          <p className="text-base">
+                            <span className="font-semibold">Código: </span>{" "}
+                            {product.code}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">Produto: </span>{" "}
+                            {product.name}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Estoque Atual:{" "}
+                            </span>
+                            {product.currentStock}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Estoque Mínimo:{" "}
+                            </span>
+                            {product.minimunStock}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Estoque Máximo:{" "}
+                            </span>
+                            {product.maximumStock}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Endereço de Estoque:
+                            </span>{" "}
+                            {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                          </p>
+                          <div className="text-base">
+                            <span className="font-semibold">
+                              Quantidade a Solicitar:{" "}
+                            </span>
+                            <Input
+                              type="number"
+                              value={quantities[product.code] ?? ""}
+                              onChange={(e) =>
+                                handleQuantityChange(
+                                  product.code,
+                                  e.target.value,
+                                )
+                              }
+                              className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                            ></Input>
+                          </div>
+                          <div className="mt-3 flex w-full justify-end">
+                            {hasPermission(product, user) ? (
+                              <Button
+                                onClick={() => handleAddProduct(product)}
+                                className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                              >
+                                Adicionar
+                              </Button>
+                            ) : (
+                              <Button className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]">
+                                Sem Permissão
+                              </Button>
+                            )}
+                          </div>
+                        </DialogDescription>
+                      </DialogContent>
+                    </Dialog>
+                  </TableComponent.Line>
+                ))
+            ) : (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
@@ -635,10 +729,10 @@ export default function CreatePurchaseOrder() {
                   {product.name}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {product.stock_current}
+                  {product.currentStock}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {product.stock_min}
+                  {product.minimunStock}
                 </TableComponent.Value>
                 <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
                   <Input
@@ -720,21 +814,21 @@ export default function CreatePurchaseOrder() {
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Atual: </span>
-                        {product.stock_current}
+                        {product.currentStock}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Mínimo: </span>
-                        {product.stock_min}
+                        {product.minimunStock}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Máximo: </span>
-                        {product.stock_max}
+                        {product.maximumStock}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
                       </p>
                       <div className="text-base">
                         <span className="font-semibold">
@@ -764,30 +858,13 @@ export default function CreatePurchaseOrder() {
           )}
         </TableComponent.Table>
 
-        <div className="pt-1 sm:pt-2">
-          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-full">
-            <Filter.Icon
-              icon={({ className }: { className: string }) => (
-                <Text className={className} />
-              )}
-            />
-            <Filter.Input
-              className="text-sm sm:text-base"
-              placeholder="Insira uma descrição para requisição"
-              state={requestDescription}
-              setState={setRequestDescription}
-            />
-          </Filter>
-        </div>
-
-        <TableButtonComponent className="pt-1 sm:pt-2">
-          <TableButtonComponent.Button
-            className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1"
-            handlePress={handleFinalizePurchase}
-          >
-            Requisitar Mercadorias
-          </TableButtonComponent.Button>
-        </TableButtonComponent>
+        <FinalizeRequest
+          requestDate={date ?? new Date()}
+          selectResponsibleId={selectResponsible}
+          addedProducts={addedProducts}
+          quantities={quantities}
+          requestDescription={requestDescription}
+        />
       </TableComponent>
     </div>
   );
