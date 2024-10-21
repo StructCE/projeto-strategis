@@ -58,6 +58,7 @@ export type InvoiceProduct = {
 };
 
 export type SerializedInvoice = {
+  id: string;
   documentNumber: string;
   documentDate: Date;
   company: { id: string; name: string };

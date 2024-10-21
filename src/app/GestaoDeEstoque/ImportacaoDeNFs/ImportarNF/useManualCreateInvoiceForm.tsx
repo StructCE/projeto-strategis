@@ -6,7 +6,7 @@ import {
   type CreateInvoiceFormValues,
 } from "./invoiceCreateFormSchema";
 
-export const useCreateInvoiceForm = () => {
+export const useManualCreateInvoiceForm = () => {
   const invoiceMutation = api.invoice.registerInvoice.useMutation({
     onSuccess: (newInvoice) => {
       console.log("Invoice created successfully:", newInvoice);

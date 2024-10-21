@@ -52,8 +52,12 @@ type RegisterProps = z.infer<typeof registerProps>;
 const editProps = z.object({
   id: z.string(),
   invoiceData: z.object({
-    accountPlanId: z.string().optional(),
-    groupdId: z.string().optional(),
+    expenseType: z.string(),
+    recurrence: z.string(),
+    installment: z.string(),
+    confirmedStatus: z.string(),
+    accountId: z.string().optional(),
+    groupId: z.string().optional(),
     documentTypeId: z.string().optional(),
     projectId: z.string().optional(),
     bankId: z.string().optional(),

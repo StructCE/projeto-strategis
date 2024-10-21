@@ -12,6 +12,7 @@ export const invoiceRouter = createTRPCRouter({
       }): Promise<InvoiceRouteInterfaces["SerializedInvoice"][]> => {
         const invoices = await invoiceRepository.getAll(input);
         const SerializedInvoices = invoices.map((invoice) => ({
+          id: invoice.id,
           documentNumber: invoice.documentNumber,
           documentDate: invoice.documentDate,
           company: { id: invoice.company.id, name: invoice.company.name },
@@ -68,5 +69,12 @@ export const invoiceRouter = createTRPCRouter({
     .mutation(async ({ input }): Promise<InvoiceRouteInterfaces["Invoice"]> => {
       const registeredInvoice = await invoiceRepository.register(input);
       return registeredInvoice;
+    }),
+
+  editInvoice: protectedProcedure
+    .input(invoiceRepositorySchema.editProps)
+    .mutation(async ({ input }): Promise<InvoiceRouteInterfaces["Invoice"]> => {
+      const editedInvoice = await invoiceRepository.edit(input);
+      return editedInvoice;
     }),
 });

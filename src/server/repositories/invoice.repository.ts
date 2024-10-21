@@ -117,7 +117,44 @@ async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
   return registeredInvoice; // Retorna a fatura registrada
 }
 
+async function edit(props: InvoiceRepositoryInterfaces["EditProps"]) {
+  const { id, invoiceData } = props;
+
+  // Verifica se o ID da fatura existe
+  const existingInvoice = await db.invoice.findUnique({
+    where: { id },
+  });
+
+  if (!existingInvoice) {
+    throw new Error("Invoice not found");
+  }
+
+  // Atualiza a fatura com os dados fornecidos
+  const updatedInvoice = await db.invoice.update({
+    where: {
+      id,
+    },
+    data: {
+      expenseType: invoiceData.expenseType,
+      recurrence: invoiceData.recurrence,
+      installment: invoiceData.installment,
+      confirmedStatus: invoiceData.confirmedStatus,
+      accountId: invoiceData.accountId ?? null,
+      groupId: invoiceData.groupId ?? null,
+      documentTypeId: invoiceData.documentTypeId ?? null,
+      projectId: invoiceData.projectId ?? null,
+      bankId: invoiceData.bankId ?? null,
+      payedValue: invoiceData.payedValue ?? null,
+      paymentDate: invoiceData.paymentDate ?? null,
+      payedStatus: invoiceData.payedStatus ?? null,
+    },
+  });
+
+  return updatedInvoice; // Retorna a fatura atualizada
+}
+
 export const invoiceRepository = {
   getAll,
   register,
+  edit,
 };

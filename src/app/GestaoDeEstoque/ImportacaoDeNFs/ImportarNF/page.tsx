@@ -40,10 +40,10 @@ import {
 } from "~/components/ui/tooltip";
 import { type AccountPlan } from "~/server/interfaces/accountPlan/accountPlan.route.interfaces";
 import { api } from "~/trpc/react";
-import { useCreateInvoiceForm } from "./useInvoiceForm";
+import { useManualCreateInvoiceForm } from "./useManualCreateInvoiceForm";
 
 export default function ManuallyImportInvoice() {
-  const invoiceCreateForm = useCreateInvoiceForm();
+  const invoiceCreateForm = useManualCreateInvoiceForm();
 
   // const [selectedStockId, setSelectedStockId] = useState<string>();
   const [selectedAccountPlan, setSelectedAccountPlan] = useState<AccountPlan>();

@@ -22,28 +22,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import {
-  account_plans,
-  document_types,
-  groups,
-  projects,
-  type AccountPlan,
-  type Invoice,
-} from "../invoicesData";
-import { useInvoiceForm } from "./useInvoiceForm";
+import { type AccountPlan } from "~/server/interfaces/accountPlan/accountPlan.route.interfaces";
+import { type SerializedInvoice } from "~/server/interfaces/invoice/invoice.route.interfaces";
+import { api } from "~/trpc/react";
+import { useEditInvoiceForm } from "./useEditInvoiceForm";
 
 type InvoiceEditForm = {
-  invoice: Invoice;
+  invoice: SerializedInvoice;
 };
 
-// TODO: useStates para armazenar info de cada product (e seus dados)
-// TODO: lógica botões de reporte e confirmação
-// TODO: lógica validação confirmação
-
 export default function InvoiceDetails(props: InvoiceEditForm) {
-  const invoiceEditForm = useInvoiceForm();
+  const invoiceEditForm = useEditInvoiceForm(props.invoice);
 
   const [selectedAccountPlan, setSelectedAccountPlan] = useState<AccountPlan>();
+
+  // const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  // const { data: companies = [] } = api.company.getAllCompanies.useQuery({});
+  const { data: documentTypes = [] } =
+    api.generalParameters.documentType.getAll.useQuery();
+  const { data: groups = [] } = api.generalParameters.group.getAll.useQuery();
+  const { data: projects = [] } =
+    api.generalParameters.project.getAll.useQuery();
+  const { data: accountPlans = [] } =
+    api.generalParameters.accountPlan.getAll.useQuery();
 
   const formatDateToString = (date: Date): string => {
     const day = String(date.getDate()).padStart(2, "0");
@@ -79,146 +80,15 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
               <FormComponent.Frame>
                 <FormComponent.Label>Data de Emissão</FormComponent.Label>
                 <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                  {formatDateToString(props.invoice.date_document)}
+                  {formatDateToString(props.invoice.documentDate)}
                 </div>
               </FormComponent.Frame>
 
               <FormComponent.Frame>
                 <FormComponent.Label>Data de Vencimento</FormComponent.Label>
                 <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                  {formatDateToString(props.invoice.date_deadline)}
+                  {formatDateToString(props.invoice.deadlineDate)}
                 </div>
-              </FormComponent.Frame>
-            </FormComponent.Line>
-
-            <FormComponent.Line>
-              <FormComponent.Frame>
-                <FormComponent.Label>Tipo de Documento</FormComponent.Label>
-                <FormField
-                  control={invoiceEditForm.form.control}
-                  name="document"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                            <SelectValue placeholder="Selecione o tipo de documento" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {document_types.map((document, index) => (
-                            <SelectItem value={document.name} key={index}>
-                              {document.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Projeto</FormComponent.Label>
-                <FormField
-                  control={invoiceEditForm.form.control}
-                  name="project"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                            <SelectValue placeholder="Selecione o projeto" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {projects.map((project, index) => (
-                            <SelectItem value={project.name} key={index}>
-                              {project.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Plano de Contas</FormComponent.Label>
-                <FormField
-                  control={invoiceEditForm.form.control}
-                  name="account_plan.name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={(value) => {
-                          const plan = account_plans.find(
-                            (plan) => plan.name === value,
-                          );
-                          setSelectedAccountPlan(plan); // Atualiza o estado com o plano selecionado
-                          field.onChange(value); // Atualiza o formulário com o valor selecionado
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                            <SelectValue placeholder="Selecione o plano de contas" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {account_plans.map((plan, index) => (
-                            <SelectItem value={plan.name} key={index}>
-                              {plan.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Conta</FormComponent.Label>
-                <FormField
-                  control={invoiceEditForm.form.control}
-                  name="account_plan.account"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        disabled={!selectedAccountPlan} // Desabilita o select se nenhum plano de contas estiver selecionado
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                            <SelectValue placeholder="Selecione a conta" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {selectedAccountPlan?.accounts.map(
-                            (account, index) => (
-                              <SelectItem value={account.name} key={index}>
-                                {account.name}
-                              </SelectItem>
-                            ),
-                          )}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </FormComponent.Frame>
             </FormComponent.Line>
 
@@ -227,7 +97,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                 <FormComponent.Label>Tipo de Despesa</FormComponent.Label>
                 <FormField
                   control={invoiceEditForm.form.control}
-                  name="expense_type"
+                  name="expenseType"
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -295,7 +165,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                       <FormControl>
                         <Input
                           className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                          placeholder="Parcela da nota fiscal"
+                          placeholder="Parcela da nota fiscal ('única' ou nº da parcela)"
                           {...field}
                         />
                       </FormControl>
@@ -306,10 +176,126 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
               </FormComponent.Frame>
 
               <FormComponent.Frame>
+                <FormComponent.Label>Tipo de Documento</FormComponent.Label>
+                <FormField
+                  control={invoiceEditForm.form.control}
+                  name="documentTypeId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                            <SelectValue placeholder="Selecione o tipo de documento" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {documentTypes.map((document, index) => (
+                            <SelectItem value={document.id} key={index}>
+                              {document.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+            </FormComponent.Line>
+
+            <FormComponent.Line>
+              <FormComponent.Frame>
+                <FormComponent.Label>Projeto</FormComponent.Label>
+                <FormField
+                  control={invoiceEditForm.form.control}
+                  name="projectId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                            <SelectValue placeholder="Selecione o projeto" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {projects.map((project, index) => (
+                            <SelectItem value={project.id} key={index}>
+                              {project.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+
+              <FormComponent.Frame>
+                <FormComponent.Label>Plano de Contas</FormComponent.Label>
+                <Select
+                  onValueChange={(value) => {
+                    const plan = accountPlans.find((plan) => plan.id === value);
+                    setSelectedAccountPlan(plan);
+                  }}
+                >
+                  <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                    <SelectValue placeholder="Selecione o plano de contas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accountPlans.map((plan, index) => (
+                      <SelectItem value={plan.id} key={index}>
+                        {plan.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormComponent.Frame>
+
+              <FormComponent.Frame>
+                <FormComponent.Label>Conta</FormComponent.Label>
+                <FormField
+                  control={invoiceEditForm.form.control}
+                  name="accountId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={!selectedAccountPlan}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                            <SelectValue placeholder="Selecione a conta" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {selectedAccountPlan?.accounts.map(
+                            (account, index) => (
+                              <SelectItem value={account.id} key={index}>
+                                {account.name}
+                              </SelectItem>
+                            ),
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+
+              <FormComponent.Frame>
                 <FormComponent.Label>Grupo</FormComponent.Label>
                 <FormField
                   control={invoiceEditForm.form.control}
-                  name="group"
+                  name="groupId"
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -323,7 +309,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                         </FormControl>
                         <SelectContent>
                           {groups.map((group, index) => (
-                            <SelectItem value={group.name} key={index}>
+                            <SelectItem value={group.id} key={index}>
                               {group.name}
                             </SelectItem>
                           ))}
@@ -343,7 +329,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
               collapsible
               className="mx-[1px] w-full p-0 shadow-[0px_0px_4px_0px_#0000004d]"
             >
-              {props.invoice.products.map((product, index) => (
+              {props.invoice.invoiceProducts.map((product, index) => (
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
@@ -398,7 +384,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                             Unidade
                           </FormComponent.Label>
                           <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                            {product.buy_unit.description}
+                            {product.unit.name}
                           </div>
                         </FormComponent.Frame>
 
@@ -407,7 +393,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                             Quantidade
                           </FormComponent.Label>
                           <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                            {product.purchase_quantity}
+                            {product.purchaseQuantity}
                           </div>
                         </FormComponent.Frame>
 
@@ -416,7 +402,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                             Valor por Unidade
                           </FormComponent.Label>
                           <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                            {product.value_unit}
+                            {product.unitValue}
                           </div>
                         </FormComponent.Frame>
 
@@ -426,7 +412,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                           </FormComponent.Label>
                           <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
                             {(
-                              product.purchase_quantity * product?.value_unit
+                              product.purchaseQuantity * product?.unitValue
                             ).toFixed(2)}
                           </div>
                         </FormComponent.Frame>
@@ -439,7 +425,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Tipo de Controle
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.type_of_control.description}
+                              {product.controlType}
                             </div>
                           </FormComponent.Frame>
 
@@ -448,7 +434,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Categoria do Produto
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.product_category.description}
+                              {product.category}
                             </div>
                           </FormComponent.Frame>
 
@@ -457,7 +443,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Setor de Utilização
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.sector_of_use.description}
+                              {product.useSector}
                             </div>
                           </FormComponent.Frame>
                         </FormComponent.Line>
@@ -468,7 +454,9 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Estoque
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.address.stock}
+                              {product.shelf?.cabinet.StockCabinet.map(
+                                (stockCabinet) => stockCabinet.stock.name,
+                              )}
                             </div>
                           </FormComponent.Frame>
 
@@ -477,7 +465,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Armário/Zona
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.address.storage}
+                              {product.shelf?.cabinet.name}
                             </div>
                           </FormComponent.Frame>
 
@@ -486,7 +474,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Prateleira
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.address.shelf}
+                              {product.shelf?.name}
                             </div>
                           </FormComponent.Frame>
                         </FormComponent.Line>
