@@ -242,8 +242,8 @@ model Unit {
     abbreviation String
     unitsPerPack Float
 
-    Product        Product[]
-    InvoiceProduct InvoiceProduct[]
+    Product Product[]
+    // InvoiceProduct InvoiceProduct[]
     // RequestProduct RequestProduct[]
 }
 
@@ -480,7 +480,7 @@ model Invoice {
     documentDate    DateTime // Data de emissão
     companyId       String // Empresa
     expenseType     String // "Despesa Fixa" | "Despesa Variável" | "Receita" | undefined;
-    recurrance      String // "Recorrente" | "Avulsa" | "Parcelas" | undefined;
+    recurrence      String // "Recorrente" | "Avulsa" | "Parcelas" | undefined;
     installment     String // Parcela (Pode ser 'única' ou o numero da parcela incluindo a data ou não)
     deadlineDate    DateTime // Data de vencimento
     confirmedStatus String // "Pendente" | "Confirmada" | "Cancelada"
@@ -507,15 +507,15 @@ model Invoice {
 
 model InvoiceProduct {
     id                String @id @default(cuid())
-    ncm               Int
-    cfop              Int
+    // ncm               Int
+    // cfop              Int
+    // unitId            String // Unidade de compra
     purchaseQuantity  Int // Quantidade comprada
     unitValue         Float // Valor por unidade de compra
-    unitId            String // Unidade de compra
     invoiceId         String
     productSupplierId String
 
-    unit            Unit            @relation(fields: [unitId], references: [id])
+    // unit            Unit            @relation(fields: [unitId], references: [id])
     productSupplier ProductSupplier @relation(fields: [productSupplierId], references: [id])
     invoice         Invoice         @relation(fields: [invoiceId], references: [id])
 }

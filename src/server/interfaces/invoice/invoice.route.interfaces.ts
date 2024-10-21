@@ -5,7 +5,7 @@ export type Invoice = {
   companyId: string;
   supplierId: string;
   expenseType: string;
-  recurrance: string;
+  recurrence: string;
   installment: string;
   deadlineDate: Date;
   confirmedStatus: string;
@@ -63,7 +63,7 @@ export type SerializedInvoice = {
   company: { id: string; name: string };
   supplier: { id: string; name: string };
   expenseType: string;
-  recurrance: string;
+  recurrence: string;
   installment: string;
   deadlineDate: Date;
   confirmedStatus: string;

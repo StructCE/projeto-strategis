@@ -57,65 +57,61 @@ export const createInvoiceFormSchema = z.object({
 
   invoiceProducts: z.array(
     z.object({
-      name: z.string({
-        required_error: "O nome do produto é obrigatório.",
+      // name: z.string({
+      //   required_error: "O nome do produto é obrigatório.",
+      // }),
+
+      // code: z.string({
+      //   required_error: "O código do produto é obrigatório.",
+      // }),
+
+      // ncm: z.preprocess(
+      //   (value) => (typeof value === "string" ? parseFloat(value) : value), // Converte string para número
+      //   z.number({ required_error: "O NCM é obrigatório." }),
+      // ),
+
+      // cfop: z.preprocess(
+      //   (value) => (typeof value === "string" ? parseFloat(value) : value), // Converte string para número
+      //   z.number({ required_error: "O CFOP é obrigatório." }),
+      // ),
+
+      // unitId: z.string({
+      //   required_error: "A unidade de compra é obrigatória.",
+      // }),
+
+      productSupplierId: z.string({
+        required_error: "O produto é obrigatório.",
       }),
 
-      code: z.string({
-        required_error: "O código do produto é obrigatório.",
-      }),
+      purchaseQuantity: z.preprocess(
+        (value) => (typeof value === "string" ? parseFloat(value) : value), // Converte string para número
+        z.number({ required_error: "A quantidade de compra é obrigatória." }),
+      ),
 
-      ncm: z
-        .preprocess(
-          (value) => (typeof value === "string" ? parseFloat(value) : value), // Converte string para número
-          z.number({ required_error: "O NCM é obrigatório." }),
-        )
-        .optional(),
+      unitValue: z.preprocess(
+        (value) => (typeof value === "string" ? parseFloat(value) : value), // Converte string para número
+        z.number({
+          required_error: "O valor por unidade do produto é obrigatório.",
+        }),
+      ),
 
-      cfop: z
-        .preprocess(
-          (value) => (typeof value === "string" ? parseFloat(value) : value), // Converte string para número
-          z.number({ required_error: "O CFOP é obrigatório." }),
-        )
-        .optional(),
+      // controlTypeId: z.string({
+      //   required_error: "O tipo de controle é obrigatório.",
+      // }),
 
-      unitId: z.string({
-        required_error: "A unidade de compra é obrigatória.",
-      }),
+      // categoryId: z.string({
+      //   required_error: "A categoria do produto é obrigatória.",
+      // }),
 
-      purchaseQuantity: z
-        .preprocess(
-          (value) => (typeof value === "string" ? parseFloat(value) : value), // Converte string para número
-          z.number({ required_error: "A quantidade de compra é obrigatória." }),
-        )
-        .optional(),
+      // sectorOfUseId: z.string({
+      //   required_error: "O setor de uso é obrigatório.",
+      // }),
 
-      unitValue: z
-        .preprocess(
-          (value) => (typeof value === "string" ? parseFloat(value) : value), // Converte string para número
-          z.number({
-            required_error: "O valor por unidade do produto é obrigatório.",
-          }),
-        )
-        .optional(),
+      // stockId: z.string().optional(),
 
-      controlTypeId: z.string({
-        required_error: "O tipo de controle é obrigatório.",
-      }),
-
-      categoryId: z.string({
-        required_error: "A categoria do produto é obrigatória.",
-      }),
-
-      sectorOfUseId: z.string({
-        required_error: "O setor de uso é obrigatório.",
-      }),
-
-      stockId: z.string().optional(),
-
-      shelfId: z.string({
-        required_error: "Selecione o local de armazenamento do produto",
-      }),
+      // shelfId: z.string({
+      //   required_error: "Selecione o local de armazenamento do produto",
+      // }),
     }),
   ),
 });
