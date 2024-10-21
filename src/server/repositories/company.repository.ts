@@ -1,19 +1,23 @@
-import { createCompanyFormSchema } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/createCompany/companyRegisterFormSchema";
 import { db } from "../db";
 import type { CompanyRepositoryInterfaces } from "../interfaces/company/company.repository.interfaces";
 
 async function getAll(props: CompanyRepositoryInterfaces["GetAllProps"]) {
-  // const { filters } = props;
-  const companies = await db.company.findMany({
-    // where: {
-    //   AND: [
-    //     { cnpj: { contains: filters.cnpj } },
-    //     { name: { contains: filters.name } },
-    //     { federativeUnit: { contains: filters.state } },
-    //     { taxRegime: { contains: filters.taxRegime } },
-    //   ],
-    // },
-  });
+  if (props) {
+    const { filters } = props;
+    const filteredCompanies = await db.company.findMany({
+      where: {
+        AND: [
+          { cnpj: { contains: filters.cnpj } },
+          { name: { contains: filters.name } },
+          { federativeUnit: { contains: filters.state } },
+          { taxRegime: { contains: filters.taxRegime } },
+        ],
+      },
+    });
+    return filteredCompanies;
+  }
+
+  const companies = await db.company.findMany();
   return companies;
 }
 
@@ -79,7 +83,20 @@ async function countLowStockProducts(
 async function getOne(props: CompanyRepositoryInterfaces["GetOneProps"]) {
   const company = await db.company.findFirst({
     where: {
-      id: props.id,
+      OR: [
+        {
+          id: props.id,
+        },
+        { cnpj: props.cnpj },
+      ],
+    },
+    include: {
+      CompanySupplier: {
+        include: {
+          supplier: true,
+        },
+      },
+      legalResponsible: true,
     },
   });
   return company;
@@ -160,14 +177,33 @@ async function remove(props: CompanyRepositoryInterfaces["DeleteProps"]) {
 }
 
 async function edit(props: CompanyRepositoryInterfaces["EditProps"]) {
+  const { suppliers, ...companyData } = props.data;
   const editedCompany = await db.company.update({
     where: {
       id: props.id,
     },
     data: {
-      ...props.data,
+      ...companyData,
     },
   });
+
+  await db.companySupplier.deleteMany({
+    where: {
+      companyId: props.id,
+    },
+  });
+
+  const newCompanySuppliers = suppliers.map(async (supplier) => {
+    const newCompanySupplier = await db.companySupplier.create({
+      data: {
+        companyId: props.id,
+        supplierId: supplier,
+      },
+    });
+    return newCompanySupplier;
+  });
+
+  await Promise.all(newCompanySuppliers);
 
   return editedCompany;
 }
