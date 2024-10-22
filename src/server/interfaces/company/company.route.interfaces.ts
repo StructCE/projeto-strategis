@@ -80,6 +80,11 @@ type CompanyUsers =
 type CompanyStocks = {
   id: string;
   name: string;
+  companyName: string;
+  responsible: {
+    name: string;
+    email: string;
+  };
 };
 
 export type CompanyRouteInterfaces = {

@@ -1,5 +1,5 @@
+"use client";
 import { Trash2 } from "lucide-react";
-// import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { TableComponent } from "~/components/table";
 import {
   Tooltip,
@@ -7,15 +7,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { api } from "~/trpc/react";
 
-type ManageUsersTableFromCompanyProps = {
-  company: string;
-};
-
-export const ManageUsersTableFromCompany = ({
-  company,
-}: ManageUsersTableFromCompanyProps) => {
-  const filteredUsers = users.filter((user) => user.company === company);
+export function ManageUsersTableFromCompany(props: { id: string }) {
+  const users = api.company.getCompanyUsers.useQuery({ id: props.id });
 
   return (
     <TableComponent className="mb-4">
@@ -32,7 +27,7 @@ export const ManageUsersTableFromCompany = ({
           <TableComponent.ValueTitle>Cargo</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {filteredUsers.map((user, index) => (
+        {users.data?.map((user, index) => (
           <TableComponent.Line
             className={`grid-cols-[repeat(4,_1fr)_30px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -69,4 +64,4 @@ export const ManageUsersTableFromCompany = ({
       </TableComponent.Table>
     </TableComponent>
   );
-};
+}

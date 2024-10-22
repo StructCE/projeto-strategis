@@ -124,6 +124,11 @@ export const companyRouter = createTRPCRouter({
         const serializedCompanyStocks = companyStocks.map((stock) => ({
           id: stock.id,
           name: stock.name,
+          companyName: stock.company.name,
+          responsible: {
+            name: stock.legalResponsible.user.name,
+            email: stock.legalResponsible.user.email,
+          },
         }));
         return serializedCompanyStocks;
       },

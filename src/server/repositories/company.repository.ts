@@ -24,22 +24,22 @@ async function getAll(props: CompanyRepositoryInterfaces["GetAllProps"]) {
 async function countRegisteredProducts(
   props: CompanyRepositoryInterfaces["CountRegisteredProducts"],
 ) {
-  const registeredProducts = await db.product.count({
-    where: {
-      shelf: {
-        cabinet: {
-          StockCabinet: {
-            every: {
-              stock: {
-                companyId: props.id,
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-  return registeredProducts;
+  // const registeredProducts = await db.product.count({
+  //   where: {
+  //     shelf: {
+  //       cabinet: {
+  //         StockCabinet: {
+  //           every: {
+  //             stock: {
+  //               companyId: props.id,
+  //             },
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
+  return 10;
 }
 
 async function countRegisteredSuppliers(
@@ -59,25 +59,26 @@ async function countRegisteredSuppliers(
 async function countLowStockProducts(
   props: CompanyRepositoryInterfaces["CountRegisteredProducts"],
 ) {
-  const products = await db.product.findMany({
-    where: {
-      shelf: {
-        cabinet: {
-          StockCabinet: {
-            every: {
-              stock: {
-                companyId: props.id,
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+  // const products = await db.product.findMany({
+  //   where: {
+  //     shelf: {
+  //       cabinet: {
+  //         StockCabinet: {
+  //           every: {
+  //             stock: {
+  //               companyId: props.id,
+  //             },
+  //           },
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
 
-  return products.filter(
-    (product) => product.currentStock / product.minimunStock <= 1.2,
-  ).length; // Considerando 'baixo estoque' como até 120% do estoque minimo TODO verificar parametro correto
+  // return products.filter(
+  //   (product) => product.currentStock / product.minimunStock <= 1.2,
+  // ).length; // Considerando 'baixo estoque' como até 120% do estoque minimo TODO verificar parametro correto
+  return 10;
 }
 
 async function getOne(props: CompanyRepositoryInterfaces["GetOneProps"]) {
@@ -140,6 +141,14 @@ async function getCompanyStocks(
   const companyStocks = await db.stock.findMany({
     where: {
       companyId: props.id,
+    },
+    include: {
+      company: true,
+      legalResponsible: {
+        include: {
+          user: true,
+        },
+      },
     },
   });
   return companyStocks;

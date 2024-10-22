@@ -81,19 +81,21 @@ export const CompanyRegister = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      {suppliers.data && (
+                      {
                         <MultiSelect
-                          options={suppliers.data?.map((supplier) => ({
-                            label: supplier.name,
-                            value: supplier.id,
-                          }))}
+                          options={
+                            suppliers.data?.map((supplier) => ({
+                              label: supplier.name,
+                              value: supplier.id,
+                            })) ?? []
+                          }
                           onValueChange={field.onChange}
                           defaultValue={field.value ?? []}
                           placeholder="Selecione um ou mais fornecedores"
                           variant="inverted"
                           maxCount={3}
                         />
-                      )}
+                      }
                     </FormControl>
                     <FormMessage />
                   </FormItem>

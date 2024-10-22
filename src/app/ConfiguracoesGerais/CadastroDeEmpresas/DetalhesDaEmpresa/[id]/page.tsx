@@ -36,9 +36,9 @@ export default async function DetalhesDaEmpresa({
         }))}
         companies={companies}
       />
-      {/* <ManageUsersTableFromCompany company={companyData.name} />
-      <ManageSuppliersTableFromComapany company={companyData} />
-      <ManageStocksTableFromComapany company={companyData} /> */}
+      <ManageUsersTableFromCompany id={params.id} />
+      <ManageSuppliersTableFromComapany id={params.id} />
+      <ManageStocksTableFromComapany id={params.id} />
     </div>
   );
 }
