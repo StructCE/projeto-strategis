@@ -132,11 +132,21 @@ const editProps = z.object({
 
 type EditProps = z.infer<typeof editProps>;
 
+const rejectProps = z.object({
+  id: z.string(),
+  invoiceData: z.object({
+    confirmedStatus: z.string(),
+  }),
+});
+
+type RejectProps = z.infer<typeof rejectProps>;
+
 export const invoiceRepositorySchema = {
   getAllProps,
   registerProps,
   autoRegisterProps,
   editProps,
+  rejectProps,
 };
 
 export type InvoiceRepositoryInterfaces = {
@@ -144,4 +154,5 @@ export type InvoiceRepositoryInterfaces = {
   RegisterProps: RegisterProps;
   AutoRegisterProps: AutoRegisterProps;
   EditProps: EditProps;
+  RejectProps: RejectProps;
 };

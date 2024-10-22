@@ -74,6 +74,7 @@ export type SerializedInvoice = {
     id: string;
     name: string;
     abbreviation: string;
+    accounts: { id: string; name: string; accountPlanId: string | null }[];
   };
   account?: { id: string | undefined; name: string | undefined };
   project?: { id: string | undefined; name: string | undefined };

@@ -338,7 +338,7 @@ export default function ImportacaoDeNFs() {
                           nº {invoice.documentNumber}
                         </TableComponent.Value>
                         <TableComponent.Value className="text-center">
-                          {`${invoice.documentDate.getDate()}/${invoice.documentDate.getMonth()}/${invoice.documentDate.getFullYear()}`}
+                          {`${String(invoice.documentDate.getDate()).padStart(2, "0")}/${String(invoice.documentDate.getMonth()).padStart(2, "0")}/${String(invoice.documentDate.getFullYear()).padStart(2, "0")}`}
                         </TableComponent.Value>
                         <TableComponent.Value>
                           {invoice.company.name}

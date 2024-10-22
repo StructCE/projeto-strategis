@@ -37,6 +37,7 @@ export const invoiceRouter = createTRPCRouter({
                 id: invoice.account?.accountPlan?.id ?? "",
                 name: invoice.account?.accountPlan?.name ?? "",
                 abbreviation: invoice.account?.accountPlan?.abbreviation ?? "",
+                accounts: invoice.account?.accountPlan.accounts ?? [],
               }
             : undefined,
           project: { id: invoice.project?.id, name: invoice.project?.name },
@@ -86,5 +87,12 @@ export const invoiceRouter = createTRPCRouter({
     .mutation(async ({ input }): Promise<InvoiceRouteInterfaces["Invoice"]> => {
       const editedInvoice = await invoiceRepository.edit(input);
       return editedInvoice;
+    }),
+
+  rejectInvoice: protectedProcedure
+    .input(invoiceRepositorySchema.rejectProps)
+    .mutation(async ({ input }): Promise<InvoiceRouteInterfaces["Invoice"]> => {
+      const rejectedInvoice = await invoiceRepository.reject(input);
+      return rejectedInvoice;
     }),
 });

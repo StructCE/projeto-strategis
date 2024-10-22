@@ -1,29 +1,10 @@
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { type InventoryProduct } from "~/server/interfaces/inventory/inventory.route.interfaces";
 import { type InvoiceProduct } from "~/server/interfaces/invoice/invoice.route.interfaces";
 import { api } from "~/trpc/react";
 
-// interface AutoCreateInvoiceProps {
-// documentNumber: string | null | undefined;
-// documentDate: Date | null | undefined;
-// supplier: string | null | undefined;
-// installment: string | null | undefined;
-// dateDeadline: Date | null | undefined;
-// products: InvoiceProduct[] | null | undefined;
-// }
-
-const AutoCreateInvoice = (
-  {
-    // documentNumber,
-    // documentDate,
-    // supplier,
-    // installment,
-    // dateDeadline,
-    // products,
-  },
-) => {
+const AutoCreateInvoice = () => {
   const invoiceMutation = api.invoice.autoRegisterInvoice.useMutation({
     onSuccess: (newInvoice) => {
       console.log("Nota fiscal criada com sucesso:", newInvoice);
@@ -265,7 +246,7 @@ const AutoCreateInvoice = (
         className="cursor-pointer font-normal hover:bg-[#F6F6F6]"
       />
       <Button
-        className="h-fit bg-cinza_escuro_botao px-[20px] py-[7px] hover:bg-cinza_borda_acordeao"
+        className="h-fit bg-verde_botao px-[20px] py-[7px] hover:bg-hover_verde_botao"
         onClick={handleImport}
       >
         Importar

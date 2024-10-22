@@ -34,7 +34,8 @@ type InvoiceEditForm = {
 export default function InvoiceDetails(props: InvoiceEditForm) {
   const invoiceEditForm = useEditInvoiceForm(props.invoice);
 
-  const [selectedAccountPlan, setSelectedAccountPlan] = useState<AccountPlan>();
+  const [selectedAccountPlan, setSelectedAccountPlan] =
+    useState<AccountPlan | null>(props.invoice.accountPlan ?? null);
 
   // const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
   // const { data: companies = [] } = api.company.getAllCompanies.useQuery({});
@@ -242,8 +243,10 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                 <Select
                   onValueChange={(value) => {
                     const plan = accountPlans.find((plan) => plan.id === value);
-                    setSelectedAccountPlan(plan);
+                    setSelectedAccountPlan(plan ?? null);
                   }}
+                  value={selectedAccountPlan?.id}
+                  defaultValue={selectedAccountPlan?.id}
                 >
                   <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
                     <SelectValue placeholder="Selecione o plano de contas" />
@@ -485,20 +488,24 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
               ))}
             </Accordion>
 
-            <FormComponent.ButtonLayout className="mt-4 flex items-center justify-center gap-4 font-bold">
-              <FormComponent.Button
-                className="bg-vermelho_botao_2 px-5 py-1.5 text-lg font-semibold hover:bg-hover_vermelho_botao_2"
-                handlePress={invoiceEditForm.form.handleSubmit(
-                  invoiceEditForm.onSubmitReject,
-                )}
-              >
-                Rejeitar NF
-              </FormComponent.Button>
+            {props.invoice.confirmedStatus === "Pendente" ? (
+              <FormComponent.ButtonLayout className="mt-4 flex items-center justify-center gap-4 font-bold">
+                <FormComponent.Button
+                  className="bg-vermelho_botao_2 px-5 py-1.5 text-lg font-semibold hover:bg-hover_vermelho_botao_2"
+                  handlePress={invoiceEditForm.form.handleSubmit(
+                    invoiceEditForm.onSubmitReject,
+                  )}
+                >
+                  Rejeitar NF
+                </FormComponent.Button>
 
-              <FormComponent.Button className="bg-verde_botao px-5 py-1.5 text-lg font-semibold hover:bg-hover_verde_botao">
-                Confirmar NF
-              </FormComponent.Button>
-            </FormComponent.ButtonLayout>
+                <FormComponent.Button className="bg-verde_botao px-5 py-1.5 text-lg font-semibold hover:bg-hover_verde_botao">
+                  Confirmar NF
+                </FormComponent.Button>
+              </FormComponent.ButtonLayout>
+            ) : (
+              <></>
+            )}
           </FormComponent>
         </form>
       </Form>

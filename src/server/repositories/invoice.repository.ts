@@ -22,7 +22,7 @@ async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
     //   ],
     // },
     include: {
-      account: { include: { accountPlan: true } },
+      account: { include: { accountPlan: { include: { accounts: true } } } },
       documentType: true,
       group: true,
       project: true,
@@ -309,9 +309,35 @@ async function edit(props: InvoiceRepositoryInterfaces["EditProps"]) {
   return updatedInvoice; // Retorna a fatura atualizada
 }
 
+async function reject(props: InvoiceRepositoryInterfaces["RejectProps"]) {
+  const { id, invoiceData } = props;
+
+  // Verifica se o ID da fatura existe
+  const existingInvoice = await db.invoice.findUnique({
+    where: { id },
+  });
+
+  if (!existingInvoice) {
+    throw new Error("Invoice not found");
+  }
+
+  // Atualiza a fatura com os dados fornecidos
+  const updatedInvoice = await db.invoice.update({
+    where: {
+      id,
+    },
+    data: {
+      confirmedStatus: invoiceData.confirmedStatus,
+    },
+  });
+
+  return updatedInvoice; // Retorna a fatura atualizada
+}
+
 export const invoiceRepository = {
   getAll,
   register,
   autoRegister,
   edit,
+  reject,
 };
