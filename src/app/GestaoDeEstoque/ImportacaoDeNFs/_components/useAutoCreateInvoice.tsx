@@ -50,6 +50,17 @@ const AutoCreateInvoice = (
     }
   };
 
+  function capitalizeName(name: string) {
+    return name
+      .toLowerCase() // Primeiro transforma tudo em minúsculo
+      .split(" ") // Divide em palavras
+      .map((word) => {
+        if (word.length === 0) return word; // Caso especial de palavras vazias
+        return word.charAt(0).toUpperCase() + word.slice(1); // Capitaliza a primeira letra de cada palavra
+      })
+      .join(" "); // Junta as palavras de volta
+  }
+
   const handleImport = async () => {
     const invoiceDataList = [];
 
@@ -68,22 +79,27 @@ const AutoCreateInvoice = (
         : new Date();
 
       const supplier = {
-        name: xmlDoc.getElementsByTagName("xNome")[0]?.textContent ?? "",
+        name: capitalizeName(
+          xmlDoc.getElementsByTagName("xNome")[0]?.textContent ?? "",
+        ),
         cnpj: xmlDoc.getElementsByTagName("CNPJ")[0]?.textContent ?? "",
         stateRegistration:
           xmlDoc.getElementsByTagName("IE")[0]?.textContent ?? "",
-        address:
+        address: capitalizeName(
           xmlDoc
             .getElementsByTagName("enderEmit")[0]
             ?.getElementsByTagName("xLgr")[0]?.textContent ?? "",
-        city:
+        ),
+        city: capitalizeName(
           xmlDoc
             .getElementsByTagName("enderEmit")[0]
             ?.getElementsByTagName("xMun")[0]?.textContent ?? "",
-        neighborhood:
+        ),
+        neighborhood: capitalizeName(
           xmlDoc
             .getElementsByTagName("enderEmit")[0]
             ?.getElementsByTagName("xBairro")[0]?.textContent ?? "",
+        ),
         federativeUnit:
           xmlDoc
             .getElementsByTagName("enderEmit")[0]
@@ -99,10 +115,11 @@ const AutoCreateInvoice = (
       };
 
       const recipient = {
-        name:
+        name: capitalizeName(
           xmlDoc
             .getElementsByTagName("dest")[0]
             ?.getElementsByTagName("xNome")[0]?.textContent ?? "",
+        ),
         cnpj:
           xmlDoc
             .getElementsByTagName("dest")[0]
@@ -110,21 +127,24 @@ const AutoCreateInvoice = (
         stateRegistration:
           xmlDoc.getElementsByTagName("dest")[0]?.getElementsByTagName("IE")[0]
             ?.textContent ?? "",
-        address:
+        address: capitalizeName(
           xmlDoc
             .getElementsByTagName("dest")[0]
             ?.getElementsByTagName("enderDest")[0]
             ?.getElementsByTagName("xLgr")[0]?.textContent ?? "",
-        city:
+        ),
+        city: capitalizeName(
           xmlDoc
             .getElementsByTagName("dest")[0]
             ?.getElementsByTagName("enderDest")[0]
             ?.getElementsByTagName("xMun")[0]?.textContent ?? "",
-        neighborhood:
+        ),
+        neighborhood: capitalizeName(
           xmlDoc
             .getElementsByTagName("dest")[0]
             ?.getElementsByTagName("enderDest")[0]
             ?.getElementsByTagName("xBairro")[0]?.textContent ?? "",
+        ),
         federativeUnit:
           xmlDoc
             .getElementsByTagName("dest")[0]
@@ -149,7 +169,7 @@ const AutoCreateInvoice = (
         ? new Date(dateDeadlineStr)
         : new Date();
       const invoiceValue =
-        xmlDoc.getElementsByTagName("")[0]?.textContent ?? "";
+        xmlDoc.getElementsByTagName("vNF")[0]?.textContent ?? "";
 
       // Extrai produtos
       const products: InvoiceProduct[] = [];
@@ -166,12 +186,14 @@ const AutoCreateInvoice = (
 
         const product: InvoiceProduct = {
           code: prodNode?.getElementsByTagName("cProd")[0]?.textContent ?? "",
-          name: prodNode?.getElementsByTagName("xProd")[0]?.textContent ?? "",
+          name: capitalizeName(
+            prodNode?.getElementsByTagName("xProd")[0]?.textContent ?? "",
+          ),
           purchaseQuantity: parseFloat(
             prodNode?.getElementsByTagName("qCom")[0]?.textContent ?? "0",
           ),
           unitValue: parseFloat(
-            prodNode?.getElementsByTagName("vProd")[0]?.textContent ?? "0",
+            prodNode?.getElementsByTagName("vUnCom")[0]?.textContent ?? "0",
           ),
           ncm: parseFloat(
             prodNode?.getElementsByTagName("NCM")[0]?.textContent ?? "0",
@@ -183,7 +205,7 @@ const AutoCreateInvoice = (
             id: "",
             name: "",
             abbreviation: unitAbbreviation ?? "",
-            unitsPerPack: unitsPerPack ?? 0,
+            unitsPerPack: unitsPerPack ?? 1,
           },
           id: "",
           productId: "",
@@ -209,8 +231,11 @@ const AutoCreateInvoice = (
           code: product.code,
           ncm: product.ncm,
           cfop: product.cfop,
-          unitAbbreviation: product.unit.abbreviation,
-          productSupplierId: product.productId,
+          unit: {
+            unitAbbreviation: product.unit.abbreviation,
+            unitsPerPack: product.unit.unitsPerPack ?? 1,
+          },
+          productId: product.productId,
           purchaseQuantity: product.purchaseQuantity,
           unitValue: product.unitValue,
         })),

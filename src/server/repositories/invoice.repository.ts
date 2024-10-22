@@ -146,6 +146,8 @@ async function autoRegister(
     });
   }
 
+  console.log("registeredCompany.id:", registeredCompany.name);
+
   let registeredSupplier = await db.supplier.findUnique({
     where: {
       cnpj: supplier.cnpj,
@@ -168,44 +170,9 @@ async function autoRegister(
       },
     });
   }
+  console.log("registeredSupplier.id:", registeredSupplier.name);
 
-  const registeredProducts = [];
-  for (const product of invoiceProducts) {
-    let registeredProduct = await db.product.findFirst({
-      where: {
-        ncm: product.ncm,
-        name: product.name,
-      },
-    });
-
-    // Se o produto não existir, cadastra
-    if (!registeredProduct) {
-      const registeredUnit = await db.unit.findFirst({
-        where: {
-          abbreviation: product.unitAbbreviation,
-        },
-      });
-
-      if (!registeredUnit) {
-        throw new Error(
-          `Unit with abbreviation ${product.unitAbbreviation} not found.`,
-        );
-      }
-
-      registeredProduct = await db.product.create({
-        data: {
-          name: product.name,
-          code: product.code,
-          ncm: product.ncm,
-          cfop: product.cfop,
-          unitId: registeredUnit.id,
-        },
-      });
-    }
-
-    registeredProducts.push(registeredProduct);
-  }
-
+  // Cria a nota fiscal antes de processar os produtos
   const registeredInvoice = await db.invoice.create({
     data: {
       documentNumber: invoiceData.documentNumber,
@@ -219,45 +186,88 @@ async function autoRegister(
     },
   });
 
-  const registeredInvoiceProducts = invoiceProducts.map(
-    async (invoiceProduct) => {
-      // Cria o produto vinculado à fatura
-      const registeredInvoiceProduct = await db.invoiceProduct.create({
-        data: {
-          ...invoiceProduct,
-          invoiceId: registeredInvoice.id, // Vincula o ID da fatura
-        },
-      });
+  console.log("invoiceProducts:", invoiceProducts);
 
-      // Busca o produto relacionado ao fornecedor
-      const productToBeUpdated = await db.productSupplier.findFirst({
+  const registeredProducts = [];
+  const registeredInvoiceProducts = [];
+  for (const product of invoiceProducts) {
+    let registeredProduct = await db.product.findFirst({
+      where: {
+        ncm: product.ncm,
+        name: product.name,
+      },
+    });
+
+    // Se o produto não existir, cadastra
+    if (!registeredProduct) {
+      let registeredUnit = await db.unit.findFirst({
         where: {
-          id: invoiceProduct.productSupplierId,
-        },
-        include: {
-          product: true,
+          abbreviation: product.unit.unitAbbreviation,
         },
       });
 
-      // Se o produto for encontrado, atualiza o estoque
-      if (productToBeUpdated) {
-        await db.product.update({
-          where: {
-            id: productToBeUpdated.product.id, // Corrige a referência para o produto
-          },
+      if (!registeredUnit) {
+        registeredUnit = await db.unit.create({
           data: {
-            currentStock: productToBeUpdated.product.currentStock
-              ? productToBeUpdated.product.currentStock +
-                invoiceProduct.purchaseQuantity
-              : invoiceProduct.purchaseQuantity,
+            name: "",
+            abbreviation: product.unit.unitAbbreviation,
+            unitsPerPack: product.unit.unitsPerPack ?? 0,
           },
         });
       }
-      return registeredInvoiceProduct;
-    },
-  );
 
-  // Aguarda o registro de todos os produtos
+      console.log("Unit:", registeredUnit.name);
+
+      registeredProduct = await db.product.create({
+        data: {
+          name: product.name,
+          code: product.code,
+          ncm: product.ncm,
+          cfop: product.cfop,
+          unitId: registeredUnit.id,
+          currentStock: product.purchaseQuantity, // Inicializa o estoque com a quantidade comprada
+          ProductSupplier: {
+            create: { supplierId: registeredSupplier.id },
+          },
+        },
+      });
+    } else {
+      // Se o produto já existir, atualiza o estoque somando a quantidade comprada
+      registeredProduct = await db.product.update({
+        where: {
+          id: registeredProduct.id,
+        },
+        data: {
+          currentStock: {
+            increment: product.purchaseQuantity, // Adiciona a quantidade comprada ao estoque atual
+          },
+        },
+      });
+    }
+
+    registeredProducts.push(registeredProduct);
+
+    // Cria a relação InvoiceProduct com o productSupplier e a invoice
+    const productSupplier = await db.productSupplier.findFirst({
+      where: {
+        productId: registeredProduct.id,
+        supplierId: registeredSupplier.id,
+      },
+    });
+
+    const invoiceProduct = await db.invoiceProduct.create({
+      data: {
+        purchaseQuantity: product.purchaseQuantity,
+        unitValue: product.unitValue,
+        invoiceId: registeredInvoice.id,
+        productSupplierId: productSupplier!.id,
+      },
+    });
+
+    registeredInvoiceProducts.push(invoiceProduct);
+  }
+
+  // Aguarda o registro de todos os InvoiceProduct
   await Promise.all(registeredInvoiceProducts);
 
   return registeredInvoice;
