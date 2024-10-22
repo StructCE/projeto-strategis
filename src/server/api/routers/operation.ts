@@ -15,4 +15,23 @@ export const operationRouter = createTRPCRouter({
         return { operationsCount };
       },
     ),
+
+  getAllOperations: protectedProcedure
+    .input(operationRepositorySchema.getAllProps)
+    .query(
+      async ({
+        input,
+      }): Promise<OperationsRouteInterfaces["OperationHistory"][]> => {
+        const operations = await operationRepository.getAll(input);
+        const serializedOperations = operations.map((operation) => ({
+          id: operation.id,
+          date: operation.date,
+          company: operation.responsible.company.name,
+          responsible: operation.responsible.user.name,
+          description: operation.description,
+        }));
+
+        return serializedOperations;
+      },
+    ),
 });

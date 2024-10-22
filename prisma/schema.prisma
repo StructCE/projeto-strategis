@@ -108,6 +108,7 @@ model UserRole {
     RequestResponsible         Request[]   @relation("RequestResponsible")
     RequestDeliveryResponsible Request[]   @relation("StatusResponsible")
     Inventory                  Inventory[]
+    Operation                  Operation[]
 }
 
 model Role {
@@ -434,11 +435,11 @@ model RequestProduct {
 }
 
 model Operation {
-    id          String   @id @default(cuid())
-    date        DateTime
-    description String
-
-    userRoleId String?
+    id            String   @id @default(cuid())
+    date          DateTime
+    description   String
+    responsibleId String
+    responsible   UserRole @relation(fields: [responsibleId], references: [id])
 }
 
 model Bank {
