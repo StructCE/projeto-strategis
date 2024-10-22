@@ -1,3 +1,4 @@
+"use client";
 import { Trash2 } from "lucide-react";
 import { TableComponent } from "~/components/table";
 import {
