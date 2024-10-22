@@ -114,14 +114,14 @@ export default function CreatePurchaseOrder() {
           );
         const matchesStock =
           selectStock === "" ||
-          product.shelf.cabinet.StockCabinet.some(
+          product.shelf?.cabinet.StockCabinet.some(
             (stockCabinet) =>
               stockCabinet.stock.name.toLowerCase() ===
               selectStock.toLowerCase(),
           );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.shelf.cabinet.name} - ${product.shelf.name}`
+          `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
@@ -153,6 +153,12 @@ export default function CreatePurchaseOrder() {
   // Função para adicionar produtos ao pedido
   const handleAddProduct = (product: ProductWithFeatures) => {
     setAddedProducts((prev) => [...prev, product]);
+
+    // Definir o valor de quantidade inicial com o buyQuantity do produto
+    setQuantities((prev) => ({
+      ...prev,
+      [product.code]: product.buyQuantity ? String(product.buyQuantity) : "0", // Define o valor padrão como buyQuantity ou "0" se não existir
+    }));
   };
 
   // Função para remover produtos do pedido
@@ -545,7 +551,7 @@ export default function CreatePurchaseOrder() {
                     </TableComponent.Value>
                     <TableComponent.Value>{product.name}</TableComponent.Value>
                     <TableComponent.Value>
-                      {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                      {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                     </TableComponent.Value>
                     <TableComponent.Value className="text-center">
                       {product.currentStock}
@@ -647,7 +653,7 @@ export default function CreatePurchaseOrder() {
                             <span className="font-semibold">
                               Endereço de Estoque:
                             </span>{" "}
-                            {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                            {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                           </p>
                           <p className="text-base">
                             <span className="font-semibold">
@@ -913,7 +919,7 @@ export default function CreatePurchaseOrder() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                        {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Atual: </span>

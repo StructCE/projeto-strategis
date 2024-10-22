@@ -17,10 +17,11 @@ export type RequestProduct = {
   productId: string;
   code: string;
   name: string;
-  // unit: string;
+  ncm: number;
+  cfop: number;
   requestedQuantity: number;
-  currentStock: number;
-  minimunStock: number;
+  currentStock: number | null;
+  minimunStock: number | null;
   releasedQuantity: number | null;
   shelf: {
     id: string;
@@ -37,7 +38,7 @@ export type RequestProduct = {
         };
       }[];
     };
-  };
+  } | null;
 };
 
 export type SerializedRequest = {

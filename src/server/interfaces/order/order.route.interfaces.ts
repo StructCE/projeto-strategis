@@ -10,9 +10,11 @@ export type OrderProduct = {
   id: string;
   code: string;
   name: string;
-  purchaseQuantity: number;
-  currentStock: number;
-  minimunStock: number;
+  ncm: number;
+  cfop: number;
+  purchaseQuantity: number | null;
+  currentStock: number | null;
+  minimunStock: number | null;
   unit: {
     id: string;
     name: string;
@@ -25,7 +27,7 @@ export type OrderProduct = {
       id: string;
       name: string;
       cnpj: string;
-      email: string;
+      email: string | null;
       phone?: string | null;
       stateRegistration: string;
       address: string;
@@ -50,7 +52,7 @@ export type OrderProduct = {
         };
       }[];
     };
-  };
+  } | null;
 };
 
 export type SerializedOrder = {

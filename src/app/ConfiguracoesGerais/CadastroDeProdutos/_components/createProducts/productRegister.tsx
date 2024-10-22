@@ -71,6 +71,48 @@ export const ProductRegister = () => {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
+              <FormComponent.Label>NCM</FormComponent.Label>
+              <FormField
+                control={productForm.form.control}
+                name="ncm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Código NCM do produto"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>CFOP</FormComponent.Label>
+              <FormField
+                control={productForm.form.control}
+                name="cfop"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Código CFOP do produto"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+          </FormComponent.Line>
+
+          <FormComponent.Line>
+            <FormComponent.Frame>
               <FormComponent.Label>Produto</FormComponent.Label>
               <FormField
                 control={productForm.form.control}

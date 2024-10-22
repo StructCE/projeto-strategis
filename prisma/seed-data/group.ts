@@ -1,0 +1,26 @@
+export const groups: {
+  name: string;
+}[] = [
+  { name: "A Categorizar | Diversos Empresa" },
+  { name: "Deduções sobre Vendas" },
+  { name: "Despesas Comerciais/Vendas" },
+  { name: "Despesas com Impostos Diretos" },
+  { name: "Despesas com Ocupação" },
+  { name: "Despesas com Pessoal" },
+  { name: "Despesas com Produção/Serviço" },
+  { name: "Despesas com Tecnologia" },
+  { name: "Despesas com Terceiros" },
+  { name: "Despesas com Transporte" },
+  { name: "Despesas Financeiras" },
+  { name: "Estornos Diversos" },
+  { name: "Excluir (DDA ou Agrupado)" },
+  { name: "Investimentos e Retiradas" },
+  { name: "Receita de Venads (Delivery)" },
+  { name: "Receita de Vendas (Delivery)" },
+  { name: "Receita de Vendas (Eventos)" },
+  { name: "Receitas de Reembolsos" },
+  { name: "Receitas de Vendas (Loja)" },
+  { name: "Receitas Diversas" },
+  { name: "Receitas Financeiras" },
+  { name: "TR transferência entre Contas" },
+];

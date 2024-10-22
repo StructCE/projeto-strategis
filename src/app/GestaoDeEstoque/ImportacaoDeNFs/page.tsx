@@ -10,14 +10,11 @@ import {
   Truck,
 } from "lucide-react";
 import { useState } from "react";
-import { companies } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/companiesData";
-import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import {
@@ -26,12 +23,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { type SerializedInvoice } from "~/server/interfaces/invoice/invoice.route.interfaces";
+import { api } from "~/trpc/react";
 import { default as InvoiceDetails } from "./_components/invoiceDetails/invoiceDetails";
-import {
-  type Invoice,
-  invoices,
-  type Product,
-} from "./_components/invoicesData";
+import AutoCreateInvoice from "./_components/useAutoCreateInvoice";
 
 export default function ImportacaoDeNFs() {
   const [selectedTab, setSelectedTab] = useState("pending");
@@ -45,13 +40,21 @@ export default function ImportacaoDeNFs() {
   const [selectSupplier, setSelectSupplier] = useState("");
   const [selectCompany, setSelectCompany] = useState("");
 
+  const {
+    data: invoices = [],
+    error,
+    isLoading,
+  } = api.invoice.getAll.useQuery({});
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery({});
+
   const filteredInvoices = invoices.filter((invoice) => {
     // Filtro de status com base na aba selecionada
     const matchesStatus =
-      (selectedTab === "pending" && invoice.confirmed_status === "Pendente") ||
+      (selectedTab === "pending" && invoice.confirmedStatus === "Pendente") ||
       (selectedTab === "confirmed" &&
-        invoice.confirmed_status === "Confirmada") ||
-      (selectedTab === "denied" && invoice.confirmed_status === "Rejeitada");
+        invoice.confirmedStatus === "Confirmada") ||
+      (selectedTab === "denied" && invoice.confirmedStatus === "Rejeitada");
 
     const adjustedDateBegin = dateBegin
       ? new Date(
@@ -72,12 +75,12 @@ export default function ImportacaoDeNFs() {
       : undefined;
 
     const matchesDates =
-      (!adjustedDateBegin || invoice.date_document >= adjustedDateBegin) &&
-      (!adjustedDateEnd || invoice.date_document <= adjustedDateEnd);
+      (!adjustedDateBegin || invoice.documentDate >= adjustedDateBegin) &&
+      (!adjustedDateEnd || invoice.documentDate <= adjustedDateEnd);
 
     const matchesDescription =
       !inputDescription ||
-      invoice.document_number
+      invoice.documentNumber
         .toLowerCase()
         .includes(inputDescription.toLowerCase());
 
@@ -96,9 +99,9 @@ export default function ImportacaoDeNFs() {
     );
   });
 
-  const calculateInvoiceTotal = (invoice: Invoice): number => {
-    return invoice.products.reduce((total, product) => {
-      const productTotal = product.purchase_quantity * product.value_unit;
+  const calculateInvoiceTotal = (invoice: SerializedInvoice): number => {
+    return invoice.invoiceProducts.reduce((total, product) => {
+      const productTotal = product.purchaseQuantity * product.unitValue;
       return total + productTotal;
     }, 0);
   };
@@ -112,113 +115,14 @@ export default function ImportacaoDeNFs() {
       .join(""); // Junta as palavras sem espaços
   }
 
-  function InvoiceDescription(invoice: Invoice): string {
-    const productsString = invoice.products
+  function InvoiceDescription(invoice: SerializedInvoice): string {
+    const productsString = invoice.invoiceProducts
       .map((product) => capitalizeFirstLetter(product.name))
       .join(",");
 
-    return `VG:${calculateInvoiceTotal(invoice)
-      .toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      })
-      .replace(/\s/g, "")}-[${productsString}]`;
+    // Valor total dos produtos: calculateInvoiceTotal(invoice)
+    return `VG:${invoice.invoiceValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }).replace(/\s/g, "")}-[${productsString}]`;
   }
-
-  type ExtractedInvoiceData = {
-    document_number: string | null | undefined;
-    date_document: Date | null | undefined;
-    supplier: string | null | undefined;
-    installment: string | null | undefined;
-    date_deadline: Date | null | undefined;
-    products: Product[] | null | undefined; // caso deseje incluir
-  };
-
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [extractedData, setExtractedData] = useState<ExtractedInvoiceData[]>(
-    [],
-  );
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const xmlFiles = Array.from(files).filter(
-        (file) => file.type === "text/xml" || file.name.endsWith(".xml"),
-      );
-      setSelectedFiles(xmlFiles);
-    }
-  };
-
-  const handleImport = async () => {
-    const data = [];
-
-    for (const file of selectedFiles) {
-      const text = await file.text(); // Lê o conteúdo do arquivo
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(text, "text/xml"); // Analisa o XML
-
-      // Extrai os dados desejados
-      const documentNumber =
-        xmlDoc.getElementsByTagName("cNF")[0]?.textContent ?? null; // Número do documento
-      const dateDocumentStr =
-        xmlDoc.getElementsByTagName("dhEmi")[0]?.textContent; // Data de emissão
-      const dateDocument = dateDocumentStr ? new Date(dateDocumentStr) : null; // Converte para Date
-      const supplierName = xmlDoc.getElementsByTagName("xNome")[0]?.textContent; // Nome do fornecedor
-      const installment =
-        xmlDoc.getElementsByTagName("nDup")[0]?.textContent ?? null; // Número da parcela, se aplicável
-      const dateDeadlineStr =
-        xmlDoc.getElementsByTagName("dVenc")[0]?.textContent; // Data de vencimento da NF
-      const dateDeadline = dateDeadlineStr ? new Date(dateDeadlineStr) : null; // Converte para Date
-
-      // Extrai produtos
-      const products: Product[] = [];
-      const productNodes = xmlDoc.getElementsByTagName("det");
-
-      for (const productNode of productNodes) {
-        const prodNode = productNode.getElementsByTagName("prod")[0];
-        const product: Product = {
-          code: prodNode?.getElementsByTagName("cProd")[0]?.textContent ?? "", // Código do produto
-          name: prodNode?.getElementsByTagName("xProd")[0]?.textContent ?? "", // Descrição do produto
-          purchase_quantity: parseFloat(
-            prodNode?.getElementsByTagName("qCom")[0]?.textContent ?? "0",
-          ), // Quantidade
-          value_unit: parseFloat(
-            prodNode?.getElementsByTagName("vProd")[0]?.textContent ?? "0",
-          ), // Valor unitário
-          ncm: parseFloat(
-            prodNode?.getElementsByTagName("NCM")[0]?.textContent ?? "0",
-          ),
-          cfop: parseFloat(
-            prodNode?.getElementsByTagName("CFOP")[0]?.textContent ?? "0",
-          ),
-          buy_unit: {
-            description:
-              prodNode?.getElementsByTagName("uCom")[0]?.textContent ?? "",
-            abbreviation: "",
-            unitsPerPack: 0,
-          },
-          // Não sei se esses campos são necessários aqui
-          type_of_control: { description: "" },
-          product_category: { description: "" },
-          sector_of_use: { description: "" },
-          address: { stock: "", storage: "", shelf: "" },
-        };
-        products.push(product);
-      }
-
-      data.push({
-        document_number: documentNumber,
-        date_document: dateDocument,
-        supplier: supplierName,
-        installment: installment,
-        date_deadline: dateDeadline,
-        products,
-      });
-    }
-
-    console.log("Todos os dados extraídos:", data); // Criar as Invoices aqui com os dados extraidos
-    setExtractedData(data);
-  };
 
   return (
     <div className="flex w-full flex-col gap-2 bg-fundo_branco text-[16px] font-semibold">
@@ -231,22 +135,9 @@ export default function ImportacaoDeNFs() {
           <Label className="font-normal">
             Selecione arquivos .XML para importá-los
           </Label>
-          <div className="flex items-center gap-2">
-            <Input
-              type="file"
-              multiple
-              accept=".xml"
-              id="xmlFileInput"
-              onChange={handleFileChange}
-              className="cursor-pointer font-normal hover:bg-[#F6F6F6]"
-            />
-            <Button
-              className="h-fit bg-cinza_escuro_botao px-[20px] py-[7px] hover:bg-cinza_borda_acordeao"
-              onClick={handleImport}
-            >
-              Importar
-            </Button>
-          </div>
+
+          {/* Componente para selecionar arquivos, importá-los e criar as invoices */}
+          <AutoCreateInvoice />
         </div>
 
         <div className="flex flex-col gap-2">
@@ -415,59 +306,107 @@ export default function ImportacaoDeNFs() {
                 <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
               </TableComponent.LineTitle>
 
-              {filteredInvoices.map((invoice, index) => (
-                <TableComponent.Line
-                  className={`grid-cols-[130px_100px_2fr_2fr_3fr_130px] gap-8 ${
-                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                  }`}
-                  key={index}
-                >
-                  <TableComponent.Value className="text-center">
-                    nº {invoice.document_number}
-                  </TableComponent.Value>
-                  <TableComponent.Value className="text-center">
-                    {`${invoice.date_document.getDate()}/${invoice.date_document.getMonth()}/${invoice.date_document.getFullYear()}`}
-                  </TableComponent.Value>
+              {error && (
+                <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                   <TableComponent.Value>
-                    {invoice.company.name}
+                    Erro ao mostrar notas fiscais: {error.message}
                   </TableComponent.Value>
-                  <TableComponent.Value>
-                    {invoice.supplier.name}
-                  </TableComponent.Value>
-                  <TableComponent.Value>
-                    {InvoiceDescription(invoice)}
-                  </TableComponent.Value>
-
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                        Detalhes
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent
-                      aria-describedby={undefined}
-                      className="max-h-[90vh] gap-0 overflow-y-auto sm:max-w-[90rem]"
-                    >
-                      <DialogTitle className="text-[1.5rem]">
-                        Nota Fiscal <b>nº{invoice.document_number}</b> <br />
-                        Valor Total:{" "}
-                        <b>
-                          R$
-                          {calculateInvoiceTotal(invoice).toLocaleString(
-                            "pt-BR",
-                            {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            },
-                          )}
-                        </b>
-                      </DialogTitle>
-
-                      <InvoiceDetails invoice={invoice} />
-                    </DialogContent>
-                  </Dialog>
                 </TableComponent.Line>
-              ))}
+              )}
+              {isLoading && (
+                <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                  <TableComponent.Value>
+                    Carregando notas fiscais...
+                  </TableComponent.Value>
+                </TableComponent.Line>
+              )}
+              {invoices.length > 0 && !isLoading && !error ? (
+                filteredInvoices.length > 0 ? (
+                  filteredInvoices
+                    .sort(
+                      (a, b) =>
+                        b.documentDate.getTime() - a.documentDate.getTime(),
+                    )
+                    .map((invoice, index) => (
+                      <TableComponent.Line
+                        className={`grid-cols-[130px_100px_2fr_2fr_3fr_130px] gap-8 ${
+                          index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                        }`}
+                        key={index}
+                      >
+                        <TableComponent.Value className="text-center">
+                          nº {invoice.documentNumber}
+                        </TableComponent.Value>
+                        <TableComponent.Value className="text-center">
+                          {`${String(invoice.documentDate.getDate()).padStart(2, "0")}/${String(invoice.documentDate.getMonth()).padStart(2, "0")}/${String(invoice.documentDate.getFullYear()).padStart(2, "0")}`}
+                        </TableComponent.Value>
+                        <TableComponent.Value>
+                          {invoice.company.name}
+                        </TableComponent.Value>
+                        <TableComponent.Value>
+                          {invoice.supplier.name}
+                        </TableComponent.Value>
+                        <TableComponent.Value>
+                          {InvoiceDescription(invoice)}
+                        </TableComponent.Value>
+
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                              Detalhes
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent
+                            aria-describedby={undefined}
+                            className="max-h-[90vh] gap-0 overflow-y-auto sm:max-w-[90rem]"
+                          >
+                            <DialogTitle className="text-[1.5rem]">
+                              Nota Fiscal <b>nº{invoice.documentNumber}</b>{" "}
+                              <br />
+                              Valor Total dos Produtos:{" "}
+                              <b>
+                                R$
+                                {calculateInvoiceTotal(invoice).toLocaleString(
+                                  "pt-BR",
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  },
+                                )}
+                              </b>
+                              <br />
+                              Valor Total da Nota:{" "}
+                              <b>
+                                R${" "}
+                                {invoice.invoiceValue.toLocaleString("pt-BR", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}
+                              </b>
+                            </DialogTitle>
+
+                            <InvoiceDetails invoice={invoice} />
+                          </DialogContent>
+                        </Dialog>
+                      </TableComponent.Line>
+                    ))
+                ) : (
+                  <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                    <TableComponent.Value>
+                      Nenhuma nota fiscal encontrada com os filtros aplicados
+                    </TableComponent.Value>
+                  </TableComponent.Line>
+                )
+              ) : (
+                !isLoading &&
+                !error && (
+                  <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                    <TableComponent.Value>
+                      Nenhuma nota fiscal encontrada
+                    </TableComponent.Value>
+                  </TableComponent.Line>
+                )
+              )}
             </TableComponent.Table>
           </TableComponent>
         </TabsContent>

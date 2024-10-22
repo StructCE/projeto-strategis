@@ -1,14 +1,21 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+import { accountRouter } from "./routers/account";
+import { accountPlanRouter } from "./routers/accountPlan";
 import { adjustRouter } from "./routers/adjust";
 import { adjustReasonRouter } from "./routers/adjustReason";
+import { bankRouter } from "./routers/bank";
 import { cabinetRouter } from "./routers/cabinet";
 import { companyRouter } from "./routers/company";
 import { controlTypeRouter } from "./routers/controlType";
+import { documentTypeRouter } from "./routers/documentType";
+import { groupRouter } from "./routers/group";
 import { inventoryRouter } from "./routers/inventory";
+import { invoiceRouter } from "./routers/invoice";
 import { operationRouter } from "./routers/operation";
 import { orderRouter } from "./routers/order";
 import { productRouter } from "./routers/product";
 import { productCategoryRouter } from "./routers/productCategory";
+import { projectRouter } from "./routers/project";
 import { requestRouter } from "./routers/request";
 import { roleRouter } from "./routers/role";
 import { shelfRouter } from "./routers/shelf";
@@ -36,6 +43,7 @@ export const appRouter = createTRPCRouter({
   userRole: userRoleRouter,
   user: userRouter,
   inventory: inventoryRouter,
+  invoice: invoiceRouter,
   order: orderRouter,
   generalParameters: {
     cabinet: cabinetRouter,
@@ -45,6 +53,12 @@ export const appRouter = createTRPCRouter({
     productCategory: productCategoryRouter,
     adjustReason: adjustReasonRouter,
     unit: unitRouter,
+    bank: bankRouter,
+    documentType: documentTypeRouter,
+    group: groupRouter,
+    project: projectRouter,
+    account: accountRouter,
+    accountPlan: accountPlanRouter,
   },
 });
 

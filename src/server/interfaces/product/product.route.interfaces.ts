@@ -6,19 +6,21 @@ export type Product = {
   id: string;
   code: string;
   name: string;
-  status: string;
+  ncm: number;
+  cfop: number;
+  status: string | null;
   ProductSupplier?: { supplierId: string }[] | null;
-  buyQuantity: number;
-  buyDay: string;
-  currentStock: number;
-  minimunStock: number;
-  maximumStock: number;
-  lastInventory: number;
+  buyQuantity: number | null;
+  buyDay: string | null;
+  currentStock: number | null;
+  minimunStock: number | null;
+  maximumStock: number | null;
+  lastInventory: number | null;
   unitId: string;
-  controlTypeId: string;
-  categoryId: string;
-  sectorOfUseId: string;
-  shelfId: string;
+  controlTypeId: string | null;
+  categoryId: string | null;
+  sectorOfUseId: string | null;
+  shelfId: string | null;
   parentProductId?: string | null;
   usersWithPermission?: { userId: string }[] | null;
 };
@@ -27,18 +29,20 @@ export type ProductWithFeatures = {
   id: string;
   code: string;
   name: string;
-  status: string;
-  buyQuantity: number;
-  buyDay: string;
-  currentStock: number;
-  minimunStock: number;
-  maximumStock: number;
-  lastInventory: number;
+  ncm: number;
+  cfop: number;
+  status: string | null;
+  buyQuantity: number | null;
+  buyDay: string | null;
+  currentStock: number | null;
+  minimunStock: number | null;
+  maximumStock: number | null;
+  lastInventory: number | null;
   unitId: string;
-  controlTypeId: string;
-  categoryId: string;
-  sectorOfUseId: string;
-  shelfId: string;
+  controlTypeId: string | null;
+  categoryId: string | null;
+  sectorOfUseId: string | null;
+  shelfId: string | null;
   parentProductId?: string | null;
 
   // Relations
@@ -52,15 +56,15 @@ export type ProductWithFeatures = {
   controlType: {
     id: string;
     name: string;
-  };
+  } | null;
   category: {
     id: string;
     name: string;
-  };
+  } | null;
   sectorOfUse: {
     id: string;
     name: string;
-  };
+  } | null;
   shelf: {
     id: string;
     name: string;
@@ -76,7 +80,7 @@ export type ProductWithFeatures = {
         };
       }[];
     };
-  };
+  } | null;
 
   ProductSupplier: {
     id: string;
@@ -85,7 +89,7 @@ export type ProductWithFeatures = {
       id: string;
       name: string;
       cnpj: string;
-      email: string;
+      email: string | null;
       phone?: string | null;
       stateRegistration: string;
       address: string;
