@@ -14,6 +14,11 @@ export const createInvoiceFormSchema = z.object({
     z.date({ required_error: "A data de emissão é obrigatória." }),
   ),
 
+  invoiceValue: z.preprocess(
+    (value) => (typeof value === "string" ? parseFloat(value) : value), // Converte string para número
+    z.number({ required_error: "O valor total da nota é obrigatório." }),
+  ),
+
   documentTypeId: z.string({
     required_error: "O tipo de documento é obrigatório.",
   }),

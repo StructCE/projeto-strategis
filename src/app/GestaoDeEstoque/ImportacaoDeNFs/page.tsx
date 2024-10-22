@@ -15,7 +15,6 @@ import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
-import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import {
@@ -24,10 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import {
-  type InvoiceProduct,
-  type SerializedInvoice,
-} from "~/server/interfaces/invoice/invoice.route.interfaces";
+import { type SerializedInvoice } from "~/server/interfaces/invoice/invoice.route.interfaces";
 import { api } from "~/trpc/react";
 import { default as InvoiceDetails } from "./_components/invoiceDetails/invoiceDetails";
 import AutoCreateInvoice from "./_components/useAutoCreateInvoice";
@@ -124,12 +120,8 @@ export default function ImportacaoDeNFs() {
       .map((product) => capitalizeFirstLetter(product.name))
       .join(",");
 
-    return `VG:${calculateInvoiceTotal(invoice)
-      .toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      })
-      .replace(/\s/g, "")}-[${productsString}]`;
+    // Valor total dos produtos: calculateInvoiceTotal(invoice)
+    return `VG:${invoice.invoiceValue.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }).replace(/\s/g, "")}-[${productsString}]`;
   }
 
   return (
@@ -371,7 +363,7 @@ export default function ImportacaoDeNFs() {
                             <DialogTitle className="text-[1.5rem]">
                               Nota Fiscal <b>nº{invoice.documentNumber}</b>{" "}
                               <br />
-                              Valor Total:{" "}
+                              Valor Total dos Produtos:{" "}
                               <b>
                                 R$
                                 {calculateInvoiceTotal(invoice).toLocaleString(
@@ -381,6 +373,15 @@ export default function ImportacaoDeNFs() {
                                     maximumFractionDigits: 2,
                                   },
                                 )}
+                              </b>
+                              <br />
+                              Valor Total da Nota:{" "}
+                              <b>
+                                R${" "}
+                                {invoice.invoiceValue.toLocaleString("pt-BR", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}
                               </b>
                             </DialogTitle>
 

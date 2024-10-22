@@ -101,9 +101,10 @@ async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
             id: productToBeUpdated.product.id, // Corrige a referência para o produto
           },
           data: {
-            currentStock:
-              productToBeUpdated.product.currentStock +
-              invoiceProduct.purchaseQuantity, // Atualiza o estoque
+            currentStock: productToBeUpdated.product.currentStock
+              ? productToBeUpdated.product.currentStock +
+                invoiceProduct.purchaseQuantity
+              : invoiceProduct.purchaseQuantity,
           },
         });
       }
@@ -115,6 +116,151 @@ async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
   await Promise.all(registeredInvoiceProducts);
 
   return registeredInvoice; // Retorna a fatura registrada
+}
+
+async function autoRegister(
+  props: InvoiceRepositoryInterfaces["AutoRegisterProps"],
+) {
+  const { company, supplier, invoiceProducts, ...invoiceData } = props;
+
+  let registeredCompany = await db.company.findUnique({
+    where: {
+      cnpj: company.cnpj,
+    },
+  });
+
+  // Se não estiver registrada, cadastra a empresa
+  if (!registeredCompany) {
+    registeredCompany = await db.company.create({
+      data: {
+        name: company.name,
+        cnpj: company.cnpj,
+        stateRegistration: company.stateRegistration,
+        address: company.address,
+        city: company.city,
+        neighborhood: company.neighborhood,
+        federativeUnit: company.federativeUnit,
+        cep: company.cep,
+        phone: company.phone,
+      },
+    });
+  }
+
+  let registeredSupplier = await db.supplier.findUnique({
+    where: {
+      cnpj: supplier.cnpj,
+    },
+  });
+
+  // Se não estiver registrado, cadastra o fornecedor
+  if (!registeredSupplier) {
+    registeredSupplier = await db.supplier.create({
+      data: {
+        name: supplier.name,
+        cnpj: supplier.cnpj,
+        stateRegistration: supplier.stateRegistration,
+        address: supplier.address,
+        city: supplier.city,
+        neighborhood: supplier.neighborhood,
+        federativeUnit: supplier.federativeUnit,
+        cep: supplier.cep,
+        phone: supplier.phone,
+      },
+    });
+  }
+
+  const registeredProducts = [];
+  for (const product of invoiceProducts) {
+    let registeredProduct = await db.product.findFirst({
+      where: {
+        ncm: product.ncm,
+        name: product.name,
+      },
+    });
+
+    // Se o produto não existir, cadastra
+    if (!registeredProduct) {
+      const registeredUnit = await db.unit.findFirst({
+        where: {
+          abbreviation: product.unitAbbreviation,
+        },
+      });
+
+      if (!registeredUnit) {
+        throw new Error(
+          `Unit with abbreviation ${product.unitAbbreviation} not found.`,
+        );
+      }
+
+      registeredProduct = await db.product.create({
+        data: {
+          name: product.name,
+          code: product.code,
+          ncm: product.ncm,
+          cfop: product.cfop,
+          unitId: registeredUnit.id,
+        },
+      });
+    }
+
+    registeredProducts.push(registeredProduct);
+  }
+
+  const registeredInvoice = await db.invoice.create({
+    data: {
+      documentNumber: invoiceData.documentNumber,
+      documentDate: invoiceData.documentDate,
+      companyId: registeredCompany.id,
+      supplierId: registeredSupplier.id,
+      installment: invoiceData.installment,
+      deadlineDate: invoiceData.deadlineDate,
+      confirmedStatus: invoiceData.confirmedStatus,
+      invoiceValue: invoiceData.invoiceValue,
+    },
+  });
+
+  const registeredInvoiceProducts = invoiceProducts.map(
+    async (invoiceProduct) => {
+      // Cria o produto vinculado à fatura
+      const registeredInvoiceProduct = await db.invoiceProduct.create({
+        data: {
+          ...invoiceProduct,
+          invoiceId: registeredInvoice.id, // Vincula o ID da fatura
+        },
+      });
+
+      // Busca o produto relacionado ao fornecedor
+      const productToBeUpdated = await db.productSupplier.findFirst({
+        where: {
+          id: invoiceProduct.productSupplierId,
+        },
+        include: {
+          product: true,
+        },
+      });
+
+      // Se o produto for encontrado, atualiza o estoque
+      if (productToBeUpdated) {
+        await db.product.update({
+          where: {
+            id: productToBeUpdated.product.id, // Corrige a referência para o produto
+          },
+          data: {
+            currentStock: productToBeUpdated.product.currentStock
+              ? productToBeUpdated.product.currentStock +
+                invoiceProduct.purchaseQuantity
+              : invoiceProduct.purchaseQuantity,
+          },
+        });
+      }
+      return registeredInvoiceProduct;
+    },
+  );
+
+  // Aguarda o registro de todos os produtos
+  await Promise.all(registeredInvoiceProducts);
+
+  return registeredInvoice;
 }
 
 async function edit(props: InvoiceRepositoryInterfaces["EditProps"]) {
@@ -156,5 +302,6 @@ async function edit(props: InvoiceRepositoryInterfaces["EditProps"]) {
 export const invoiceRepository = {
   getAll,
   register,
+  autoRegister,
   edit,
 };

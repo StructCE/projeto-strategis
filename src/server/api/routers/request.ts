@@ -33,6 +33,8 @@ export const requestRouter = createTRPCRouter({
             productId: requestProduct.productId, // ID do Produto
             code: requestProduct.product.code,
             name: requestProduct.product.name,
+            ncm: requestProduct.product.ncm,
+            cfop: requestProduct.product.cfop,
             requestedQuantity: requestProduct.requestedQuantity,
             releasedQuantity: requestProduct.releasedQuantity,
             currentStock: requestProduct.product.currentStock,

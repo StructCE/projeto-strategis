@@ -190,6 +190,28 @@ export default function ManuallyImportInvoice() {
                   )}
                 />
               </FormComponent.Frame>
+
+              <FormComponent.Frame>
+                <FormComponent.Label className="text-[#444444]">
+                  Valor Total da Nota
+                </FormComponent.Label>
+                <FormField
+                  control={invoiceCreateForm.form.control}
+                  name={`invoiceValue`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                          placeholder="Valor total da nota fiscal"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
             </FormComponent.Line>
 
             <FormComponent.Line>

@@ -17,6 +17,7 @@ export const invoiceRouter = createTRPCRouter({
           documentDate: invoice.documentDate,
           company: { id: invoice.company.id, name: invoice.company.name },
           supplier: { id: invoice.supplier.id, name: invoice.supplier.name },
+          invoiceValue: invoice.invoiceValue,
           expenseType: invoice.expenseType,
           recurrence: invoice.recurrence,
           installment: invoice.installment,
@@ -45,17 +46,19 @@ export const invoiceRouter = createTRPCRouter({
               productId: invoiceProductSupplier.productSupplier.product.id,
               name: invoiceProductSupplier.productSupplier.product.name,
               code: invoiceProductSupplier.productSupplier.product.code,
-              // ncm: invoiceProductSupplier.ncm,
-              // cfop: invoiceProductSupplier.cfop,
+              ncm: invoiceProductSupplier.productSupplier.product.ncm,
+              cfop: invoiceProductSupplier.productSupplier.product.cfop,
               unit: invoiceProductSupplier.productSupplier.product.unit,
               purchaseQuantity: invoiceProductSupplier.purchaseQuantity,
               unitValue: invoiceProductSupplier.unitValue,
               controlType:
-                invoiceProductSupplier.productSupplier.product.controlType.name,
+                invoiceProductSupplier.productSupplier.product.controlType
+                  ?.name,
               category:
-                invoiceProductSupplier.productSupplier.product.category.name,
+                invoiceProductSupplier.productSupplier.product.category?.name,
               useSector:
-                invoiceProductSupplier.productSupplier.product.sectorOfUse.name,
+                invoiceProductSupplier.productSupplier.product.sectorOfUse
+                  ?.name,
               shelf: invoiceProductSupplier.productSupplier.product.shelf,
             }),
           ),
@@ -68,6 +71,13 @@ export const invoiceRouter = createTRPCRouter({
     .input(invoiceRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<InvoiceRouteInterfaces["Invoice"]> => {
       const registeredInvoice = await invoiceRepository.register(input);
+      return registeredInvoice;
+    }),
+
+  autoRegisterInvoice: protectedProcedure
+    .input(invoiceRepositorySchema.autoRegisterProps)
+    .mutation(async ({ input }): Promise<InvoiceRouteInterfaces["Invoice"]> => {
+      const registeredInvoice = await invoiceRepository.autoRegister(input);
       return registeredInvoice;
     }),
 

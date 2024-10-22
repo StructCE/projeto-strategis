@@ -69,13 +69,13 @@ model VerificationToken {
 model Company {
     id                 String  @id @default(cuid())
     name               String
-    email              String
-    cnpj               String
-    type               String
+    email              String?
+    cnpj               String  @unique
+    type               String?
     headquarters       String?
     phone              String
     stateRegistration  String
-    taxRegime          String
+    taxRegime          String?
     address            String
     city               String
     neighborhood       String
@@ -138,8 +138,8 @@ model Module {
 model Supplier {
     id                String            @id @default(cuid())
     name              String
-    cnpj              String
-    email             String
+    cnpj              String            @unique
+    email             String?
     phone             String?
     stateRegistration String
     address           String
@@ -166,32 +166,34 @@ model Contact {
 }
 
 model Product {
-    id            String @id @default(cuid())
+    id            String  @id @default(cuid())
     code          String
     name          String
-    status        String
-    buyQuantity   Float
-    buyDay        String
-    currentStock  Float
-    minimunStock  Int
-    maximumStock  Int
-    lastInventory Float
+    ncm           Int
+    cfop          Int
+    status        String?
+    buyQuantity   Float?
+    buyDay        String?
+    currentStock  Float?
+    minimunStock  Int?
+    maximumStock  Int?
+    lastInventory Float?
 
     unitId          String
-    controlTypeId   String
-    categoryId      String
-    sectorOfUseId   String
-    shelfId         String
+    controlTypeId   String?
+    categoryId      String?
+    sectorOfUseId   String?
+    shelfId         String?
     parentProductId String?
 
     usersWithPermission ProductPermission[]
 
-    parentProduct Product?        @relation("ProductToParent", fields: [parentProductId], references: [id])
-    unit          Unit            @relation(fields: [unitId], references: [id])
-    controlType   ControlType     @relation(fields: [controlTypeId], references: [id])
-    category      ProductCategory @relation(fields: [categoryId], references: [id])
-    sectorOfUse   UseSector       @relation(fields: [sectorOfUseId], references: [id])
-    shelf         Shelf           @relation(fields: [shelfId], references: [id], onDelete: Cascade)
+    parentProduct Product?         @relation("ProductToParent", fields: [parentProductId], references: [id])
+    unit          Unit             @relation(fields: [unitId], references: [id])
+    controlType   ControlType?     @relation(fields: [controlTypeId], references: [id])
+    category      ProductCategory? @relation(fields: [categoryId], references: [id])
+    sectorOfUse   UseSector?       @relation(fields: [sectorOfUseId], references: [id])
+    shelf         Shelf?           @relation(fields: [shelfId], references: [id], onDelete: Cascade)
 
     childProducts    Product[]          @relation("ProductToParent")
     ProductSupplier  ProductSupplier[]
@@ -392,7 +394,7 @@ model Order {
 model OrderProduct {
     id                String @id @default(cuid())
     orderId           String
-    purchaseQuantity  Int
+    purchaseQuantity  Float
     productSupplierId String
 
     order   Order           @relation(fields: [orderId], references: [id])
@@ -479,8 +481,8 @@ model Invoice {
     documentNumber  String // Número da nota
     documentDate    DateTime // Data de emissão
     companyId       String // Empresa
-    expenseType     String // "Despesa Fixa" | "Despesa Variável" | "Receita" | undefined;
-    recurrence      String // "Recorrente" | "Avulsa" | "Parcelas" | undefined;
+    expenseType     String? // "Despesa Fixa" | "Despesa Variável" | "Receita" | undefined;
+    recurrence      String? // "Recorrente" | "Avulsa" | "Parcelas" | undefined;
     installment     String // Parcela (Pode ser 'única' ou o numero da parcela incluindo a data ou não)
     deadlineDate    DateTime // Data de vencimento
     confirmedStatus String // "Pendente" | "Confirmada" | "Cancelada"
@@ -489,6 +491,7 @@ model Invoice {
     groupId         String? // Grupo
     documentTypeId  String? // Tipo de documento
     supplierId      String
+    invoiceValue    Float
 
     bankId      String? // Banco do pagamento
     payedValue  String? // Valor pago
@@ -510,7 +513,7 @@ model InvoiceProduct {
     // ncm               Int
     // cfop              Int
     // unitId            String // Unidade de compra
-    purchaseQuantity  Int // Quantidade comprada
+    purchaseQuantity  Float // Quantidade comprada
     unitValue         Float // Valor por unidade de compra
     invoiceId         String
     productSupplierId String

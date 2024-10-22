@@ -20,6 +20,7 @@ const registerProps = z.object({
   installment: z.string(),
   deadlineDate: z.date(),
   confirmedStatus: z.string(),
+  invoiceValue: z.number(),
   accountId: z.string().optional(),
   groupId: z.string().optional(),
   documentTypeId: z.string().optional(),
@@ -49,6 +50,65 @@ const registerProps = z.object({
 
 type RegisterProps = z.infer<typeof registerProps>;
 
+const autoRegisterProps = z.object({
+  company: z.object({
+    name: z.string(),
+    cnpj: z.string(),
+    stateRegistration: z.string(),
+    address: z.string(),
+    city: z.string(),
+    neighborhood: z.string(),
+    federativeUnit: z.string(),
+    cep: z.string(),
+    phone: z.string(),
+  }),
+  supplier: z.object({
+    name: z.string(),
+    cnpj: z.string(),
+    stateRegistration: z.string(),
+    address: z.string(),
+    city: z.string(),
+    neighborhood: z.string(),
+    federativeUnit: z.string(),
+    cep: z.string(),
+    phone: z.string(),
+  }),
+  documentNumber: z.string(),
+  documentDate: z.date(),
+  installment: z.string(),
+  deadlineDate: z.date(),
+  confirmedStatus: z.string(),
+  invoiceValue: z.number(),
+  // expenseType: z.string().optional(),
+  // recurrence: z.string().optional(),
+  // accountId: z.string().optional(),
+  // groupId: z.string().optional(),
+  // documentTypeId: z.string().optional(),
+  // projectId: z.string().optional(),
+  // bankId: z.string().optional(),
+  // payedValue: z.string().optional(),
+  // paymentDate: z.date().optional(),
+  // payedStatus: z.string().optional(),
+  invoiceProducts: z.array(
+    z.object({
+      name: z.string(),
+      code: z.string(),
+      ncm: z.number(),
+      cfop: z.number(),
+      unitAbbreviation: z.string(),
+      purchaseQuantity: z.number(),
+      unitValue: z.number(),
+      productSupplierId: z.string(),
+      // controlTypeId: z.string(),
+      // categoryId: z.string(),
+      // sectorOfUseId: z.string(),
+      // shelfId: z.string(),
+    }),
+  ),
+});
+
+type AutoRegisterProps = z.infer<typeof autoRegisterProps>;
+
 const editProps = z.object({
   id: z.string(),
   invoiceData: z.object({
@@ -72,11 +132,13 @@ type EditProps = z.infer<typeof editProps>;
 export const invoiceRepositorySchema = {
   getAllProps,
   registerProps,
+  autoRegisterProps,
   editProps,
 };
 
 export type InvoiceRepositoryInterfaces = {
   GetAllProps: GetAllProps;
   RegisterProps: RegisterProps;
+  AutoRegisterProps: AutoRegisterProps;
   EditProps: EditProps;
 };

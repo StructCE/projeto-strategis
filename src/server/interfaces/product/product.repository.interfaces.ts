@@ -23,6 +23,8 @@ type GetProductsBySupplierIdProps = z.infer<
 const createProps = z.object({
   name: z.string(),
   code: z.string(),
+  ncm: z.number(),
+  cfop: z.number(),
   status: z.string(),
   ProductSupplier: z.array(z.string()).optional(),
   parentProductId: z.string().optional(),
@@ -47,6 +49,8 @@ const editProps = z.object({
   data: z.object({
     name: z.string(),
     code: z.string(),
+    ncm: z.number(),
+    cfop: z.number(),
     status: z.string(),
     ProductSupplier: z.array(z.string()).optional(),
     parentProductId: z.string().optional(),

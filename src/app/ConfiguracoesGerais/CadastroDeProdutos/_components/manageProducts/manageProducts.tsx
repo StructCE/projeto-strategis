@@ -69,14 +69,14 @@ export default function ManageProductsTable() {
       );
     const matchesStock =
       selectStock === "" ||
-      product.shelf.cabinet.StockCabinet.some((stockCabinet) =>
+      product.shelf?.cabinet.StockCabinet.some((stockCabinet) =>
         stockCabinet.stock.name
           .toLowerCase()
           .includes(selectStock.toLowerCase()),
       );
     const matchesAddress =
       selectAddress === "" ||
-      `${product.shelf.cabinet.name} - ${product.shelf.name}`
+      `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
         .toLowerCase()
         .includes(selectAddress.toLowerCase());
     const matchesControlType =
@@ -391,19 +391,19 @@ export default function ManageProductsTable() {
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.currentStock}
+                      defaultValue={product.currentStock ?? ""}
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.minimunStock}
+                      defaultValue={product.minimunStock ?? ""}
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.maximumStock}
+                      defaultValue={product.maximumStock ?? ""}
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>

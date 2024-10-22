@@ -4,8 +4,8 @@ export type Invoice = {
   documentDate: Date;
   companyId: string;
   supplierId: string;
-  expenseType: string;
-  recurrence: string;
+  expenseType: string | null;
+  recurrence: string | null;
   installment: string;
   deadlineDate: Date;
   confirmedStatus: string;
@@ -54,7 +54,8 @@ export type InvoiceProduct = {
           }[];
         };
       }
-    | undefined;
+    | undefined
+    | null;
 };
 
 export type SerializedInvoice = {
@@ -63,8 +64,9 @@ export type SerializedInvoice = {
   documentDate: Date;
   company: { id: string; name: string };
   supplier: { id: string; name: string };
-  expenseType: string;
-  recurrence: string;
+  invoiceValue: number;
+  expenseType: string | null;
+  recurrence: string | null;
   installment: string;
   deadlineDate: Date;
   confirmedStatus: string;

@@ -80,6 +80,7 @@ export const useManualCreateInvoiceForm = () => {
       deadlineDate: data.documentDate,
       confirmedStatus: "Pendente",
       groupId: data.groupId,
+      invoiceValue: data.invoiceValue,
       invoiceProducts: data.invoiceProducts.map((invoiceProduct) => ({
         // name: "",
         // code: "",

@@ -14,7 +14,7 @@ type Product = {
   controlTypeId: string;
   categoryId: string;
   sectorOfUseId: string;
-  shelfId: string;
+  shelfId: string | null;
   parentProductId?: string | null;
   usersWithPermission?: { userId: string }[] | null;
 };
@@ -25,18 +25,18 @@ export type ProductSupplierWithFeatures = {
     id: string;
     code: string;
     name: string;
-    status: string;
-    buyQuantity: number;
-    buyDay: string;
-    currentStock: number;
-    minimunStock: number;
-    maximumStock: number;
-    lastInventory: number;
+    status: string | null;
+    buyQuantity: number | null;
+    buyDay: string | null;
+    currentStock: number | null;
+    minimunStock: number | null;
+    maximumStock: number | null;
+    lastInventory: number | null;
     unitId: string;
-    controlTypeId: string;
-    categoryId: string;
-    sectorOfUseId: string;
-    shelfId: string;
+    controlTypeId: string | null;
+    categoryId: string | null;
+    sectorOfUseId: string | null;
+    shelfId: string | null;
     parentProductId?: string | null;
 
     // Relations
@@ -50,15 +50,15 @@ export type ProductSupplierWithFeatures = {
     controlType: {
       id: string;
       name: string;
-    };
+    } | null;
     category: {
       id: string;
       name: string;
-    };
+    } | null;
     sectorOfUse: {
       id: string;
       name: string;
-    };
+    } | null;
     shelf: {
       id: string;
       name: string;
@@ -74,7 +74,7 @@ export type ProductSupplierWithFeatures = {
           };
         }[];
       };
-    };
+    } | null;
     usersWithPermission: {
       id: string;
       userId: string;

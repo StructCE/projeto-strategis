@@ -24,12 +24,12 @@ const AutoCreateInvoice = (
     // products,
   },
 ) => {
-  const invoiceMutation = api.invoice.registerInvoice.useMutation({
+  const invoiceMutation = api.invoice.autoRegisterInvoice.useMutation({
     onSuccess: (newInvoice) => {
       console.log("Nota fiscal criada com sucesso:", newInvoice);
       alert("Nota fiscal criada com sucesso.");
       setTimeout(() => {
-        location.reload(); // Atualiza a página após criar o inventário
+        location.reload();
       }, 500);
     },
     onError: (error) => {
@@ -51,25 +51,105 @@ const AutoCreateInvoice = (
   };
 
   const handleImport = async () => {
-    const invoiceData = [];
+    const invoiceDataList = [];
 
     for (const file of selectedFiles) {
       const text = await file.text(); // Lê o conteúdo do arquivo
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(text, "text/xml"); // Analisa o XML
 
-      // Extrai os dados desejados
+      // Extrai os dados da fatura (invoice)
       const documentNumber =
-        xmlDoc.getElementsByTagName("cNF")[0]?.textContent ?? null; // Número do documento
+        xmlDoc.getElementsByTagName("cNF")[0]?.textContent ?? "";
       const dateDocumentStr =
-        xmlDoc.getElementsByTagName("dhEmi")[0]?.textContent; // Data de emissão
-      const documentDate = dateDocumentStr ? new Date(dateDocumentStr) : null; // Converte para Date
-      const supplierName = xmlDoc.getElementsByTagName("xNome")[0]?.textContent; // Nome do fornecedor
+        xmlDoc.getElementsByTagName("dhEmi")[0]?.textContent;
+      const documentDate = dateDocumentStr
+        ? new Date(dateDocumentStr)
+        : new Date();
+
+      const supplier = {
+        name: xmlDoc.getElementsByTagName("xNome")[0]?.textContent ?? "",
+        cnpj: xmlDoc.getElementsByTagName("CNPJ")[0]?.textContent ?? "",
+        stateRegistration:
+          xmlDoc.getElementsByTagName("IE")[0]?.textContent ?? "",
+        address:
+          xmlDoc
+            .getElementsByTagName("enderEmit")[0]
+            ?.getElementsByTagName("xLgr")[0]?.textContent ?? "",
+        city:
+          xmlDoc
+            .getElementsByTagName("enderEmit")[0]
+            ?.getElementsByTagName("xMun")[0]?.textContent ?? "",
+        neighborhood:
+          xmlDoc
+            .getElementsByTagName("enderEmit")[0]
+            ?.getElementsByTagName("xBairro")[0]?.textContent ?? "",
+        federativeUnit:
+          xmlDoc
+            .getElementsByTagName("enderEmit")[0]
+            ?.getElementsByTagName("UF")[0]?.textContent ?? "",
+        cep:
+          xmlDoc
+            .getElementsByTagName("enderEmit")[0]
+            ?.getElementsByTagName("CEP")[0]?.textContent ?? "",
+        phone:
+          xmlDoc
+            .getElementsByTagName("enderEmit")[0]
+            ?.getElementsByTagName("fone")[0]?.textContent ?? "",
+      };
+
+      const recipient = {
+        name:
+          xmlDoc
+            .getElementsByTagName("dest")[0]
+            ?.getElementsByTagName("xNome")[0]?.textContent ?? "",
+        cnpj:
+          xmlDoc
+            .getElementsByTagName("dest")[0]
+            ?.getElementsByTagName("CNPJ")[0]?.textContent ?? "",
+        stateRegistration:
+          xmlDoc.getElementsByTagName("dest")[0]?.getElementsByTagName("IE")[0]
+            ?.textContent ?? "",
+        address:
+          xmlDoc
+            .getElementsByTagName("dest")[0]
+            ?.getElementsByTagName("enderDest")[0]
+            ?.getElementsByTagName("xLgr")[0]?.textContent ?? "",
+        city:
+          xmlDoc
+            .getElementsByTagName("dest")[0]
+            ?.getElementsByTagName("enderDest")[0]
+            ?.getElementsByTagName("xMun")[0]?.textContent ?? "",
+        neighborhood:
+          xmlDoc
+            .getElementsByTagName("dest")[0]
+            ?.getElementsByTagName("enderDest")[0]
+            ?.getElementsByTagName("xBairro")[0]?.textContent ?? "",
+        federativeUnit:
+          xmlDoc
+            .getElementsByTagName("dest")[0]
+            ?.getElementsByTagName("enderDest")[0]
+            ?.getElementsByTagName("UF")[0]?.textContent ?? "",
+        cep:
+          xmlDoc
+            .getElementsByTagName("dest")[0]
+            ?.getElementsByTagName("enderDest")[0]
+            ?.getElementsByTagName("CEP")[0]?.textContent ?? "",
+        phone:
+          xmlDoc
+            .getElementsByTagName("dest")[0]
+            ?.getElementsByTagName("fone")[0]?.textContent ?? "",
+      };
+
       const installment =
-        xmlDoc.getElementsByTagName("nDup")[0]?.textContent ?? null; // Número da parcela, se aplicável
+        xmlDoc.getElementsByTagName("nDup")[0]?.textContent ?? "";
       const dateDeadlineStr =
-        xmlDoc.getElementsByTagName("dVenc")[0]?.textContent; // Data de vencimento da NF
-      const dateDeadline = dateDeadlineStr ? new Date(dateDeadlineStr) : null; // Converte para Date
+        xmlDoc.getElementsByTagName("dVenc")[0]?.textContent;
+      const dateDeadline = dateDeadlineStr
+        ? new Date(dateDeadlineStr)
+        : new Date();
+      const invoiceValue =
+        xmlDoc.getElementsByTagName("")[0]?.textContent ?? "";
 
       // Extrai produtos
       const products: InvoiceProduct[] = [];
@@ -77,15 +157,22 @@ const AutoCreateInvoice = (
 
       for (const productNode of productNodes) {
         const prodNode = productNode.getElementsByTagName("prod")[0];
+
+        const uCom =
+          prodNode?.getElementsByTagName("uCom")[0]?.textContent ?? "";
+        const match = uCom.match(/^(\w+)(?:\s+(\d+))?$/);
+        const unitAbbreviation = match ? match[1] : "";
+        const unitsPerPack = match?.[2] ? parseInt(match[2], 10) : 0;
+
         const product: InvoiceProduct = {
-          code: prodNode?.getElementsByTagName("cProd")[0]?.textContent ?? "", // Código do produto
-          name: prodNode?.getElementsByTagName("xProd")[0]?.textContent ?? "", // Descrição do produto
+          code: prodNode?.getElementsByTagName("cProd")[0]?.textContent ?? "",
+          name: prodNode?.getElementsByTagName("xProd")[0]?.textContent ?? "",
           purchaseQuantity: parseFloat(
             prodNode?.getElementsByTagName("qCom")[0]?.textContent ?? "0",
-          ), // Quantidade
+          ),
           unitValue: parseFloat(
             prodNode?.getElementsByTagName("vProd")[0]?.textContent ?? "0",
-          ), // Valor unitário
+          ),
           ncm: parseFloat(
             prodNode?.getElementsByTagName("NCM")[0]?.textContent ?? "0",
           ),
@@ -94,9 +181,9 @@ const AutoCreateInvoice = (
           ),
           unit: {
             id: "",
-            name: prodNode?.getElementsByTagName("uCom")[0]?.textContent ?? "",
-            abbreviation: "",
-            unitsPerPack: 0,
+            name: "",
+            abbreviation: unitAbbreviation ?? "",
+            unitsPerPack: unitsPerPack ?? 0,
           },
           id: "",
           productId: "",
@@ -108,21 +195,37 @@ const AutoCreateInvoice = (
         products.push(product);
       }
 
-      invoiceData.push({
+      const invoiceData = {
+        supplier: supplier,
+        company: recipient,
         documentNumber: documentNumber,
         documentDate: documentDate,
-        supplier: supplierName,
         installment: installment,
-        dateDeadline: dateDeadline,
-        products,
-      });
+        deadlineDate: dateDeadline,
+        confirmedStatus: "Pendente",
+        invoiceValue: Number(invoiceValue),
+        invoiceProducts: products.map((product) => ({
+          name: product.name,
+          code: product.code,
+          ncm: product.ncm,
+          cfop: product.cfop,
+          unitAbbreviation: product.unit.abbreviation,
+          productSupplierId: product.productId,
+          purchaseQuantity: product.purchaseQuantity,
+          unitValue: product.unitValue,
+        })),
+      };
+
+      invoiceDataList.push(invoiceData);
     }
 
-    console.log("Todos os dados extraídos:", invoiceData); // Criar as Invoices aqui com os dados extraidos
-    try {
-      invoiceMutation.mutate({ ...invoiceData });
-    } catch (error) {
-      console.error("Erro ao enviar o formulário:", error);
+    // Envia cada fatura para o backend
+    for (const invoiceData of invoiceDataList) {
+      try {
+        await invoiceMutation.mutateAsync(invoiceData);
+      } catch (error) {
+        console.error("Erro ao criar a fatura:", error);
+      }
     }
   };
 

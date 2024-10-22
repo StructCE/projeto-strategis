@@ -27,6 +27,8 @@ export const useProductForm = () => {
     defaultValues: {
       code: "",
       name: "",
+      ncm: "",
+      cfop: "",
       status: "",
       suppliersId: [],
       usersWithPermission: [],
@@ -49,6 +51,8 @@ export const useProductForm = () => {
     const productData = {
       code: data.code,
       name: data.name,
+      ncm: Number(data.ncm),
+      cfop: Number(data.cfop),
       status: data.status,
       ProductSupplier: data.suppliersId ?? [],
       buyQuantity: Number(data.buyQuantity),

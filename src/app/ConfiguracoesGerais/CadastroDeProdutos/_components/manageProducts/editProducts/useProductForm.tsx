@@ -42,7 +42,7 @@ export const useProductForm = (product: ProductWithFeatures) => {
   });
 
   const { data: productStock } = api.stock.getStockFromShelf.useQuery({
-    shelfId: product.shelfId,
+    shelfId: product.shelfId ?? "",
   });
 
   const selectedStock =
@@ -54,22 +54,23 @@ export const useProductForm = (product: ProductWithFeatures) => {
     defaultValues: {
       code: product.code,
       name: product.name,
-      status: product.status,
-      // suppliersId: product.ProductSupplier?.map((supplier) => supplier.id),
+      ncm: product.ncm.toString(),
+      cfop: product.cfop.toString(),
+      status: product.status ?? "",
       suppliersId: product.ProductSupplier.map(
         (supplier) => supplier.supplier.id,
       ),
-      buyQuantity: product.buyQuantity.toString(),
-      buyDay: product.buyDay,
-      currentStock: product.currentStock.toString(),
-      minimunStock: product.minimunStock.toString(),
-      maximumStock: product.maximumStock.toString(),
+      buyQuantity: product.buyQuantity?.toString(),
+      buyDay: product.buyDay ?? "",
+      currentStock: product.currentStock?.toString(),
+      minimunStock: product.minimunStock?.toString(),
+      maximumStock: product.maximumStock?.toString(),
       unitId: product.unitId,
-      controlTypeId: product.controlTypeId,
-      categoryId: product.categoryId,
-      sectorOfUseId: product.sectorOfUseId,
+      controlTypeId: product.controlTypeId ?? "",
+      categoryId: product.categoryId ?? "",
+      sectorOfUseId: product.sectorOfUseId ?? "",
       stockId: selectedStock,
-      shelfId: product.shelfId,
+      shelfId: product.shelfId ?? "",
       parentProductId: product.parentProductId ?? undefined,
       usersWithPermission: product.usersWithPermission?.map(
         (user) => user.userId,
@@ -87,6 +88,8 @@ export const useProductForm = (product: ProductWithFeatures) => {
         data: {
           code: data.code,
           name: data.name,
+          ncm: Number(data.ncm),
+          cfop: Number(data.cfop),
           status: data.status,
           ProductSupplier: data.suppliersId ?? [],
           buyQuantity: Number(data.buyQuantity),
