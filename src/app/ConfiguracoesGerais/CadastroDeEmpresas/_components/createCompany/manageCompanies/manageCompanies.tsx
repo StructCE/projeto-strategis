@@ -163,7 +163,7 @@ export function ManageCompaniesTable() {
             <Button
               onClick={() =>
                 router.push(
-                  `/ConfiguracoesGerais/CadastroDeEmpresas/DetalhesDaEmpresa?cnpj=${encodeURIComponent(company.cnpj)}`,
+                  `/ConfiguracoesGerais/CadastroDeEmpresas/DetalhesDaEmpresa/${company.id}`,
                 )
               }
               className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]"

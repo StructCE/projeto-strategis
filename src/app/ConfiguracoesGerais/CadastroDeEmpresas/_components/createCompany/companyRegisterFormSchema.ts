@@ -12,18 +12,11 @@ export const createCompanyFormSchema = z.object({
 
   suppliers: z.array(z.string()),
 
-  company_type: z.string({
+  type: z.string({
     required_error: "Por favor selecione o tipo da empresa.",
   }),
 
-  company_headquarters: z
-    .object({
-      name: z
-        .string()
-        .min(3, "Nome da matriz deve ter pelo menos 3 caracteres."),
-      cnpj: z.string().min(14, "CNPJ da matriz deve ter 14 dígitos."),
-    })
-    .optional(),
+  headquarters: z.string(),
 
   email: z
     .string({
@@ -44,14 +37,14 @@ export const createCompanyFormSchema = z.object({
         "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
     }),
 
-  state_registration: z
+  stateRegistration: z
     .string({ required_error: "Campo obrigatório" })
     .min(9, { message: "Inscrição Estadual deve ter no minimo 9 caracteres" })
     .max(14, {
       message: "Inscrição Estadual deve ter no máximo 14 caracteres",
     }),
 
-  tax_regime: z.string({
+  taxRegime: z.string({
     required_error: "Por favor selecione um regime tributário",
   }),
 
@@ -70,7 +63,7 @@ export const createCompanyFormSchema = z.object({
     .min(3, { message: "Município deve ter pelo menos 3 caracteres." })
     .max(20, { message: "Município deve ter no máximo 20 caracteres." }),
 
-  state: z.string({
+  federativeUnit: z.string({
     required_error: "Por favor selecione uma unidade federativa",
   }),
 
@@ -78,13 +71,7 @@ export const createCompanyFormSchema = z.object({
     .string({ required_error: "CEP deve ser obrigatório." })
     .length(8, { message: "São necessarios 8 dígitos" }),
 
-  // address_file_XML: z
-  //   .string({
-  //     required_error: "Selecione o endereço local dos arquivos XML",
-  //   })
-  //   .optional(),
-
-  legal_representative: z
+  legalResponsibleId: z
     .string({
       required_error: "Selecione o representante legal da empresa",
     })

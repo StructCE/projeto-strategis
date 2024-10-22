@@ -1,45 +1,52 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type Company } from "../../../../_components/companiesData";
 import {
-  editCompanyFormSchema,
-  type EditCompanyFormValues,
-} from "./companyEditFormSchema";
+  type CompanyRepositoryInterfaces,
+  companyRepositorySchema,
+} from "~/server/interfaces/company/company.repository.interfaces";
+import type { CompanyRouteInterfaces } from "~/server/interfaces/company/company.route.interfaces";
+import { api } from "~/trpc/react";
 
-export const useCompanyForm = (company: Company) => {
-  const form = useForm<EditCompanyFormValues>({
-    resolver: zodResolver(editCompanyFormSchema),
-    mode: "onChange",
-    defaultValues: {
-      name: company.name,
-      cnpj: company.cnpj,
-      company_type: company.company_type,
-      suppliers: company.suppliers.map((supplier) => supplier.name),
-      company_headquarters: {
-        name: company.company_headquarters?.name,
-        cnpj: company.company_headquarters?.cnpj,
-      },
-      email: company.email,
-      phone: company.phone,
-      address: company.address,
-      neighborhood: company.neighborhood,
-      city: company.city,
-      state: company.state,
-      cep: company.cep,
-      state_registration: company.state_registration,
-      tax_regime: company.tax_regime,
-      // address_file_XML: company.xmlFilePath,
-      legal_representative: company.legal_representative.name,
+export const useCompanyForm = (
+  company: CompanyRouteInterfaces["EditCompany"],
+) => {
+  const editCompany = api.company.editCompany.useMutation({
+    onSuccess: () => alert("Mudanças salvas"),
+    onError: (error) => {
+      alert("Erro no salvamento das mudanças");
+      console.log(error);
     },
   });
 
-  function onSubmitEdit(data: EditCompanyFormValues) {
-    console.log("Editando empresa");
+  const removeCompany = api.company.deleteCompany.useMutation({
+    onSuccess: () => alert("Empresa deletada com sucesso"),
+    onError: (error) => {
+      alert("Erro ao deletar empresa");
+      console.log(error);
+    },
+  });
+
+  const form = useForm<CompanyRepositoryInterfaces["EditProps"]>({
+    resolver: zodResolver(companyRepositorySchema.editProps),
+    mode: "onChange",
+
+    defaultValues: {
+      id: company.id,
+      data: {
+        ...company,
+        suppliers: company.suppliers.map((supplier) => supplier.id),
+        legalResponsibleId: company.legalResponsibleId,
+      },
+    },
+  });
+
+  function onSubmitEdit(data: CompanyRepositoryInterfaces["EditProps"]) {
+    editCompany.mutate(data);
     console.log(JSON.stringify(data, null, 2));
   }
 
-  function onSubmitRemove(data: EditCompanyFormValues) {
-    console.log("Removendo empresa");
+  function onSubmitRemove(data: CompanyRepositoryInterfaces["DeleteProps"]) {
+    removeCompany.mutate(data);
     console.log(JSON.stringify(data, null, 2));
   }
 

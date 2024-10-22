@@ -1,7 +1,6 @@
 "use client";
 import { Building2, Calendar, Eraser, Settings, UserCog2 } from "lucide-react";
 import { useState } from "react";
-import { companies } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/companiesData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
@@ -19,8 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import OperationDetails from "./_components/operationDetails";
-import { operations } from "./_components/operationsData";
+import { api } from "~/trpc/react";
 
 export default function ManageRequestsTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -29,30 +27,16 @@ export default function ManageRequestsTable() {
   const [selectCompany, setSelectCompany] = useState("");
   const [selectOperation, setSelectOperation] = useState("");
 
-  const filteredOperations = operations.filter((operation) => {
-    const matchesDate =
-      !date ||
-      (operation.date.getDate() === date.getDate() &&
-        operation.date.getMonth() === date.getMonth() + 1 &&
-        operation.date.getFullYear() === date.getFullYear());
-
-    const matchesResponsible =
-      inputOperator === "" ||
-      operation.operator.name
-        .toLowerCase()
-        .includes(inputOperator.toLowerCase());
-
-    const matchesCompany =
-      selectCompany === "" || operation.operator.company == selectCompany;
-
-    const matchesOperation =
-      selectOperation === "" || operation.operation == selectOperation;
-
-    return (
-      matchesDate && matchesResponsible && matchesCompany && matchesOperation
-    );
+  const companies = api.company.getAllCompanies.useQuery();
+  const operations = api.operation.getAllOperations.useQuery({
+    filters: {
+      startDate: date,
+      endDate: date,
+      company: selectCompany,
+      operationType: selectOperation,
+      operator: inputOperator,
+    },
   });
-
   return (
     <TableComponent className="gap-3">
       <TableComponent.Title>Histórico de Operações</TableComponent.Title>
@@ -102,7 +86,7 @@ export default function ManageRequestsTable() {
             state={selectCompany}
             setState={setSelectCompany}
           >
-            {companies.map((company, index) => (
+            {companies.data?.map((company, index) => (
               <Filter.SelectItems
                 value={company.name}
                 key={index}
@@ -122,9 +106,9 @@ export default function ManageRequestsTable() {
             state={selectOperation}
             setState={setSelectOperation}
           >
-            {operations.map((operation, index) => (
+            {operations.data?.map((operation, index) => (
               <Filter.SelectItems
-                value={operation.operation}
+                value={operation.description}
                 key={index}
               ></Filter.SelectItems>
             ))}
@@ -159,7 +143,7 @@ export default function ManageRequestsTable() {
           <TableComponent.ValueTitle>Descrição</TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {filteredOperations.map((operation, index) => (
+        {operations.data?.map((operation, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_1fr_1fr_2fr] gap-8 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -169,17 +153,9 @@ export default function ManageRequestsTable() {
             <TableComponent.Value>
               {`${operation.date.getDate()}/${operation.date.getMonth()}/${operation.date.getFullYear()}`}
             </TableComponent.Value>
-            <TableComponent.Value>
-              {operation.operator.company}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {operation.operator.name}
-            </TableComponent.Value>
-            <TableComponent.Value>{operation.operation}</TableComponent.Value>
-
-            {/* 
-            Não sei como fazer os detalhes da operação, cada operação teria q mostrar infromações diferentes
-            então não sei como seria estruturado o banco de dados para isso.
+            <TableComponent.Value>{operation.company}</TableComponent.Value>
+            <TableComponent.Value>{operation.responsible}</TableComponent.Value>
+            <TableComponent.Value>{operation.description}</TableComponent.Value>
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
@@ -201,23 +177,21 @@ export default function ManageRequestsTable() {
                     </p>
                     <p className="w-fit">
                       <span className="font-semibold">Esmpresa:</span>{" "}
-                      {operation.operator.company}
+                      {operation.company}
                     </p>
                     <p className="w-fit">
                       <span className="font-semibold">Operador:</span>{" "}
-                      {operation.operator.name}
+                      {operation.responsible}
                     </p>
                     <p className="w-fit">
                       <span className="font-semibold">Operação:</span>{" "}
-                      {operation.operation}
+                      {operation.description}
                     </p>
-                    <p className="w-fit font-semibold">Produtos solicitados:</p>
+                    {/* <p className="w-fit font-semibold">Produtos solicitados:</p> ACHO MELHOR NAO TER ISSO AQ*/}
                   </DialogDescription>
-
-                  <OperationDetails operation={operation} />
                 </DialogHeader>
               </DialogContent>
-            </Dialog> */}
+            </Dialog>
           </TableComponent.Line>
         ))}
       </TableComponent.Table>

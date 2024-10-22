@@ -54,6 +54,7 @@ model User {
     sessions           Session[]
     UserRole           UserRole[]
     productPermissions ProductPermission[]
+    Company            Company[]           @relation("CompanyResponsible")
 
     @@map("users")
 }
@@ -83,11 +84,12 @@ model Company {
     cep                String
     legalResponsibleId String?
 
-    legaResponsible UserRole?  @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
-    UserRole        UserRole[] @relation("CompanyEmployees")
-    Stock           Stock[]
-    Invoice         Invoice[]
+    legalResponsible User?             @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
+    UserRole         UserRole[]        @relation("CompanyEmployees")
+    Stock            Stock[]
+    Invoice          Invoice[]
     // Contact         Contact[]
+    CompanySupplier  CompanySupplier[]
 }
 
 model UserRole {
@@ -99,7 +101,6 @@ model UserRole {
     user                       User        @relation(fields: [userId], references: [id])
     company                    Company     @relation("CompanyEmployees", fields: [companyId], references: [id])
     role                       Role        @relation(fields: [roleId], references: [id])
-    CompanyResponsible         Company[]   @relation("CompanyResponsible")
     StockResponsible           Stock[]     @relation("StockResponsible")
     OutputResponsible          Output[]    @relation("OutputResponsible")
     OutputApplicant            Output[]    @relation("OutputApplicant")
@@ -108,6 +109,7 @@ model UserRole {
     RequestResponsible         Request[]   @relation("RequestResponsible")
     RequestDeliveryResponsible Request[]   @relation("StatusResponsible")
     Inventory                  Inventory[]
+    Operation                  Operation[]
 }
 
 model Role {
@@ -150,6 +152,7 @@ model Supplier {
     contacts          Contact[]
     ProductSupplier   ProductSupplier[]
     ProductOutput     ProductOutput[]
+    CompanySupplier   CompanySupplier[]
     Invoice           Invoice[]
 }
 
@@ -159,9 +162,16 @@ model Contact {
     email      String
     phone      String
     supplierId String
-    // companyId  String
 
-    // company  Company  @relation(fields: [companyId], references: [id])
+    supplier Supplier @relation(fields: [supplierId], references: [id])
+}
+
+model CompanySupplier {
+    id         String @id @default(cuid())
+    companyId  String
+    supplierId String
+
+    company  Company  @relation(fields: [companyId], references: [id])
     supplier Supplier @relation(fields: [supplierId], references: [id])
 }
 
@@ -430,11 +440,11 @@ model RequestProduct {
 }
 
 model Operation {
-    id          String   @id @default(cuid())
-    date        DateTime
-    description String
-
-    userRoleId String?
+    id            String   @id @default(cuid())
+    date          DateTime
+    description   String
+    responsibleId String
+    responsible   UserRole @relation(fields: [responsibleId], references: [id])
 }
 
 model Bank {

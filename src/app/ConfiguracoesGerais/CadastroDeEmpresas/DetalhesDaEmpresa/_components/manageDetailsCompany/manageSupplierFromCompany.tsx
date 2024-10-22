@@ -1,3 +1,4 @@
+"use client";
 import { Trash2 } from "lucide-react";
 import { TableComponent } from "~/components/table/index";
 import {
@@ -6,21 +7,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { suppliers } from "../../../../CadastroDeFornecedores/_components/supplierData";
-import { type Company } from "../../../_components/companiesData";
+import { api } from "~/trpc/react";
 
-type ManageSuppliersTableFromCompanyProps = {
-  company: Company;
-};
-
-export const ManageSuppliersTableFromComapany = ({
-  company,
-}: ManageSuppliersTableFromCompanyProps) => {
-  const filteredSuppliers = suppliers.filter((supplier) =>
-    company.suppliers.some(
-      (companySupplier) => companySupplier.name === supplier.name,
-    ),
-  );
+export const ManageSuppliersTableFromComapany = (props: { id: string }) => {
+  const suppliers = api.company.getCompanySuppliers.useQuery({ id: props.id });
 
   return (
     <TableComponent>
@@ -36,7 +26,7 @@ export const ManageSuppliersTableFromComapany = ({
           <TableComponent.ValueTitle>Telefone</TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {filteredSuppliers.map((supplier, index) => (
+        {suppliers.data?.map((supplier, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_1fr_2fr_1fr_30px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -47,7 +37,7 @@ export const ManageSuppliersTableFromComapany = ({
             <TableComponent.Value>{supplier.name}</TableComponent.Value>
             <TableComponent.Value>
               {supplier.address} - {supplier.neighborhood} - {supplier.city} (
-              {supplier.state})
+              {supplier.federativeUnit})
             </TableComponent.Value>
             <TableComponent.Value>{supplier.phone}</TableComponent.Value>
 
