@@ -195,7 +195,8 @@ model Product {
     sectorOfUseId   String?
     shelfId         String?
     parentProductId String?
-
+    stockId        String
+    
     usersWithPermission ProductPermission[]
 
     parentProduct Product?         @relation("ProductToParent", fields: [parentProductId], references: [id])

@@ -156,104 +156,104 @@ async function createUserWithRole({
 }
 
 async function main() {
-  // const createdCategories = categories.map(async (category) => {
-  //   const createdCategory = await createCategory({ name: category.name });
-  //   return createdCategory;
-  // });
-  // await Promise.all(createdCategories);
-  // const createdReasons = adjustementReasons.map(async (reason) => {
-  //   const createdReason = await createAdjustmentReason({ name: reason.name });
-  //   return createdReason;
-  // });
-  // await Promise.all(createdReasons);
-  // const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
-  //   const createdSector = await createSectorOfUse({ name: sector.name });
-  //   return createdSector;
-  // });
-  // await Promise.all(createdSectorOfUse);
-  // const createdControlType = controlTypes.map(async (controlType) => {
-  //   const createdControlType = await createControlType({
-  //     name: controlType.name,
-  //   });
-  //   return createdControlType;
-  // });
-  // await Promise.all(createdControlType);
-  // const createdUnits = units.map(async (unit) => {
-  //   const createdUnit = await createUnit({
-  //     name: unit.name,
-  //     abbreviation: unit.abbreviation,
-  //     unitsPerPack: unit.unitsPerPack,
-  //   });
-  //   return createdUnit;
-  // });
-  // await Promise.all(createdUnits);
+  const createdCategories = categories.map(async (category) => {
+    const createdCategory = await createCategory({ name: category.name });
+    return createdCategory;
+  });
+  await Promise.all(createdCategories);
+  const createdReasons = adjustementReasons.map(async (reason) => {
+    const createdReason = await createAdjustmentReason({ name: reason.name });
+    return createdReason;
+  });
+  await Promise.all(createdReasons);
+  const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
+    const createdSector = await createSectorOfUse({ name: sector.name });
+    return createdSector;
+  });
+  await Promise.all(createdSectorOfUse);
+  const createdControlType = controlTypes.map(async (controlType) => {
+    const createdControlType = await createControlType({
+      name: controlType.name,
+    });
+    return createdControlType;
+  });
+  await Promise.all(createdControlType);
+  const createdUnits = units.map(async (unit) => {
+    const createdUnit = await createUnit({
+      name: unit.name,
+      abbreviation: unit.abbreviation,
+      unitsPerPack: unit.unitsPerPack,
+    });
+    return createdUnit;
+  });
+  await Promise.all(createdUnits);
 
-  // const createdBanks = banks.map(async (bank) => {
-  //   const createdBank = await createBank({
-  //     name: bank.name,
-  //   });
-  //   return createdBank;
-  // });
-  // await Promise.all(createdBanks);
+  const createdBanks = banks.map(async (bank) => {
+    const createdBank = await createBank({
+      name: bank.name,
+    });
+    return createdBank;
+  });
+  await Promise.all(createdBanks);
 
-  // const createdProjects = projects.map(async (project) => {
-  //   const createdProject = await createProject({
-  //     name: project.name,
-  //   });
-  //   return createdProject;
-  // });
-  // await Promise.all(createdProjects);
+  const createdProjects = projects.map(async (project) => {
+    const createdProject = await createProject({
+      name: project.name,
+    });
+    return createdProject;
+  });
+  await Promise.all(createdProjects);
 
-  // const createdGroups = groups.map(async (group) => {
-  //   const createdGroup = await createGroup({
-  //     name: group.name,
-  //   });
-  //   return createdGroup;
-  // });
-  // await Promise.all(createdGroups);
+  const createdGroups = groups.map(async (group) => {
+    const createdGroup = await createGroup({
+      name: group.name,
+    });
+    return createdGroup;
+  });
+  await Promise.all(createdGroups);
 
-  // const createdDocumentTypes = documentTypes.map(async (type) => {
-  //   const createdDocumentType = await createDocumentType({
-  //     name: type.name,
-  //   });
-  //   return createdDocumentType;
-  // });
-  // await Promise.all(createdDocumentTypes);
+  const createdDocumentTypes = documentTypes.map(async (type) => {
+    const createdDocumentType = await createDocumentType({
+      name: type.name,
+    });
+    return createdDocumentType;
+  });
+  await Promise.all(createdDocumentTypes);
 
-  // for (const plan of account_plans) {
-  //   // 1. Cria InvoiceAccountPlan
-  //   const createdPlan = await db.invoiceAccountPlan.create({
-  //     data: {
-  //       name: plan.name,
-  //       abbreviation: plan.abbreviation,
-  //     },
-  //   });
+  for (const plan of account_plans) {
+    // 1. Cria InvoiceAccountPlan
+    const createdPlan = await db.invoiceAccountPlan.create({
+      data: {
+        name: plan.name,
+        abbreviation: plan.abbreviation,
+      },
+    });
 
-  //   // 2. Para cada conta no plano, cria InvoiceAccount
-  //   for (const account of plan.accounts) {
-  //     await db.invoiceAccount.create({
-  //       data: {
-  //         name: account.name,
-  //         accountPlanId: createdPlan.id, // Relaciona com o plano recém-criado
-  //       },
-  //     });
-  //   }
-  // }
+    // 2. Para cada conta no plano, cria InvoiceAccount
+    for (const account of plan.accounts) {
+      await db.invoiceAccount.create({
+        data: {
+          name: account.name,
+          accountPlanId: createdPlan.id, // Relaciona com o plano recém-criado
+        },
+      });
+    }
+  }
 
-  // const createdModules = modules.map(async (module) => {
-  //   const createdModule = await createModule(module);
-  //   return createdModule;
-  // });
-  // await Promise.all(createdModules);
-  // const createdRoles = roles.map(async (role) => {
-  //   const createdRole = await createRole({ name: role.name });
-  //   const createdRoleModules = await createRoleModules({
-  //     roleId: createdRole.id,
-  //     modules: role.modules,
-  //   });
-  //   return createdRoleModules;
-  // });
-  // await Promise.all(createdRoles);
+  const createdModules = modules.map(async (module) => {
+    const createdModule = await createModule(module);
+    return createdModule;
+  });
+  await Promise.all(createdModules);
+  const createdRoles = roles.map(async (role) => {
+    const createdRole = await createRole({ name: role.name });
+    const createdRoleModules = await createRoleModules({
+      roleId: createdRole.id,
+      modules: role.modules,
+    });
+    return createdRoleModules;
+  });
+  await Promise.all(createdRoles);
 
   const companyStruct = await db.company.create({
     data: {
