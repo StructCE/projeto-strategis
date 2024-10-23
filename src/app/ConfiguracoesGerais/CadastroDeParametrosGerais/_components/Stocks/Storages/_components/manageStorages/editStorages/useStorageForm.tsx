@@ -2,6 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type Cabinet } from "~/server/interfaces/cabinet/cabinet.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -17,15 +18,24 @@ export const useStorageForm = (cabinet: Cabinet) => {
       onSuccess: (updatedCabinet) => {
         console.log("Cabinet updated successfully:", updatedCabinet);
         if (isDeleted === false) {
-          alert("Armário/zona atualizada com sucesso.");
+          // alert("Armário/zona atualizada com sucesso.");
+          toast.success(
+            "Armário/zona atualizado com sucesso. Atualizando a página...",
+            {
+              position: "bottom-right",
+            },
+          );
         }
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 1500);
       },
       onError: (error) => {
         console.error("Error updating cabinet:", error);
-        alert("Erro ao atualizar armário/zona.");
+        // alert("Erro ao atualizar armário/zona.");
+        toast.error("Erro ao atualizar armário/zona.", {
+          position: "bottom-right",
+        });
       },
     },
   );

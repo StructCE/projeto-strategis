@@ -1,9 +1,7 @@
 import { type Metadata } from "next";
-import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
+import { ToastContainer } from "react-toastify";
 import LayoutSelector from "~/components/layout/layoutSelector";
-import { AuthProvider } from "~/lib/authProvider";
-import { RolePermissionsWrapper } from "~/lib/rolePermissionsWrapper";
 import { getServerAuthSession } from "~/server/auth";
 import "~/styles/globals.css";
 import { TRPCReactProvider } from "~/trpc/react";
@@ -31,6 +29,8 @@ export default async function RootLayout({
       >
         <TRPCReactProvider>
           <LayoutSelector session={session}>{children}</LayoutSelector>
+
+          <ToastContainer />
         </TRPCReactProvider>
       </body>
     </html>

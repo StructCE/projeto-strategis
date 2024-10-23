@@ -80,7 +80,7 @@ export const ProductRegister = () => {
                     <FormControl>
                       <Input
                         className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Código NCM do produto"
+                        placeholder="Código NCM do produto (XXXXXXXX)"
                         {...field}
                       />
                     </FormControl>
@@ -100,7 +100,7 @@ export const ProductRegister = () => {
                     <FormControl>
                       <Input
                         className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                        placeholder="Código CFOP do produto"
+                        placeholder="Código CFOP do produto (XXXX)"
                         {...field}
                       />
                     </FormControl>

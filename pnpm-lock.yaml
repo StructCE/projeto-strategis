@@ -128,6 +128,9 @@ dependencies:
   react-phone-number-input:
     specifier: ^3.4.5
     version: 3.4.5(react-dom@18.3.1)(react@18.3.1)
+  react-toastify:
+    specifier: ^10.0.6
+    version: 10.0.6(react-dom@18.3.1)(react@18.3.1)
   server-only:
     specifier: ^0.0.1
     version: 0.0.1
@@ -5116,6 +5119,17 @@ packages:
       invariant: 2.2.4
       react: 18.3.1
       tslib: 2.6.3
+    dev: false
+
+  /react-toastify@10.0.6(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-yYjp+omCDf9lhZcrZHKbSq7YMuK0zcYkDFTzfRFgTXkTFHZ1ToxwAonzA4JI5CxA91JpjFLmwEsZEgfYfOqI1A==}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
+    dependencies:
+      clsx: 2.1.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
   /react@18.3.1:
