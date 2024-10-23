@@ -2,7 +2,7 @@ export type Supplier = {
   id: string;
   name: string;
   cnpj: string;
-  email: string;
+  email: string | null;
   phone: string | null;
   stateRegistration: string;
   address: string;

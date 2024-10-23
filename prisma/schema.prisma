@@ -54,6 +54,7 @@ model User {
     sessions           Session[]
     UserRole           UserRole[]
     productPermissions ProductPermission[]
+    Company            Company[]           @relation("CompanyResponsible")
 
     @@map("users")
 }
@@ -69,13 +70,13 @@ model VerificationToken {
 model Company {
     id                 String  @id @default(cuid())
     name               String
-    email              String
-    cnpj               String
-    type               String
+    email              String?
+    cnpj               String  @unique
+    type               String?
     headquarters       String?
     phone              String
     stateRegistration  String
-    taxRegime          String
+    taxRegime          String?
     address            String
     city               String
     neighborhood       String
@@ -83,10 +84,12 @@ model Company {
     cep                String
     legalResponsibleId String?
 
-    legaResponsible UserRole?  @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
-    UserRole        UserRole[] @relation("CompanyEmployees")
-    Stock           Stock[]
+    legalResponsible User?             @relation("CompanyResponsible", fields: [legalResponsibleId], references: [id])
+    UserRole         UserRole[]        @relation("CompanyEmployees")
+    Stock            Stock[]
+    Invoice          Invoice[]
     // Contact         Contact[]
+    CompanySupplier  CompanySupplier[]
 }
 
 model UserRole {
@@ -98,7 +101,6 @@ model UserRole {
     user                       User        @relation(fields: [userId], references: [id])
     company                    Company     @relation("CompanyEmployees", fields: [companyId], references: [id])
     role                       Role        @relation(fields: [roleId], references: [id])
-    CompanyResponsible         Company[]   @relation("CompanyResponsible")
     StockResponsible           Stock[]     @relation("StockResponsible")
     OutputResponsible          Output[]    @relation("OutputResponsible")
     OutputApplicant            Output[]    @relation("OutputApplicant")
@@ -107,6 +109,7 @@ model UserRole {
     RequestResponsible         Request[]   @relation("RequestResponsible")
     RequestDeliveryResponsible Request[]   @relation("StatusResponsible")
     Inventory                  Inventory[]
+    Operation                  Operation[]
 }
 
 model Role {
@@ -137,8 +140,8 @@ model Module {
 model Supplier {
     id                String            @id @default(cuid())
     name              String
-    cnpj              String
-    email             String
+    cnpj              String            @unique
+    email             String?
     phone             String?
     stateRegistration String
     address           String
@@ -149,6 +152,8 @@ model Supplier {
     contacts          Contact[]
     ProductSupplier   ProductSupplier[]
     ProductOutput     ProductOutput[]
+    CompanySupplier   CompanySupplier[]
+    Invoice           Invoice[]
 }
 
 model Contact {
@@ -157,41 +162,49 @@ model Contact {
     email      String
     phone      String
     supplierId String
-    // companyId  String
 
-    // company  Company  @relation(fields: [companyId], references: [id])
+    supplier Supplier @relation(fields: [supplierId], references: [id])
+}
+
+model CompanySupplier {
+    id         String @id @default(cuid())
+    companyId  String
+    supplierId String
+
+    company  Company  @relation(fields: [companyId], references: [id])
     supplier Supplier @relation(fields: [supplierId], references: [id])
 }
 
 model Product {
-    id            String @id @default(cuid())
+    id            String  @id @default(cuid())
     code          String
     name          String
-    status        String
-    buyQuantity   Float
-    buyDay        String
-    currentStock  Float
-    minimunStock  Int
-    maximumStock  Int
-    lastInventory Float
+    ncm           Int
+    cfop          Int
+    status        String?
+    buyQuantity   Float?
+    buyDay        String?
+    currentStock  Float?
+    minimunStock  Int?
+    maximumStock  Int?
+    lastInventory Float?
 
     unitId          String
-    controlTypeId   String
-    categoryId      String
-    sectorOfUseId   String
-    shelfId         String
+    controlTypeId   String?
+    categoryId      String?
+    sectorOfUseId   String?
+    shelfId         String?
     parentProductId String?
     stockId        String
     
     usersWithPermission ProductPermission[]
 
-    parentProduct Product?        @relation("ProductToParent", fields: [parentProductId], references: [id])
-    unit          Unit            @relation(fields: [unitId], references: [id])
-    controlType   ControlType     @relation(fields: [controlTypeId], references: [id])
-    category      ProductCategory @relation(fields: [categoryId], references: [id])
-    sectorOfUse   UseSector       @relation(fields: [sectorOfUseId], references: [id])
-    shelf         Shelf           @relation(fields: [shelfId], references: [id], onDelete: Cascade)
-    // stock         Stock           @relation(fields: [stockId],references: [id])
+    parentProduct Product?         @relation("ProductToParent", fields: [parentProductId], references: [id])
+    unit          Unit             @relation(fields: [unitId], references: [id])
+    controlType   ControlType?     @relation(fields: [controlTypeId], references: [id])
+    category      ProductCategory? @relation(fields: [categoryId], references: [id])
+    sectorOfUse   UseSector?       @relation(fields: [sectorOfUseId], references: [id])
+    shelf         Shelf?           @relation(fields: [shelfId], references: [id], onDelete: Cascade)
 
     childProducts    Product[]          @relation("ProductToParent")
     ProductSupplier  ProductSupplier[]
@@ -243,6 +256,7 @@ model Unit {
     unitsPerPack Float
 
     Product Product[]
+    // InvoiceProduct InvoiceProduct[]
     // RequestProduct RequestProduct[]
 }
 
@@ -391,7 +405,7 @@ model Order {
 model OrderProduct {
     id                String @id @default(cuid())
     orderId           String
-    purchaseQuantity  Int
+    purchaseQuantity  Float
     productSupplierId String
 
     order   Order           @relation(fields: [orderId], references: [id])
@@ -427,28 +441,32 @@ model RequestProduct {
 }
 
 model Operation {
-    id          String   @id @default(cuid())
-    date        DateTime
-    description String
-
-    userRoleId String?
+    id            String   @id @default(cuid())
+    date          DateTime
+    description   String
+    responsibleId String
+    responsible   UserRole @relation(fields: [responsibleId], references: [id])
 }
 
 model Bank {
     id      String    @id @default(cuid())
     name    String
-    Payment Payment[]
-}
-
-model BankAccount {
-    id   String @id @default(cuid())
-    name String
-}
-
-model BankAccountPlan {
-    id      String    @id @default(cuid())
-    name    String
     Invoice Invoice[]
+}
+
+model InvoiceAccount {
+    id            String              @id @default(cuid())
+    name          String
+    accountPlanId String?
+    accountPlan   InvoiceAccountPlan? @relation(fields: [accountPlanId], references: [id])
+    Invoice       Invoice[]
+}
+
+model InvoiceAccountPlan {
+    id           String           @id @default(cuid())
+    name         String
+    abbreviation String
+    accounts     InvoiceAccount[]
 }
 
 model DocumentType {
@@ -469,48 +487,49 @@ model Group {
     Invoice Invoice[]
 }
 
-model Payment {
-    id          String   @id @default(cuid())
-    invoiceId   String
-    bankId      String
-    payedValue  String
-    paymentDate DateTime
-    payedStatus String
-
-    invoice Invoice @relation(fields: [invoiceId], references: [id])
-    bank    Bank    @relation(fields: [bankId], references: [id])
-}
-
 model Invoice {
-    id             String   @id @default(cuid())
-    documentNumber String
-    documentDate   DateTime
-    expenseType    String
-    installment    String
-    deadlineDate   DateTime
-    status         String
-    groupId        String?
-    documentTypeId String?
-    accountPlanId  String?
-    projectId      String?
+    id              String   @id @default(cuid())
+    documentNumber  String // Número da nota
+    documentDate    DateTime // Data de emissão
+    companyId       String // Empresa
+    expenseType     String? // "Despesa Fixa" | "Despesa Variável" | "Receita" | undefined;
+    recurrence      String? // "Recorrente" | "Avulsa" | "Parcelas" | undefined;
+    installment     String // Parcela (Pode ser 'única' ou o numero da parcela incluindo a data ou não)
+    deadlineDate    DateTime // Data de vencimento
+    confirmedStatus String // "Pendente" | "Confirmada" | "Cancelada"
+    accountId       String? // Conta relacionada a um accoutn plan com nome e sigla
+    projectId       String? // Projeto
+    groupId         String? // Grupo
+    documentTypeId  String? // Tipo de documento
+    supplierId      String
+    invoiceValue    Float
 
+    bankId      String? // Banco do pagamento
+    payedValue  String? // Valor pago
+    paymentDate DateTime? // Data do pagamento
+    payedStatus String? // "Pago" | "Em Aberto" | "Cancelado"
+
+    supplier       Supplier         @relation(fields: [supplierId], references: [id])
+    company        Company          @relation(fields: [companyId], references: [id])
     group          Group?           @relation(fields: [groupId], references: [id])
     documentType   DocumentType?    @relation(fields: [documentTypeId], references: [id])
-    accountPlan    BankAccountPlan? @relation(fields: [accountPlanId], references: [id])
+    account        InvoiceAccount?  @relation(fields: [accountId], references: [id])
     project        Project?         @relation(fields: [projectId], references: [id])
-    Payment        Payment[]
     InvoiceProduct InvoiceProduct[]
+    bank           Bank?            @relation(fields: [bankId], references: [id])
 }
 
 model InvoiceProduct {
     id                String @id @default(cuid())
-    ncm               Int
-    cfop              Int
+    // ncm               Int
+    // cfop              Int
+    // unitId            String // Unidade de compra
+    purchaseQuantity  Float // Quantidade comprada
+    unitValue         Float // Valor por unidade de compra
     invoiceId         String
     productSupplierId String
-    purchaseQuantity  Int
-    unitValue         Float
 
+    // unit            Unit            @relation(fields: [unitId], references: [id])
     productSupplier ProductSupplier @relation(fields: [productSupplierId], references: [id])
     invoice         Invoice         @relation(fields: [invoiceId], references: [id])
 }

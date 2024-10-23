@@ -1,54 +1,63 @@
 import { z } from "zod";
 
-const getAllProps = z.object({
-  // filters: z.object({
-  //   cnpj: z.string().optional(),
-  //   name: z.string().optional(),
-  //   state: z.string().optional(),
-  //   taxRegime: z.string().optional(),
-  // }),
-});
+const getAllProps = z
+  .object({
+    filters: z.object({
+      cnpj: z.string().optional(),
+      name: z.string().optional(),
+      state: z.string().optional(),
+      taxRegime: z.string().optional(),
+    }),
+  })
+  .optional();
 
 type GetAllProps = z.infer<typeof getAllProps>;
 
 const countRegisteredProducts = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  cnpj: z.string().optional(),
 });
 
 type CountRegisteredProducts = z.infer<typeof countRegisteredProducts>;
 
 const countRegisteredSuppliers = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  cnpj: z.string().optional(),
 });
 
 type CountRegisteredSuppliers = z.infer<typeof countRegisteredProducts>;
 
 const countLowStockProducts = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  cnpj: z.string().optional(),
 });
 
 type CountLowStockProducts = z.infer<typeof countLowStockProducts>;
 
 const getOneProps = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  cnpj: z.string().optional(),
 });
 
 type GetOneProps = z.infer<typeof getOneProps>;
 
 const getCompanyUsersProps = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  cnpj: z.string().optional(),
 });
 
 type GetCompanyUsersProps = z.infer<typeof getCompanyUsersProps>;
 
 const getCompanySuppliersProps = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  cnpj: z.string().optional(),
 });
 
 type GetCompanySuppliersProps = z.infer<typeof getCompanySuppliersProps>;
 
 const getCompanyStocksProps = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  cnpj: z.string().optional(),
 });
 
 type GetCompanyStocksProps = z.infer<typeof getCompanyStocksProps>;
@@ -68,12 +77,14 @@ const registerProps = z.object({
   federativeUnit: z.string(),
   cep: z.string(),
   legalResponsibleId: z.string().optional(),
+  suppliers: z.array(z.string()),
 });
 
 type RegisterProps = z.infer<typeof registerProps>;
 
 const deleteProps = z.object({
-  id: z.string(),
+  id: z.string().optional(),
+  cnpj: z.string().optional(),
 });
 
 type DeleteProps = z.infer<typeof deleteProps>;
@@ -85,7 +96,7 @@ const editProps = z.object({
     email: z.string(),
     cnpj: z.string().optional(),
     type: z.string().optional(),
-    headquarters: z.string().optional(),
+    headquarters: z.string().nullable().optional(),
     phone: z.string().optional(),
     stateRegistration: z.string().optional(),
     taxRegime: z.string().optional(),
@@ -94,7 +105,8 @@ const editProps = z.object({
     neighborhood: z.string().optional(),
     federativeUnit: z.string().optional(),
     cep: z.string().optional(),
-    legalResponsibleId: z.string().optional(),
+    legalResponsibleId: z.string().optional().nullable(),
+    suppliers: z.array(z.string()),
   }),
 });
 

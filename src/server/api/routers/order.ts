@@ -22,6 +22,8 @@ export const orderRouter = createTRPCRouter({
             id: orderProduct.product.product.id,
             code: orderProduct.product.product.code,
             name: orderProduct.product.product.name,
+            ncm: orderProduct.product.product.ncm,
+            cfop: orderProduct.product.product.cfop,
             purchaseQuantity: orderProduct.purchaseQuantity,
             currentStock: orderProduct.product.product.currentStock,
             minimunStock: orderProduct.product.product.minimunStock,

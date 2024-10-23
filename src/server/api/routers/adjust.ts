@@ -28,6 +28,8 @@ export const adjustRouter = createTRPCRouter({
             },
             name: adjustProduct.product.name,
             code: adjustProduct.product.code,
+            ncm: adjustProduct.product.ncm,
+            cfop: adjustProduct.product.cfop,
             unit: adjustProduct.product.unit,
             shelf: adjustProduct.product.shelf,
           })),

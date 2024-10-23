@@ -22,6 +22,8 @@ export const inventoryRouter = createTRPCRouter({
               id: inventoryProduct.id,
               code: inventoryProduct.product.code,
               name: inventoryProduct.product.name,
+              ncm: inventoryProduct.product.ncm,
+              cfop: inventoryProduct.product.cfop,
               productId: inventoryProduct.product.id,
               unit: inventoryProduct.product.unit,
               inventoryQuantity: inventoryProduct.inventoryQuantity,

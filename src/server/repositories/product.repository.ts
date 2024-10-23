@@ -104,6 +104,87 @@ async function getAll() {
   return products;
 }
 
+async function getProductsBySupplierId(
+  props: ProductRepositoryInterfaces["GetProductsBySupplierIdProps"],
+) {
+  const products = await db.product.findMany({
+    where: {
+      ProductSupplier: {
+        some: {
+          supplierId: props.supplierId, // Filtro pelo id do fornecedor
+        },
+      },
+    },
+    include: {
+      unit: true,
+      controlType: true,
+      category: true,
+      sectorOfUse: true,
+      shelf: {
+        include: {
+          cabinet: {
+            include: {
+              StockCabinet: {
+                include: {
+                  stock: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      usersWithPermission: {
+        include: {
+          user: true, // Inclui os dados do usuário relacionados à permissão
+        },
+      },
+      ProductSupplier: {
+        include: {
+          supplier: true, // Inclui os detalhes do fornecedor
+        },
+      },
+    },
+  });
+
+  return products;
+}
+
+async function getAllProductSuppliers() {
+  const productsSuppliers = await db.productSupplier.findMany({
+    include: {
+      product: {
+        include: {
+          unit: true,
+          controlType: true,
+          category: true,
+          sectorOfUse: true,
+          shelf: {
+            include: {
+              cabinet: {
+                include: {
+                  StockCabinet: {
+                    include: {
+                      stock: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          usersWithPermission: {
+            include: {
+              user: true, // Inclui os dados do usuário relacionados à permissão
+            },
+          },
+        },
+      },
+      supplier: true,
+    },
+  });
+
+  return productsSuppliers;
+}
+
 async function create(props: ProductRepositoryInterfaces["CreateProps"]) {
   const createdProduct = await db.product.create({
     data: {
@@ -179,6 +260,8 @@ export const ProductRepository = {
   countProducts,
   getAll,
   getAllWhere,
+  getProductsBySupplierId,
+  getAllProductSuppliers,
   create,
   edit,
   updateCurrentStock,

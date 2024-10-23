@@ -1,7 +1,4 @@
 "use client";
-// import { Upload } from "lucide-react";
-import { useState } from "react";
-// import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -19,17 +16,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import {
-  states,
-  suppliers,
-} from "../../../CadastroDeFornecedores/_components/supplierData";
-import { companies } from "../companiesData";
+import { states } from "../../../CadastroDeFornecedores/_components/supplierData";
 import { useCompanyForm } from "./useCompanyForm";
+import { api } from "~/trpc/react";
 
 export const CompanyRegister = () => {
   const companyForm = useCompanyForm();
-
-  const [companyType, setCompanyType] = useState<string>("");
+  const suppliers = api.supplier.getAll.useQuery();
+  const users = api.user.getAll.useQuery();
+  const companies = api.company.getAllCompanies.useQuery();
 
   return (
     <Form {...companyForm.form}>
@@ -86,17 +81,21 @@ export const CompanyRegister = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <MultiSelect
-                        options={suppliers.flatMap((supplier) => ({
-                          label: supplier.name,
-                          value: supplier.name,
-                        }))}
-                        onValueChange={field.onChange}
-                        defaultValue={field.value ?? []}
-                        placeholder="Selecione um ou mais fornecedores"
-                        variant="inverted"
-                        maxCount={3}
-                      />
+                      {
+                        <MultiSelect
+                          options={
+                            suppliers.data?.map((supplier) => ({
+                              label: supplier.name,
+                              value: supplier.id,
+                            })) ?? []
+                          }
+                          onValueChange={field.onChange}
+                          defaultValue={field.value ?? []}
+                          placeholder="Selecione um ou mais fornecedores"
+                          variant="inverted"
+                          maxCount={3}
+                        />
+                      }
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -150,7 +149,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="state_registration"
+                name="stateRegistration"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -170,7 +169,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Representante Legal</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="legal_representative"
+                name="legalResponsibleId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -183,8 +182,12 @@ export const CompanyRegister = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {users.map((user, index) => (
-                          <SelectItem value={user.name} key={index}>
+                        {users.data?.map((user, index) => (
+                          <SelectItem
+                            about={user.name}
+                            value={user.id}
+                            key={index}
+                          >
                             {user.name}
                           </SelectItem>
                         ))}
@@ -202,12 +205,12 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Tipo de Empresa</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="company_type"
+                name="type"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={(value) => {
-                        setCompanyType(value);
+                        // setCompanyType(value);
                         field.onChange(value);
                       }}
                       defaultValue={field.value}
@@ -232,13 +235,13 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Matriz da Empresa</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="company_headquarters.name"
+                name="headquarters"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      disabled={companyType !== "Filial"}
+                      // disabled={companyType !== "Filial"}
                     >
                       <FormControl>
                         <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
@@ -246,12 +249,11 @@ export const CompanyRegister = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {companyType === "Filial" &&
-                          companies.map((company, index) => (
-                            <SelectItem value={company.name} key={index}>
-                              {company.name}
-                            </SelectItem>
-                          ))}
+                        {companies.data?.map((company, index) => (
+                          <SelectItem value={company.name} key={index}>
+                            {company.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -264,7 +266,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Regime Tributário</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="tax_regime"
+                name="taxRegime"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -359,7 +361,7 @@ export const CompanyRegister = () => {
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
                 control={companyForm.form.control}
-                name="state"
+                name="federativeUnit"
                 render={({ field }) => (
                   <FormItem>
                     <Select

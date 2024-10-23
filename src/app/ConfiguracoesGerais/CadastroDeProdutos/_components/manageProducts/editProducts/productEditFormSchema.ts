@@ -29,6 +29,10 @@ export const editProductFormSchema = z.object({
     })
     .min(1, { message: "Digite o nome do produto." }),
 
+  ncm: z.string({ required_error: "Digite o código NCM do produto" }),
+
+  cfop: z.string({ required_error: "Digite o código CFOP do produto" }),
+
   suppliersId: z.array(z.string()).optional(),
   // .min(1, { message: "Selecione um ou mais fornecedores." }),
 

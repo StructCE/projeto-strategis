@@ -41,7 +41,7 @@ export default function ManageProductsTable() {
     isLoading,
   } = api.product.getAll.useQuery();
 
-  console.log(products);
+  // console.log(products);
 
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
   const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
@@ -69,14 +69,14 @@ export default function ManageProductsTable() {
       );
     const matchesStock =
       selectStock === "" ||
-      product.shelf.cabinet.StockCabinet.some((stockCabinet) =>
+      product.shelf?.cabinet.StockCabinet.some((stockCabinet) =>
         stockCabinet.stock.name
           .toLowerCase()
           .includes(selectStock.toLowerCase()),
       );
     const matchesAddress =
       selectAddress === "" ||
-      `${product.shelf.cabinet.name} - ${product.shelf.name}`
+      `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
         .toLowerCase()
         .includes(selectAddress.toLowerCase());
     const matchesControlType =
@@ -104,6 +104,30 @@ export default function ManageProductsTable() {
       matchesBuyDay
     );
   });
+
+  function alphanumericSort(a: string, b: string) {
+    const regex = /(\d+)|(\D+)/g;
+    const aParts = a.match(regex) ?? [];
+    const bParts = b.match(regex) ?? [];
+
+    for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+      const aPart = aParts[i] ?? "";
+      const bPart = bParts[i] ?? "";
+
+      // Se a parte for um número, faça comparação numérica
+      if (/\d/.test(aPart) && /\d/.test(bPart)) {
+        const diff = parseInt(aPart, 10) - parseInt(bPart, 10);
+        if (diff !== 0) return diff;
+      }
+
+      // Se não for número, faça comparação lexicográfica
+      if (aPart !== bPart) {
+        return aPart.localeCompare(bPart);
+      }
+    }
+
+    return 0;
+  }
 
   return (
     <TableComponent>
@@ -369,7 +393,7 @@ export default function ManageProductsTable() {
         {products?.length > 0 && !isLoading && !error ? (
           filteredProducts?.length > 0 ? (
             filteredProducts
-              ?.sort((a, b) => a.code.localeCompare(b.code))
+              ?.sort((a, b) => alphanumericSort(a.code, b.code))
               .map((product, index) => (
                 <TableComponent.Line
                   className={`grid-cols-[70px_1fr_100px_100px_100px_100px_130px] gap-8 ${
@@ -391,19 +415,19 @@ export default function ManageProductsTable() {
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.currentStock}
+                      defaultValue={product.currentStock ?? ""}
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.minimunStock}
+                      defaultValue={product.minimunStock ?? ""}
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.maximumStock}
+                      defaultValue={product.maximumStock ?? ""}
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>

@@ -10,7 +10,9 @@ export type AdjustProduct = {
   id: string;
   code: string;
   name: string;
-  currentStock: number;
+  ncm: number;
+  cfop: number;
+  currentStock: number | null;
   oldStock: number;
   adjustedStock: number;
   reason: { id: string; name: string };
@@ -35,7 +37,7 @@ export type AdjustProduct = {
         };
       }[];
     };
-  };
+  } | null;
 };
 
 export type SerializedAdjust = {

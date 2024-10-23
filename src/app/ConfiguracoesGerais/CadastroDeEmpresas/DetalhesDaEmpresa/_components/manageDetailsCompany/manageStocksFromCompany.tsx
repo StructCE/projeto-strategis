@@ -1,5 +1,5 @@
+"use client";
 import { Trash2 } from "lucide-react";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
 import { TableComponent } from "~/components/table";
 import {
   Tooltip,
@@ -7,18 +7,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { type Company } from "../../../_components/companiesData";
+import { api } from "~/trpc/react";
 
-type ManageStocksTableFromCompanyProps = {
-  company: Company;
-};
-
-export const ManageStocksTableFromComapany = ({
-  company,
-}: ManageStocksTableFromCompanyProps) => {
-  const filteredStocks = stocks.filter((stock) =>
-    company.stocks.some((companyStock) => companyStock.name === stock.name),
-  );
+export const ManageStocksTableFromComapany = (props: { id: string }) => {
+  const stocks = api.company.getCompanyStocks.useQuery({ id: props.id });
 
   return (
     <TableComponent>
@@ -42,7 +34,7 @@ export const ManageStocksTableFromComapany = ({
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {filteredStocks.map((stock, index) => (
+        {stocks.data?.map((stock, index) => (
           <TableComponent.Line
             className={`grid-cols-[1.7fr_1fr_1fr_2fr_30px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -54,13 +46,13 @@ export const ManageStocksTableFromComapany = ({
               {`${stock.name
                 .split(" ")
                 .map((word) => word.charAt(0).toUpperCase())
-                .join("")}-${stock.company.name.split(" ")[0]}`}
+                .join("")}-${stock.companyName.split(" ")[0]}`}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {stock.stock_manager.name}
+              {stock.responsible.name}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {stock.stock_manager.email}
+              {stock.responsible.email}
             </TableComponent.Value>
 
             <TooltipProvider delayDuration={300}>

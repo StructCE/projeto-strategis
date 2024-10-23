@@ -7,9 +7,33 @@ export const companyRouter = createTRPCRouter({
   getOneCompany: protectedProcedure
     .input(companyRepositorySchema.getOneProps)
     .query(
-      async ({ input }): Promise<CompanyRouteInterfaces["Company"] | null> => {
+      async ({
+        input,
+      }): Promise<CompanyRouteInterfaces["EditCompany"] | null> => {
         const company = await CompanyRepository.getOne(input);
-        return company;
+        if (!company) return null;
+        const editCompany = {
+          id: company.id,
+          name: company.name,
+          email: company.email,
+          cnpj: company.cnpj,
+          stateRegistration: company.stateRegistration,
+          type: company.type,
+          phone: company.phone,
+          headquarters: company.headquarters,
+          address: company.address,
+          neighborhood: company.neighborhood,
+          city: company.city,
+          federativeUnit: company.federativeUnit,
+          cep: company.cep,
+          taxRegime: company.taxRegime,
+          suppliers: company?.CompanySupplier.map((companySupplier) => ({
+            id: companySupplier.supplier.id,
+            name: companySupplier.supplier.name,
+          })),
+          legalResponsibleId: company.legalResponsibleId,
+        };
+        return editCompany;
       },
     ),
 
@@ -81,6 +105,7 @@ export const companyRouter = createTRPCRouter({
         const companyUsers = await CompanyRepository.getCompanyUsers(input);
         const serializedCompanyUsers = companyUsers?.UserRole.map(
           (companyUser) => ({
+            id: companyUser.user.id,
             name: companyUser.user.name,
             email: companyUser.user.email,
             role: companyUser.role.name,
@@ -99,6 +124,11 @@ export const companyRouter = createTRPCRouter({
         const serializedCompanyStocks = companyStocks.map((stock) => ({
           id: stock.id,
           name: stock.name,
+          companyName: stock.company.name,
+          responsible: {
+            name: stock.legalResponsible.user.name,
+            email: stock.legalResponsible.user.email,
+          },
         }));
         return serializedCompanyStocks;
       },

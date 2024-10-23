@@ -16,6 +16,28 @@ type Company = {
   legalResponsibleId: string | null;
 };
 
+type EditCompany = {
+  id: string;
+  name: string;
+  cnpj: string;
+  suppliers: {
+    id: string;
+    name: string;
+  }[];
+  email: string;
+  phone: string;
+  stateRegistration: string;
+  legalResponsibleId: string | null;
+  type: string;
+  headquarters: string | null;
+  taxRegime: string;
+  address: string;
+  neighborhood: string;
+  city: string;
+  federativeUnit: string;
+  cep: string;
+};
+
 type ManageCompany = {
   id: string;
   name: string;
@@ -26,6 +48,7 @@ type ManageCompany = {
 };
 
 type CompanySuppliers = {
+  id: string;
   cnpj: string;
   name: string;
   email: string;
@@ -46,6 +69,7 @@ type CompanySuppliers = {
 
 type CompanyUsers =
   | {
+      id: string;
       name: string;
       email: string;
       role: string;
@@ -56,10 +80,16 @@ type CompanyUsers =
 type CompanyStocks = {
   id: string;
   name: string;
+  companyName: string;
+  responsible: {
+    name: string;
+    email: string;
+  };
 };
 
 export type CompanyRouteInterfaces = {
   Company: Company;
+  EditCompany: EditCompany;
   CompanySuppliers: CompanySuppliers;
   CompanyUsers: CompanyUsers;
   CompanyStocks: CompanyStocks;

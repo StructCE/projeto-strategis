@@ -11,7 +11,9 @@ export type InventoryProduct = {
   productId: string;
   code: string;
   name: string;
-  stockQuantity: number;
+  ncm: number;
+  cfop: number;
+  stockQuantity: number | null;
   inventoryQuantity: number;
   unit: {
     id: string;
@@ -34,7 +36,7 @@ export type InventoryProduct = {
         };
       }[];
     };
-  };
+  } | null;
 };
 
 export type SerializedInventory = {

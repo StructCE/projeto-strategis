@@ -12,9 +12,19 @@ const getAllProps = z.object({
 
 type GetAllProps = z.infer<typeof getAllProps>;
 
+const getProductsBySupplierIdProps = z.object({
+  supplierId: z.string(),
+});
+
+type GetProductsBySupplierIdProps = z.infer<
+  typeof getProductsBySupplierIdProps
+>;
+
 const createProps = z.object({
   name: z.string(),
   code: z.string(),
+  ncm: z.number(),
+  cfop: z.number(),
   status: z.string(),
   ProductSupplier: z.array(z.string()).optional(),
   parentProductId: z.string().optional(),
@@ -39,6 +49,8 @@ const editProps = z.object({
   data: z.object({
     name: z.string(),
     code: z.string(),
+    ncm: z.number(),
+    cfop: z.number(),
     status: z.string(),
     ProductSupplier: z.array(z.string()).optional(),
     parentProductId: z.string().optional(),
@@ -78,6 +90,7 @@ type RemoveProps = z.infer<typeof removeProps>;
 
 export const productRepositorySchema = {
   getAllProps,
+  getProductsBySupplierIdProps,
   createProps,
   editProps,
   updateCurrentStockProps,
@@ -86,6 +99,7 @@ export const productRepositorySchema = {
 
 export type ProductRepositoryInterfaces = {
   GetAllProps: GetAllProps;
+  GetProductsBySupplierIdProps: GetProductsBySupplierIdProps;
   CreateProps: CreateProps;
   EditProps: EditProps;
   UpdateCurrentStockProps: UpdateCurrentStockProps;
