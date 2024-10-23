@@ -108,7 +108,7 @@ export default function ExitsHistory() {
             }`}
             key={index}
           >
-            <TableComponent.Value>{`${exit.date.getDate()}/${exit.date.getMonth()}/${exit.date.getFullYear()}`}</TableComponent.Value>
+            <TableComponent.Value>{`${String(exit.date.getDate()).padStart(2, "0")}/${String(exit.date.getMonth()).padStart(2, "0")}/${String(exit.date.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
             <TableComponent.Value>{exit.exit_responsible}</TableComponent.Value>
             <TableComponent.Value>
               {exit.request_responsible}

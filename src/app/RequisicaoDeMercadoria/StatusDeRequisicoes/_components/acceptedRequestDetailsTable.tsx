@@ -51,7 +51,7 @@ export default function AcceptedRequestDetails(props: RequestType) {
       <div className="mt-2 flex flex-col">
         <p className="w-fit">
           <span className="font-semibold">Data da Confirmação:</span>{" "}
-          {`${props.request.statusDate?.getDate()}/${props.request.statusDate?.getMonth()}/${props.request.statusDate?.getFullYear()}`}
+          {`${String(props.request.statusDate?.getDate()).padStart(2, "0")}/${String(props.request.statusDate?.getMonth()).padStart(2, "0")}/${String(props.request.statusDate?.getFullYear()).padStart(2, "0")}`}
         </p>
         <p className="w-fit">
           <span className="font-semibold">Responsável pela Confirmação:</span>{" "}

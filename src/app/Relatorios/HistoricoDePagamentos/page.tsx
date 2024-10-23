@@ -941,9 +941,9 @@ export default function PaymentHistory() {
                 </span>
               </TableComponent.Value>
               <TableComponent.Value className="text-center">
-                {`${payment.date_document.getDate()}/${payment.date_document.getMonth()}/${payment.date_document.getFullYear()}`}
+                {`${String(payment.date_document.getDate()).padStart(2, "0")}/${String(payment.date_document.getMonth()).padStart(2, "0")}/${String(payment.date_document.getFullYear()).padStart(2, "0")}`}
               </TableComponent.Value>
-              <TableComponent.Value className="text-center">{`${payment.date_deadline.getDate()}/${payment.date_deadline.getMonth()}/${payment.date_deadline.getFullYear()}`}</TableComponent.Value>
+              <TableComponent.Value className="text-center">{`${String(payment.date_deadline.getDate()).padStart(2, "0")}/${String(payment.date_deadline.getMonth()).padStart(2, "0")}/${String(payment.date_deadline.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
               <TableComponent.Value>
                 {payment.company.name}
               </TableComponent.Value>

@@ -178,7 +178,7 @@ export default function ManageAdjustmentsTable() {
                             <span className="font-semibold">
                               Data do Ajuste:
                             </span>{" "}
-                            {`${adjustment.date.getDate()}/${adjustment.date.getMonth()}/${adjustment.date.getFullYear()}`}
+                            {`${String(adjustment.date.getDate()).padStart(2, "0")}/${String(adjustment.date.getMonth()).padStart(2, "0")}/${String(adjustment.date.getFullYear()).padStart(2, "0")}`}
                           </p>
                           <p className="w-fit">
                             <span className="font-semibold">

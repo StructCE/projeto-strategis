@@ -186,7 +186,7 @@ export default function ManageRequestsTable() {
                   key={index}
                 >
                   <TableComponent.Value>
-                    {`${request.requestDate.getDate()}/${request.requestDate.getMonth()}/${request.requestDate.getFullYear()}`}
+                    {`${String(request.requestDate.getDate()).padStart(2, "0")}/${String(request.requestDate.getMonth()).padStart(2, "0")}/${String(request.requestDate.getFullYear()).padStart(2, "0")}`}
                   </TableComponent.Value>
                   <TableComponent.Value>
                     {request.responsibleName}
@@ -217,7 +217,7 @@ export default function ManageRequestsTable() {
                             <span className="font-semibold">
                               Data da Requisição:
                             </span>{" "}
-                            {`${request.requestDate.getDate()}/${request.requestDate.getMonth()}/${request.requestDate.getFullYear()}`}
+                            {`${String(request.requestDate.getDate()).padStart(2, "0")}/${String(request.requestDate.getMonth()).padStart(2, "0")}/${String(request.requestDate.getFullYear()).padStart(2, "0")}`}
                           </p>
                           <p className="w-fit">
                             <span className="font-semibold">

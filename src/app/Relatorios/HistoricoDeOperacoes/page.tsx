@@ -151,7 +151,7 @@ export default function ManageRequestsTable() {
             key={index}
           >
             <TableComponent.Value>
-              {`${operation.date.getDate()}/${operation.date.getMonth()}/${operation.date.getFullYear()}`}
+              {`${String(operation.date.getDate()).padStart(2, "0")}/${String(operation.date.getMonth()).padStart(2, "0")}/${String(operation.date.getFullYear()).padStart(2, "0")}`}
             </TableComponent.Value>
             <TableComponent.Value>{operation.company}</TableComponent.Value>
             <TableComponent.Value>{operation.responsible}</TableComponent.Value>
@@ -173,7 +173,7 @@ export default function ManageRequestsTable() {
                   <DialogDescription className="w-fit text-base text-black">
                     <p className="w-fit">
                       <span className="font-semibold">Data da Operação:</span>{" "}
-                      {`${operation.date.getDate()}/${operation.date.getMonth()}/${operation.date.getFullYear()}`}
+                      {`${String(operation.date.getDate()).padStart(2, "0")}/${String(operation.date.getMonth()).padStart(2, "0")}/${String(operation.date.getFullYear()).padStart(2, "0")}`}
                     </p>
                     <p className="w-fit">
                       <span className="font-semibold">Esmpresa:</span>{" "}

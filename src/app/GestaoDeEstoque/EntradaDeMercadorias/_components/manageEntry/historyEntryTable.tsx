@@ -174,7 +174,7 @@ export const HistoryEntryTable = () => {
             key={index}
           >
             <TableComponent.Value>{entry.invoice}</TableComponent.Value>
-            <TableComponent.Value>{`${entry.date_issue.getDate()}/${entry.date_issue.getMonth()}/${entry.date_issue.getFullYear()}`}</TableComponent.Value>
+            <TableComponent.Value>{`${String(entry.date_issue.getDate()).padStart(2, "0")}/${String(entry.date_issue.getMonth()).padStart(2, "0")}/${String(entry.date_issue.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
             <TableComponent.Value className="text-center">
               {entry.quantity_products}
             </TableComponent.Value>

@@ -141,7 +141,7 @@ export default function ManageInventoriesTable() {
                   key={index}
                 >
                   <TableComponent.Value>
-                    {`${inventory.date.getDate()}/${inventory.date.getMonth()}/${inventory.date.getFullYear()}`}
+                    {`${String(inventory.date.getDate()).padStart(2, "0")}/${String(inventory.date.getMonth()).padStart(2, "0")}/${String(inventory.date.getFullYear()).padStart(2, "0")}`}
                   </TableComponent.Value>
                   <TableComponent.Value>
                     {inventory.responsibleName}
@@ -179,7 +179,7 @@ export default function ManageInventoriesTable() {
                             <span className="font-semibold">
                               Data do Inventário:
                             </span>{" "}
-                            {`${inventory.date.getDate()}/${inventory.date.getMonth()}/${inventory.date.getFullYear()}`}
+                            {`${String(inventory.date.getDate()).padStart(2, "0")}/${String(inventory.date.getMonth()).padStart(2, "0")}/${String(inventory.date.getFullYear()).padStart(2, "0")}`}
                           </p>
                           <p className="w-fit">
                             <span className="font-semibold">

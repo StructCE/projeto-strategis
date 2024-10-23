@@ -304,7 +304,7 @@ export default function ManagePurchasesTable() {
                   key={index}
                 >
                   <TableComponent.Value>
-                    {`${order.date.getDate()}/${order.date.getMonth()}/${order.date.getFullYear()}`}
+                    {`${String(order.date.getDate()).padStart(2, "0")}/${String(order.date.getMonth()).padStart(2, "0")}/${String(order.date.getFullYear()).padStart(2, "0")}`}
                   </TableComponent.Value>
                   <TableComponent.Value>
                     {order.responsible.name}
@@ -350,7 +350,7 @@ export default function ManagePurchasesTable() {
                             <span className="font-semibold">
                               Data do Pedido:
                             </span>{" "}
-                            {`${order.date.getDate()}/${order.date.getMonth()}/${order.date.getFullYear()}`}
+                            {`${String(order.date.getDate()).padStart(2, "0")}/${String(order.date.getMonth()).padStart(2, "0")}/${String(order.date.getFullYear()).padStart(2, "0")}`}
                           </p>
                           <p className="w-fit">
                             <span className="font-semibold">
