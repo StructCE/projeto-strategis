@@ -30,8 +30,7 @@ export default function ManageRequestsTable() {
   const companies = api.company.getAllCompanies.useQuery();
   const operations = api.operation.getAllOperations.useQuery({
     filters: {
-      startDate: date,
-      endDate: date,
+      date: date,
       company: selectCompany,
       operationType: selectOperation,
       operator: inputOperator,
