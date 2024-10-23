@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createTypeFormSchema,
@@ -11,14 +12,21 @@ export const useTypeForm = () => {
     api.generalParameters.controlType.registerControlType.useMutation({
       onSuccess: (newControlType) => {
         console.log("Control type created successfully:", newControlType);
-        alert("Tipo de controle criado com sucesso.");
+        toast.success(
+          "Tipo de controle criado com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error creating control type:", error);
-        alert("Erro ao criar tipo de controle.");
+        toast.error("Erro ao criar tipo de controle.", {
+          position: "bottom-right",
+        });
       },
     });
 

@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { TableButtonComponent } from "~/components/tableButton";
 import { type AdjustProduct } from "~/server/interfaces/adjust/adjust.route.interfaces";
 import { api } from "~/trpc/react";
@@ -22,21 +23,31 @@ const FinalizeAdjust: React.FC<FinalizeAdjustProps> = ({
   const adjustMutation = api.adjust.registerAdjust.useMutation({
     onSuccess: (newAdjust) => {
       console.log("Ajuste de estoque criado com sucesso:", newAdjust);
-      alert("Ajuste de estoque criado com sucesso.");
+      toast.success(
+        "Ajuste de estoque criado com sucesso. Atualizando a página...",
+        {
+          position: "bottom-right",
+        },
+      );
       setTimeout(() => {
-        location.reload(); // Atualiza a página após criar o Ajuste de estoque
-      }, 500);
+        location.reload();
+      }, 2000);
     },
     onError: (error) => {
       console.error("Erro ao criar ajuste de estoque:", error);
-      alert("Erro ao criar ajuste de estoque.");
+      toast.error("Erro ao criar ajuste de estoque.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const handleFinalizeAdjust = () => {
     if (!selectResponsible || addedProducts.length === 0) {
-      alert(
+      toast.warn(
         "Preencha todos os campos obrigatórios e adicione pelo menos um produto.",
+        {
+          position: "top-center",
+        },
       );
       return;
     }

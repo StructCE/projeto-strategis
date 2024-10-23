@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type Unit } from "~/server/interfaces/unit/unit.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -15,29 +16,40 @@ export const useUnitForm = (unit: Unit) => {
     onSuccess: (updatedUnit) => {
       console.log("Unit updated successfully:", updatedUnit);
       if (isDeleted === false) {
-        alert("Unidade atualizada com sucesso.");
+        toast.success(
+          "Unidade atualizada com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
       }
       setTimeout(() => {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error updating unit:", error);
-      alert("Erro ao atualizar unidade.");
+      toast.error("Erro ao atualizar a unidade.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const deleteUnitMutation = api.generalParameters.unit.removeUnit.useMutation({
     onSuccess: (deletedUnit) => {
       console.log("Unit removed successfully:", deletedUnit);
-      alert("Unidade removida com sucesso.");
+      toast.success("Unidade removida com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(() => {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error removing unit:", error);
-      alert("Erro ao remover unidade.");
+      toast.error("Erro ao remover a unidade.", {
+        position: "bottom-right",
+      });
     },
   });
 

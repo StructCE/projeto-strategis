@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createAccessProfileFormSchema,
@@ -10,14 +11,18 @@ export const useAccessProfileForm = () => {
   const roleMutation = api.role.registerRole.useMutation({
     onSuccess: (newRole) => {
       console.log("Role created successfully:", newRole);
-      alert("Cargo criado com sucesso.");
+      toast.success("Cargo criado com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error creating role:", error);
-      alert("Erro ao criar cargo.");
+      toast.error("Erro ao criar cargo.", {
+        position: "bottom-right",
+      });
     },
   });
 

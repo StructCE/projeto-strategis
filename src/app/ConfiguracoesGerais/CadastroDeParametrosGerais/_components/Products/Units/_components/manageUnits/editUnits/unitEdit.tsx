@@ -95,7 +95,7 @@ export const UnitEdit = (props: UnitEditForm) => {
                 className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
                 handlePress={() => {
                   const confirmed = window.confirm(
-                    "Tem certeza que deseja excluir esta unidade? Esta ação não pode ser desfeita.",
+                    "Tem certeza que deseja excluir esta unidade? Esta ação não pode ser desfeita!",
                   );
                   if (confirmed) {
                     unitEditForm.onSubmitRemove();

@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import {
   type CompanyRepositoryInterfaces,
   companyRepositorySchema,
@@ -11,17 +12,35 @@ export const useCompanyForm = (
   company: CompanyRouteInterfaces["EditCompany"],
 ) => {
   const editCompany = api.company.editCompany.useMutation({
-    onSuccess: () => alert("Mudanças salvas"),
+    onSuccess: () => {
+      toast.success("Empresa atualizada com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
+      setTimeout(() => {
+        location.reload();
+      }, 2000);
+    },
     onError: (error) => {
-      alert("Erro no salvamento das mudanças");
+      toast.error("Erro ao atualizar empresa.", {
+        position: "bottom-right",
+      });
       console.log(error);
     },
   });
 
   const removeCompany = api.company.deleteCompany.useMutation({
-    onSuccess: () => alert("Empresa deletada com sucesso"),
+    onSuccess: () => {
+      toast.success("Empresa removida com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
+      setTimeout(() => {
+        location.reload();
+      }, 2000);
+    },
     onError: (error) => {
-      alert("Erro ao deletar empresa");
+      toast.error("Erro ao remover empresa.", {
+        position: "bottom-right",
+      });
       console.log(error);
     },
   });

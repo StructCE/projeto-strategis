@@ -28,7 +28,9 @@ export const ProductRegister = () => {
 
   // TODO: get only the products for the crrnt restaurant
   const { data: products = [] } = api.product.getAll.useQuery();
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: {},
+  });
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
   const { data: useSectors = [] } =

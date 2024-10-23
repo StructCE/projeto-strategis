@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type ProductCategory } from "~/server/interfaces/productCategory/productCategory.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -16,15 +17,22 @@ export const useCategoryForm = (category: ProductCategory) => {
       onSuccess: (updatedCategory) => {
         console.log("Category updated successfully:", updatedCategory);
         if (isDeleted === false) {
-          alert("Categoria atualizada com sucesso.");
+          toast.success(
+            "Categoria atualizada com sucesso. Atualizando a página...",
+            {
+              position: "bottom-right",
+            },
+          );
         }
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error updating category:", error);
-        alert("Erro ao atualizar categoria.");
+        toast.error("Erro ao atualizar categoria.", {
+          position: "bottom-right",
+        });
       },
     });
 
@@ -32,14 +40,21 @@ export const useCategoryForm = (category: ProductCategory) => {
     api.generalParameters.productCategory.removeProductCategory.useMutation({
       onSuccess: (deletedCategory) => {
         console.log("Category removed successfully:", deletedCategory);
-        alert("Categoria removida com sucesso.");
+        toast.success(
+          "Categoria removida com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error removing category:", error);
-        alert("Erro ao remover categoria.");
+        toast.error("Erro ao remover categoria.", {
+          position: "bottom-right",
+        });
       },
     });
 

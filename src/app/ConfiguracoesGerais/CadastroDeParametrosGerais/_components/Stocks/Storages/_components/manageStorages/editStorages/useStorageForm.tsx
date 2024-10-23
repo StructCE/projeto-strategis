@@ -18,7 +18,6 @@ export const useStorageForm = (cabinet: Cabinet) => {
       onSuccess: (updatedCabinet) => {
         console.log("Cabinet updated successfully:", updatedCabinet);
         if (isDeleted === false) {
-          // alert("Armário/zona atualizada com sucesso.");
           toast.success(
             "Armário/zona atualizado com sucesso. Atualizando a página...",
             {
@@ -28,11 +27,10 @@ export const useStorageForm = (cabinet: Cabinet) => {
         }
         setTimeout(() => {
           location.reload();
-        }, 1500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error updating cabinet:", error);
-        // alert("Erro ao atualizar armário/zona.");
         toast.error("Erro ao atualizar armário/zona.", {
           position: "bottom-right",
         });
@@ -44,14 +42,21 @@ export const useStorageForm = (cabinet: Cabinet) => {
     api.generalParameters.cabinet.removeCabinet.useMutation({
       onSuccess: (deletedCabinet) => {
         console.log("Cabinet removed successfully:", deletedCabinet);
-        alert("Armário/zona removida com sucesso.");
+        toast.success(
+          "Armário/zona removido com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error removing cabinet:", error);
-        alert("Erro ao remover armário/zona.");
+        toast.error("Erro ao remover armário/zona.", {
+          position: "bottom-right",
+        });
       },
     });
 

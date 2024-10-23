@@ -51,7 +51,7 @@ export const ReasonEdit = (props: ReasonEditForm) => {
                 className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
                 handlePress={() => {
                   const confirmed = window.confirm(
-                    "Tem certeza que deseja excluir esta categoria? Esta ação não pode ser desfeita.",
+                    "Tem certeza que deseja excluir esta categoria? Esta ação não pode ser desfeita!",
                   );
                   if (confirmed) {
                     reasonEditForm.onSubmitRemove();

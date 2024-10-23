@@ -1,4 +1,5 @@
 import { Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
 import { TableButtonComponent } from "~/components/tableButton";
 import { api } from "~/trpc/react";
 
@@ -10,14 +11,21 @@ export const DeleteOrder = (props: DeleteOrderProps) => {
   const deleteOrderMutation = api.order.deleteOrder.useMutation({
     onSuccess: (deletedOrder) => {
       console.log("Order removed successfully:", deletedOrder);
-      alert("Pedido de compra removido com sucesso.");
+      toast.success(
+        "Pedido de compra removido com sucesso. Atualizando a página...",
+        {
+          position: "bottom-right",
+        },
+      );
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error removing order:", error);
-      alert("Erro ao remover pedido de compra.");
+      toast.error("Erro ao remover pedido de compra.", {
+        position: "bottom-right",
+      });
     },
   });
 

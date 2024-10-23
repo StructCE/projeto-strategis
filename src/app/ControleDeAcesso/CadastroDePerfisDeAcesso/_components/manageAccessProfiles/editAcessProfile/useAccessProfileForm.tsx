@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type RoleWithModules } from "~/server/interfaces/role/role.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -15,29 +16,37 @@ export const useAccessProfileForm = (role: RoleWithModules) => {
     onSuccess: (updatedRole) => {
       console.log("Role updated successfully:", updatedRole);
       if (isDeleted === false) {
-        alert("Cargo atualizado com sucesso.");
+        toast.success("Cargo atualizado com sucesso. Atualizando a página...", {
+          position: "bottom-right",
+        });
       }
       setTimeout(() => {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error updating role:", error);
-      alert("Erro ao atualizar cargo.");
+      toast.error("Erro ao atualizar cargo.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const deleteRoleMutation = api.role.deleteRole.useMutation({
     onSuccess: (deletedRole) => {
       console.log("Role removed successfully:", deletedRole);
-      alert("Cargo removido com sucesso.");
+      toast.success("Cargo removido com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(() => {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error removing role:", error);
-      alert("Erro ao remover cargo.");
+      toast.error("Erro ao remover cargo.", {
+        position: "bottom-right",
+      });
     },
   });
 

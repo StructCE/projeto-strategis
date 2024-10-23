@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createCategoryFormSchema,
@@ -11,14 +12,18 @@ export const useCategoryForm = () => {
     api.generalParameters.productCategory.registerProductCategory.useMutation({
       onSuccess: (newCategory) => {
         console.log("Category created successfully:", newCategory);
-        alert("Categoria criada com sucesso.");
+        toast.success("Categoria criada com sucesso. Atualizando a página...", {
+          position: "bottom-right",
+        });
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error creating category:", error);
-        alert("Erro ao criar categoria.");
+        toast.error("Erro ao criar categoria.", {
+          position: "bottom-right",
+        });
       },
     });
 

@@ -51,7 +51,7 @@ export const ShelfEdit = (props: ShelfEditForm) => {
                 className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
                 handlePress={() => {
                   const confirmed = window.confirm(
-                    "Tem certeza que deseja excluir esta prateleira? Esta ação não pode ser desfeita.",
+                    "Tem certeza que deseja excluir esta prateleira? Esta ação não pode ser desfeita!",
                   );
                   if (confirmed) {
                     shelfEditForm.onSubmitRemove();

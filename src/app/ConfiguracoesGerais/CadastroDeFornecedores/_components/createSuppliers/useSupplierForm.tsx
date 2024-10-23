@@ -5,20 +5,25 @@ import {
   type CreateSupplierFormValues,
 } from "./supplierRegisterFormSchema";
 
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 
 export const useSupplierForm = () => {
   const supplierMutation = api.supplier.createSupplier.useMutation({
     onSuccess: (newSupplier) => {
       console.log("Supplier created successfully:", newSupplier);
-      alert("Fornecedor criado com sucesso.");
+      toast.success("Fornecedor criado com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error creating supplier:", error);
-      alert("Erro ao criar fornecedor.");
+      toast.error("Erro ao criar fornecedor.", {
+        position: "bottom-right",
+      });
     },
   });
 

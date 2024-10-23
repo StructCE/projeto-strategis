@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { TableButtonComponent } from "~/components/tableButton";
 import { type InventoryProduct } from "~/server/interfaces/inventory/inventory.route.interfaces";
 import { api } from "~/trpc/react";
@@ -20,21 +21,28 @@ const FinalizeInventory: React.FC<FinalizeInventoryProps> = ({
   const inventoryMutation = api.inventory.registerInventory.useMutation({
     onSuccess: (newInventory) => {
       console.log("Inventário criado com sucesso:", newInventory);
-      alert("Inventário criado com sucesso.");
+      toast.success("Inventário criado com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(() => {
-        location.reload(); // Atualiza a página após criar o inventário
-      }, 500);
+        location.reload();
+      }, 2000);
     },
     onError: (error) => {
       console.error("Erro ao criar inventário:", error);
-      alert("Erro ao criar inventário.");
+      toast.error("Erro ao criar inventário.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const handleFinalizeInventory = () => {
     if (!selectResponsible || addedProducts.length === 0) {
-      alert(
+      toast.warn(
         "Preencha todos os campos obrigatórios e adicione pelo menos um produto.",
+        {
+          position: "top-center",
+        },
       );
       return;
     }

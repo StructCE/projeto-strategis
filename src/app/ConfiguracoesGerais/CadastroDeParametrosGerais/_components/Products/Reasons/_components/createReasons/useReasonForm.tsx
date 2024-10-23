@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createReasonFormSchema,
@@ -11,14 +12,18 @@ export const useReasonForm = () => {
     api.generalParameters.adjustReason.registerAdjustReason.useMutation({
       onSuccess: (newReason) => {
         console.log("Reason created successfully:", newReason);
-        alert("Motivo criado com sucesso.");
+        toast.success("Motivo criado com sucesso. Atualizando a página...", {
+          position: "bottom-right",
+        });
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error creating reason:", error);
-        alert("Erro ao criar motivo.");
+        toast.error("Erro ao criar motivo.", {
+          position: "bottom-right",
+        });
       },
     });
 

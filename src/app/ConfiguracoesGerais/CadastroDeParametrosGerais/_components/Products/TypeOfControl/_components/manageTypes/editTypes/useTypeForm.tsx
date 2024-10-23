@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type ControlType } from "~/server/interfaces/controlType/controlType.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -16,15 +17,22 @@ export const useTypeForm = (controlType: ControlType) => {
       onSuccess: (updatedControlType) => {
         console.log("Control type updated successfully:", updatedControlType);
         if (isDeleted === false) {
-          alert("Tipo de controle atualizado com sucesso.");
+          toast.success(
+            "Tipo de controle atualizado com sucesso. Atualizando a página...",
+            {
+              position: "bottom-right",
+            },
+          );
         }
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error updating control type:", error);
-        alert("Erro ao atualizar tipo de controle.");
+        toast.error("Erro ao atualizar tipo de controle.", {
+          position: "bottom-right",
+        });
       },
     });
 
@@ -32,14 +40,21 @@ export const useTypeForm = (controlType: ControlType) => {
     api.generalParameters.controlType.removeControlType.useMutation({
       onSuccess: (deletedControlType) => {
         console.log("Control type removed successfully:", deletedControlType);
-        alert("Tipo de controle removido com sucesso.");
+        toast.success(
+          "Tipo de controle removido com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error removing control type:", error);
-        alert("Erro ao remover tipo de controle.");
+        toast.error("Erro ao remover tipo de controle.", {
+          position: "bottom-right",
+        });
       },
     });
 

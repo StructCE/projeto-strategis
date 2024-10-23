@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createInvoiceFormSchema,
@@ -10,14 +11,18 @@ export const useManualCreateInvoiceForm = () => {
   const invoiceMutation = api.invoice.registerInvoice.useMutation({
     onSuccess: (newInvoice) => {
       console.log("Invoice created successfully:", newInvoice);
-      alert("Nota fiscal criada com sucesso.");
+      toast.success("Nota fiscal criada com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error creating invoice:", error);
-      alert("Erro ao criar nota fiscal.");
+      toast.error("Erro ao criar nota fiscal.", {
+        position: "bottom-right",
+      });
     },
   });
 

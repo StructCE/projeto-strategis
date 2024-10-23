@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type SerializedInvoice } from "~/server/interfaces/invoice/invoice.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -11,28 +12,42 @@ export const useEditInvoiceForm = (invoice: SerializedInvoice) => {
   const invoiceMutation = api.invoice.editInvoice.useMutation({
     onSuccess: (updatedInvoice) => {
       console.log("Invoice updated successfully:", updatedInvoice);
-      alert("Nota fiscal atualizada com sucesso.");
+      toast.success(
+        "Nota fiscal atualizada com sucesso. Atualizando a página...",
+        {
+          position: "bottom-right",
+        },
+      );
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error updating invoice:", error);
-      alert("Erro ao atualizar nota fiscal.");
+      toast.error("Erro ao atualizar nota fiscal.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const rejectMutation = api.invoice.rejectInvoice.useMutation({
     onSuccess: (updatedInvoice) => {
       console.log("Invoice rejected successfully:", updatedInvoice);
-      alert("Nota fiscal rejeitada com sucesso.");
+      toast.success(
+        "Nota fiscal rejeitada com sucesso. Atualizando a página...",
+        {
+          position: "bottom-right",
+        },
+      );
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error rejecting invoice:", error);
-      alert("Erro ao rejeitar nota fiscal.");
+      toast.error("Erro ao rejeitar nota fiscal.", {
+        position: "bottom-right",
+      });
     },
   });
 

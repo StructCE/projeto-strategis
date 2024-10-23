@@ -53,7 +53,7 @@ export const CategoryEdit = (props: CategoryEditForm) => {
                 className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
                 handlePress={() => {
                   const confirmed = window.confirm(
-                    "Tem certeza que deseja excluir esta categoria? Esta ação não pode ser desfeita.",
+                    "Tem certeza que deseja excluir esta categoria? Esta ação não pode ser desfeita!",
                   );
                   if (confirmed) {
                     categoryEditForm.onSubmitRemove();

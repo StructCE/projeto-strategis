@@ -51,7 +51,7 @@ export const SectorEdit = (props: SectorEditForm) => {
                 className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
                 handlePress={() => {
                   const confirmed = window.confirm(
-                    "Tem certeza que deseja excluir este setor de utilização? Esta ação não pode ser desfeita.",
+                    "Tem certeza que deseja excluir este setor de utilização? Esta ação não pode ser desfeita!",
                   );
                   if (confirmed) {
                     sectorEditForm.onSubmitRemove();

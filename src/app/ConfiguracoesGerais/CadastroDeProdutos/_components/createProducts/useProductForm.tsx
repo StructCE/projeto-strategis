@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createProductFormSchema,
@@ -10,14 +11,18 @@ export const useProductForm = () => {
   const productMutation = api.product.createProduct.useMutation({
     onSuccess: (newProduct) => {
       console.log("Product created successfully:", newProduct);
-      alert("Produto criado com sucesso.");
+      toast.success("Produto criado com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error creating product:", error);
-      alert("Erro ao criar produto.");
+      toast.error("Erro ao criar produto.", {
+        position: "bottom-right",
+      });
     },
   });
 

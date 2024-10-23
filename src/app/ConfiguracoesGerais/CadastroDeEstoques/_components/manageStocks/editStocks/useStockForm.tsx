@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type StockWithCabinets } from "~/server/interfaces/stock/stock.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -15,29 +16,40 @@ export const useStockForm = (stock: StockWithCabinets) => {
     onSuccess: (updatedStock) => {
       console.log("Stock updated successfully:", updatedStock);
       if (isDeleted === false) {
-        alert("Estoque atualizado com sucesso.");
+        toast.success(
+          "Estoque atualizado com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
       }
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error updating stock:", error);
-      alert("Erro ao atualizar estoque.");
+      toast.error("Erro ao atualizar estoque.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const deleteStockMutation = api.stock.deleteStock.useMutation({
     onSuccess: (deletedStock) => {
       console.log("Stock removed successfully:", deletedStock);
-      alert("Estoque removido com sucesso.");
+      toast.success("Estoque removido com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error removing stock:", error);
-      alert("Erro ao remover estoque.");
+      toast.error("Erro ao remover estoque.", {
+        position: "bottom-right",
+      });
     },
   });
 

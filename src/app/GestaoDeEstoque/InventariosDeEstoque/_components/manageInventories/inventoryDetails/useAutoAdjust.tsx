@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { TableButtonComponent } from "~/components/tableButton";
 import {
   type InventoryProduct,
@@ -31,14 +32,21 @@ const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
         inventoryData: { status: "Ajuste realizado" },
       });
 
-      alert("Ajuste de estoque realizado com sucesso.");
+      toast.success(
+        "Ajuste de estoque realizado com sucesso. Atualizando a página...",
+        {
+          position: "bottom-right",
+        },
+      );
       setTimeout(() => {
-        location.reload(); // Atualiza a página após criar o Ajuste de estoque
-      }, 500);
+        location.reload();
+      }, 2000);
     },
     onError: (error) => {
       console.error("Erro ao realizar ajuste de estoque:", error);
-      alert("Erro ao realizar ajuste de estoque.");
+      toast.error("Erro ao realizar ajuste de estoque.", {
+        position: "bottom-right",
+      });
     },
   });
 
@@ -54,8 +62,11 @@ const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
 
   const handleFinalizeAutoAdjust = () => {
     if (!selectResponsible || addedProducts.length === 0) {
-      alert(
+      toast.warn(
         "Preencha todos os campos obrigatórios e adicione pelo menos um produto.",
+        {
+          position: "top-center",
+        },
       );
       return;
     }

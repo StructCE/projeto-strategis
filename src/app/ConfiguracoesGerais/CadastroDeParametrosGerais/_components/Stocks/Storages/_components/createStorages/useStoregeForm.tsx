@@ -15,7 +15,6 @@ export const useStorageForm = () => {
     api.generalParameters.cabinet.registerCabinet.useMutation({
       onSuccess: (newCabinet) => {
         console.log("Cabinet created successfully:", newCabinet);
-        // alert("Armário/zona criado com sucesso.");
         toast.success(
           "Armário/zona criado com sucesso. Atualizando a página...",
           {
@@ -24,11 +23,10 @@ export const useStorageForm = () => {
         );
         setTimeout(() => {
           location.reload();
-        }, 1500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error creating cabinet:", error);
-        // alert("Erro ao criar armário/zona.");
         toast.error("Erro ao criar armário/zona.", {
           position: "bottom-right",
         });

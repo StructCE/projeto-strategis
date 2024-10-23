@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { TableButtonComponent } from "~/components/tableButton";
 import { type SerializedRequest } from "~/server/interfaces/request/request.route.interfaces";
 import { api } from "~/trpc/react";
@@ -20,14 +21,21 @@ const ConfirmRequest: React.FC<ConfirmRequestProps> = ({
   const requestMutation = api.request.editRequest.useMutation({
     onSuccess: (newRequest) => {
       console.log("Requisição atualizada com sucesso:", newRequest);
-      alert("Requisição atualizada com sucesso.");
+      toast.success(
+        "Requisição atualizada com sucesso. Atualizando a página...",
+        {
+          position: "bottom-right",
+        },
+      );
       setTimeout(() => {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Erro ao atualizar requisição:", error);
-      alert("Erro ao atualizar requisição.");
+      toast.error("Erro ao atualizar requisição.", {
+        position: "bottom-right",
+      });
     },
   });
 

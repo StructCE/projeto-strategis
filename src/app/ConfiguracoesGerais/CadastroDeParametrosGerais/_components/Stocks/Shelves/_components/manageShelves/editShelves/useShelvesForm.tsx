@@ -2,6 +2,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type Shelf } from "~/server/interfaces/cabinet/cabinet.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -16,15 +17,22 @@ export const useShelfForm = (shelf: Shelf) => {
     onSuccess: (updatedShelf) => {
       console.log("Shelf updated successfully:", updatedShelf);
       if (isDeleted === false) {
-        alert("Prateleira atualizada com sucesso.");
+        toast.success(
+          "Prateleira atualizada com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
       }
       setTimeout(() => {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error updating shelf:", error);
-      alert("Erro ao atualizar prateleira.");
+      toast.error("Erro ao atualizar prateleira.", {
+        position: "bottom-right",
+      });
     },
   });
 
@@ -32,14 +40,21 @@ export const useShelfForm = (shelf: Shelf) => {
     api.generalParameters.shelf.removeShelf.useMutation({
       onSuccess: (deletedShelf) => {
         console.log("Shelf removed successfully:", deletedShelf);
-        alert("Prateleira removida com sucesso.");
+        toast.success(
+          "Prateleira removida com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error removing shelf:", error);
-        alert("Erro ao remover prateleira.");
+        toast.error("Erro ao remover prateleira.", {
+          position: "bottom-right",
+        });
       },
     });
 

@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type UseSector } from "~/server/interfaces/useSector/useSector.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -16,15 +17,22 @@ export const useSectorForm = (sector: UseSector) => {
       onSuccess: (updatedSector) => {
         console.log("Sector updated successfully:", updatedSector);
         if (isDeleted === false) {
-          alert("Setor atualizado com sucesso.");
+          toast.success(
+            "Setor atualizado com sucesso. Atualizando a página...",
+            {
+              position: "bottom-right",
+            },
+          );
         }
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error updating sector:", error);
-        alert("Erro ao atualizar setor.");
+        toast.error("Erro ao atualizar setor.", {
+          position: "bottom-right",
+        });
       },
     });
 
@@ -32,14 +40,18 @@ export const useSectorForm = (sector: UseSector) => {
     api.generalParameters.useSector.removeUseSector.useMutation({
       onSuccess: (deletedSector) => {
         console.log("Sector removed successfully:", deletedSector);
-        alert("Setor removido com sucesso.");
+        toast.success("Setor removido com sucesso. Atualizando a página...", {
+          position: "bottom-right",
+        });
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error removing sector:", error);
-        alert("Erro ao remover setor.");
+        toast.error("Erro ao remover setor.", {
+          position: "bottom-right",
+        });
       },
     });
 

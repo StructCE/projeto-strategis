@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { TableButtonComponent } from "~/components/tableButton";
 import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
 import { api } from "~/trpc/react";
@@ -19,25 +20,32 @@ const FinalizeRequest: React.FC<FinalizeRequestProps> = ({
 }) => {
   const requestMutation = api.request.registerRequest.useMutation({
     onSuccess: (newRequest) => {
-      console.log("Requisição criado com sucesso:", newRequest);
-      alert("Requisição criado com sucesso.");
+      console.log("Requisição criada com sucesso:", newRequest);
+      toast.success("Requisição criada com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(() => {
         location.reload(); // Atualiza a página após criar o requisição
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Erro ao criar requisição:", error);
-      alert("Erro ao criar requisição.");
+      toast.error("Erro ao criar requisição.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const handleFinalizeRequest = () => {
     if (!selectResponsibleId) {
-      alert("Selecione o reponsável pelo requisição.");
+      toast.warn("Selecione o reponsável pelo requisição.", {
+        position: "top-center",
+      });
       return;
     } else if (addedProducts.length === 0) {
-      alert("Adicione pelo menos um produto.");
-
+      toast.warn("Adicione pelo menos um produto.", {
+        position: "top-center",
+      });
       return;
     }
 

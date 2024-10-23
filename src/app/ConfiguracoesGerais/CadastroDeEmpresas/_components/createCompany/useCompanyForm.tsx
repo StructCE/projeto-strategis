@@ -1,18 +1,26 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { api } from "~/trpc/react";
 import {
   createCompanyFormSchema,
   type CreateCompanyFormValues,
 } from "./companyRegisterFormSchema";
-import { api } from "~/trpc/react";
 
 export const useCompanyForm = () => {
   const createCompany = api.company.registerCompany.useMutation({
     onSuccess: () => {
-      alert("Empresa criada");
+      toast.success("Empresa criada com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
+      setTimeout(() => {
+        location.reload();
+      }, 2000);
     },
     onError: (error) => {
-      alert("Erro na criação da empresa");
+      toast.error("Erro ao criar empresa.", {
+        position: "bottom-right",
+      });
       console.log(error);
     },
   });

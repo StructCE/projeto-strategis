@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import { toast } from "react-toastify";
 import { TableButtonComponent } from "~/components/tableButton";
 import { type SerializedOrder } from "~/server/interfaces/order/order.route.interfaces";
 import { api } from "~/trpc/react";
@@ -11,14 +12,21 @@ export const EditOrder = (props: EditOrderProps) => {
   const editOrderMutation = api.order.editOrder.useMutation({
     onSuccess: (updatedOrder) => {
       console.log("Order updated successfully:", updatedOrder);
-      alert("Status atualizado com sucesso.");
+      toast.success(
+        "Pedido de compra atualizado com sucesso. Atualizando a página...",
+        {
+          position: "bottom-right",
+        },
+      );
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error updating order:", error);
-      alert("Erro ao atualizar status.");
+      toast.error("Erro ao atualizar pedido de compra.", {
+        position: "bottom-right",
+      });
     },
   });
 

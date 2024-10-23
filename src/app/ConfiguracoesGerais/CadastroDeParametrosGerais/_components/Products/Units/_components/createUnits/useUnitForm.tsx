@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createUnitFormSchema,
@@ -10,14 +11,18 @@ export const useUnitForm = () => {
   const unitMutation = api.generalParameters.unit.registerUnit.useMutation({
     onSuccess: (newUnit) => {
       console.log("Unit created successfully:", newUnit);
-      alert("Unidade criada com sucesso.");
+      toast.success("Unidade criada com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(() => {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error creating unit:", error);
-      alert("Erro ao criar unidade.");
+      toast.error("Erro ao criar unidade.", {
+        position: "bottom-right",
+      });
     },
   });
 

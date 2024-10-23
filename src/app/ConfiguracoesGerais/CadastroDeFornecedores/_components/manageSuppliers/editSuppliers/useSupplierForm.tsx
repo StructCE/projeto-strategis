@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -15,29 +16,43 @@ export const useSupplierForm = (supplier: Supplier) => {
     onSuccess: (updatedSupplier) => {
       console.log("Supplier updated successfully:", updatedSupplier);
       if (isDeleted === false) {
-        alert("Fornecedor atualizado com sucesso.");
+        toast.success(
+          "Fornecedor atualizado com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
       }
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error updating supplier:", error);
-      alert("Erro ao atualizar fornecedor.");
+      toast.error("Erro ao atualizar fornecedor.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const deleteSupplierMutation = api.supplier.removeSupplier.useMutation({
     onSuccess: (removedSupplier) => {
       console.log("Supplier removed successfully:", removedSupplier);
-      alert("Fornecedor removido com sucesso.");
+      toast.success(
+        "Fornecedor removido com sucesso. Atualizando a página...",
+        {
+          position: "bottom-right",
+        },
+      );
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error removing supplier:", error);
-      alert("Erro ao remover fornecedor.");
+      toast.error("Erro ao remover fornecedor.", {
+        position: "bottom-right",
+      });
     },
   });
 
@@ -47,7 +62,7 @@ export const useSupplierForm = (supplier: Supplier) => {
     defaultValues: {
       name: supplier.name,
       cnpj: supplier.cnpj,
-      email: supplier.email,
+      email: supplier.email ?? "",
       phone: supplier.phone ?? "",
       stateRegistration: supplier.stateRegistration,
       address: supplier.address,

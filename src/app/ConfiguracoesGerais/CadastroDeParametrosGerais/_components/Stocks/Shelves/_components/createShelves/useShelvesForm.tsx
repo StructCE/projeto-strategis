@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createShelfFormSchema,
@@ -10,14 +11,18 @@ export const useShelfForm = () => {
   const shelfMutation = api.generalParameters.shelf.registerShelf.useMutation({
     onSuccess: (newShelf) => {
       console.log("Shelf created successfully:", newShelf);
-      alert("Prateleira criada com sucesso.");
+      toast.success("Prateleira criada com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(() => {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error creating shelf:", error);
-      alert("Erro ao criar prateleira.");
+      toast.error("Erro ao criar prateleira.", {
+        position: "bottom-right",
+      });
     },
   });
 

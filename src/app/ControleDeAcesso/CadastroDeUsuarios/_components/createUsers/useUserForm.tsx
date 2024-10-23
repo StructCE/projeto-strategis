@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createUserFormSchema,
@@ -10,14 +11,18 @@ export const useUserForm = () => {
   const userMutation = api.user.registerUser.useMutation({
     onSuccess: (newUser) => {
       console.log("User created successfully:", newUser);
-      alert("Usuário criado com sucesso.");
+      toast.success("Usuário criado com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error creating user:", error);
-      alert("Erro ao criar usuário.");
+      toast.error("Erro ao criar usuário.", {
+        position: "bottom-right",
+      });
     },
   });
 

@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { TableButtonComponent } from "~/components/tableButton";
 import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
 import { api } from "~/trpc/react";
@@ -20,24 +21,34 @@ const FinalizeOrder: React.FC<FinalizeOrderProps> = ({
   const orderMutation = api.order.registerOrder.useMutation({
     onSuccess: (newOrder) => {
       console.log("Pedido de compra criado com sucesso:", newOrder);
-      alert("Pedido de compra criado com sucesso.");
+      toast.success(
+        "Pedido de compra criado com sucesso. Atualizando a página...",
+        {
+          position: "bottom-right",
+        },
+      );
       setTimeout(() => {
-        location.reload(); // Atualiza a página após criar o pedido de compra
-      }, 500);
+        location.reload();
+      }, 2000);
     },
     onError: (error) => {
       console.error("Erro ao criar pedido de compra:", error);
-      alert("Erro ao criar pedido de compra.");
+      toast.error("Erro ao criar pedido de compra.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const handleFinalizeOrder = () => {
     if (!selectResponsible) {
-      alert("Selecione o reponsável pelo pedido de compra.");
+      toast.warn("Selecione o reponsável pelo pedido de compra.", {
+        position: "top-center",
+      });
       return;
     } else if (addedProducts.length === 0) {
-      alert("Adicione pelo menos um produto.");
-
+      toast.warn("Adicione pelo menos um produto.", {
+        position: "top-center",
+      });
       return;
     }
 

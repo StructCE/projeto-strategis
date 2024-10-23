@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -15,29 +16,40 @@ export const useProductForm = (product: ProductWithFeatures) => {
     onSuccess: (updatedProduct) => {
       console.log("Product updated successfully:", updatedProduct);
       if (isDeleted === false) {
-        alert("Produto atualizado com sucesso.");
+        toast.success(
+          "Produto atualizado com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
       }
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error updating product:", error);
-      alert("Erro ao atualizar produto.");
+      toast.error("Erro ao atualizar produto.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const deleteProductMutation = api.product.deleteProduct.useMutation({
     onSuccess: (deletedProduct) => {
       console.log("Product removed successfully:", deletedProduct);
-      alert("Produto removido com sucesso.");
+      toast.success("Produto removido com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error removing product:", error);
-      alert("Erro ao remover produto.");
+      toast.error("Erro ao remover produto.", {
+        position: "bottom-right",
+      });
     },
   });
 

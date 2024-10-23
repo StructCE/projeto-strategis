@@ -16,9 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import type { CompanyRouteInterfaces } from "~/server/interfaces/company/company.route.interfaces";
 import { states } from "../../../../../CadastroDeFornecedores/_components/supplierData";
 import { useCompanyForm } from "./useCompanyForm";
-import type { CompanyRouteInterfaces } from "~/server/interfaces/company/company.route.interfaces";
 
 type CompanyEditProps = {
   company: CompanyRouteInterfaces["EditCompany"];
@@ -421,22 +421,31 @@ export const CompanyEdit = (props: CompanyEditProps) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button
-              handlePress={editCompanyForm.form.handleSubmit(
-                editCompanyForm.onSubmitEdit,
-              )}
-              className="bg-amarelo_botao hover:bg-hover_amarelo_botao"
-            >
-              Editar Empresa
-            </FormComponent.Button>
-            <FormComponent.Button
-              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
-              handlePress={editCompanyForm.form.handleSubmit(
-                editCompanyForm.onSubmitRemove,
-              )}
-            >
-              Remover Empresa
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir esta empresa? Esta ação não pode ser desfeita!",
+                  );
+                  if (confirmed) {
+                    editCompanyForm.form.handleSubmit(
+                      editCompanyForm.onSubmitRemove,
+                    );
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={editCompanyForm.form.handleSubmit(
+                  editCompanyForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

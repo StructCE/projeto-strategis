@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type AdjustReason } from "~/server/interfaces/adjustReason/adjustReason.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -16,15 +17,22 @@ export const useReasonForm = (reason: AdjustReason) => {
       onSuccess: (updatedReason) => {
         console.log("Reason updated successfully:", updatedReason);
         if (isDeleted === false) {
-          alert("Motivo atualizado com sucesso.");
+          toast.success(
+            "Motivo atualizado com sucesso. Atualizando a página...",
+            {
+              position: "bottom-right",
+            },
+          );
         }
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error updating reason:", error);
-        alert("Erro ao atualizar motivo.");
+        toast.error("Erro ao atualizar motivo.", {
+          position: "bottom-right",
+        });
       },
     });
 
@@ -32,14 +40,18 @@ export const useReasonForm = (reason: AdjustReason) => {
     api.generalParameters.adjustReason.removeAdjustReason.useMutation({
       onSuccess: (deletedReason) => {
         console.log("Reason removed successfully:", deletedReason);
-        alert("Motivo removido com sucesso.");
+        toast.success("Motivo removido com sucesso. Atualizando a página...", {
+          position: "bottom-right",
+        });
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error removing reason:", error);
-        alert("Erro ao remover motivo.");
+        toast.error("Erro ao remover motivo.", {
+          position: "bottom-right",
+        });
       },
     });
 

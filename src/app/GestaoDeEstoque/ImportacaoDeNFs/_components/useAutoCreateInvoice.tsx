@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { type InvoiceProduct } from "~/server/interfaces/invoice/invoice.route.interfaces";
@@ -7,15 +8,22 @@ import { api } from "~/trpc/react";
 const AutoCreateInvoice = () => {
   const invoiceMutation = api.invoice.autoRegisterInvoice.useMutation({
     onSuccess: (newInvoice) => {
-      console.log("Nota fiscal criada com sucesso:", newInvoice);
-      alert("Nota fiscal criada com sucesso.");
+      console.log("Nota fiscal importada com sucesso:", newInvoice);
+      toast.success(
+        "Nota fiscal importada com sucesso. Atualizando a página...",
+        {
+          position: "bottom-right",
+        },
+      );
       setTimeout(() => {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
-      console.error("Erro ao criar nota fiscal:", error);
-      alert("Erro ao criar nota fiscal.");
+      console.error("Erro ao importar nota fiscal:", error);
+      toast.error("Erro ao importar nota fiscal.", {
+        position: "bottom-right",
+      });
     },
   });
 

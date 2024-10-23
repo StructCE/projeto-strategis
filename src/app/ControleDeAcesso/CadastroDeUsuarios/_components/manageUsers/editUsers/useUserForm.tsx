@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { type UserWithRoles } from "~/server/interfaces/user/user.route.interfaces";
 import { api } from "~/trpc/react";
 import {
@@ -15,29 +16,40 @@ export const useUserForm = (user: UserWithRoles) => {
     onSuccess: (updatedUser) => {
       console.log("User updated successfully:", updatedUser);
       if (isDeleted === false) {
-        alert("Usuário atualizado com sucesso.");
+        toast.success(
+          "Usuário atualizado com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
       }
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error updating user:", error);
-      alert("Erro ao atualizar usuário.");
+      toast.error("Erro ao atualizar usuário.", {
+        position: "bottom-right",
+      });
     },
   });
 
   const deleteUserMutation = api.user.deleteUser.useMutation({
     onSuccess: (deletedUser) => {
       console.log("User removed successfully:", deletedUser);
-      alert("Usuário removido com sucesso.");
+      toast.success("Usuário removido com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error removing user:", error);
-      alert("Erro ao remover usuário.");
+      toast.error("Erro ao remover usuário.", {
+        position: "bottom-right",
+      });
     },
   });
 

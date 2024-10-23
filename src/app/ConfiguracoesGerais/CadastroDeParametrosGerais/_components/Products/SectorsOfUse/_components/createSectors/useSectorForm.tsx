@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createSectorFormSchema,
@@ -11,14 +12,18 @@ export const useSectorForm = () => {
     api.generalParameters.useSector.registerUseSector.useMutation({
       onSuccess: (newSector) => {
         console.log("Sector created successfully:", newSector);
-        alert("Setor criado com sucesso.");
+        toast.success("Setor criado com sucesso. Atualizando a página...", {
+          position: "bottom-right",
+        });
         setTimeout(() => {
           location.reload();
-        }, 500);
+        }, 2000);
       },
       onError: (error) => {
         console.error("Error creating sector:", error);
-        alert("Erro ao criar setor.");
+        toast.error("Erro ao criar setor.", {
+          position: "bottom-right",
+        });
       },
     });
 

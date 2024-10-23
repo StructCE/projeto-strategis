@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { api } from "~/trpc/react";
 import {
   createStockFormSchema,
@@ -10,14 +11,18 @@ export const useStockForm = () => {
   const stockMutation = api.stock.registerStock.useMutation({
     onSuccess: (newStock) => {
       console.log("Stock created successfully:", newStock);
-      alert("Estoque criado com sucesso.");
+      toast.success("Estoque criado com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
       setTimeout(function () {
         location.reload();
-      }, 500);
+      }, 2000);
     },
     onError: (error) => {
       console.error("Error creating stock:", error);
-      alert("Erro ao criar estoque.");
+      toast.error("Erro ao criar estoque.", {
+        position: "bottom-right",
+      });
     },
   });
 

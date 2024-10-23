@@ -179,7 +179,7 @@ export const StockEdit = (props: StockEditProps) => {
                 className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
                 handlePress={() => {
                   const confirmed = window.confirm(
-                    "Tem certeza que deseja excluir este estoque? Esta ação não pode ser desfeita.",
+                    "Tem certeza que deseja excluir este estoque? Esta ação não pode ser desfeita!",
                   );
                   if (confirmed) {
                     stockForm.onSubmitRemove();
