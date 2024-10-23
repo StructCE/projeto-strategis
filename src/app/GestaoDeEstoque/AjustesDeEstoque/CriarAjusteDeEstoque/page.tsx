@@ -53,11 +53,11 @@ import type {
 function flatProducts(
   products: ProductWithFeatures[],
 ): FlatProductWithFeatures[] {
-  return products.map((product) => {
+  return products.flatMap((product) => {
     const { shelf } = product;
-    const firstStockCabinet = shelf?.cabinet?.StockCabinet[0]?.stock;
+    const stockCabinets = shelf?.cabinet?.StockCabinet ?? [];
 
-    return {
+    return stockCabinets.map((stockCabinet) => ({
       ...product,
       address: {
         shelf: {
@@ -69,13 +69,13 @@ function flatProducts(
           name: shelf.cabinet.name,
         },
         stock: {
-          id: firstStockCabinet?.id ?? "",
-          name: firstStockCabinet?.name ?? "",
-          companyId: firstStockCabinet?.companyId ?? "",
-          legalResponsibleId: firstStockCabinet?.legalResponsibleId ?? "",
+          id: stockCabinet?.stock?.id ?? "",
+          name: stockCabinet?.stock?.name ?? "",
+          companyId: stockCabinet?.stock?.companyId ?? "",
+          legalResponsibleId: stockCabinet?.stock?.legalResponsibleId ?? "",
         },
       },
-    } as FlatProductWithFeatures;
+    }));
   });
 }
 
@@ -94,10 +94,12 @@ export default function CreateAdjustment() {
   const { data: adjustmentReasons = [] } =
     api.generalParameters.adjustReason.getAll.useQuery();
 
+  const { data: responsibles = [] } = api.user.getAll.useQuery();
+
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
-  const [inputResponsible, setInputResponsible] = useState("");
-
+  // const [inputResponsible, setInputResponsible] = useState("");
+  const [selectResponsible, setSelectResponsible] = useState("");
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
   const [selectStock, setSelectStock] = useState("");
@@ -138,7 +140,7 @@ export default function CreateAdjustment() {
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
           selectStock === "" ||
-          product.address.stock.name
+          product.address.stock.id
             .toLowerCase()
             .includes(selectStock.toLowerCase());
         const matchesAddress =
@@ -168,11 +170,19 @@ export default function CreateAdjustment() {
   const filteredAddresses = Array.from(
     new Set(
       products
-        .filter((product) => selectStock.includes(product.address.stock.name))
+        .filter((product) => selectStock.includes(product.address.stock.id))
         .map(
           (product) =>
             `${product.address.cabinet.name}, ${product.address.shelf.name}`,
         ),
+    ),
+  );
+
+  const allowedRoles = ["operador", "administrador", "estoquista"];
+
+  const filteredResponsibles = responsibles.filter((responsible) =>
+    responsible.UserRole.some((userRole) =>
+      allowedRoles.includes(userRole.role.name.toLowerCase()),
     ),
   );
 
@@ -235,10 +245,10 @@ export default function CreateAdjustment() {
     }));
 
     const adjustmentData = {
-      stockId: "", // TODO: add field to select stock and filter products
+      stockId: selectStock,
       date: date ?? new Date(),
-      type: "", // TODO
-      responsibleId: inputResponsible, // TODO
+      type: selectControlType,
+      responsibleId: selectResponsible,
       adjustProducts: productsAdjustData,
     };
 
@@ -301,12 +311,28 @@ export default function CreateAdjustment() {
                 <UserCog2 className={className} />
               )}
             />
-            <Filter.Input
+            {/* <Filter.Input
               className="text-sm sm:text-base"
               placeholder="Responsável"
               state={inputResponsible}
               setState={setInputResponsible}
             />
+          </Filter> */}
+
+            <Filter.Select
+              className="text-sm sm:text-base"
+              placeholder="Responsável"
+              state={selectResponsible}
+              setState={setSelectResponsible}
+            >
+              {filteredResponsibles.map((user, index) => (
+                <Filter.SelectItems
+                  key={index}
+                  valueId={user.id}
+                  value={user.name}
+                ></Filter.SelectItems>
+              ))}
+            </Filter.Select>
           </Filter>
         </TableComponent.FiltersLine>
 
@@ -358,6 +384,7 @@ export default function CreateAdjustment() {
               {stocks.map((stock, index) => (
                 <Filter.SelectItems
                   key={index}
+                  valueId={stock.id}
                   value={stock.name}
                 ></Filter.SelectItems>
               ))}
@@ -414,6 +441,7 @@ export default function CreateAdjustment() {
                 <Filter.SelectItems
                   key={index}
                   value={type.name}
+                  valueId={type.id}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
