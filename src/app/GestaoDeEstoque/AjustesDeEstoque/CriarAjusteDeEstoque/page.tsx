@@ -229,15 +229,15 @@ export default function CreateAdjustment() {
     const productsAdjustData = addedProducts.map((product) => ({
       productId: product.id,
       oldStock: product.currentStock,
-      adjustedStock: adjustedStock[product.code] ?? 0,
+      adjustedStock: Number(adjustedStock[product.code]) ?? 0,
       reasonId: adjustmentReasonsHash[product.code],
       // adjustId: undefined,
     }));
 
     const adjustmentData = {
-      stockId: undefined, // TODO: add field to select stock and filter products
-      date: date?.toISOString(),
-      type: undefined, 
+      stockId: "", // TODO: add field to select stock and filter products
+      date: date ?? new Date(),
+      type: "", // TODO
       responsibleId: inputResponsible, // TODO
       adjustProducts: productsAdjustData,
     };
