@@ -3,8 +3,7 @@ import z from "zod";
 const getAllProps = z
   .object({
     filters: z.object({
-      startDate: z.date().optional(),
-      endDate: z.date().optional(),
+      date: z.date().optional(),
       operator: z.string().optional(),
       company: z.string().optional(),
       operationType: z.string().optional(),
