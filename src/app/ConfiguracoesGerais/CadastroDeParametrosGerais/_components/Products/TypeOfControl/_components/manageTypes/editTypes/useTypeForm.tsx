@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { type ControlType } from "~/server/interfaces/controlType/controlType.route.interfaces";
 import { api } from "~/trpc/react";
 import {

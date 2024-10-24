@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { TableButtonComponent } from "~/components/tableButton";
 import { type SerializedOrder } from "~/server/interfaces/order/order.route.interfaces";
 import { api } from "~/trpc/react";

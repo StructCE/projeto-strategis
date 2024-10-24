@@ -6,6 +6,7 @@ import {
 } from "./supplierRegisterFormSchema";
 
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { api } from "~/trpc/react";
 
 export const useSupplierForm = () => {

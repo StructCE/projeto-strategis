@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { TableButtonComponent } from "~/components/tableButton";
 import { type AdjustProduct } from "~/server/interfaces/adjust/adjust.route.interfaces";
 import { api } from "~/trpc/react";

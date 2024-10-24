@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { type InvoiceProduct } from "~/server/interfaces/invoice/invoice.route.interfaces";

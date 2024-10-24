@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { TableButtonComponent } from "~/components/tableButton";
 import { type InventoryProduct } from "~/server/interfaces/inventory/inventory.route.interfaces";
 import { api } from "~/trpc/react";
