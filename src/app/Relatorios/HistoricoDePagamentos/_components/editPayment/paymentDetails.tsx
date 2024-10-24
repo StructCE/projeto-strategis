@@ -107,7 +107,7 @@ export default function PaymentDetails(props: PaymentType) {
               <TableCell className="px-[10px] py-[5px]">
                 <FormField
                   control={paymentEditForm.form.control}
-                  name="bank"
+                  name="bankId"
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -162,7 +162,7 @@ export default function PaymentDetails(props: PaymentType) {
               <TableCell className="px-[10px] py-[5px]">
                 <FormField
                   control={paymentEditForm.form.control}
-                  name="value_payed"
+                  name="payedValue"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -187,7 +187,7 @@ export default function PaymentDetails(props: PaymentType) {
               <TableCell className="px-[10px] py-[5px]">
                 <FormField
                   control={paymentEditForm.form.control}
-                  name="date_payment"
+                  name="paymentDate"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -234,7 +234,7 @@ export default function PaymentDetails(props: PaymentType) {
               <TableCell className="px-[10px] py-[5px]">
                 <FormField
                   control={paymentEditForm.form.control}
-                  name="payed_status"
+                  name="payedStatus"
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -261,46 +261,12 @@ export default function PaymentDetails(props: PaymentType) {
 
             <TableRow className="bg-[#fbfbfb]">
               <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-                Tipo de Documento
-              </TableCell>
-              <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.documentType?.name}
-              </TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-                Plano de Contas
-              </TableCell>
-              <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.accountPlan?.name}
-              </TableCell>
-            </TableRow>
-
-            <TableRow className="bg-[#fbfbfb]">
-              <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-                Conta
-              </TableCell>
-              <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.account?.name}
-              </TableCell>
-            </TableRow>
-
-            <TableRow>
-              <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-                Projeto
-              </TableCell>
-              <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.project?.name}
-              </TableCell>
-            </TableRow>
-
-            <TableRow className="bg-[#fbfbfb]">
-              <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
                 Tipo de Despesa
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.expenseType}
+                {props.invoice.expenseType
+                  ? props.invoice.expenseType
+                  : "Não informado"}
               </TableCell>
             </TableRow>
 
@@ -309,7 +275,53 @@ export default function PaymentDetails(props: PaymentType) {
                 Recorrência
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.recurrence}
+                {props.invoice.recurrence
+                  ? props.invoice.recurrence
+                  : "Não informada"}
+              </TableCell>
+            </TableRow>
+
+            <TableRow className="bg-[#fbfbfb]">
+              <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
+                Tipo de Documento
+              </TableCell>
+              <TableCell className="px-[10px] py-[5px]">
+                {props.invoice.documentType
+                  ? props.invoice.documentType.name
+                  : "Não informado"}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
+                Plano de Contas
+              </TableCell>
+              <TableCell className="px-[10px] py-[5px]">
+                {props.invoice.accountPlan
+                  ? props.invoice.accountPlan.name
+                  : "Não informado"}
+              </TableCell>
+            </TableRow>
+
+            <TableRow className="bg-[#fbfbfb]">
+              <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
+                Conta
+              </TableCell>
+              <TableCell className="px-[10px] py-[5px]">
+                {props.invoice.account
+                  ? props.invoice.account.name
+                  : "Não informado"}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
+                Projeto
+              </TableCell>
+              <TableCell className="px-[10px] py-[5px]">
+                {props.invoice.project
+                  ? props.invoice.project.name
+                  : "Não informado"}
               </TableCell>
             </TableRow>
 
@@ -318,7 +330,9 @@ export default function PaymentDetails(props: PaymentType) {
                 Grupo
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.group?.name}
+                {props.invoice.group
+                  ? props.invoice.group.name
+                  : "Não informado"}
               </TableCell>
             </TableRow>
           </TableBody>

@@ -70,7 +70,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Banco
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.invoice.bank?.name}
+            {props.invoice.bank ? props.invoice.bank.name : "Não informado"}
           </TableCell>
         </TableRow>
 
@@ -112,9 +112,11 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Data de Pagamento
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {new Date(
-              props.invoice.paymentDate ? props.invoice.paymentDate : "",
-            ).toLocaleDateString()}
+            {props.invoice.paymentDate
+              ? new Date(
+                  props.invoice.paymentDate ? props.invoice.paymentDate : "",
+                ).toLocaleDateString()
+              : "Não informada"}
           </TableCell>
         </TableRow>
 
@@ -124,42 +126,6 @@ export default function PaymentCompleteDetails(props: PaymentType) {
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
             {props.invoice.payedStatus}
-          </TableCell>
-        </TableRow>
-
-        <TableRow className="bg-[#fbfbfb]">
-          <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-            Tipo de Documento
-          </TableCell>
-          <TableCell className="px-[10px] py-[5px]">
-            {props.invoice.documentType?.name}
-          </TableCell>
-        </TableRow>
-
-        <TableRow>
-          <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-            Plano de Contas
-          </TableCell>
-          <TableCell className="px-[10px] py-[5px]">
-            {props.invoice.accountPlan?.name}
-          </TableCell>
-        </TableRow>
-
-        <TableRow className="bg-[#fbfbfb]">
-          <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-            Conta
-          </TableCell>
-          <TableCell className="px-[10px] py-[5px]">
-            {props.invoice.account?.name}
-          </TableCell>
-        </TableRow>
-
-        <TableRow>
-          <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-            Projeto
-          </TableCell>
-          <TableCell className="px-[10px] py-[5px]">
-            {props.invoice.project?.name}
           </TableCell>
         </TableRow>
 
@@ -183,10 +149,52 @@ export default function PaymentCompleteDetails(props: PaymentType) {
 
         <TableRow className="bg-[#fbfbfb]">
           <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
+            Tipo de Documento
+          </TableCell>
+          <TableCell className="px-[10px] py-[5px]">
+            {props.invoice.documentType?.name}
+          </TableCell>
+        </TableRow>
+
+        <TableRow>
+          <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
+            Plano de Contas
+          </TableCell>
+          <TableCell className="px-[10px] py-[5px]">
+            {props.invoice.accountPlan
+              ? props.invoice.accountPlan.name
+              : "Não informado"}
+          </TableCell>
+        </TableRow>
+
+        <TableRow className="bg-[#fbfbfb]">
+          <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
+            Conta
+          </TableCell>
+          <TableCell className="px-[10px] py-[5px]">
+            {props.invoice.account
+              ? props.invoice.account.name
+              : "Não informado"}
+          </TableCell>
+        </TableRow>
+
+        <TableRow>
+          <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
+            Projeto
+          </TableCell>
+          <TableCell className="px-[10px] py-[5px]">
+            {props.invoice.project
+              ? props.invoice.project.name
+              : "Não informado"}
+          </TableCell>
+        </TableRow>
+
+        <TableRow className="bg-[#fbfbfb]">
+          <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
             Grupo
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.invoice.group?.name}
+            {props.invoice.group ? props.invoice.group.name : "Não informado"}
           </TableCell>
         </TableRow>
       </TableBody>

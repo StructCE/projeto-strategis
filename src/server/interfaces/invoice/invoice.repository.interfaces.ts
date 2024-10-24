@@ -115,10 +115,10 @@ type AutoRegisterProps = z.infer<typeof autoRegisterProps>;
 const editProps = z.object({
   id: z.string(),
   invoiceData: z.object({
-    expenseType: z.string(),
-    recurrence: z.string(),
-    installment: z.string(),
-    confirmedStatus: z.string(),
+    expenseType: z.string().optional(),
+    recurrence: z.string().optional(),
+    installment: z.string().optional(),
+    confirmedStatus: z.string().optional(),
     accountId: z.string().optional(),
     groupId: z.string().optional(),
     documentTypeId: z.string().optional(),
