@@ -28,6 +28,7 @@ async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
       project: true,
       company: true,
       supplier: true,
+      bank: true,
       InvoiceProduct: {
         include: {
           productSupplier: {
@@ -183,6 +184,7 @@ async function autoRegister(
       deadlineDate: invoiceData.deadlineDate,
       confirmedStatus: invoiceData.confirmedStatus,
       invoiceValue: invoiceData.invoiceValue,
+      payedStatus: invoiceData.payedStatus,
     },
   });
 
@@ -302,7 +304,7 @@ async function edit(props: InvoiceRepositoryInterfaces["EditProps"]) {
       bankId: invoiceData.bankId ?? null,
       payedValue: invoiceData.payedValue ?? null,
       paymentDate: invoiceData.paymentDate ?? null,
-      payedStatus: invoiceData.payedStatus ?? null,
+      payedStatus: invoiceData.payedStatus,
     },
   });
 

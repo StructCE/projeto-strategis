@@ -24,15 +24,18 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
-import { banks, type Payment } from "../paymentsData";
+import { type SerializedInvoice } from "~/server/interfaces/invoice/invoice.route.interfaces";
+import { api } from "~/trpc/react";
 import { usePaymentForm } from "./usePaymentForm";
 
 type PaymentType = {
-  payment: Payment;
+  invoice: SerializedInvoice;
 };
 
 export default function PaymentDetails(props: PaymentType) {
-  const paymentEditForm = usePaymentForm(props.payment);
+  const paymentEditForm = usePaymentForm(props.invoice);
+
+  const { data: banks = [] } = api.generalParameters.bank.getAll.useQuery();
 
   return (
     <Form {...paymentEditForm.form}>
@@ -46,7 +49,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Nº do Documento
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.document_number}
+                {props.invoice.documentNumber}
               </TableCell>
             </TableRow>
 
@@ -55,7 +58,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Empresa
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.company.name}
+                {props.invoice.company.name}
               </TableCell>
             </TableRow>
 
@@ -64,7 +67,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Fornecedor
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.supplier.name}
+                {props.invoice.supplier.name}
               </TableCell>
             </TableRow>
 
@@ -73,7 +76,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Data do Documento
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {new Date(props.payment.date_document).toLocaleDateString()}
+                {new Date(props.invoice.documentDate).toLocaleDateString()}
               </TableCell>
             </TableRow>
 
@@ -82,7 +85,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Data de Vencimento
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {new Date(props.payment.date_deadline).toLocaleDateString()}
+                {new Date(props.invoice.deadlineDate).toLocaleDateString()}
               </TableCell>
             </TableRow>
 
@@ -91,7 +94,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Produtos
               </TableCell>
               <TableCell className="flex border-0 px-[10px] py-[5px]">
-                {props.payment.products
+                {props.invoice.invoiceProducts
                   .map((product) => product.name)
                   .join(", ")}
               </TableCell>
@@ -117,9 +120,9 @@ export default function PaymentDetails(props: PaymentType) {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {banks.map((document, index) => (
-                            <SelectItem value={document.name} key={index}>
-                              {document.name}
+                          {banks.map((bank, index) => (
+                            <SelectItem value={bank.id} key={index}>
+                              {bank.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -136,7 +139,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Valor
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.value.toLocaleString("pt-BR", {
+                {props.invoice.invoiceValue.toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 })}
@@ -148,7 +151,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Parcela
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.installment}
+                {props.invoice.installment}
               </TableCell>
             </TableRow>
 
@@ -261,7 +264,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Tipo de Documento
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.document.name}
+                {props.invoice.documentType?.name}
               </TableCell>
             </TableRow>
 
@@ -270,7 +273,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Plano de Contas
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.account_plan.name}
+                {props.invoice.accountPlan?.name}
               </TableCell>
             </TableRow>
 
@@ -279,7 +282,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Conta
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.account_plan.account.name}
+                {props.invoice.account?.name}
               </TableCell>
             </TableRow>
 
@@ -288,7 +291,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Projeto
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.project.name}
+                {props.invoice.project?.name}
               </TableCell>
             </TableRow>
 
@@ -297,7 +300,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Tipo de Despesa
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.expense_type}
+                {props.invoice.expenseType}
               </TableCell>
             </TableRow>
 
@@ -306,7 +309,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Recorrência
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.recurrence}
+                {props.invoice.recurrence}
               </TableCell>
             </TableRow>
 
@@ -315,7 +318,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Grupo
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.payment.group.name}
+                {props.invoice.group?.name}
               </TableCell>
             </TableRow>
           </TableBody>

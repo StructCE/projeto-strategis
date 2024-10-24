@@ -504,9 +504,9 @@ model Invoice {
     invoiceValue    Float
 
     bankId      String? // Banco do pagamento
-    payedValue  String? // Valor pago
+    payedValue  Float? // Valor pago
     paymentDate DateTime? // Data do pagamento
-    payedStatus String? // "Pago" | "Em Aberto" | "Cancelado"
+    payedStatus String    @default("Em Aberto") // "Pago" | "Em Aberto" | "Cancelado"
 
     supplier       Supplier         @relation(fields: [supplierId], references: [id])
     company        Company          @relation(fields: [companyId], references: [id])

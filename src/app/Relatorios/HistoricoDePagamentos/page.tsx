@@ -15,8 +15,6 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import * as XLSX from "xlsx";
-import { companies } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/companiesData";
-import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -36,16 +34,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { api } from "~/trpc/react";
 import PaymentDetails from "./_components/editPayment/paymentDetails";
 import PaymentCompleteDetails from "./_components/paymentCompleteDetails";
-import {
-  account_plans,
-  banks,
-  groups,
-  type Payment,
-  payments,
-  projects,
-} from "./_components/paymentsData";
 
 export default function PaymentHistory() {
   // Checkboxes dos pagamentos
@@ -70,63 +61,93 @@ export default function PaymentHistory() {
   // Filtros - Linha 3
   const [selectAccountPlan, setSelectAccountPlan] = useState("");
   const [selectGroup, setSelectGroup] = useState("");
-  const [selectAccount, setSelectAccount] = useState("");
+  const [selectDocumentType, setSelectDocumentType] = useState("");
   const [selectProject, setSelectProject] = useState("");
   const [selectExpenseType, setSelectExpenseType] = useState("");
 
+  // Dados do BD
+  const { data: invoices = [] } = api.invoice.getAll.useQuery({});
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
+  const { data: banks = [] } = api.generalParameters.bank.getAll.useQuery();
+  const { data: groups = [] } = api.generalParameters.group.getAll.useQuery();
+  const { data: projects = [] } =
+    api.generalParameters.project.getAll.useQuery();
+  const { data: documentTypes = [] } =
+    api.generalParameters.documentType.getAll.useQuery();
+  const { data: accountPlans = [] } =
+    api.generalParameters.accountPlan.getAll.useQuery();
+
+  console.log(invoices);
+
   // Filtragem dos pagamentos
-  const filteredPayments = payments.filter((payment) => {
+  const filteredInvoices = invoices.filter((invoice) => {
+    const matchesConfirmedStatus = invoice.confirmedStatus != "Rejeitada";
+
     const matchesDateDocument =
       !dateDocument ||
-      (payment.date_document.getDate() === dateDocument.getDate() &&
-        payment.date_document.getMonth() === dateDocument.getMonth() + 1 &&
-        payment.date_document.getFullYear() === dateDocument.getFullYear());
+      (invoice.documentDate.getDate() === dateDocument.getDate() &&
+        invoice.documentDate.getMonth() === dateDocument.getMonth() + 1 &&
+        invoice.documentDate.getFullYear() === dateDocument.getFullYear());
 
     const matchesDateDeadline =
       !dateDeadline ||
-      (payment.date_deadline.getDate() === dateDeadline.getDate() &&
-        payment.date_deadline.getMonth() === dateDeadline.getMonth() + 1 &&
-        payment.date_deadline.getFullYear() === dateDeadline.getFullYear());
+      (invoice.deadlineDate.getDate() === dateDeadline.getDate() &&
+        invoice.deadlineDate.getMonth() === dateDeadline.getMonth() + 1 &&
+        invoice.deadlineDate.getFullYear() === dateDeadline.getFullYear());
 
     const matchesDatePayment =
       !datePayment ||
-      (payment.date_payment &&
-        payment.date_payment.getDate() === datePayment.getDate() &&
-        payment.date_payment.getMonth() === datePayment.getMonth() + 1 &&
-        payment.date_payment.getFullYear() === datePayment.getFullYear());
+      (invoice.paymentDate &&
+        invoice.paymentDate.getDate() === datePayment.getDate() &&
+        invoice.paymentDate.getMonth() === datePayment.getMonth() + 1 &&
+        invoice.paymentDate.getFullYear() === datePayment.getFullYear());
 
     const matchesDescription =
       inputDescription === "" ||
-      payment.document_number.includes(inputDescription);
+      invoice.documentNumber.includes(inputDescription) ||
+      invoice.invoiceValue.toString().includes(inputDescription) ||
+      invoice.invoiceProducts.some((invoiceProduct) =>
+        invoiceProduct.name.includes(inputDescription),
+      );
 
-    const matchesBank = selectBank === "" || payment.bank?.name === selectBank;
+    const matchesBank = selectBank === "" || invoice.bank?.name === selectBank;
 
     const matchesSupplier =
-      selectSupplier === "" || payment.supplier.name === selectSupplier;
+      selectSupplier === "" || invoice.supplier.name === selectSupplier;
 
     const matchesCompany =
-      selectCompany === "" || payment.company.name === selectCompany;
+      selectCompany === "" || invoice.company.name === selectCompany;
 
     const matchesTypeOfStatus =
-      selectTypeOfStatus === "" || payment.payed_status === selectTypeOfStatus;
+      selectTypeOfStatus === "" || invoice.payedStatus === selectTypeOfStatus;
 
-    const matchesStatus =
-      selectStatus === "" || payment.payed_status === selectStatus;
+    const invoiceStatus =
+      invoice.deadlineDate && new Date() <= invoice.deadlineDate
+        ? "Em Dia"
+        : "Atrasado";
+
+    const matchesStatus = selectStatus === "" || invoiceStatus === selectStatus;
 
     const matchesAccountPlan =
       selectAccountPlan === "" ||
-      payment.account_plan.name === selectAccountPlan;
+      invoice.accountPlan?.name === selectAccountPlan;
 
     const matchesGroup =
-      selectGroup === "" || payment.group.name === selectGroup;
+      selectGroup === "" || invoice.group?.name === selectGroup;
 
     const matchesProject =
-      selectProject === "" || payment.project.name === selectProject;
+      selectProject === "" || invoice.project?.name === selectProject;
 
     const matchesExpenseType =
-      selectExpenseType === "" || payment.expense_type === selectExpenseType;
+      selectExpenseType === "" || invoice.expenseType === selectExpenseType;
+
+    const matchesDocumentType =
+      selectDocumentType === "" ||
+      invoice.documentType?.name === selectDocumentType;
 
     return (
+      matchesConfirmedStatus &&
       matchesDateDocument &&
       matchesDateDeadline &&
       matchesDatePayment &&
@@ -139,7 +160,8 @@ export default function PaymentHistory() {
       matchesAccountPlan &&
       matchesGroup &&
       matchesProject &&
-      matchesExpenseType
+      matchesExpenseType &&
+      matchesDocumentType
     );
   });
 
@@ -161,8 +183,8 @@ export default function PaymentHistory() {
   }
 
   function handleSelectAll() {
-    const allFilteredPayments = filteredPayments.map(
-      (payment) => payment.document_number,
+    const allFilteredPayments = filteredInvoices.map(
+      (payment) => payment.documentNumber,
     );
 
     setSelectedPayments((prevSelectedPayments) => [
@@ -176,13 +198,13 @@ export default function PaymentHistory() {
   }
 
   function calculateTotalValue() {
-    const selectedPaymentObjects = filteredPayments.filter((payment) =>
-      selectedPayments.includes(payment.document_number),
+    const selectedPaymentObjects = filteredInvoices.filter((payment) =>
+      selectedPayments.includes(payment.documentNumber),
     );
 
     const totalValue = selectedPaymentObjects.reduce(
       (total, payment) =>
-        total + (payment.value_payed ? payment.value_payed : 0),
+        total + (payment.invoiceValue ? payment.invoiceValue : 0),
       0,
     );
 
@@ -206,7 +228,7 @@ export default function PaymentHistory() {
   ): string {
     const productsString = produtos
       .map((product) => capitalizeFirstLetter(product.name))
-      .join(", ");
+      .join(",");
 
     return `NF:${nota_fiscal}-VG:${valor
       .toLocaleString("pt-BR", {
@@ -722,9 +744,9 @@ export default function PaymentHistory() {
                   setSelectStatus("");
                   setSelectAccountPlan("");
                   setSelectGroup("");
-                  setSelectAccount("");
                   setSelectProject("");
                   setSelectExpenseType("");
+                  setSelectDocumentType("");
                 }}
               />
             </TooltipTrigger>
@@ -733,7 +755,7 @@ export default function PaymentHistory() {
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
-      {/* Filtros Linha 3 - Plano de conta, Grupo, Conta, Projeto, Tipo de Despesa */}
+      {/* Filtros Linha 3 - Plano de conta, Grupo, Projeto, Tipo de Despesa, Tipo de Documento */}
       <TableComponent.FiltersLine>
         <Filter>
           <Filter.Icon
@@ -746,7 +768,7 @@ export default function PaymentHistory() {
             state={selectAccountPlan}
             setState={setSelectAccountPlan}
           >
-            {account_plans.map((account_plan, index) => (
+            {accountPlans.map((account_plan, index) => (
               <Filter.SelectItems
                 value={account_plan.name}
                 key={index}
@@ -772,31 +794,6 @@ export default function PaymentHistory() {
                 key={index}
               ></Filter.SelectItems>
             ))}
-          </Filter.Select>
-        </Filter>
-
-        <Filter>
-          <Filter.Icon
-            icon={({ className }: { className: string }) => (
-              <Search className={className} />
-            )}
-          />
-          <Filter.Select
-            placeholder="Conta"
-            state={selectAccount}
-            setState={setSelectAccount}
-          >
-            {groups.map(
-              (
-                group,
-                index, // Montar esse select, dados estão na parte Plano de Contas Geral do arquivo Planilha de Contas 1
-              ) => (
-                <Filter.SelectItems
-                  value={group.name}
-                  key={index}
-                ></Filter.SelectItems>
-              ),
-            )}
           </Filter.Select>
         </Filter>
 
@@ -836,6 +833,26 @@ export default function PaymentHistory() {
             <Filter.SelectItems value="Receita"></Filter.SelectItems>
           </Filter.Select>
         </Filter>
+
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
+          />
+          <Filter.Select
+            placeholder="Tipo de Documento"
+            state={selectDocumentType}
+            setState={setSelectDocumentType}
+          >
+            {documentTypes.map((documentType, index) => (
+              <Filter.SelectItems
+                value={documentType.name}
+                key={index}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
       </TableComponent.FiltersLine>
 
       {/* Botões de selecionar todos e remover todos */}
@@ -855,11 +872,11 @@ export default function PaymentHistory() {
           Remover Seleção
         </Button>
         <div className="mx-2">
-          <span className="font-medium">Pagamento Selecionados:</span>{" "}
+          <span className="font-medium">Pagamentos Selecionados:</span>{" "}
           {selectedPayments.length}
         </div>
         <div>
-          <span className="font-medium">Valor Total:</span>{" "}
+          <span className="font-medium">Valor Total das NFs:</span>{" "}
           {calculateTotalValue()}
         </div>
       </div>
@@ -884,9 +901,9 @@ export default function PaymentHistory() {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {filteredPayments
-          .sort((a, b) => a.date_document.getTime() - b.date_document.getTime())
-          .map((payment, index) => (
+        {filteredInvoices
+          .sort((a, b) => a.documentDate.getTime() - b.documentDate.getTime())
+          .map((invoice, index) => (
             <TableComponent.Line
               className={`grid-cols-[85px_1fr_170px_120px_120px_0.6fr_130px] gap-4 md:gap-8 ${
                 index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -895,57 +912,56 @@ export default function PaymentHistory() {
             >
               <TableComponent.Value className="text-center">
                 <Checkbox
-                  checked={selectedPayments.includes(payment.document_number)}
+                  checked={selectedPayments.includes(invoice.documentNumber)}
                   onCheckedChange={(checked) =>
-                    handlePaymentSelection(payment.document_number, checked)
+                    handlePaymentSelection(invoice.documentNumber, checked)
                   }
                 />
               </TableComponent.Value>
               <TableComponent.Value className="tracking-tight">
                 {paymentDescription(
                   parseInt(
-                    payment.document_number.replace(/\./g, ""),
+                    invoice.documentNumber.replace(/\./g, ""),
                     10,
                   ).toString(),
-                  payment.value,
-                  payment.products,
+                  invoice.invoiceValue,
+                  invoice.invoiceProducts,
                 )}
               </TableComponent.Value>
               <TableComponent.Value className="text-center">
                 <span
                   className={`${
-                    payment.payed_status === "Pago"
+                    invoice.payedStatus === "Pago"
                       ? "text-verde_botao"
-                      : payment.payed_status === "Em Aberto"
+                      : invoice.payedStatus === "Em Aberto"
                         ? "text-amarelo_botao"
-                        : payment.payed_status === "Cancelado"
+                        : invoice.payedStatus === "Cancelado"
                           ? "text-vermelho_botao_2"
                           : ""
                   }`}
                 >
-                  {payment.payed_status}
+                  {invoice.payedStatus}
                 </span>
                 {" - "}
                 <span
                   className={`${
-                    payment.date_payment &&
-                    payment.date_payment <= payment.date_deadline
+                    invoice.paymentDate &&
+                    invoice.paymentDate <= invoice.deadlineDate
                       ? "text-verde_botao"
                       : "text-vermelho_botao_2"
                   }`}
                 >
-                  {payment.date_payment &&
-                  payment.date_payment <= payment.date_deadline
+                  {invoice.deadlineDate && new Date() <= invoice.deadlineDate
                     ? "Em Dia"
                     : "Atrasado"}
                 </span>
               </TableComponent.Value>
               <TableComponent.Value className="text-center">
-                {`${String(payment.date_document.getDate()).padStart(2, "0")}/${String(payment.date_document.getMonth()).padStart(2, "0")}/${String(payment.date_document.getFullYear()).padStart(2, "0")}`}
+                {`${String(invoice.documentDate.getDate()).padStart(2, "0")}/${String(invoice.documentDate.getMonth()).padStart(2, "0")}/${String(invoice.documentDate.getFullYear()).padStart(2, "0")}`}
               </TableComponent.Value>
-              <TableComponent.Value className="text-center">{`${String(payment.date_deadline.getDate()).padStart(2, "0")}/${String(payment.date_deadline.getMonth()).padStart(2, "0")}/${String(payment.date_deadline.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
+              <TableComponent.Value className="text-center">{`${String(invoice.deadlineDate.getDate()).padStart(2, "0")}/${String(invoice.deadlineDate.getMonth()).padStart(2, "0")}/${String(invoice.deadlineDate.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
               <TableComponent.Value>
-                {payment.company.name}
+                {invoice.company.name}
               </TableComponent.Value>
 
               <Dialog>
@@ -964,10 +980,10 @@ export default function PaymentHistory() {
                     </DialogTitle>
                     <DialogDescription></DialogDescription>
 
-                    {payment.payed_status === "Pago" ? (
-                      <PaymentCompleteDetails payment={payment} />
+                    {invoice.payedStatus === "Pago" ? (
+                      <PaymentCompleteDetails invoice={invoice} />
                     ) : (
-                      <PaymentDetails payment={payment} />
+                      <PaymentDetails invoice={invoice} />
                     )}
                   </DialogHeader>
                 </DialogContent>

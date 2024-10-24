@@ -26,7 +26,7 @@ const registerProps = z.object({
   documentTypeId: z.string().optional(),
   projectId: z.string().optional(),
   // bankId: z.string().optional(),
-  // payedValue: z.string().optional(),
+  // payedValue: z.number().optional(),
   // paymentDate: z.date().optional(),
   // payedStatus: z.string().optional(),
   invoiceProducts: z.array(
@@ -86,9 +86,9 @@ const autoRegisterProps = z.object({
   // documentTypeId: z.string().optional(),
   // projectId: z.string().optional(),
   // bankId: z.string().optional(),
-  // payedValue: z.string().optional(),
+  // payedValue: z.number().optional(),
   // paymentDate: z.date().optional(),
-  // payedStatus: z.string().optional(),
+  payedStatus: z.string().optional(),
   invoiceProducts: z.array(
     z.object({
       name: z.string(),
@@ -124,7 +124,7 @@ const editProps = z.object({
     documentTypeId: z.string().optional(),
     projectId: z.string().optional(),
     bankId: z.string().optional(),
-    payedValue: z.string().optional(),
+    payedValue: z.number().optional(),
     paymentDate: z.date().optional(),
     payedStatus: z.string().optional(),
   }),

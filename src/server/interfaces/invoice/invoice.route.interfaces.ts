@@ -14,7 +14,7 @@ export type Invoice = {
   accountId: string | null;
   projectId: string | null;
   bankId: string | null;
-  payedValue: string | null;
+  payedValue: number | null;
   paymentDate: Date | null;
   payedStatus: string | null;
 };
@@ -83,8 +83,8 @@ export type SerializedInvoice = {
 
   invoiceProducts: InvoiceProduct[];
 
-  bankId?: string; // Banco do pagamento
-  payedValue?: string; // Valor pago
+  bank?: { id: string | undefined; name: string | undefined }; // Banco do pagamento
+  payedValue?: number; // Valor pago
   paymentDate?: Date; // Data do pagamento
   payedStatus?: string; // "Pago" | "Em Aberto" | "Cancelado"
 };

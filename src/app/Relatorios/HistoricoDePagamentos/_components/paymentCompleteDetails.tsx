@@ -1,8 +1,8 @@
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
-import { type Payment } from "./paymentsData";
+import { type SerializedInvoice } from "~/server/interfaces/invoice/invoice.route.interfaces";
 
 type PaymentType = {
-  payment: Payment;
+  invoice: SerializedInvoice;
 };
 
 export default function PaymentCompleteDetails(props: PaymentType) {
@@ -14,7 +14,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Nº do Documento
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.document_number}
+            {props.invoice.documentNumber}
           </TableCell>
         </TableRow>
 
@@ -23,7 +23,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Empresa
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.company.name}
+            {props.invoice.company.name}
           </TableCell>
         </TableRow>
 
@@ -32,7 +32,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Fornecedor
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.supplier.name}
+            {props.invoice.supplier.name}
           </TableCell>
         </TableRow>
 
@@ -41,7 +41,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Data do Documento
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {new Date(props.payment.date_document).toLocaleDateString()}
+            {new Date(props.invoice.documentDate).toLocaleDateString()}
           </TableCell>
         </TableRow>
 
@@ -50,7 +50,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Data de Vencimento
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {new Date(props.payment.date_deadline).toLocaleDateString()}
+            {new Date(props.invoice.deadlineDate).toLocaleDateString()}
           </TableCell>
         </TableRow>
 
@@ -59,7 +59,9 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Produtos
           </TableCell>
           <TableCell className="flex border-0 px-[10px] py-[5px]">
-            {props.payment.products.map((product) => product.name).join(", ")}
+            {props.invoice.invoiceProducts
+              .map((product) => product.name)
+              .join(", ")}
           </TableCell>
         </TableRow>
 
@@ -68,7 +70,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Banco
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.bank?.name}
+            {props.invoice.bank?.name}
           </TableCell>
         </TableRow>
 
@@ -77,7 +79,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Valor
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.value.toLocaleString("pt-BR", {
+            {props.invoice.invoiceValue.toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             })}
@@ -89,7 +91,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Parcela
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.installment}
+            {props.invoice.installment}
           </TableCell>
         </TableRow>
 
@@ -98,7 +100,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Valor Pago
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.value_payed?.toLocaleString("pt-BR", {
+            {props.invoice.payedValue?.toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             })}
@@ -111,7 +113,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
             {new Date(
-              props.payment.date_payment ? props.payment.date_payment : "",
+              props.invoice.paymentDate ? props.invoice.paymentDate : "",
             ).toLocaleDateString()}
           </TableCell>
         </TableRow>
@@ -121,7 +123,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Status
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.payed_status}
+            {props.invoice.payedStatus}
           </TableCell>
         </TableRow>
 
@@ -130,7 +132,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Tipo de Documento
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.document.name}
+            {props.invoice.documentType?.name}
           </TableCell>
         </TableRow>
 
@@ -139,7 +141,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Plano de Contas
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.account_plan.name}
+            {props.invoice.accountPlan?.name}
           </TableCell>
         </TableRow>
 
@@ -148,7 +150,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Conta
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.account_plan.account.name}
+            {props.invoice.account?.name}
           </TableCell>
         </TableRow>
 
@@ -157,7 +159,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Projeto
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.project.name}
+            {props.invoice.project?.name}
           </TableCell>
         </TableRow>
 
@@ -166,7 +168,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Tipo de Despesa
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.expense_type}
+            {props.invoice.expenseType}
           </TableCell>
         </TableRow>
 
@@ -175,7 +177,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Recorrência
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.recurrence}
+            {props.invoice.recurrence}
           </TableCell>
         </TableRow>
 
@@ -184,7 +186,7 @@ export default function PaymentCompleteDetails(props: PaymentType) {
             Grupo
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.payment.group.name}
+            {props.invoice.group?.name}
           </TableCell>
         </TableRow>
       </TableBody>

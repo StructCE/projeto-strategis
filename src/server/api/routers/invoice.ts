@@ -41,6 +41,10 @@ export const invoiceRouter = createTRPCRouter({
               }
             : undefined,
           project: { id: invoice.project?.id, name: invoice.project?.name },
+          bank: { id: invoice.bank?.id, name: invoice.bank?.name },
+          payedValue: invoice.payedValue ?? undefined,
+          paymentDate: invoice.paymentDate ?? undefined,
+          payedStatus: invoice.payedStatus ?? undefined,
           invoiceProducts: invoice.InvoiceProduct.map(
             (invoiceProductSupplier) => ({
               id: invoiceProductSupplier.productSupplier.id,

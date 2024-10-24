@@ -215,6 +215,7 @@ const AutoCreateInvoice = () => {
         deadlineDate: dateDeadline,
         confirmedStatus: "Pendente",
         invoiceValue: Number(invoiceValue),
+        payedStatus: "Em Aberto",
         invoiceProducts: products.map((product) => ({
           name: product.name,
           code: product.code,

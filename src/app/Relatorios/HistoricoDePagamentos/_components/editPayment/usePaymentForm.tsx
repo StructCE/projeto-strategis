@@ -1,20 +1,20 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { type SerializedInvoice } from "~/server/interfaces/invoice/invoice.route.interfaces";
 import {
   editPaymentFormSchema,
   type EditPaymentFormValues,
 } from "./paymentEditFormSchema";
-import { type Payment } from "./paymentsData";
 
-export const usePaymentForm = (payment: Payment) => {
+export const usePaymentForm = (invoice: SerializedInvoice) => {
   const form = useForm<EditPaymentFormValues>({
     resolver: zodResolver(editPaymentFormSchema),
     mode: "onChange",
     defaultValues: {
-      bank: payment.bank?.name,
-      value_payed: payment.value_payed,
-      date_payment: payment.date_payment,
-      payed_status: payment.payed_status,
+      bank: invoice.bank?.id,
+      value_payed: invoice.payedValue,
+      date_payment: invoice.paymentDate,
+      payed_status: invoice.payedStatus,
     },
   });
 
