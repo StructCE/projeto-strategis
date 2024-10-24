@@ -293,18 +293,20 @@ async function edit(props: InvoiceRepositoryInterfaces["EditProps"]) {
       id,
     },
     data: {
-      expenseType: invoiceData.expenseType,
-      recurrence: invoiceData.recurrence,
-      installment: invoiceData.installment,
-      confirmedStatus: invoiceData.confirmedStatus,
-      accountId: invoiceData.accountId ?? null,
-      groupId: invoiceData.groupId ?? null,
-      documentTypeId: invoiceData.documentTypeId ?? null,
-      projectId: invoiceData.projectId ?? null,
-      bankId: invoiceData.bankId ?? null,
-      payedValue: invoiceData.payedValue ?? null,
-      paymentDate: invoiceData.paymentDate ?? null,
-      payedStatus: invoiceData.payedStatus,
+      expenseType: invoiceData.expenseType ?? existingInvoice.expenseType,
+      recurrence: invoiceData.recurrence ?? existingInvoice.recurrence,
+      installment: invoiceData.installment ?? existingInvoice.installment,
+      confirmedStatus:
+        invoiceData.confirmedStatus ?? existingInvoice.confirmedStatus,
+      accountId: invoiceData.accountId ?? existingInvoice.accountId,
+      groupId: invoiceData.groupId ?? existingInvoice.groupId,
+      documentTypeId:
+        invoiceData.documentTypeId ?? existingInvoice.documentTypeId,
+      projectId: invoiceData.projectId ?? existingInvoice.projectId,
+      bankId: invoiceData.bankId ?? existingInvoice.bankId,
+      payedValue: invoiceData.payedValue ?? existingInvoice.payedValue,
+      paymentDate: invoiceData.paymentDate ?? existingInvoice.paymentDate,
+      payedStatus: invoiceData.payedStatus ?? existingInvoice.payedStatus,
     },
   });
 

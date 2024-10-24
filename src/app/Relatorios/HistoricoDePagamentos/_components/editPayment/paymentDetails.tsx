@@ -102,35 +102,10 @@ export default function PaymentDetails(props: PaymentType) {
 
             <TableRow className="bg-[#fbfbfb]">
               <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-                Banco*
+                Parcela
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                <FormField
-                  control={paymentEditForm.form.control}
-                  name="bankId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="h-fit border-[1px] border-borda_input bg-fundo_destaque_relatorio py-[5px] placeholder-placeholder_input">
-                            <SelectValue placeholder="Selecione o banco do pagamento" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {banks.map((bank, index) => (
-                            <SelectItem value={bank.id} key={index}>
-                              {bank.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {props.invoice.installment}
               </TableCell>
             </TableRow>
 
@@ -147,15 +122,6 @@ export default function PaymentDetails(props: PaymentType) {
             </TableRow>
 
             <TableRow className="bg-[#fbfbfb]">
-              <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
-                Parcela
-              </TableCell>
-              <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.installment}
-              </TableCell>
-            </TableRow>
-
-            <TableRow>
               <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
                 Valor Pago*
               </TableCell>
@@ -180,7 +146,7 @@ export default function PaymentDetails(props: PaymentType) {
               </TableCell>
             </TableRow>
 
-            <TableRow className="bg-[#fbfbfb]">
+            <TableRow>
               <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
                 Data de Pagamento*
               </TableCell>
@@ -227,6 +193,40 @@ export default function PaymentDetails(props: PaymentType) {
               </TableCell>
             </TableRow>
 
+            <TableRow className="bg-[#fbfbfb]">
+              <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
+                Banco*
+              </TableCell>
+              <TableCell className="px-[10px] py-[5px]">
+                <FormField
+                  control={paymentEditForm.form.control}
+                  name="bankId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="h-fit border-[1px] border-borda_input bg-fundo_destaque_relatorio py-[5px] placeholder-placeholder_input">
+                            <SelectValue placeholder="Selecione o banco do pagamento" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {banks.map((bank, index) => (
+                            <SelectItem value={bank.id} key={index}>
+                              {bank.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </TableCell>
+            </TableRow>
+
             <TableRow>
               <TableCell className="w-[250px] px-[10px] py-[5px] font-medium">
                 Status*
@@ -264,9 +264,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Tipo de Despesa
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.expenseType
-                  ? props.invoice.expenseType
-                  : "Não informado"}
+                {props.invoice.expenseType ?? "Não informado"}
               </TableCell>
             </TableRow>
 
@@ -275,9 +273,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Recorrência
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.recurrence
-                  ? props.invoice.recurrence
-                  : "Não informada"}
+                {props.invoice.recurrence ?? "Não informada"}
               </TableCell>
             </TableRow>
 
@@ -286,9 +282,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Tipo de Documento
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.documentType
-                  ? props.invoice.documentType.name
-                  : "Não informado"}
+                {props.invoice.documentType?.name ?? "Não informado"}
               </TableCell>
             </TableRow>
 
@@ -297,9 +291,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Plano de Contas
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.accountPlan
-                  ? props.invoice.accountPlan.name
-                  : "Não informado"}
+                {props.invoice.accountPlan?.name ?? "Não informado"}
               </TableCell>
             </TableRow>
 
@@ -308,8 +300,9 @@ export default function PaymentDetails(props: PaymentType) {
                 Conta
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.account
-                  ? props.invoice.account.name
+                {props.invoice.account?.name != undefined &&
+                props.invoice.account?.name != ""
+                  ? props.invoice.account?.name
                   : "Não informado"}
               </TableCell>
             </TableRow>
@@ -319,9 +312,7 @@ export default function PaymentDetails(props: PaymentType) {
                 Projeto
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.project
-                  ? props.invoice.project.name
-                  : "Não informado"}
+                {props.invoice.project?.name ?? "Não informado"}
               </TableCell>
             </TableRow>
 
@@ -330,15 +321,13 @@ export default function PaymentDetails(props: PaymentType) {
                 Grupo
               </TableCell>
               <TableCell className="px-[10px] py-[5px]">
-                {props.invoice.group
-                  ? props.invoice.group.name
-                  : "Não informado"}
+                {props.invoice.group?.name ?? "Não informado"}
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
         <TableButtonComponent className="pt-1 sm:pt-2">
-          <TableButtonComponent.Button className="min-h-0 min-w-0 rounded-md bg-cinza_borda_acordeao px-2 py-1 text-black">
+          <TableButtonComponent.Button className="min-h-0 min-w-0 rounded-md bg-verde_botao px-2 py-1 text-black hover:bg-hover_verde_botao">
             Salvar
           </TableButtonComponent.Button>
         </TableButtonComponent>

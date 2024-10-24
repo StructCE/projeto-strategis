@@ -36,7 +36,7 @@ export const usePaymentForm = (invoice: SerializedInvoice) => {
     mode: "onChange",
     defaultValues: {
       bankId: invoice.bank?.id,
-      payedValue: invoice.payedValue,
+      payedValue: invoice.invoiceValue,
       paymentDate: invoice.paymentDate,
       payedStatus: invoice.payedStatus,
     },

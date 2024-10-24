@@ -1,5 +1,4 @@
 "use client";
-import jsPDF from "jspdf";
 import "jspdf-autotable";
 import {
   Building2,
@@ -240,36 +239,60 @@ export default function PaymentHistory() {
 
   interface PaymentReportData {
     date: string;
-    payments: Payment[];
+    invoices: {
+      documentNumber: string;
+      documentDate: Date;
+      companyName: string;
+      supplierName: string;
+      expenseType: string | null;
+      recurrence: string | null;
+      installment: string;
+      deadlineDate: Date;
+      confirmedStatus: string;
+      groupName: string | null;
+      documentTypeName: string | null;
+      accountPlanName: string | null;
+      accountName: string | null;
+      projectName: string | null;
+      bankName: string | null;
+      invoiceValue: number;
+      payedValue: number | null;
+      paymentDate: Date | null;
+      payedStatus: string;
+      invoiceProductNames: string[];
+    }[];
   }
 
   function exportSelectedProductData(fileType: string) {
-    const paymentsToPrint = payments.filter((payment) =>
-      selectedPayments.includes(payment.document_number),
+    const paymentsToPrint = invoices.filter((payment) =>
+      selectedPayments.includes(payment.documentNumber),
     );
 
     const paymentReportData = {
       date: new Date()?.toISOString(),
-      payments: paymentsToPrint.map((payment) => ({
-        document_number: payment.document_number,
-        company: payment.company,
-        date_document: payment.date_document,
-        document: payment.document,
-        account_plan: payment.account_plan,
-        project: payment.project,
-        expense_type: payment.expense_type,
+      invoices: paymentsToPrint.map((payment) => ({
+        documentNumber: payment.documentNumber,
+        documentDate: payment.documentDate,
+        companyName: payment.company.name,
+        supplierName: payment.supplier.name,
+        expenseType: payment.expenseType,
         recurrence: payment.recurrence,
-        supplier: payment.supplier,
-        bank: payment.bank,
-        value: payment.value,
         installment: payment.installment,
-        value_payed: payment.value_payed,
-        date_deadline: payment.date_deadline,
-        date_payment: payment.date_payment,
-        confirmed_status: payment.confirmed_status,
-        payed_status: payment.payed_status,
-        group: payment.group,
-        products: payment.products,
+        deadlineDate: payment.deadlineDate,
+        confirmedStatus: payment.confirmedStatus,
+        groupName: payment.group?.name ?? "Não informado",
+        documentTypeName: payment.documentType?.name ?? "Não informado",
+        accountPlanName: payment.accountPlan?.name ?? "Não informado",
+        accountName: payment.account?.name ?? "Não informado",
+        projectName: payment.project?.name ?? "Não informado",
+        bankName: payment.bank?.name ?? "Não informado",
+        invoiceValue: payment.invoiceValue,
+        payedValue: payment.payedValue ?? 0,
+        paymentDate: payment.paymentDate ?? null,
+        payedStatus: payment.payedStatus ?? "Não informado",
+        invoiceProductNames: payment.invoiceProducts.map(
+          (invoiceProduct) => invoiceProduct.name,
+        ),
       })),
     };
 
@@ -280,10 +303,6 @@ export default function PaymentHistory() {
 
       case "json":
         exportToJson(paymentReportData);
-        break;
-
-      case "pdf":
-        exportToPDF(paymentReportData);
         break;
 
       default:
@@ -301,198 +320,6 @@ export default function PaymentHistory() {
     link.click();
   }
 
-  function exportToPDF(paymentReportData: PaymentReportData) {
-    const doc = new jsPDF();
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text(
-      `Relatório de Pagamentos - ${new Date(paymentReportData.date).toLocaleDateString()}`,
-      14,
-      20,
-    );
-
-    doc.setFontSize(12);
-    let yPosition = 25;
-    const lineHeight = 5.5; // Altura entre as linhas de texto
-    const pageHeight = 280; // Limite de altura da página
-
-    function addKeyValuePair(
-      key: string,
-      value: string | number,
-      x1: number,
-      x2: number,
-      y: number,
-    ) {
-      doc.setFont("helvetica", "bold");
-      doc.text(`${key}:`, x1, y); // Chave
-      doc.setFont("helvetica", "normal");
-
-      const splitText: string[] = doc.splitTextToSize(
-        `${value}`,
-        120,
-      ) as string[];
-      doc.text(splitText, x2, y);
-
-      return splitText.length * lineHeight;
-    }
-
-    paymentReportData.payments.forEach((payment) => {
-      const productHeight = 12 * lineHeight + 14;
-
-      if (yPosition + productHeight > pageHeight) {
-        doc.addPage();
-        yPosition = 14;
-      }
-
-      yPosition += addKeyValuePair(
-        "Nº do Documento",
-        payment.document_number,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Empresa",
-        payment.company.name,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Fornecedor",
-        payment.supplier.name,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Data do Documento",
-        new Date(payment.date_document).toLocaleDateString(),
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Data de Vencimento",
-        new Date(payment.date_deadline).toLocaleDateString(),
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Produtos",
-        payment.products.map((product) => product.name).join(", "),
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Banco",
-        payment.bank?.name ?? "N/A",
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Valor",
-        payment.value.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }),
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Parcela",
-        payment.installment,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Valor Pago",
-        payment.value_payed?.toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }) ?? "N/A",
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Data de Pagamento",
-        new Date(
-          payment.date_payment ? payment.date_payment : "",
-        ).toLocaleDateString() ?? "N/A",
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Status",
-        payment.payed_status,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Tipo de Documento",
-        payment.document.name,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Plano de Contas",
-        payment.account_plan.name,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Conta",
-        payment.account_plan.account.name,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Projeto",
-        payment.project.name,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Tipo de Despesa",
-        payment.expense_type,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Recorrência",
-        payment.recurrence,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Grupo",
-        payment.group.name,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-
-      yPosition += 10;
-    });
-
-    doc.save(`Avisos_Estoque_${new Date().toISOString().slice(0, 10)}.pdf`);
-  }
-
   function exportToCSV(paymentReportData: PaymentReportData) {
     const headers = [
       "Nº do Documento",
@@ -501,61 +328,65 @@ export default function PaymentHistory() {
       "Data do Documento",
       "Data de Vencimento",
       "Produtos",
-      "Banco",
-      "Valor",
       "Parcela",
+      "Valor",
       "Valor Pago",
       "Data de Pagamento",
+      "Banco",
       "Status",
+      "Tipo de Despesa",
+      "Recorrência",
       "Tipo de Documento",
       "Plano de Contas",
       "Conta",
       "Projeto",
-      "Tipo de Despesa",
-      "Recorrência",
       "Grupo",
     ];
 
-    const worksheetData = [
+    const worksheetData: (string | number)[][] = [
       headers,
-      ...paymentReportData.payments.map((payment: Payment) => [
-        payment.document_number,
-        payment.company.name,
-        payment.supplier.name,
-        new Date(payment.date_document).toLocaleDateString(),
-        new Date(payment.date_deadline).toLocaleDateString(),
-        payment.products.map((product) => product.name).join(", "),
-        payment.bank ? payment.bank.name : "Em Aberto",
-        payment.value.toLocaleString("pt-BR", {
+      ...paymentReportData.invoices.map((payment) => [
+        payment.documentNumber,
+        payment.companyName,
+        payment.supplierName,
+        new Date(payment.documentDate).toLocaleDateString(),
+        new Date(payment.deadlineDate).toLocaleDateString(),
+        payment.invoiceProductNames.join(", "),
+        payment.installment,
+        payment.invoiceValue.toLocaleString("pt-BR", {
           style: "currency",
           currency: "BRL",
         }),
-        payment.installment,
-        payment.value_payed
-          ? payment.value_payed.toLocaleString("pt-BR", {
+        payment.payedValue
+          ? payment.payedValue.toLocaleString("pt-BR", {
               style: "currency",
               currency: "BRL",
             })
           : "Em Aberto",
-        payment.date_payment
-          ? new Date(
-              payment.date_payment ? payment.date_payment : "",
-            ).toLocaleDateString()
+        payment.paymentDate
+          ? new Date(payment.paymentDate).toLocaleDateString()
           : "Em Aberto",
-        payment.payed_status,
-        payment.document.name,
-        payment.account_plan.name,
-        payment.account_plan.account.name,
-        payment.project.name,
-        payment.expense_type,
-        payment.recurrence,
-        payment.group.name,
+        payment.bankName ?? "Em Aberto",
+        payment.payedStatus,
+        payment.expenseType ?? "Não informado",
+        payment.recurrence ?? "Não informado",
+        payment.documentTypeName ?? "Não informado",
+        payment.accountPlanName ?? "Não informado",
+        payment.accountName != undefined && payment.accountName != ""
+          ? payment.accountName
+          : "Não informado",
+        payment.projectName ?? "Não informado",
+        payment.groupName ?? "Não informado",
       ]),
     ];
 
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Avisos de Estoque");
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "Relatório de Pagamentos",
+    );
     XLSX.writeFile(
       workbook,
       `Relatorio_Pagamentos_${new Date().toISOString().slice(0, 10)}.xlsx`,
@@ -980,10 +811,10 @@ export default function PaymentHistory() {
                     </DialogTitle>
                     <DialogDescription></DialogDescription>
 
-                    {invoice.payedStatus === "Pago" ? (
-                      <PaymentCompleteDetails invoice={invoice} />
-                    ) : (
+                    {invoice.payedStatus === "Em Aberto" ? (
                       <PaymentDetails invoice={invoice} />
+                    ) : (
+                      <PaymentCompleteDetails invoice={invoice} />
                     )}
                   </DialogHeader>
                 </DialogContent>
