@@ -32,19 +32,12 @@ export const ManageSuppliersTable = () => {
     data: suppliers = [],
     error,
     isLoading,
-  } = api.supplier.getAll.useQuery({});
-
-  const filteredSuppliers = suppliers.filter((supplier) => {
-    const matchesName =
-      inputName === "" ||
-      supplier.name.toLowerCase().includes(inputName?.toLowerCase());
-    const matchesEmail =
-      inputEmail === "" ||
-      supplier.email.toLowerCase().includes(inputEmail?.toLowerCase());
-    const matchesState =
-      selectState === "" || supplier.federativeUnit === selectState;
-
-    return matchesName && matchesEmail && matchesState;
+  } = api.supplier.getAll.useQuery({
+    filters: {
+      name: inputName,
+      email: inputEmail,
+      federativeUnit: selectState,
+    },
   });
 
   return (
@@ -141,8 +134,8 @@ export const ManageSuppliersTable = () => {
           </TableComponent.Line>
         )}
         {suppliers.length > 0 && !isLoading && !error ? (
-          filteredSuppliers.length > 0 ? (
-            filteredSuppliers.map((supplier, index) => (
+          suppliers.length > 0 ? (
+            suppliers.map((supplier, index) => (
               <TableComponent.Line
                 className={`grid-cols-[2fr_4fr_3fr_130px] ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""

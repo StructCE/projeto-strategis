@@ -2,18 +2,24 @@ import { db } from "../db";
 import type { SupplierRepositoryInterfaces } from "../interfaces/supplier/supplier.repository.interfaces";
 
 async function getAll(props: SupplierRepositoryInterfaces["GetAll"]) {
-  // const { filters } = props;
+  if (props) {
+    const { filters } = props;
+    const suppliers = await db.supplier.findMany({
+      where: {
+        AND: [
+          { name: { contains: filters.name } },
+          { email: { contains: filters.email } },
+          { federativeUnit: { contains: filters.federativeUnit } },
+        ],
+      },
+      include: { contacts: true },
+    });
+
+    return suppliers;
+  }
   const suppliers = await db.supplier.findMany({
-    // where: {
-    //   AND: [
-    //     { name: filters.name },
-    //     { email: filters.email },
-    //     { federativeUnit: filters.federativeUnit },
-    //   ],
-    // },
     include: { contacts: true },
   });
-
   return suppliers;
 }
 
