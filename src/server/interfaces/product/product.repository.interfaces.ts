@@ -1,14 +1,20 @@
 import { z } from "zod";
 
-const getAllProps = z.object({
-  filters: z.object({
-    name: z.string(),
-    stock: z.string(),
-    controlType: z.string(),
-    productCategory: z.string(),
-    sectorOfUse: z.string(),
-  }),
-});
+const getAllProps = z
+  .object({
+    filters: z.object({
+      name: z.string().optional(),
+      stock: z.string().optional(),
+      controlType: z.string().optional(),
+      productCategory: z.string().optional(),
+      sectorOfUse: z.string().optional(),
+      code: z.string().optional(),
+      suppliers: z.array(z.string()).optional(),
+      status: z.string().optional(),
+      buyDay: z.string().optional(),
+    }),
+  })
+  .optional();
 
 type GetAllProps = z.infer<typeof getAllProps>;
 
