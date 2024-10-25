@@ -1,5 +1,4 @@
 "use client";
-import "jspdf-autotable";
 import {
   Building2,
   Calendar,
