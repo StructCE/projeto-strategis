@@ -211,9 +211,6 @@ async function edit(props: ProductRepositoryInterfaces["EditProps"]) {
   const existingProduct = await db.product.findUnique({
     where: { id },
   });
-  if (existingProduct) {
-    console.log(existingProduct);
-  }
   if (!existingProduct) {
     throw new Error("Produto não encontrado.");
   }
@@ -331,6 +328,25 @@ async function edit(props: ProductRepositoryInterfaces["EditProps"]) {
 }
 
 async function remove(props: ProductRepositoryInterfaces["RemoveProps"]) {
+  // Exclui as permissões relacionadas ao produto
+  await db.productPermission.deleteMany({ where: { productId: props.id } });
+
+  // Exclui os fornecedores relacionados ao produto
+  await db.productSupplier.deleteMany({ where: { productId: props.id } });
+
+  // Exclui os ajustes relacionados ao produto
+  await db.productAdjust.deleteMany({ where: { productId: props.id } });
+
+  // Exclui os registros de inventário relacionados ao produto
+  await db.productInventory.deleteMany({ where: { productId: props.id } });
+
+  // Exclui os produtos em solicitações relacionados ao produto
+  await db.requestProduct.deleteMany({ where: { productId: props.id } });
+
+  // Exclui o produto principal (caso existam produtos filhos associados)
+  await db.product.deleteMany({ where: { parentProductId: props.id } });
+
+  // Exclui o próprio produto
   const deletedProduct = await db.product.delete({
     where: {
       id: props.id,
