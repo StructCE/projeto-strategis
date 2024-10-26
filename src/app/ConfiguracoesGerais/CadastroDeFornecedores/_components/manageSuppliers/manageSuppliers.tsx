@@ -32,7 +32,7 @@ export const ManageSuppliersTable = () => {
     data: suppliers = [],
     error,
     isLoading,
-  } = api.supplier.getAll.useQuery({});
+  } = api.supplier.getAll.useQuery({ filters: {} });
 
   const filteredSuppliers = suppliers.filter((supplier) => {
     const matchesName =

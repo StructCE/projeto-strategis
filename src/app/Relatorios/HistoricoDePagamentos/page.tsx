@@ -66,7 +66,9 @@ export default function PaymentHistory() {
   // Dados do BD
   const { data: invoices = [] } = api.invoice.getAll.useQuery({});
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: {},
+  });
   const { data: banks = [] } = api.generalParameters.bank.getAll.useQuery();
   const { data: groups = [] } = api.generalParameters.group.getAll.useQuery();
   const { data: projects = [] } =

@@ -43,7 +43,9 @@ export default function ManageProductsTable() {
 
   // console.log(products);
 
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: {},
+  });
   const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();

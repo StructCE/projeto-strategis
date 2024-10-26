@@ -207,14 +207,113 @@ async function create(props: ProductRepositoryInterfaces["CreateProps"]) {
 async function edit(props: ProductRepositoryInterfaces["EditProps"]) {
   const { id, data } = props;
 
-  const editedProduct = await db.product.update({
+  // Verificar se o produto existe
+  const existingProduct = await db.product.findUnique({
     where: { id },
+  });
+  if (existingProduct) {
+    console.log(existingProduct);
+  }
+  if (!existingProduct) {
+    throw new Error("Produto não encontrado.");
+  }
+
+  // Verificar se a unidade de compra existe
+  if (data.unitId) {
+    const existingUnit = await db.unit.findUnique({
+      where: { id: data.unitId },
+    });
+    if (!existingUnit) {
+      throw new Error("Unidade de compra não encontrada.");
+    }
+  }
+
+  // Verificar se o tipo de controle existe
+  if (data.controlTypeId) {
+    const existingControlType = await db.controlType.findUnique({
+      where: { id: data.controlTypeId },
+    });
+    if (!existingControlType) {
+      throw new Error("Tipo de controle não encontrado.");
+    }
+  }
+
+  // Verificar se a categoria existe
+  if (data.categoryId) {
+    const existingCategory = await db.productCategory.findUnique({
+      where: { id: data.categoryId },
+    });
+    if (!existingCategory) {
+      throw new Error("Categoria não encontrada.");
+    }
+  }
+
+  // Verificar se o setor de uso existe
+  if (data.sectorOfUseId) {
+    const existingSectorOfUse = await db.useSector.findUnique({
+      where: { id: data.sectorOfUseId },
+    });
+    if (!existingSectorOfUse) {
+      throw new Error("Setor de utilização não encontrado.");
+    }
+  }
+
+  // Verificar se a prateleira existe
+  if (data.shelfId) {
+    const existingShelf = await db.shelf.findUnique({
+      where: { id: data.shelfId },
+    });
+    if (!existingShelf) {
+      throw new Error("Prateleira não encontrada.");
+    }
+  }
+
+  // Verificar fornecedores (se fornecido)
+  if (data.ProductSupplier && data.ProductSupplier.length > 0) {
+    const existingSuppliers = await db.supplier.findMany({
+      where: { id: { in: data.ProductSupplier } },
+    });
+    if (existingSuppliers.length !== data.ProductSupplier.length) {
+      throw new Error("Um ou mais fornecedores não foram encontrados.");
+    }
+  }
+
+  // Verificar usuários com permissão (se fornecido)
+  if (data.usersWithPermission && data.usersWithPermission.length > 0) {
+    const existingUsers = await db.user.findMany({
+      where: { id: { in: data.usersWithPermission } },
+    });
+    if (existingUsers.length !== data.usersWithPermission.length) {
+      throw new Error(
+        "Um ou mais usuários com permissão não foram encontrados.",
+      );
+    }
+  }
+
+  const editedProduct = await db.product.update({
+    where: { id: id },
     data: {
-      ...data,
+      name: data.name,
+      code: data.code,
+      ncm: data.ncm,
+      cfop: data.cfop,
+      status: data.status,
+      parentProductId: data.parentProductId,
+      unitId: data.unitId,
+      buyQuantity: data.buyQuantity,
+      buyDay: data.buyDay,
+      currentStock: data.currentStock,
+      minimunStock: data.minimunStock,
+      maximumStock: data.maximumStock,
+      lastInventory: data.lastInventory,
+      controlTypeId: data.controlTypeId,
+      categoryId: data.categoryId,
+      sectorOfUseId: data.sectorOfUseId,
+      shelfId: data.shelfId,
       // Atualiza usersWithPermission, deletando os antigos e criando os novos
       usersWithPermission: {
         deleteMany: {}, // Deleta todas as permissões antigas
-        create: data.usersWithPermission.map((userId) => ({
+        create: data.usersWithPermission?.map((userId) => ({
           userId,
         })), // Cria as novas permissões
       },

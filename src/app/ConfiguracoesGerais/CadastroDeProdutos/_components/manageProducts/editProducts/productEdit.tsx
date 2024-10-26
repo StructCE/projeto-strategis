@@ -31,7 +31,9 @@ export const ProductEdit = (props: ProductEditForm) => {
   const { data: products = [] } = api.product.getAll.useQuery();
 
   const { data: users = [] } = api.user.getAll.useQuery();
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: {},
+  });
   const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();

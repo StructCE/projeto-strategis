@@ -1,6 +1,5 @@
 "use client";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Calendar, Download, Eraser, Search, UserCog2 } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
@@ -24,6 +23,7 @@ import {
 } from "~/components/ui/tooltip";
 import { type SerializedOrder } from "~/server/interfaces/order/order.route.interfaces";
 import { api } from "~/trpc/react";
+import CustomReportPDF from "./pdfReport";
 import { default as PurchaseDetails } from "./purchaseDetails/purchaseDetailsTable";
 import { DeleteOrder } from "./useDeleteOrder";
 import { EditOrder } from "./useEditOrder";
@@ -41,7 +41,9 @@ export default function ManagePurchasesTable() {
   } = api.order.getAll.useQuery({
     // filters: { date: date ?? new Date(), responsibleName: inputResponsible },
   });
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: {},
+  });
 
   const filteredOrders = orders.filter((order) => {
     const matchesDate =
@@ -65,136 +67,159 @@ export default function ManagePurchasesTable() {
     return matchesDate && matchesResponsible && matchesSupplier;
   });
 
-  function exportData(order: SerializedOrder) {
+  // function exportData(order: SerializedOrder) {
+  //   const purchaseData = {
+  //     date: order.date,
+  //     responsible: order.responsible.name,
+  //     orderProducts: order.orderProducts.map((product) => ({
+  //       code: product.code,
+  //       name: product.name,
+  //       unit: product.unit,
+  //       currentStock: product.currentStock,
+  //       minimunStock: product.minimunStock,
+  //       purchaseQuantity: product.purchaseQuantity,
+  //       ProductSupplier: product.ProductSupplier,
+  //       shelf: product.shelf,
+  //     })),
+  //   };
+
+  //   const doc = new jsPDF();
+
+  //   doc.setFont("helvetica", "bold");
+  //   doc.setFontSize(16);
+  //   doc.text(
+  //     `Pedido de Compra - ${new Date(purchaseData.date).toLocaleDateString()}`,
+  //     14,
+  //     20,
+  //   );
+
+  //   doc.setFontSize(12);
+  //   let yPosition = 25;
+  //   const lineHeight = 5.5; // Altura entre as linhas de texto
+  //   const pageHeight = 280; // Limite de altura da página
+
+  //   function addKeyValuePair(
+  //     key: string,
+  //     value: string | number,
+  //     x1: number,
+  //     x2: number,
+  //     y: number,
+  //   ) {
+  //     doc.setFont("helvetica", "bold");
+  //     doc.text(`${key}:`, x1, y); // Chave
+  //     doc.setFont("helvetica", "normal");
+
+  //     const splitText: string[] = doc.splitTextToSize(
+  //       `${value}`,
+  //       120,
+  //     ) as string[];
+  //     doc.text(splitText, x2, y);
+
+  //     return splitText.length * lineHeight;
+  //   }
+
+  //   yPosition += addKeyValuePair(
+  //     "Responsável",
+  //     order.responsible.name,
+  //     14,
+  //     70,
+  //     (yPosition += lineHeight),
+  //   );
+  //   yPosition += 5;
+
+  //   purchaseData.orderProducts.forEach((product) => {
+  //     const productHeight = 12 * lineHeight + 14;
+
+  //     if (yPosition + productHeight > pageHeight) {
+  //       doc.addPage();
+  //       yPosition = 14;
+  //     }
+
+  //     yPosition += addKeyValuePair(
+  //       "Código",
+  //       product.code,
+  //       14,
+  //       70,
+  //       (yPosition += lineHeight),
+  //     );
+  //     yPosition += addKeyValuePair(
+  //       "Nome",
+  //       product.name,
+  //       14,
+  //       70,
+  //       (yPosition += lineHeight),
+  //     );
+  //     yPosition += addKeyValuePair(
+  //       "Unidade de Compra",
+  //       `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`,
+  //       14,
+  //       70,
+  //       (yPosition += lineHeight),
+  //     );
+  //     yPosition += addKeyValuePair(
+  //       "Estoque Atual",
+  //       product.currentStock,
+  //       14,
+  //       70,
+  //       (yPosition += lineHeight),
+  //     );
+  //     yPosition += addKeyValuePair(
+  //       "Estoque Mínimo",
+  //       product.minimunStock,
+  //       14,
+  //       70,
+  //       (yPosition += lineHeight),
+  //     );
+
+  //     yPosition += addKeyValuePair(
+  //       "Quantidade a Comprar",
+  //       product.purchaseQuantity,
+  //       14,
+  //       70,
+  //       (yPosition += lineHeight),
+  //     );
+  //     yPosition += addKeyValuePair(
+  //       "Fornecedor",
+  //       product.ProductSupplier.supplier.name,
+  //       14,
+  //       70,
+  //       (yPosition += lineHeight),
+  //     );
+  //     yPosition += addKeyValuePair(
+  //       "Endereço de Estoque",
+  //       `${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`,
+  //       14,
+  //       70,
+  //       (yPosition += lineHeight),
+  //     );
+
+  //     yPosition += 10;
+  //   });
+
+  //   doc.save(`Pedido_Compra_${order.date.toISOString().slice(0, 10)}.pdf`);
+  // }
+
+  function orderData(order: SerializedOrder) {
     const purchaseData = {
-      date: order.date.toISOString(),
+      date: order.date,
       responsible: order.responsible.name,
       orderProducts: order.orderProducts.map((product) => ({
         code: product.code,
         name: product.name,
-        unit: product.unit,
+        unit: product.unit.abbreviation,
         currentStock: product.currentStock,
         minimunStock: product.minimunStock,
         purchaseQuantity: product.purchaseQuantity,
-        ProductSupplier: product.ProductSupplier,
-        shelf: product.shelf,
+        ProductSupplier: product.ProductSupplier.supplier.name,
+        stock: product.shelf?.cabinet.StockCabinet.map(
+          (stockCabinet) => stockCabinet.stock.name,
+        ).join(", "),
+        cabinet: product.shelf?.cabinet.name,
+        shelf: product.shelf?.name,
       })),
     };
 
-    const doc = new jsPDF();
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text(
-      `Pedido de Compra - ${new Date(purchaseData.date).toLocaleDateString()}`,
-      14,
-      20,
-    );
-
-    doc.setFontSize(12);
-    let yPosition = 25;
-    const lineHeight = 5.5; // Altura entre as linhas de texto
-    const pageHeight = 280; // Limite de altura da página
-
-    function addKeyValuePair(
-      key: string,
-      value: string | number,
-      x1: number,
-      x2: number,
-      y: number,
-    ) {
-      doc.setFont("helvetica", "bold");
-      doc.text(`${key}:`, x1, y); // Chave
-      doc.setFont("helvetica", "normal");
-
-      const splitText: string[] = doc.splitTextToSize(
-        `${value}`,
-        120,
-      ) as string[];
-      doc.text(splitText, x2, y);
-
-      return splitText.length * lineHeight;
-    }
-
-    yPosition += addKeyValuePair(
-      "Responsável",
-      order.responsible.name,
-      14,
-      70,
-      (yPosition += lineHeight),
-    );
-    yPosition += 5;
-
-    purchaseData.orderProducts.forEach((product) => {
-      const productHeight = 12 * lineHeight + 14;
-
-      if (yPosition + productHeight > pageHeight) {
-        doc.addPage();
-        yPosition = 14;
-      }
-
-      yPosition += addKeyValuePair(
-        "Código",
-        product.code,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Nome",
-        product.name,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Unidade de Compra",
-        `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Estoque Atual",
-        product.currentStock,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Estoque Mínimo",
-        product.minimunStock,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-
-      yPosition += addKeyValuePair(
-        "Quantidade a Comprar",
-        product.purchaseQuantity,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Fornecedor",
-        product.ProductSupplier.supplier.name,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Endereço de Estoque",
-        `${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-
-      yPosition += 10;
-    });
-
-    doc.save(`Pedido_Compra_${order.date.toISOString().slice(0, 10)}.pdf`);
+    return purchaseData;
   }
 
   return (
@@ -382,7 +407,7 @@ export default function ManagePurchasesTable() {
                             {order.status ? <></> : <EditOrder order={order} />}
                           </div>
 
-                          <TableButtonComponent.Button
+                          {/* <TableButtonComponent.Button
                             className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
                             icon={
                               <Download
@@ -395,7 +420,30 @@ export default function ManagePurchasesTable() {
                             handlePress={() => exportData(order)}
                           >
                             Baixar Relatório
-                          </TableButtonComponent.Button>
+                          </TableButtonComponent.Button> */}
+
+                          <PDFDownloadLink
+                            document={
+                              <CustomReportPDF
+                                purchaseData={orderData(order)}
+                              />
+                            }
+                            fileName={`Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.pdf`}
+                          >
+                            <TableButtonComponent.Button
+                              className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
+                              icon={
+                                <Download
+                                  className="flex h-full cursor-pointer self-center"
+                                  size={20}
+                                  strokeWidth={2.2}
+                                  color="white"
+                                />
+                              }
+                            >
+                              Exportar Dados em PDF
+                            </TableButtonComponent.Button>
+                          </PDFDownloadLink>
                         </TableButtonComponent>
                       </DialogHeader>
                     </DialogContent>

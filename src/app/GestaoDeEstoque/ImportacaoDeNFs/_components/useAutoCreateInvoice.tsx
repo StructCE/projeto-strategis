@@ -172,7 +172,7 @@ const AutoCreateInvoice = () => {
           prodNode?.getElementsByTagName("uCom")[0]?.textContent ?? "";
         const match = uCom.match(/^(\w+)(?:\s+(\d+))?$/);
         const unitAbbreviation = match ? match[1] : "";
-        const unitsPerPack = match?.[2] ? parseInt(match[2], 10) : 0;
+        const unitsPerPack = match?.[2] ? parseInt(match[2], 10) : 1;
 
         const product: InvoiceProduct = {
           code: prodNode?.getElementsByTagName("cProd")[0]?.textContent ?? "",

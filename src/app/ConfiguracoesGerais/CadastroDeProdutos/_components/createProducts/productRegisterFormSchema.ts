@@ -1,25 +1,5 @@
 import { z } from "zod";
 
-export const addressSchema = z.object({
-  stock: z
-    .string({
-      required_error: "Selecione um local.",
-    })
-    .min(1, { message: "Selecione um local." }),
-
-  storage: z
-    .string({
-      required_error: "Selecione um armário/zona.",
-    })
-    .min(1, { message: "Selecione um armário/zona." }),
-
-  shelf: z
-    .string({
-      required_error: "Selecione uma prateleira.",
-    })
-    .min(1, { message: "Selecione uma prateleira." }),
-});
-
 export const createProductFormSchema = z.object({
   code: z.string({ required_error: "O código do produto é obrigatório." }),
 
@@ -106,7 +86,6 @@ export const createProductFormSchema = z.object({
 
   stockId: z.string().optional(),
 
-  // address: addressSchema,
   shelfId: z.string({
     required_error: "Selecione o local de armazenamento do produto",
   }),

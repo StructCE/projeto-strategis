@@ -44,12 +44,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#000",
   },
-  tableRowEven: {
-    backgroundColor: "#fbfbfb",
-  },
-  tableRowOdd: {
-    backgroundColor: "#fff",
-  },
 });
 
 type CustomReportData = {

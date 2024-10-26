@@ -45,7 +45,9 @@ export default function ImportacaoDeNFs() {
     error,
     isLoading,
   } = api.invoice.getAll.useQuery({});
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: {},
+  });
   const { data: companies = [] } = api.company.getAllCompanies.useQuery({});
 
   const filteredInvoices = invoices.filter((invoice) => {

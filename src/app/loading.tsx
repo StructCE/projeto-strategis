@@ -1,6 +1,6 @@
 export default function LoadingPage() {
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-fundo_branco text-vermelho_strategis">
+    <div className="flex h-[80vh] w-full items-center justify-center bg-fundo_branco text-vermelho_strategis">
       <div role="status">
         <svg
           aria-hidden="true"

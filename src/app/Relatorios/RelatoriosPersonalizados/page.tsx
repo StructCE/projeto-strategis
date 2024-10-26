@@ -132,7 +132,7 @@ export default function CustomReports() {
     setSelectedProducts([]);
   }
 
-  interface StockWarningsData {
+  interface CustomReportsData {
     date: string;
     products: {
       code: string;
@@ -161,7 +161,7 @@ export default function CustomReports() {
       selectedProducts.includes(product.code),
     );
 
-    const stockWarningsData = {
+    const customReportsData = {
       date: new Date()?.toISOString(),
       products: productsToPrint.map((product) => ({
         code: product.code,
@@ -198,22 +198,22 @@ export default function CustomReports() {
 
     switch (fileType) {
       case "json":
-        exportToJson(stockWarningsData);
+        exportToJson(customReportsData);
         break;
       case "csv":
-        exportToCSV(stockWarningsData);
+        exportToCSV(customReportsData);
         break;
       case "pdf":
-        exportToPDF(stockWarningsData);
+        exportToPDF(customReportsData);
         break;
       default:
         break;
     }
   }
 
-  function exportToJson(stockWarningsData: StockWarningsData) {
+  function exportToJson(customReportsData: CustomReportsData) {
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(stockWarningsData),
+      JSON.stringify(customReportsData),
     )}`;
     const link = document.createElement("a");
     link.href = jsonString;
@@ -221,14 +221,14 @@ export default function CustomReports() {
     link.click();
   }
 
-  function exportToPDF(stockWarningsData: StockWarningsData) {
+  function exportToPDF(customReportsData: CustomReportsData) {
     const doc = new jsPDF();
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
     doc.text(
       `Relatório Personalizado - ${new Date(
-        stockWarningsData.date,
+        customReportsData.date,
       ).toLocaleDateString()}`,
       14,
       20,
@@ -259,7 +259,7 @@ export default function CustomReports() {
       return splitText.length * lineHeight;
     }
 
-    stockWarningsData.products.forEach((product) => {
+    customReportsData.products.forEach((product) => {
       const productHeight = Object.keys(product).length * lineHeight + 14;
 
       if (yPosition + productHeight > pageHeight) {
@@ -434,7 +434,7 @@ export default function CustomReports() {
     );
   }
 
-  function exportToCSV(stockWarningsData: StockWarningsData) {
+  function exportToCSV(customReportsData: CustomReportsData) {
     // Mapear as colunas a partir de `selectReportOptions`
     const headers: string[] = [];
 
@@ -470,7 +470,7 @@ export default function CustomReports() {
 
     const worksheetData: (string | number | null | undefined)[][] = [
       headers,
-      ...stockWarningsData.products.map((product) => {
+      ...customReportsData.products.map((product) => {
         const rowData: (string | number | null | undefined)[] = [];
 
         if (selectReportOptions.includes("Código")) rowData.push(product.code);
@@ -538,7 +538,7 @@ export default function CustomReports() {
     selectedProducts.includes(product.code),
   );
 
-  const stockWarningsData = {
+  const customReportsData = {
     date: new Date()?.toISOString(),
     products: productsToPrint.map((product) => ({
       code: product.code,
@@ -963,7 +963,7 @@ export default function CustomReports() {
         <PDFDownloadLink
           document={
             <CustomReportPDF
-              customReportData={stockWarningsData}
+              customReportData={customReportsData}
               selectReportOptions={selectReportOptions}
             />
           }
