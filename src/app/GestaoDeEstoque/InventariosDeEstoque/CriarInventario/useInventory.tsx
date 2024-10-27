@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -19,6 +20,7 @@ const FinalizeInventory: React.FC<FinalizeInventoryProps> = ({
   addedProducts,
   quantities,
 }) => {
+  const router = useRouter();
   const inventoryMutation = api.inventory.registerInventory.useMutation({
     onSuccess: (newInventory) => {
       console.log("Inventário criado com sucesso:", newInventory);
@@ -26,7 +28,7 @@ const FinalizeInventory: React.FC<FinalizeInventoryProps> = ({
         position: "bottom-right",
       });
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
@@ -67,7 +69,7 @@ const FinalizeInventory: React.FC<FinalizeInventoryProps> = ({
       status: status,
       inventoryProducts: addedProducts.map((product) => ({
         productId: product.id,
-        stockQuantity: product.stockQuantity, // Quantidade em estoque
+        stockQuantity: product.stockQuantity ?? 0, // Quantidade em estoque
         inventoryQuantity: Number(quantities[product.code]) || 0, // Quantidade no inventário
       })),
     };

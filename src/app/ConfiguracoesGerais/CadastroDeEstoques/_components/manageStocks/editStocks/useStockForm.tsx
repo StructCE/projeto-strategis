@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ import {
 } from "../editStocks/stockEditFormSchema";
 
 export const useStockForm = (stock: StockWithCabinets) => {
+  const router = useRouter();
   const [isDeleted, setIsDeleted] = useState(false);
 
   const stockMutation = api.stock.editStock.useMutation({
@@ -25,7 +27,7 @@ export const useStockForm = (stock: StockWithCabinets) => {
         );
       }
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
@@ -43,7 +45,7 @@ export const useStockForm = (stock: StockWithCabinets) => {
         position: "bottom-right",
       });
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

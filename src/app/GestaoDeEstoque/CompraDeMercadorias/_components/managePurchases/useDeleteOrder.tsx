@@ -1,4 +1,5 @@
 import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -9,6 +10,7 @@ interface DeleteOrderProps {
 }
 
 export const DeleteOrder = (props: DeleteOrderProps) => {
+  const router = useRouter();
   const deleteOrderMutation = api.order.deleteOrder.useMutation({
     onSuccess: (deletedOrder) => {
       console.log("Order removed successfully:", deletedOrder);
@@ -19,7 +21,7 @@ export const DeleteOrder = (props: DeleteOrderProps) => {
         },
       );
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -24,6 +25,7 @@ const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
   addedProducts,
   adjustReasonId,
 }) => {
+  const router = useRouter();
   const adjustMutation = api.adjust.registerAdjust.useMutation({
     onSuccess: (newAdjust) => {
       console.log("Ajuste de estoque realizado com sucesso:", newAdjust);
@@ -40,7 +42,7 @@ const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
         },
       );
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
@@ -79,7 +81,7 @@ const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
       stockId: stockId,
       adjustProducts: addedProducts.map((product) => ({
         productId: product.productId,
-        oldStock: product.stockQuantity,
+        oldStock: product.stockQuantity ?? 0,
         adjustedStock: product.inventoryQuantity,
         reasonId: adjustReasonId ?? "",
       })),

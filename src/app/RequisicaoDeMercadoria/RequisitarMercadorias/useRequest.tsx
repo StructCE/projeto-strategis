@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -19,6 +20,7 @@ const FinalizeRequest: React.FC<FinalizeRequestProps> = ({
   quantities,
   requestDescription,
 }) => {
+  const router = useRouter();
   const requestMutation = api.request.registerRequest.useMutation({
     onSuccess: (newRequest) => {
       console.log("Requisição criada com sucesso:", newRequest);
@@ -26,7 +28,7 @@ const FinalizeRequest: React.FC<FinalizeRequestProps> = ({
         position: "bottom-right",
       });
       setTimeout(() => {
-        location.reload(); // Atualiza a página após criar o requisição
+        router.refresh(); // Atualiza a página após criar o requisição
       }, 2000);
     },
     onError: (error) => {

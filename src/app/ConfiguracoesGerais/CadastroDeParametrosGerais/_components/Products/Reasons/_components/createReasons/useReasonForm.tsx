@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,6 +10,7 @@ import {
 } from "./reasonRegisterFormSchema";
 
 export const useReasonForm = () => {
+  const router = useRouter();
   const reasonMutation =
     api.generalParameters.adjustReason.registerAdjustReason.useMutation({
       onSuccess: (newReason) => {
@@ -17,7 +19,7 @@ export const useReasonForm = () => {
           position: "bottom-right",
         });
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {

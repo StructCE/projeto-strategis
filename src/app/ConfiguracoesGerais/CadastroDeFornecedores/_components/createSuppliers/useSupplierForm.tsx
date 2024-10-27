@@ -5,11 +5,13 @@ import {
   type CreateSupplierFormValues,
 } from "./supplierRegisterFormSchema";
 
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { api } from "~/trpc/react";
 
 export const useSupplierForm = () => {
+  const router = useRouter();
   const supplierMutation = api.supplier.createSupplier.useMutation({
     onSuccess: (newSupplier) => {
       console.log("Supplier created successfully:", newSupplier);
@@ -17,7 +19,7 @@ export const useSupplierForm = () => {
         position: "bottom-right",
       });
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
