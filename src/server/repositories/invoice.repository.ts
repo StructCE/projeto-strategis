@@ -2,27 +2,34 @@ import { db } from "../db";
 import type { InvoiceRepositoryInterfaces } from "../interfaces/invoice/invoice.repository.interfaces";
 
 async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
-  // const { filters } = props;
-  const invoices = await db.invoice.findMany({
-    // where: {
-    //   AND: [
-    //     {
-    //       documentDate: {
-    //         gte: filters.startDate,
-    //         lte: filters.endDate,
-    //       },
-    //     },
-    //     {
-    //       InvoiceProduct: {
-    //         every: {
-    //           productSupplier: { supplier: { name: filters.supplier } },
-    //         },
-    //       },
-    //     },
-    //   ],
-    // },
-    include: {
-      account: { include: { accountPlan: { include: { accounts: true } } } },
+  if (props){
+
+    const { filters } = props;
+    const invoices = await db.invoice.findMany({
+      where: {
+        AND: [
+          {
+            documentDate: {
+              gte: filters.startDate,
+              lte: filters.endDate,
+            },
+          },
+          {company: {
+            name: {contains: filters.company}
+          }},
+          {
+            InvoiceProduct: {
+              every: {
+                productSupplier: { supplier: { name: {contains: filters.supplier} } },
+              },
+            },
+          },
+          {documentNumber: {contains: filters.nfNumber}},
+          {confirmedStatus: {contains: filters.status}}
+        ],
+      },
+      include: {
+        account: { include: { accountPlan: { include: { accounts: true } } } },
       documentType: true,
       group: true,
       project: true,
@@ -63,10 +70,52 @@ async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
   });
   return invoices;
 }
+return await db.invoice.findMany({
+    include: {
+      account: { include: { accountPlan: { include: { accounts: true } } } },
+    documentType: true,
+    group: true,
+    project: true,
+    company: true,
+    supplier: true,
+    bank: true,
+    InvoiceProduct: {
+      include: {
+        productSupplier: {
+          include: {
+            product: {
+              include: {
+                unit: true,
+                category: true,
+                controlType: true,
+                sectorOfUse: true,
+                shelf: {
+                  include: {
+                    cabinet: {
+                      include: {
+                        StockCabinet: {
+                          include: {
+                            stock: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            supplier: true,
+          },
+        },
+      },
+    },
+    }
+  })
+}
 
 async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
   const { invoiceProducts, ...invoiceData } = props;
-
+  
   // Cria a fatura (Invoice)
   const registeredInvoice = await db.invoice.create({
     data: {

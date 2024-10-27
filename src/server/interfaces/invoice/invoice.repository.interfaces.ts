@@ -1,12 +1,15 @@
 import z from "zod";
 
 const getAllProps = z.object({
-  // filters: z.object({
-  //   startDate: z.string(),
-  //   endDate: z.string(),
-  //   supplier: z.string(),
-  // }),
-});
+  filters: z.object({
+    startDate: z.date().optional(),
+    endDate: z.date().optional(),
+    supplier: z.string().optional(),
+    company: z.string().optional(),
+    nfNumber: z.string().optional(),
+    status: z.string().optional(),
+  }),
+}).optional();
 
 type GetAllProps = z.infer<typeof getAllProps>;
 
