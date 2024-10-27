@@ -6,6 +6,18 @@ const getUserById = z.object({
 
 type GetUserById = z.infer<typeof getUserById>;
 
+const getAllProps = z
+  .object({
+    filters: z.object({
+      name: z.string().optional(),
+      company: z.string().optional(),
+      role: z.string().optional(),
+    }),
+  })
+  .optional();
+
+type GetAllProps = z.infer<typeof getAllProps>;
+
 const registerProps = z.object({
   name: z.string(),
   email: z.string().email(),
@@ -45,6 +57,7 @@ const deleteProps = z.object({
 type DeleteProps = z.infer<typeof deleteProps>;
 
 export const userRepositorySchema = {
+  getAllProps,
   getUserById,
   registerProps,
   editProps,
@@ -52,6 +65,7 @@ export const userRepositorySchema = {
 };
 
 export type UserRepositoryInterfaces = {
+  GetAllProps: GetAllProps;
   GetUserById: GetUserById;
   RegisterProps: RegisterProps;
   EditProps: EditProps;

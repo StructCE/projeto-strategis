@@ -22,11 +22,21 @@ import { api } from "~/trpc/react";
 import { UserEdit } from "./editUsers/userEdit";
 
 export const ManageUsersTable = () => {
-  const [inputNameEmail, setInputNameEmail] = useState("");
+  const [inputName, setInputName] = useState("");
   const [selectCompany, setSelectCompany] = useState("");
   const [selectRole, setSelectRole] = useState("");
 
-  const { data: users = [], error, isLoading } = api.user.getAll.useQuery();
+  const {
+    data: users = [],
+    error,
+    isLoading,
+  } = api.user.getAll.useQuery({
+    filters: {
+      name: inputName,
+      company: selectCompany,
+      role: selectRole,
+    },
+  });
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();
   const { data: roles = [] } = api.role.getAll.useQuery();
 
@@ -39,25 +49,6 @@ export const ManageUsersTable = () => {
     const role = roles.find((role) => role.id === roleId);
     return role ? role.name : "Cargo não encontrado";
   };
-
-  const filteredUsers = users.filter((user) => {
-    const matchesName =
-      inputNameEmail === "" ||
-      user.name.toLowerCase().includes(inputNameEmail.toLowerCase()) ||
-      user.email.toLowerCase().includes(inputNameEmail.toLowerCase());
-    const matchesCompany =
-      selectCompany === "" ||
-      user.UserRole.some(
-        (userRole) => getCompanyNameById(userRole.companyId) === selectCompany,
-      );
-    const matchesRole =
-      selectRole === "" ||
-      user.UserRole.some(
-        (userRole) => getRoleNameById(userRole.roleId) === selectRole,
-      );
-
-    return matchesName && matchesCompany && matchesRole;
-  });
 
   return (
     <TableComponent>
@@ -74,9 +65,9 @@ export const ManageUsersTable = () => {
             )}
           />
           <Filter.Input
-            placeholder="Nome/email do Usuário"
-            state={inputNameEmail}
-            setState={setInputNameEmail}
+            placeholder="Nome do Usuário"
+            state={inputName}
+            setState={setInputName}
           />
         </Filter>
 
@@ -126,7 +117,7 @@ export const ManageUsersTable = () => {
               <Eraser
                 size={20}
                 onClick={() => {
-                  setInputNameEmail("");
+                  setInputName("");
                   setSelectCompany("");
                   setSelectRole("");
                 }}
@@ -159,8 +150,8 @@ export const ManageUsersTable = () => {
           </TableComponent.Line>
         )}
         {users.length > 0 && !isLoading && !error ? (
-          filteredUsers.length > 0 ? (
-            filteredUsers.map((user, index) => (
+          users.length > 0 ? (
+            users.map((user, index) => (
               <TableComponent.Line
                 className={`grid-cols-[repeat(3,_1fr)_0.75fr_130px] gap-8 ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
