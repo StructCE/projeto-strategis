@@ -105,14 +105,14 @@ export default function CreateAdjustment() {
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
           selectStockId === "" ||
-          product.shelf.cabinet.StockCabinet.some(
+          product.shelf?.cabinet.StockCabinet.some(
             (stockCabinet) =>
               stockCabinet.stock.id.toLowerCase() ===
               selectStockId.toLowerCase(),
           );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.shelf.cabinet.name} - ${product.shelf.name}`
+          `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
@@ -173,6 +173,8 @@ export default function CreateAdjustment() {
     setAdjustmentReasons({});
   };
 
+  const allowedRoles = ["operador", "administrador", "estoquista"];
+
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
       <TableComponent className="gap-2">
@@ -200,7 +202,34 @@ export default function CreateAdjustment() {
             ></Filter.DatePicker>
           </Filter>
 
-          <div className="flex w-full items-center rounded-[12px] bg-filtro bg-opacity-50 lg:w-[225px]">
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[250px]">
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <UserCog2 className={className} />
+              )}
+            />
+            <Filter.Select
+              className="text-sm sm:text-base"
+              placeholder="Responsável"
+              state={selectResponsible}
+              setState={setSelectResponsible}
+            >
+              {users
+                .filter((user) =>
+                  user.UserRole.some((userRole) =>
+                    allowedRoles.includes(userRole.role.name.toLowerCase()),
+                  ),
+                )
+                .map((user, index) => (
+                  <Filter.SelectItems
+                    key={index}
+                    valueId={user.id}
+                    value={user.name}
+                  ></Filter.SelectItems>
+                ))}
+            </Filter.Select>
+          </Filter>
+          {/* <div className="flex w-full items-center rounded-[12px] bg-filtro bg-opacity-50 lg:w-[225px]">
             <Select
               onValueChange={setSelectResponsible}
               value={selectResponsible}
@@ -221,7 +250,7 @@ export default function CreateAdjustment() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </TableComponent.FiltersLine>
 
         <div className="my-2 flex flex-col items-center gap-1 sm:flex-row sm:gap-3">
@@ -231,7 +260,29 @@ export default function CreateAdjustment() {
             (só é possível fazer ajustes em um estoque de cada vez):
           </div>
 
-          <div className="flex w-full items-center rounded-[12px] bg-filtro bg-opacity-50 lg:w-fit">
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Search className={className} />
+              )}
+            />
+            <Filter.Select
+              className="text-sm sm:text-base"
+              placeholder="Estoque"
+              state={selectStockId}
+              setState={handleStockChange}
+            >
+              {stocks.map((stock, index) => (
+                <Filter.SelectItems
+                  key={index}
+                  valueId={stock.id}
+                  value={stock.name}
+                ></Filter.SelectItems>
+              ))}
+            </Filter.Select>
+          </Filter>
+
+          {/* <div className="flex w-full items-center rounded-[12px] bg-filtro bg-opacity-50 lg:w-fit">
             <Select
               onValueChange={handleStockChange}
               value={selectStockId}
@@ -249,7 +300,7 @@ export default function CreateAdjustment() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </div>
 
         <TableComponent.FiltersLine>
@@ -469,7 +520,7 @@ export default function CreateAdjustment() {
                       {product.currentStock}
                     </TableComponent.Value>
                     <TableComponent.Value>
-                      {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                      {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                     </TableComponent.Value>
                     <Button
                       onClick={() =>
@@ -477,8 +528,10 @@ export default function CreateAdjustment() {
                           id: product.id,
                           code: product.code,
                           name: product.name,
+                          ncm: product.ncm,
+                          cfop: product.cfop,
                           currentStock: product.currentStock,
-                          oldStock: product.currentStock,
+                          oldStock: product.currentStock ?? 0,
                           adjustedStock: 0,
                           reason: { id: "", name: "" },
                           unit: product.unit,
@@ -594,7 +647,7 @@ export default function CreateAdjustment() {
                             <span className="font-semibold">
                               Endereço de Estoque:
                             </span>{" "}
-                            {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                            {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                           </p>
                           <p className="text-base">
                             <span className="font-semibold">
@@ -655,8 +708,10 @@ export default function CreateAdjustment() {
                                   id: product.id,
                                   code: product.code,
                                   name: product.name,
-                                  currentStock: product.currentStock,
-                                  oldStock: product.currentStock,
+                                  ncm: product.ncm,
+                                  cfop: product.cfop,
+                                  currentStock: product.currentStock ?? 0,
+                                  oldStock: product.currentStock ?? 0,
                                   adjustedStock: 0,
                                   reason: { id: "", name: "" },
                                   unit: product.unit,
@@ -838,7 +893,7 @@ export default function CreateAdjustment() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                        {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Atual: </span>

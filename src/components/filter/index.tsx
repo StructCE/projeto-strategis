@@ -91,6 +91,7 @@ Filter.Select = function FilterSelect(props: FilterSelectProps) {
 type FilterSelectItemsProps = {
   className?: string;
   value: string;
+  valueId?: string;
 };
 
 Filter.SelectItems = function FilterSelectItems(props: FilterSelectItemsProps) {
@@ -99,7 +100,7 @@ Filter.SelectItems = function FilterSelectItems(props: FilterSelectItemsProps) {
     props.className,
   );
   return (
-    <SelectItem className={style} value={props.value}>
+    <SelectItem className={style} value={props.valueId ?? props.value}>
       {props.value}
     </SelectItem>
   );
