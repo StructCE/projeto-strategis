@@ -1,5 +1,7 @@
 import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -20,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
 import { api } from "~/trpc/react";
 import { ProductEdit } from "./editProducts/productEdit";
 
@@ -39,7 +42,9 @@ export default function ManageProductsTable() {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery();
+  } = api.product.getAll.useQuery(undefined, {
+    refetchInterval: 10000, // Atualiza a cada 10 segundos
+  });
 
   // console.log(products);
 
@@ -129,6 +134,108 @@ export default function ManageProductsTable() {
     }
 
     return 0;
+  }
+
+  const [editedProducts, setEditedProducts] = useState<ProductWithFeatures[]>(
+    [],
+  );
+  const [updatedName, setUpdatedName] = useState<Record<string, string>>({});
+  const [updatedCurrentStock, setUpdatedCurrentStock] = useState<
+    Record<string, number>
+  >({});
+  const [updatedMinimumStock, setUpdatedMinimumStock] = useState<
+    Record<string, number>
+  >({});
+  const [updatedMaximumStock, setUpdatedMaximumStock] = useState<
+    Record<string, number>
+  >({});
+
+  const addEditedProduct = (product: ProductWithFeatures) => {
+    setEditedProducts((prev) => {
+      // Verifica se o produto já está na lista para evitar duplicatas
+      const isAlreadyEdited = prev.some((p) => p.id === product.id);
+      return isAlreadyEdited ? prev : [...prev, product];
+    });
+  };
+
+  const handleProductNameChange = (
+    product: ProductWithFeatures,
+    value: string,
+  ) => {
+    setUpdatedName((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const handleProductCurrentStockChange = (
+    product: ProductWithFeatures,
+    value: number,
+  ) => {
+    setUpdatedCurrentStock((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const handleProductMinimumStockChange = (
+    product: ProductWithFeatures,
+    value: number,
+  ) => {
+    setUpdatedMinimumStock((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const handleProductMaximumStockChange = (
+    product: ProductWithFeatures,
+    value: number,
+  ) => {
+    setUpdatedMaximumStock((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const productMutation = api.product.editProduct.useMutation({
+    onSuccess: (updatedProduct) => {
+      console.log("Product updated successfully:", updatedProduct);
+      toast.success("Produto atualizado com sucesso.", {
+        position: "bottom-right",
+      });
+      setTimeout(function () {
+        location.reload();
+      }, 2000);
+    },
+    onError: (error) => {
+      console.error("Error updating product:", error);
+      toast.error("Erro ao atualizar produto.", {
+        position: "bottom-right",
+      });
+    },
+  });
+
+  function onSubmitEdit() {
+    for (const product of editedProducts) {
+      try {
+        productMutation.mutate({
+          id: product.id,
+          data: {
+            name: updatedName[product.id],
+            currentStock: updatedCurrentStock[product.id],
+            minimunStock: updatedMinimumStock[product.id],
+            maximumStock: updatedMaximumStock[product.id],
+          },
+        });
+      } catch (error) {
+        console.error("Error submitting update form:", error);
+      }
+    }
   }
 
   return (
@@ -408,7 +515,10 @@ export default function ManageProductsTable() {
                   </TableComponent.Value>
                   <TableComponent.Value>
                     <Input
-                      defaultValue={product.name}
+                      value={updatedName[product.id] ?? product.name}
+                      onChange={(e) =>
+                        handleProductNameChange(product, e.target.value)
+                      }
                       className="h-7 bg-cinza_destaque sm:h-8"
                     />
                   </TableComponent.Value>
@@ -417,19 +527,52 @@ export default function ManageProductsTable() {
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.currentStock ?? ""}
+                      type="number"
+                      value={
+                        updatedCurrentStock[product.id] ??
+                        product.currentStock ??
+                        undefined
+                      }
+                      onChange={(e) =>
+                        handleProductCurrentStockChange(
+                          product,
+                          Number(e.target.value),
+                        )
+                      }
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.minimunStock ?? ""}
+                      type="number"
+                      value={
+                        updatedMinimumStock[product.id] ??
+                        product.minimunStock ??
+                        undefined
+                      }
+                      onChange={(e) =>
+                        handleProductMinimumStockChange(
+                          product,
+                          Number(e.target.value),
+                        )
+                      }
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.maximumStock ?? ""}
+                      type="number"
+                      value={
+                        updatedMaximumStock[product.id] ??
+                        product.maximumStock ??
+                        undefined
+                      }
+                      onChange={(e) =>
+                        handleProductMaximumStockChange(
+                          product,
+                          Number(e.target.value),
+                        )
+                      }
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>
@@ -476,9 +619,11 @@ export default function ManageProductsTable() {
         )}
       </TableComponent.Table>
 
-      {/* Ver, durante a integração, se é possível fazer essa atualizações na tabela mesmo */}
       <TableButtonComponent className="pt-0.5 sm:pt-1">
-        <TableButtonComponent.Button className="min-w-0 rounded-md bg-cinza_borda_acordeao px-5 py-1 hover:bg-[#606060]">
+        <TableButtonComponent.Button
+          className="min-w-0 rounded-md bg-cinza_borda_acordeao px-5 py-1 hover:bg-[#606060]"
+          handlePress={onSubmitEdit}
+        >
           Salvar Alterações
         </TableButtonComponent.Button>
       </TableButtonComponent>
