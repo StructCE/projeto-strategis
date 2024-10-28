@@ -173,6 +173,23 @@ async function autoRegister(
   }
   console.log("registeredSupplier.id:", registeredSupplier.name);
 
+  // Cria a relação entre fornecedor e empresa se não existir
+  const companySupplierRelation = await db.companySupplier.findFirst({
+    where: {
+      companyId: registeredCompany.id,
+      supplierId: registeredSupplier.id,
+    },
+  });
+
+  if (!companySupplierRelation) {
+    await db.companySupplier.create({
+      data: {
+        companyId: registeredCompany.id,
+        supplierId: registeredSupplier.id,
+      },
+    });
+  }
+
   // Cria a nota fiscal antes de processar os produtos
   const registeredInvoice = await db.invoice.create({
     data: {

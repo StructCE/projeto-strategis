@@ -20,7 +20,7 @@ export function ManageCompaniesTable() {
   const [selectState, setSelectState] = useState("");
   const [selectTaxRegime, setSelectTaxRegime] = useState("");
 
-  const companies = api.company.getManageCompanies.useQuery({
+  const { data: companies = [] } = api.company.getManageCompanies.useQuery({
     filters: {
       cnpj: inputCnpj,
       name: inputName,
@@ -134,20 +134,27 @@ export function ManageCompaniesTable() {
             Cadastrados
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center">
-            Produtos com
+            Usuários
             <br />
-            Estoque Baixo
+            Cadastrados
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {companies.data?.map((company, index) => (
+        {companies.map((company, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_2fr_1fr_1fr_1fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value>{company.cnpj}</TableComponent.Value>
+            <TableComponent.Value>
+              {company.cnpj
+                .replace(/\D/g, "")
+                .replace(
+                  /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
+                  "$1.$2.$3/$4-$5",
+                )}
+            </TableComponent.Value>
             <TableComponent.Value>{company.name}</TableComponent.Value>
             <TableComponent.Value className="text-center">
               {company.registeredProductsCount}
@@ -156,7 +163,7 @@ export function ManageCompaniesTable() {
               {company.registeredSuppliersCount}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {company.lowStockProductsCount}
+              {company.registeredUsersCount}
             </TableComponent.Value>
 
             <Button

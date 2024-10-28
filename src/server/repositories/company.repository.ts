@@ -4,16 +4,27 @@ import type { CompanyRepositoryInterfaces } from "../interfaces/company/company.
 async function getAll(props: CompanyRepositoryInterfaces["GetAllProps"]) {
   if (props) {
     const { filters } = props;
+    const conditions = [];
+
+    if (filters.cnpj) {
+      conditions.push({ cnpj: { contains: filters.cnpj } });
+    }
+    if (filters.name) {
+      conditions.push({ name: { contains: filters.name } });
+    }
+    if (filters.state) {
+      conditions.push({ federativeUnit: { contains: filters.state } });
+    }
+    if (filters.taxRegime) {
+      conditions.push({ taxRegime: { contains: filters.taxRegime } });
+    }
+
     const filteredCompanies = await db.company.findMany({
       where: {
-        AND: [
-          { cnpj: { contains: filters.cnpj } },
-          { name: { contains: filters.name } },
-          { federativeUnit: { contains: filters.state } },
-          { taxRegime: { contains: filters.taxRegime } },
-        ],
+        AND: conditions,
       },
     });
+
     return filteredCompanies;
   }
 
@@ -24,61 +35,51 @@ async function getAll(props: CompanyRepositoryInterfaces["GetAllProps"]) {
 async function countRegisteredProducts(
   props: CompanyRepositoryInterfaces["CountRegisteredProducts"],
 ) {
-  // const registeredProducts = await db.product.count({
-  //   where: {
-  //     shelf: {
-  //       cabinet: {
-  //         StockCabinet: {
-  //           every: {
-  //             stock: {
-  //               companyId: props.id,
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
-  return 10;
+  const registeredProducts = await db.product.count({
+    where: {
+      shelf: {
+        cabinet: {
+          StockCabinet: {
+            every: {
+              stock: {
+                companyId: props.id,
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+  return registeredProducts;
 }
 
 async function countRegisteredSuppliers(
-  props: CompanyRepositoryInterfaces["CountRegisteredProducts"],
+  props: CompanyRepositoryInterfaces["CountRegisteredSuppliers"],
 ) {
-  // const registeredSuppliers = await db.contact.count({
-  //   where: {
-  //     companyId: props.id, // companyId esta comentado no bd
-  //   },
-  //   select: {
-  //     supplierId: true,
-  //   },
-  // });
-  return 10;
+  const { id, cnpj } = props;
+
+  // Busca a empresa com base no ID ou CNPJ e conta os fornecedores associados
+  const company = await db.company.findUnique({
+    where: id ? { id } : { cnpj },
+    include: {
+      CompanySupplier: true, // Inclui os fornecedores associados
+    },
+  });
+
+  // Se a empresa for encontrada, retorna o número de fornecedores associados; caso contrário, retorna 0
+  return company ? company.CompanySupplier.length : 0;
 }
 
-async function countLowStockProducts(
-  props: CompanyRepositoryInterfaces["CountRegisteredProducts"],
+async function countRegisteredUsers(
+  props: CompanyRepositoryInterfaces["CountRegisteredUsers"],
 ) {
-  // const products = await db.product.findMany({
-  //   where: {
-  //     shelf: {
-  //       cabinet: {
-  //         StockCabinet: {
-  //           every: {
-  //             stock: {
-  //               companyId: props.id,
-  //             },
-  //           },
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
+  const users = await db.userRole.count({
+    where: {
+      companyId: props.id,
+    },
+  });
 
-  // return products.filter(
-  //   (product) => product.currentStock / product.minimunStock <= 1.2,
-  // ).length; // Considerando 'baixo estoque' como até 120% do estoque minimo TODO verificar parametro correto
-  return 10;
+  return users; // Considerando 'baixo estoque' como até 120% do estoque minimo TODO verificar parametro correto
 }
 
 async function getOne(props: CompanyRepositoryInterfaces["GetOneProps"]) {
@@ -130,6 +131,7 @@ async function getCompanySuppliers(
     where: {
       companyId: props.id,
     },
+    include: { supplier: { include: { contacts: true } } },
   });
 
   return companySuppliers;
@@ -228,5 +230,5 @@ export const CompanyRepository = {
   getCompanyStocks,
   countRegisteredProducts,
   countRegisteredSuppliers,
-  countLowStockProducts,
+  countRegisteredUsers,
 };
