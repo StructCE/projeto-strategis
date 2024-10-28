@@ -6,6 +6,14 @@ import Ilustracao from "../../lib/assets/ilustracao";
 import LogoBranca from "../../lib/assets/logo-branca";
 
 export default function Login() {
+  const handleLogin = async () => {
+    // Limpa o localStorage
+    localStorage.clear();
+
+    // Faz o login usando o provedor Google
+    await signIn("google", { callbackUrl: "/" });
+  };
+
   return (
     <div className="flex w-full">
       <div className="absolute z-[-1] h-screen w-full overflow-hidden">
@@ -25,7 +33,7 @@ export default function Login() {
                 Faça login na sua conta com Google
               </p>
               <Button
-                onClick={() => signIn("google", { callbackUrl: "/" })}
+                onClick={handleLogin}
                 className="relative w-full overflow-hidden bg-vermelho_botao_1 px-4 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-hover_vermelho_login before:duration-200 before:ease-out hover:bg-hover_vermelho_login hover:shadow-[#ff332852] hover:before:h-96 hover:before:w-96"
               >
                 <span className="relative z-10">Entrar</span>
