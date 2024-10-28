@@ -39,7 +39,19 @@ export default function CustomReports() {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery();
+  } = api.product.getAllWhere.useQuery({
+    filters: {
+      code: inputCode,
+      controlType: selectControlType,
+      name: inputProduct,
+      productCategory: selectCategory,
+      sectorOfUse: selectSector,
+      stock: selectStock,
+      suppliers: selectSuppliers,
+      status: selectStatus,
+      buyDay: selectBuyDay,
+    },
+  });
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
@@ -53,72 +65,21 @@ export default function CustomReports() {
       stockName: selectStock ? selectStock : "",
     });
 
-  const filteredProducts = products
-    .filter((product) => {
-      const matchesCode = inputCode === "" || product.code.includes(inputCode);
-      const matchesProduct =
-        inputProduct === "" ||
-        product.name.toLowerCase().includes(inputProduct.toLowerCase());
-      const matchesSupplier =
-        selectSuppliers.length === 0 ||
-        product.ProductSupplier.some((supplier) =>
-          selectSuppliers.includes(supplier.supplier.name),
-        );
-      const matchesStock =
-        selectStock === "" ||
-        product.shelf.cabinet.StockCabinet.some(
-          (stockCabinet) =>
-            stockCabinet.stock.name.toLowerCase() === selectStock.toLowerCase(),
-        );
-      const matchesAddress =
-        selectAddress === "" ||
-        `${product.shelf.cabinet.name} - ${product.shelf.name}`
-          .toLowerCase()
-          .includes(selectAddress.toLowerCase());
-      const matchesControlType =
-        selectControlType === "" ||
-        product.controlType?.name === selectControlType;
-      const matchesCategory =
-        selectCategory === "" || product.category?.name === selectCategory;
-      const matchesSector =
-        selectSector === "" || product.sectorOfUse?.name === selectSector;
-      const matchesStatus =
-        selectStatus === "" || product.status === selectStatus;
-      const matchesBuyDay =
-        selectBuyDay === "" || product.buyDay === selectBuyDay;
-
-      return (
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
-      );
-    })
-    .sort((a, b) => a.code.localeCompare(b.code));
-
   function handleProductSelection(
     productCode: string,
-    checked: string | boolean,
+    checked: string | boolean
   ) {
     if (checked) {
       setSelectedProducts((prevSelected) => [...prevSelected, productCode]);
     } else {
       setSelectedProducts((prevSelected) =>
-        prevSelected.filter((code) => code !== productCode),
+        prevSelected.filter((code) => code !== productCode)
       );
     }
   }
 
   function handleSelectAll() {
-    const allFilteredProductCodes = filteredProducts.map(
-      (product) => product.code,
-    );
+    const allFilteredProductCodes = products.map((product) => product.code);
 
     setSelectedProducts((prevSelectedProducts) => [
       ...new Set([...prevSelectedProducts, ...allFilteredProductCodes]),
@@ -136,7 +97,7 @@ export default function CustomReports() {
 
   function exportSelectedProductData(fileType: string) {
     const productsToPrint = products.filter((product) =>
-      selectedProducts.includes(product.code),
+      selectedProducts.includes(product.code)
     );
 
     const stockWarningsData = {
@@ -178,7 +139,7 @@ export default function CustomReports() {
 
   function exportToJson(stockWarningsData: StockWarningsData) {
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(stockWarningsData),
+      JSON.stringify(stockWarningsData)
     )}`;
     const link = document.createElement("a");
     link.href = jsonString;
@@ -193,10 +154,10 @@ export default function CustomReports() {
     doc.setFontSize(16);
     doc.text(
       `Relatório Personalizado - ${new Date(
-        stockWarningsData.date,
+        stockWarningsData.date
       ).toLocaleDateString()}`,
       14,
-      20,
+      20
     );
 
     doc.setFontSize(12);
@@ -209,7 +170,7 @@ export default function CustomReports() {
       value: string | number,
       x1: number,
       x2: number,
-      y: number,
+      y: number
     ) {
       doc.setFont("helvetica", "bold");
       doc.text(`${key}:`, x1, y);
@@ -217,7 +178,7 @@ export default function CustomReports() {
 
       const splitText: string[] = doc.splitTextToSize(
         `${value}`,
-        120,
+        120
       ) as string[];
       doc.text(splitText, x2, y);
 
@@ -239,7 +200,7 @@ export default function CustomReports() {
           product.code,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Nome")) {
@@ -248,7 +209,7 @@ export default function CustomReports() {
           product.name,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Fornecedores")) {
@@ -256,12 +217,12 @@ export default function CustomReports() {
           "Fornecedores",
           product.ProductSupplier.length
             ? product.ProductSupplier.map(
-                (supplier) => supplier.supplier.name,
+                (supplier) => supplier.supplier.name
               ).join(", ")
             : "N/A",
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Status")) {
@@ -270,7 +231,7 @@ export default function CustomReports() {
           product.status,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Produto Pai")) {
@@ -279,7 +240,7 @@ export default function CustomReports() {
           product.parentProduct?.name ?? "N/A",
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Unidade de Compra")) {
@@ -288,7 +249,7 @@ export default function CustomReports() {
           `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Quantidade de Compra")) {
@@ -297,7 +258,7 @@ export default function CustomReports() {
           product.buyQuantity,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Dia de Compra")) {
@@ -306,7 +267,7 @@ export default function CustomReports() {
           product.buyDay,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Estoque Atual")) {
@@ -315,7 +276,7 @@ export default function CustomReports() {
           product.currentStock,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Estoque Mínimo")) {
@@ -324,7 +285,7 @@ export default function CustomReports() {
           product.minimunStock,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Estoque Máximo")) {
@@ -333,7 +294,7 @@ export default function CustomReports() {
           product.maximumStock,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Tipo de Controle")) {
@@ -342,7 +303,7 @@ export default function CustomReports() {
           product.controlType.name,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Categoria do Produto")) {
@@ -351,7 +312,7 @@ export default function CustomReports() {
           product.category.name,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Setor de Utilização")) {
@@ -360,7 +321,7 @@ export default function CustomReports() {
           product.sectorOfUse.name,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Endereço do Estoque")) {
@@ -369,7 +330,7 @@ export default function CustomReports() {
           `${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`,
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
       if (selectReportOptions.includes("Usuários com Permissão")) {
@@ -382,7 +343,7 @@ export default function CustomReports() {
             : "Sem usuários",
           14,
           70,
-          (yPosition += lineHeight),
+          (yPosition += lineHeight)
         );
       }
 
@@ -390,7 +351,7 @@ export default function CustomReports() {
     });
 
     doc.save(
-      `Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.pdf`,
+      `Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.pdf`
     );
   }
 
@@ -439,9 +400,9 @@ export default function CustomReports() {
           rowData.push(
             product.ProductSupplier.length
               ? product.ProductSupplier.map(
-                  (supplier) => supplier.supplier.name,
+                  (supplier) => supplier.supplier.name
                 ).join(", ")
-              : "N/A",
+              : "N/A"
           );
         if (selectReportOptions.includes("Status"))
           rowData.push(product.status);
@@ -449,7 +410,7 @@ export default function CustomReports() {
           rowData.push(product.parentProduct?.name ?? "Não tem produto pai");
         if (selectReportOptions.includes("Unidade de Compra"))
           rowData.push(
-            `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`,
+            `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`
           );
         if (selectReportOptions.includes("Quantidade de Compra"))
           rowData.push(product.buyQuantity);
@@ -470,9 +431,9 @@ export default function CustomReports() {
         if (selectReportOptions.includes("Endereço do Estoque"))
           rowData.push(
             product.shelf.cabinet.StockCabinet.map(
-              (stockCabinet) => stockCabinet.stock.name,
+              (stockCabinet) => stockCabinet.stock.name
             ).join(),
-            ` ${product.shelf.cabinet.name}, ${product.shelf.name}`,
+            ` ${product.shelf.cabinet.name}, ${product.shelf.name}`
           );
         if (selectReportOptions.includes("Usuários com Permissão"))
           rowData.push(
@@ -480,7 +441,7 @@ export default function CustomReports() {
               ? product.usersWithPermission
                   .map((user) => user.user.name)
                   .join(", ")
-              : "Sem usuários",
+              : "Sem usuários"
           );
 
         return rowData;
@@ -492,11 +453,11 @@ export default function CustomReports() {
     XLSX.utils.book_append_sheet(
       workbook,
       worksheet,
-      "Relatorio Personalizado",
+      "Relatorio Personalizado"
     );
     XLSX.writeFile(
       workbook,
-      `Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      `Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.xlsx`
     );
   }
 
@@ -621,7 +582,7 @@ export default function CustomReports() {
                     key={shelf.id}
                     value={`${cabinet.name} - ${shelf.name}`}
                   />
-                )),
+                ))
               )
             )}
           </Filter.Select>
@@ -816,7 +777,7 @@ export default function CustomReports() {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {filteredProducts.map((product, index) => (
+        {products.map((product, index) => (
           <TableComponent.Line
             className={`w-max grid-cols-[85px_70px_500px_500px_70px_300px_150px_120px_150px_90px_90px_90px_200px_250px_200px_500px_500px] gap-4 md:gap-8 ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
@@ -838,7 +799,7 @@ export default function CustomReports() {
             <TableComponent.Value>
               {product.ProductSupplier.length
                 ? product.ProductSupplier.map(
-                    (supplier) => supplier.supplier.name,
+                    (supplier) => supplier.supplier.name
                   ).join(", ")
                 : "N/A"}
             </TableComponent.Value>
@@ -864,14 +825,16 @@ export default function CustomReports() {
               {product.maximumStock}
             </TableComponent.Value>
             <TableComponent.Value>
-              {product.controlType.name}
-            </TableComponent.Value>
-            <TableComponent.Value>{product.category.name}</TableComponent.Value>
-            <TableComponent.Value>
-              {product.sectorOfUse.name}
+              {product.controlType?.name}
             </TableComponent.Value>
             <TableComponent.Value>
-              {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+              {product.category?.name}
+            </TableComponent.Value>
+            <TableComponent.Value>
+              {product.sectorOfUse?.name}
+            </TableComponent.Value>
+            <TableComponent.Value>
+              {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
             </TableComponent.Value>
             <TableComponent.Value>
               {product.usersWithPermission.length > 0
