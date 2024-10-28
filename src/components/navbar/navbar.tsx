@@ -8,6 +8,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { api } from "~/trpc/react";
 import {
   Select,
@@ -41,12 +47,9 @@ export default function Navbar({ session }: { session: Session | null }) {
   const [selectCompanyId, setSelectCompanyId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Verificar se o window existe (somente no client-side)
     if (typeof window !== "undefined") {
       const storedCompanyId = localStorage.getItem("selectCompanyId");
-      if (storedCompanyId) {
-        setSelectCompanyId(storedCompanyId);
-      }
+      setSelectCompanyId(storedCompanyId ?? "all_companies");
     }
   }, []);
 
@@ -56,31 +59,36 @@ export default function Navbar({ session }: { session: Session | null }) {
     }
   }, [selectCompanyId]);
 
-  console.log(selectCompanyId);
-
   return (
     <nav className="z-10 flex h-[64px] w-full items-center justify-end gap-8 bg-black px-2 sm:h-[74px] sm:gap-12 sm:px-16 lg:h-[87px]">
       {/* Select */}
       {user?.UserRole.some(
-        (userRole) => getRoleNameById(userRole.roleId) === "Administrador",
+        (userRole) => userRole.role.name === "Administrador",
       ) && (
-        <Select
-          onValueChange={setSelectCompanyId}
-          value={selectCompanyId ?? ""}
-          defaultValue={selectCompanyId ?? ""}
-        >
-          <SelectTrigger className="h-fit w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-3 py-1.5 text-[12px] text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-4 sm:py-2 sm:text-base">
-            <SelectValue placeholder="Empresa a Operar" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all_companies">Todas Empresas</SelectItem>
-            {companies.map((company, index) => (
-              <SelectItem value={company.id} key={index}>
-                {company.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger className="flex cursor-pointer self-center">
+              <Select
+                onValueChange={setSelectCompanyId}
+                value={selectCompanyId ?? ""}
+                defaultValue={selectCompanyId ?? ""}
+              >
+                <SelectTrigger className="h-fit w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-3 py-1.5 text-[12px] text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-4 sm:py-2 sm:text-base">
+                  <SelectValue placeholder="Empresa a Operar" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all_companies">Todas Empresas</SelectItem>
+                  {companies.map((company, index) => (
+                    <SelectItem value={company.id} key={index}>
+                      {company.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </TooltipTrigger>
+            <TooltipContent side="left">Empresa a Operar</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
 
       {/* Dropdown */}
@@ -101,18 +109,18 @@ export default function Navbar({ session }: { session: Session | null }) {
             Telefone: <span className="font-normal">{session?.user.phone}</span>
           </DropdownMenuLabel>
           <DropdownMenuLabel className="p-0">
-            Cargo:{" "}
-            <span className="font-normal">
-              {user?.UserRole.map((userRole) =>
-                getRoleNameById(userRole.roleId),
-              ).join(", ")}
-            </span>
-          </DropdownMenuLabel>
-          <DropdownMenuLabel className="p-0">
             Empresa:{" "}
             <span className="font-normal">
               {user?.UserRole.map((userRole) =>
                 getCompanyNameById(userRole.companyId),
+              ).join(", ")}
+            </span>
+          </DropdownMenuLabel>
+          <DropdownMenuLabel className="p-0">
+            Cargo:{" "}
+            <span className="font-normal">
+              {user?.UserRole.map((userRole) =>
+                getRoleNameById(userRole.roleId),
               ).join(", ")}
             </span>
           </DropdownMenuLabel>
