@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,13 +10,14 @@ import {
 } from "./companyRegisterFormSchema";
 
 export const useCompanyForm = () => {
+  const router = useRouter();
   const createCompany = api.company.registerCompany.useMutation({
     onSuccess: () => {
       toast.success("Empresa criada com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

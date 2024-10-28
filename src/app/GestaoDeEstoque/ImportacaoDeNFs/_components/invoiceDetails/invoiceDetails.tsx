@@ -37,7 +37,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
   const [selectedAccountPlan, setSelectedAccountPlan] =
     useState<AccountPlan | null>(props.invoice.accountPlan ?? null);
 
-  // const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  // const { data: suppliers = [] } = api.supplier.getAll.useQuery({filters: {},});;
   // const { data: companies = [] } = api.company.getAllCompanies.useQuery({});
   const { data: documentTypes = [] } =
     api.generalParameters.documentType.getAll.useQuery();

@@ -96,7 +96,9 @@ export default function CreatePurchaseOrder() {
       stockName: selectStock ? selectStock : "",
     });
   const { data: users = [] } = api.user.getAll.useQuery();
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: {},
+  });
 
   // Função para filtrar produtos
   const filteredProducts = areAllFiltersEmpty

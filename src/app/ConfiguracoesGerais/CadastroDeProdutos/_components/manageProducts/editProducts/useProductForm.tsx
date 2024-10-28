@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ import {
 } from "./productEditFormSchema";
 
 export const useProductForm = (product: ProductWithFeatures) => {
+  const router = useRouter();
   const [isDeleted, setIsDeleted] = useState(false);
 
   const productMutation = api.product.editProduct.useMutation({
@@ -25,7 +27,7 @@ export const useProductForm = (product: ProductWithFeatures) => {
         );
       }
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
@@ -43,7 +45,7 @@ export const useProductForm = (product: ProductWithFeatures) => {
         position: "bottom-right",
       });
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
@@ -93,7 +95,7 @@ export const useProductForm = (product: ProductWithFeatures) => {
 
   function onSubmitEdit(data: EditProductFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    console.log(JSON.stringify(product, null, 2));
 
     try {
       productMutation.mutate({
@@ -127,6 +129,7 @@ export const useProductForm = (product: ProductWithFeatures) => {
 
   function onSubmitRemove() {
     setIsDeleted(true);
+    console.log(product.id);
     try {
       deleteProductMutation.mutate({
         id: product.id,

@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ import {
 } from "./reasonEditFormSchema";
 
 export const useReasonForm = (reason: AdjustReason) => {
+  const router = useRouter();
   const [isDeleted, setIsDeleted] = useState(false);
 
   const reasonMutation =
@@ -26,7 +28,7 @@ export const useReasonForm = (reason: AdjustReason) => {
           );
         }
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {
@@ -45,7 +47,7 @@ export const useReasonForm = (reason: AdjustReason) => {
           position: "bottom-right",
         });
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {

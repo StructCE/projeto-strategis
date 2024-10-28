@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ import {
 } from "./supplierEditFormSchema";
 
 export const useSupplierForm = (supplier: Supplier) => {
+  const router = useRouter();
   const [isDeleted, setIsDeleted] = useState(false);
 
   const supplierMutation = api.supplier.editSupplier.useMutation({
@@ -25,7 +27,7 @@ export const useSupplierForm = (supplier: Supplier) => {
         );
       }
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
@@ -46,7 +48,7 @@ export const useSupplierForm = (supplier: Supplier) => {
         },
       );
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

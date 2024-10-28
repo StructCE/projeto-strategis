@@ -51,8 +51,8 @@ export default function ImportacaoDeNFs() {
       supplier: selectSupplier,
       company: selectCompany,
       nfNumber: inputDescription,
-      status: selectedTab
-    }
+      status: selectedTab,
+    },
   });
   const { data: suppliers = [] } = api.supplier.getAll.useQuery();
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();

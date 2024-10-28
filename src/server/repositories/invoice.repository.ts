@@ -331,7 +331,7 @@ async function autoRegister(
           data: {
             name: "",
             abbreviation: product.unit.unitAbbreviation,
-            unitsPerPack: product.unit.unitsPerPack ?? 0,
+            unitsPerPack: product.unit.unitsPerPack ?? 1,
           },
         });
       }

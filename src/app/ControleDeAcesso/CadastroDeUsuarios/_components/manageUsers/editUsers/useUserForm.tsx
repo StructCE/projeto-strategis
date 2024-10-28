@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ import {
 } from "./userEditFormSchema";
 
 export const useUserForm = (user: UserWithRoles) => {
+  const router = useRouter();
   const [isDeleted, setIsDeleted] = useState(false);
 
   const userMutation = api.user.editUser.useMutation({
@@ -25,7 +27,7 @@ export const useUserForm = (user: UserWithRoles) => {
         );
       }
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
@@ -43,7 +45,7 @@ export const useUserForm = (user: UserWithRoles) => {
         position: "bottom-right",
       });
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

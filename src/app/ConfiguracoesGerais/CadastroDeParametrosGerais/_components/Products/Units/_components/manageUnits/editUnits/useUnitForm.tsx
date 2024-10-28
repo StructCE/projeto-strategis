@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ import {
 } from "./unitEditFormSchema";
 
 export const useUnitForm = (unit: Unit) => {
+  const router = useRouter();
   const [isDeleted, setIsDeleted] = useState(false);
 
   const unitMutation = api.generalParameters.unit.editUnit.useMutation({
@@ -25,7 +27,7 @@ export const useUnitForm = (unit: Unit) => {
         );
       }
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
@@ -43,7 +45,7 @@ export const useUnitForm = (unit: Unit) => {
         position: "bottom-right",
       });
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

@@ -1,9 +1,8 @@
 "use client";
-
 import { Eraser, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { states } from "prisma/seed-data/states";
 import { useState } from "react";
-import { states } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
@@ -76,9 +75,9 @@ export function ManageCompaniesTable() {
             state={selectState}
             setState={setSelectState}
           >
-            {states.map((tributo, index) => (
+            {states.map((state, index) => (
               <Filter.SelectItems
-                value={tributo.value}
+                value={state.value}
                 key={index}
               ></Filter.SelectItems>
             ))}

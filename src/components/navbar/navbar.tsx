@@ -56,6 +56,8 @@ export default function Navbar({ session }: { session: Session | null }) {
     }
   }, [selectCompanyId]);
 
+  console.log(selectCompanyId);
+
   return (
     <nav className="z-10 flex h-[64px] w-full items-center justify-end gap-8 bg-black px-2 sm:h-[74px] sm:gap-12 sm:px-16 lg:h-[87px]">
       {/* Select */}
@@ -65,6 +67,7 @@ export default function Navbar({ session }: { session: Session | null }) {
         <Select
           onValueChange={setSelectCompanyId}
           value={selectCompanyId ?? ""}
+          defaultValue={selectCompanyId ?? ""}
         >
           <SelectTrigger className="h-fit w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-3 py-1.5 text-[12px] text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-4 sm:py-2 sm:text-base">
             <SelectValue placeholder="Empresa a Operar" />

@@ -21,7 +21,9 @@ import { useStockForm } from "./useStockForm";
 export const StockRegister = () => {
   const stockForm = useStockForm();
 
-  const { data: companies = [] } = api.company.getAllCompanies.useQuery({});
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery({
+    filters: {},
+  });
   const { data: users = [] } = api.user.getAll.useQuery();
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetsWithoutStock.useQuery();

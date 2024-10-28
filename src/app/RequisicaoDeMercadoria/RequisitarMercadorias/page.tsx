@@ -98,7 +98,7 @@ export default function CreatePurchaseOrder() {
   // Função para remover produtos da requisição
   const handleRemoveProduct = (productCode: string) => {
     setAddedProducts((prev) =>
-      prev.filter((product) => product.code !== productCode)
+      prev.filter((product) => product.code !== productCode),
     );
     setQuantities((prev) => {
       const newQuantities = { ...prev };
@@ -119,10 +119,10 @@ export default function CreatePurchaseOrder() {
 
   function hasPermission(
     product: ProductWithFeatures,
-    user: UserWithRoles | null | undefined
+    user: UserWithRoles | null | undefined,
   ) {
     return product.usersWithPermission?.some(
-      (permittedUser) => permittedUser.user.id === user?.id
+      (permittedUser) => permittedUser.user.id === user?.id,
     );
   }
 
@@ -276,7 +276,7 @@ export default function CreatePurchaseOrder() {
                       key={shelf.id}
                       value={`${cabinet.name} - ${shelf.name}`}
                     />
-                  ))
+                  )),
                 )
               )}
             </Filter.Select>
@@ -589,7 +589,7 @@ export default function CreatePurchaseOrder() {
                               onChange={(e) =>
                                 handleQuantityChange(
                                   product.code,
-                                  e.target.value
+                                  e.target.value,
                                 )
                               }
                               className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"

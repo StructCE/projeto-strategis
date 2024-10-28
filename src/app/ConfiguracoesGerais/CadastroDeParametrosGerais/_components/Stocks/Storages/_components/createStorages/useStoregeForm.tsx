@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,8 +10,7 @@ import {
 } from "./storageRegisterFormSchema";
 
 export const useStorageForm = () => {
-  // const { toast } = useToast();
-
+  const router = useRouter();
   const cabinetMutation =
     api.generalParameters.cabinet.registerCabinet.useMutation({
       onSuccess: (newCabinet) => {
@@ -22,7 +22,7 @@ export const useStorageForm = () => {
           },
         );
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {

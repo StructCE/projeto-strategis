@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,6 +8,7 @@ import { type InvoiceProduct } from "~/server/interfaces/invoice/invoice.route.i
 import { api } from "~/trpc/react";
 
 const AutoCreateInvoice = () => {
+  const router = useRouter();
   const invoiceMutation = api.invoice.autoRegisterInvoice.useMutation({
     onSuccess: (newInvoice) => {
       console.log("Nota fiscal importada com sucesso:", newInvoice);
@@ -17,8 +19,8 @@ const AutoCreateInvoice = () => {
         },
       );
       setTimeout(() => {
-        location.reload();
-      }, 2000);
+        router.refresh();
+      }, 5000);
     },
     onError: (error) => {
       console.error("Erro ao importar nota fiscal:", error);
@@ -172,7 +174,7 @@ const AutoCreateInvoice = () => {
           prodNode?.getElementsByTagName("uCom")[0]?.textContent ?? "";
         const match = uCom.match(/^(\w+)(?:\s+(\d+))?$/);
         const unitAbbreviation = match ? match[1] : "";
-        const unitsPerPack = match?.[2] ? parseInt(match[2], 10) : 0;
+        const unitsPerPack = match?.[2] ? parseInt(match[2], 10) : 1;
 
         const product: InvoiceProduct = {
           code: prodNode?.getElementsByTagName("cProd")[0]?.textContent ?? "",

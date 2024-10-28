@@ -19,8 +19,8 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 
+import { states } from "prisma/seed-data/states";
 import { api } from "~/trpc/react";
-import { states } from "../supplierData";
 import { SupplierEdit } from "./editSuppliers/supplierEdit";
 
 export const ManageSuppliersTable = () => {

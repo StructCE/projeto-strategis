@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -17,6 +18,7 @@ const RejectRequest: React.FC<RejectRequestProps> = ({
   statusDescription,
   request,
 }) => {
+  const router = useRouter();
   const requestMutation = api.request.editRequest.useMutation({
     onSuccess: (newRequest) => {
       console.log("Requisição atualizada com sucesso:", newRequest);
@@ -27,7 +29,7 @@ const RejectRequest: React.FC<RejectRequestProps> = ({
         },
       );
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

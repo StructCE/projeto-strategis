@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,6 +10,7 @@ import {
 } from "./accessProfileRegisterFormSchema";
 
 export const useAccessProfileForm = () => {
+  const router = useRouter();
   const roleMutation = api.role.registerRole.useMutation({
     onSuccess: (newRole) => {
       console.log("Role created successfully:", newRole);
@@ -16,7 +18,7 @@ export const useAccessProfileForm = () => {
         position: "bottom-right",
       });
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

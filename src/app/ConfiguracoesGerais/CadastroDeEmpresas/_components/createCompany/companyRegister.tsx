@@ -1,4 +1,5 @@
 "use client";
+import { states } from "prisma/seed-data/states";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -16,13 +17,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { states } from "../../../CadastroDeFornecedores/_components/supplierData";
-import { useCompanyForm } from "./useCompanyForm";
 import { api } from "~/trpc/react";
+import { useCompanyForm } from "./useCompanyForm";
 
 export const CompanyRegister = () => {
   const companyForm = useCompanyForm();
-  const suppliers = api.supplier.getAll.useQuery();
+  const suppliers = api.supplier.getAll.useQuery({ filters: {} });
   const users = api.user.getAll.useQuery();
   const companies = api.company.getAllCompanies.useQuery();
 

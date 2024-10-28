@@ -11,7 +11,6 @@ import { modules } from "./seed-data/modules";
 import { projects } from "./seed-data/projects";
 import { roles } from "./seed-data/roles";
 import { sectorsOfUse } from "./seed-data/sectorOfUse";
-import { units } from "./seed-data/units";
 
 async function createModule(props: {
   name: string;
@@ -58,17 +57,6 @@ async function createControlType(props: { name: string }) {
     data: { ...props },
   });
   return createdControlType;
-}
-
-async function createUnit(props: {
-  name: string;
-  abbreviation: string;
-  unitsPerPack: number;
-}) {
-  const createdUnit = await db.unit.create({
-    data: { ...props },
-  });
-  return createdUnit;
 }
 
 async function createBank(props: { name: string }) {
@@ -178,15 +166,6 @@ async function main() {
   //   return createdControlType;
   // });
   // await Promise.all(createdControlType);
-  // const createdUnits = units.map(async (unit) => {
-  //   const createdUnit = await createUnit({
-  //     name: unit.name,
-  //     abbreviation: unit.abbreviation,
-  //     unitsPerPack: unit.unitsPerPack,
-  //   });
-  //   return createdUnit;
-  // });
-  // await Promise.all(createdUnits);
 
   // const createdBanks = banks.map(async (bank) => {
   //   const createdBank = await createBank({

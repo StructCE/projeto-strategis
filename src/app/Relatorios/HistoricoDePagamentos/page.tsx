@@ -1,5 +1,4 @@
 "use client";
-import "jspdf-autotable";
 import {
   Building2,
   Calendar,
@@ -65,7 +64,11 @@ export default function PaymentHistory() {
   const [selectExpenseType, setSelectExpenseType] = useState("");
 
   // Dados do BD
-  const { data: invoices = [] } = api.invoice.getAll.useQuery({
+  const {
+    data: invoices = [],
+    error,
+    isLoading,
+  } = api.invoice.getAll.useQuery({
     filters: {
       bank: selectBank,
       company: selectCompany,
@@ -82,8 +85,11 @@ export default function PaymentHistory() {
       documentType: selectDocumentType,
     },
   });
+
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: {},
+  });
   const { data: banks = [] } = api.generalParameters.bank.getAll.useQuery();
   const { data: groups = [] } = api.generalParameters.group.getAll.useQuery();
   const { data: projects = [] } =
@@ -93,12 +99,12 @@ export default function PaymentHistory() {
   const { data: accountPlans = [] } =
     api.generalParameters.accountPlan.getAll.useQuery();
 
-  console.log(invoices);
+  // console.log(invoices);
 
   // Seleção dos pagamentos via checkbox
   function handlePaymentSelection(
     paymentDocumentNumber: string,
-    checked: string | boolean
+    checked: string | boolean,
   ) {
     if (checked) {
       setSelectedPayments((prevSelected) => [
@@ -107,14 +113,14 @@ export default function PaymentHistory() {
       ]);
     } else {
       setSelectedPayments((prevSelected) =>
-        prevSelected.filter((code) => code !== paymentDocumentNumber)
+        prevSelected.filter((code) => code !== paymentDocumentNumber),
       );
     }
   }
 
   function handleSelectAll() {
     const allFilteredPayments = invoices.map(
-      (payment) => payment.documentNumber
+      (payment) => payment.documentNumber,
     );
 
     setSelectedPayments((prevSelectedPayments) => [
@@ -129,13 +135,13 @@ export default function PaymentHistory() {
 
   function calculateTotalValue() {
     const selectedPaymentObjects = invoices.filter((payment) =>
-      selectedPayments.includes(payment.documentNumber)
+      selectedPayments.includes(payment.documentNumber),
     );
 
     const totalValue = selectedPaymentObjects.reduce(
       (total, payment) =>
         total + (payment.invoiceValue ? payment.invoiceValue : 0),
-      0
+      0,
     );
 
     return totalValue.toLocaleString("pt-BR", {
@@ -154,7 +160,7 @@ export default function PaymentHistory() {
   function paymentDescription(
     nota_fiscal: string,
     valor: number,
-    produtos: { name: string }[]
+    produtos: { name: string }[],
   ): string {
     const productsString = produtos
       .map((product) => capitalizeFirstLetter(product.name))
@@ -196,7 +202,7 @@ export default function PaymentHistory() {
 
   function exportSelectedProductData(fileType: string) {
     const paymentsToPrint = invoices.filter((payment) =>
-      selectedPayments.includes(payment.documentNumber)
+      selectedPayments.includes(payment.documentNumber),
     );
 
     const paymentReportData = {
@@ -222,7 +228,7 @@ export default function PaymentHistory() {
         paymentDate: payment.paymentDate ?? null,
         payedStatus: payment.payedStatus ?? "Não informado",
         invoiceProductNames: payment.invoiceProducts.map(
-          (invoiceProduct) => invoiceProduct.name
+          (invoiceProduct) => invoiceProduct.name,
         ),
       })),
     };
@@ -243,7 +249,7 @@ export default function PaymentHistory() {
 
   function exportToJson(paymentReportData: PaymentReportData) {
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(paymentReportData)
+      JSON.stringify(paymentReportData),
     )}`;
     const link = document.createElement("a");
     link.href = jsonString;
@@ -316,11 +322,11 @@ export default function PaymentHistory() {
     XLSX.utils.book_append_sheet(
       workbook,
       worksheet,
-      "Relatório de Pagamentos"
+      "Relatório de Pagamentos",
     );
     XLSX.writeFile(
       workbook,
-      `Relatorio_Pagamentos_${new Date().toISOString().slice(0, 10)}.xlsx`
+      `Relatorio_Pagamentos_${new Date().toISOString().slice(0, 10)}.xlsx`,
     );
   }
 
@@ -663,95 +669,133 @@ export default function PaymentHistory() {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {invoices
-          .sort((a, b) => a.documentDate.getTime() - b.documentDate.getTime())
-          .map((invoice, index) => (
-            <TableComponent.Line
-              className={`grid-cols-[85px_1fr_170px_120px_120px_0.6fr_130px] gap-4 md:gap-8 ${
-                index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-              }`}
-              key={index}
-            >
-              <TableComponent.Value className="text-center">
-                <Checkbox
-                  checked={selectedPayments.includes(invoice.documentNumber)}
-                  onCheckedChange={(checked) =>
-                    handlePaymentSelection(invoice.documentNumber, checked)
-                  }
-                />
-              </TableComponent.Value>
-              <TableComponent.Value className="tracking-tight">
-                {paymentDescription(
-                  parseInt(
-                    invoice.documentNumber.replace(/\./g, ""),
-                    10
-                  ).toString(),
-                  invoice.invoiceValue,
-                  invoice.invoiceProducts
-                )}
-              </TableComponent.Value>
-              <TableComponent.Value className="text-center">
-                <span
-                  className={`${
-                    invoice.payedStatus === "Pago"
-                      ? "text-verde_botao"
-                      : invoice.payedStatus === "Em Aberto"
-                        ? "text-amarelo_botao"
-                        : invoice.payedStatus === "Cancelado"
-                          ? "text-vermelho_botao_2"
-                          : ""
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Erro ao mostrar pagamentos: {error.message}
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando pagamentos...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {invoices?.length > 0 && !isLoading && !error ? (
+          invoices?.length > 0 ? (
+            invoices
+              .sort(
+                (a, b) => a.documentDate.getTime() - b.documentDate.getTime(),
+              )
+              .map((invoice, index) => (
+                <TableComponent.Line
+                  className={`grid-cols-[85px_1fr_170px_120px_120px_0.6fr_130px] gap-4 md:gap-8 ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                   }`}
+                  key={index}
                 >
-                  {invoice.payedStatus}
-                </span>
-                {" - "}
-                <span
-                  className={`${
-                    invoice.paymentDate &&
-                    invoice.paymentDate <= invoice.deadlineDate
-                      ? "text-verde_botao"
-                      : "text-vermelho_botao_2"
-                  }`}
-                >
-                  {invoice.deadlineDate && new Date() <= invoice.deadlineDate
-                    ? "Em Dia"
-                    : "Atrasado"}
-                </span>
-              </TableComponent.Value>
-              <TableComponent.Value className="text-center">
-                {`${String(invoice.documentDate.getDate()).padStart(2, "0")}/${String(invoice.documentDate.getMonth()).padStart(2, "0")}/${String(invoice.documentDate.getFullYear()).padStart(2, "0")}`}
-              </TableComponent.Value>
-              <TableComponent.Value className="text-center">{`${String(invoice.deadlineDate.getDate()).padStart(2, "0")}/${String(invoice.deadlineDate.getMonth()).padStart(2, "0")}/${String(invoice.deadlineDate.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
-              <TableComponent.Value>
-                {invoice.company.name}
-              </TableComponent.Value>
-
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                    Detalhes
-                  </Button>
-                </DialogTrigger>
-                <DialogContent
-                  aria-describedby={undefined}
-                  className="max-h-[90vh] overflow-y-auto sm:max-w-4xl"
-                >
-                  <DialogHeader>
-                    <DialogTitle className="pb-1.5">
-                      Informações do Pagamento:
-                    </DialogTitle>
-                    <DialogDescription></DialogDescription>
-
-                    {invoice.payedStatus === "Em Aberto" ? (
-                      <PaymentDetails invoice={invoice} />
-                    ) : (
-                      <PaymentCompleteDetails invoice={invoice} />
+                  <TableComponent.Value className="text-center">
+                    <Checkbox
+                      checked={selectedPayments.includes(
+                        invoice.documentNumber,
+                      )}
+                      onCheckedChange={(checked) =>
+                        handlePaymentSelection(invoice.documentNumber, checked)
+                      }
+                    />
+                  </TableComponent.Value>
+                  <TableComponent.Value className="tracking-tight">
+                    {paymentDescription(
+                      parseInt(
+                        invoice.documentNumber.replace(/\./g, ""),
+                        10,
+                      ).toString(),
+                      invoice.invoiceValue,
+                      invoice.invoiceProducts,
                     )}
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    <span
+                      className={`${
+                        invoice.payedStatus === "Pago"
+                          ? "text-verde_botao"
+                          : invoice.payedStatus === "Em Aberto"
+                            ? "text-amarelo_botao"
+                            : invoice.payedStatus === "Cancelado"
+                              ? "text-vermelho_botao_2"
+                              : ""
+                      }`}
+                    >
+                      {invoice.payedStatus}
+                    </span>
+                    {" - "}
+                    <span
+                      className={`${
+                        invoice.paymentDate &&
+                        invoice.paymentDate <= invoice.deadlineDate
+                          ? "text-verde_botao"
+                          : "text-vermelho_botao_2"
+                      }`}
+                    >
+                      {invoice.deadlineDate &&
+                      new Date() <= invoice.deadlineDate
+                        ? "Em Dia"
+                        : "Atrasado"}
+                    </span>
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {`${String(invoice.documentDate.getDate()).padStart(2, "0")}/${String(invoice.documentDate.getMonth()).padStart(2, "0")}/${String(invoice.documentDate.getFullYear()).padStart(2, "0")}`}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">{`${String(invoice.deadlineDate.getDate()).padStart(2, "0")}/${String(invoice.deadlineDate.getMonth()).padStart(2, "0")}/${String(invoice.deadlineDate.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
+                  <TableComponent.Value>
+                    {invoice.company.name}
+                  </TableComponent.Value>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="max-h-[90vh] overflow-y-auto sm:max-w-4xl"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="pb-1.5">
+                          Informações do Pagamento:
+                        </DialogTitle>
+                        <DialogDescription></DialogDescription>
+
+                        {invoice.payedStatus === "Em Aberto" ? (
+                          <PaymentDetails invoice={invoice} />
+                        ) : (
+                          <PaymentCompleteDetails invoice={invoice} />
+                        )}
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum pagamento encontrado com os filtros aplicados
+              </TableComponent.Value>
             </TableComponent.Line>
-          ))}
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum pagamento encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">

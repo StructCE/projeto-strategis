@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,6 +10,7 @@ import {
 } from "./categoryRegisterFormSchema";
 
 export const useCategoryForm = () => {
+  const router = useRouter();
   const categoryMutation =
     api.generalParameters.productCategory.registerProductCategory.useMutation({
       onSuccess: (newCategory) => {
@@ -17,7 +19,7 @@ export const useCategoryForm = () => {
           position: "bottom-right",
         });
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {

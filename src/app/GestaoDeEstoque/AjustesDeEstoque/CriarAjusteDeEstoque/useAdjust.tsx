@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -21,6 +22,7 @@ const FinalizeAdjust: React.FC<FinalizeAdjustProps> = ({
   adjustedStock,
   adjustmentReasons,
 }) => {
+  const router = useRouter();
   const adjustMutation = api.adjust.registerAdjust.useMutation({
     onSuccess: (newAdjust) => {
       console.log("Ajuste de estoque criado com sucesso:", newAdjust);
@@ -31,7 +33,7 @@ const FinalizeAdjust: React.FC<FinalizeAdjustProps> = ({
         },
       );
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

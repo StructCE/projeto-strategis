@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -10,6 +11,7 @@ interface EditOrderProps {
 }
 
 export const EditOrder = (props: EditOrderProps) => {
+  const router = useRouter();
   const editOrderMutation = api.order.editOrder.useMutation({
     onSuccess: (updatedOrder) => {
       console.log("Order updated successfully:", updatedOrder);
@@ -20,7 +22,7 @@ export const EditOrder = (props: EditOrderProps) => {
         },
       );
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

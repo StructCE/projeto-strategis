@@ -1,4 +1,5 @@
 "use client";
+import { states } from "prisma/seed-data/states";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -15,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { states } from "../supplierData";
 import { useSupplierForm } from "./useSupplierForm";
 
 export const SupplierRegister = () => {
