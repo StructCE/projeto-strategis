@@ -1,12 +1,15 @@
 import z from "zod";
 
-const getAllProps = z.object({
-  // filters: z.object({
-  //   date: z.date(),
-  //   requestResponsible: z.string(),
-  //   status: z.string(),
-  // }),
-});
+const getAllProps = z
+  .object({
+    filters: z
+      .object({
+        date: z.date().optional(),
+        requestResponsible: z.string().optional(),
+      })
+      .optional(),
+  })
+  .optional();
 
 type GetAllProps = z.infer<typeof getAllProps>;
 
@@ -26,7 +29,7 @@ const registerProps = z.object({
       // requestId: z.string(),
       productId: z.string(),
       // unitId: z.string(),
-    }),
+    })
   ),
 });
 
@@ -52,7 +55,7 @@ const editProps = z.object({
         // requestId: z.string(),
         // productId: z.string(),
         // unitId: z.string(),
-      }),
+      })
     ),
   }),
 });
