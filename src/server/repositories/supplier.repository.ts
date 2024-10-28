@@ -7,18 +7,18 @@ async function getAll(props: SupplierRepositoryInterfaces["GetAll"]) {
     const suppliers = await db.supplier.findMany({
       where: {
         AND: [
-          { name: { contains: filters.name } },
-          { email: { contains: filters.email } },
-          { federativeUnit: { contains: filters.federativeUnit } },
+          { name: { contains: filters?.name } },
+          { email: { contains: filters?.email } },
+          { federativeUnit: { contains: filters?.federativeUnit } },
         ],
       },
-      include: { contacts: true },
+      // include: { contacts: true },
     });
 
     return suppliers;
   }
   const suppliers = await db.supplier.findMany({
-    include: { contacts: true },
+    // include: { contacts: true },
   });
   return suppliers;
 }

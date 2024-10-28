@@ -39,31 +39,11 @@ export default function ManagePurchasesTable() {
     error,
     isLoading,
   } = api.order.getAll.useQuery({
-    // filters: { date: date ?? new Date(), responsibleName: inputResponsible },
+    filters: { date: date, responsibleName: inputResponsible, suppliers: selectSuppliers },
   });
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
 
-  const filteredOrders = orders.filter((order) => {
-    const matchesDate =
-      !date ||
-      (order.date.getDate() === date.getDate() &&
-        order.date.getMonth() === date.getMonth() + 1 &&
-        order.date.getFullYear() === date.getFullYear());
 
-    const matchesResponsible =
-      inputResponsible === "" ||
-      order.responsible.name
-        .toLowerCase()
-        .includes(inputResponsible.toLowerCase());
-
-    const matchesSupplier =
-      selectSuppliers.length === 0 ||
-      order.orderProducts.some((product) =>
-        selectSuppliers.includes(product.ProductSupplier.supplier.name),
-      );
-
-    return matchesDate && matchesResponsible && matchesSupplier;
-  });
 
   function exportData(order: SerializedOrder) {
     const purchaseData = {
@@ -98,7 +78,7 @@ export default function ManagePurchasesTable() {
 
     function addKeyValuePair(
       key: string,
-      value: string | number,
+      value: string | number | null,
       x1: number,
       x2: number,
       y: number,
@@ -185,7 +165,7 @@ export default function ManagePurchasesTable() {
       );
       yPosition += addKeyValuePair(
         "Endereço de Estoque",
-        `${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`,
+        `${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`,
         14,
         70,
         (yPosition += lineHeight),
@@ -293,8 +273,8 @@ export default function ManagePurchasesTable() {
           </TableComponent.Line>
         )}
         {orders.length > 0 && !isLoading && !error ? (
-          filteredOrders.length > 0 ? (
-            filteredOrders
+          orders.length > 0 ? (
+            orders
               .sort((a, b) => b.date.getTime() - a.date.getTime())
               .map((order, index) => (
                 <TableComponent.Line

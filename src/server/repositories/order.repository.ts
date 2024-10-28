@@ -2,14 +2,33 @@ import { db } from "../db";
 import type { OrderRepositoryInterfaces } from "../interfaces/order/order.repository.interfaces";
 
 async function getAll(props: OrderRepositoryInterfaces["GetAllProps"]) {
-  // const { filters } = props;
-  const orders = await db.order.findMany({
-    // where: {
-    //   AND: [
-    //     { date: filters.date },
-    //     { responsible: { user: { name: filters.responsibleName } } },
-    //   ],
-    // },
+  if (props) {
+
+    const { filters } = props;
+    const orders = await db.order.findMany({
+    where: {
+        AND: [
+          {
+            date: {
+              gte: filters?.date
+                ? new Date(
+                    `${filters.date.getFullYear()}-${filters.date.getMonth() + 1}-${filters.date?.getDate()}T00:00:00.000Z`,
+                  )
+                : undefined,
+            },
+          },
+          {
+            date: {
+              lt: filters?.date
+                ? new Date(
+                    `${filters.date.getFullYear()}-${filters.date.getMonth() + 1}-${filters.date.getDate() + 1}T00:00:00.000Z`,
+                  )
+                : undefined,
+            },
+          },
+        { responsible: { user: { name: {contains: filters?.responsibleName} } } },
+      ],
+    },
     include: {
       responsible: { include: { user: true } },
       // stock: true,
@@ -43,6 +62,41 @@ async function getAll(props: OrderRepositoryInterfaces["GetAllProps"]) {
     },
   });
   return orders;
+}
+return await db.order.findMany({
+  include: {
+    responsible: { include: { user: true } },
+    // stock: true,
+    OrderProduct: {
+      include: {
+        product: {
+          include: {
+            product: {
+              include: {
+                unit: true,
+                shelf: {
+                  include: {
+                    cabinet: {
+                      include: {
+                        StockCabinet: {
+                          include: {
+                            stock: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            supplier: true,
+          },
+        },
+      },
+    },
+  },
+
+})
 }
 
 async function register(props: OrderRepositoryInterfaces["RegisterProps"]) {
