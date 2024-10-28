@@ -36,7 +36,14 @@ export const orderRouter = createTRPCRouter({
           })),
         }));
 
-        return serializedOrders;
+        return serializedOrders.filter((serializedOrder) => {
+          for (let i = 0; i < serializedOrder.orderProducts.length; i++) {
+            const productSupplier = serializedOrder.orderProducts[i]?.ProductSupplier.supplier.name
+            if (!input?.filters.suppliers?.includes(productSupplier?? ""))
+              return false
+          }
+          return true
+        });
       },
     ),
 

@@ -40,69 +40,31 @@ export default function CustomReports() {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery();
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
-    filters: {},
+  } = api.product.getAllWhere.useQuery({
+    filters: {
+      code: inputCode,
+      controlType: selectControlType,
+      name: inputProduct,
+      productCategory: selectCategory,
+      sectorOfUse: selectSector,
+      stock: selectStock,
+      suppliers: selectSuppliers,
+      status: selectStatus,
+      buyDay: selectBuyDay,
+    },
   });
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
     api.generalParameters.controlType.getAll.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
     });
-
-  const filteredProducts = products.filter((product) => {
-    const matchesCode = inputCode === "" || product.code.includes(inputCode);
-    const matchesProduct =
-      inputProduct === "" ||
-      product.name.toLowerCase().includes(inputProduct.toLowerCase());
-    const matchesSupplier =
-      selectSuppliers.length === 0 ||
-      product.ProductSupplier.some((supplier) =>
-        selectSuppliers.includes(supplier.supplier.name),
-      );
-    const matchesStock =
-      selectStock === "" ||
-      product.shelf?.cabinet.StockCabinet.some(
-        (stockCabinet) =>
-          stockCabinet.stock.name.toLowerCase() === selectStock.toLowerCase(),
-      );
-    const matchesAddress =
-      selectAddress === "" ||
-      `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
-        .toLowerCase()
-        .includes(selectAddress.toLowerCase());
-    const matchesControlType =
-      selectControlType === "" ||
-      product.controlType?.name === selectControlType;
-    const matchesCategory =
-      selectCategory === "" || product.category?.name === selectCategory;
-    const matchesSector =
-      selectSector === "" || product.sectorOfUse?.name === selectSector;
-    const matchesStatus =
-      selectStatus === "" || product.status === selectStatus;
-    const matchesBuyDay =
-      selectBuyDay === "" || product.buyDay === selectBuyDay;
-
-    return (
-      matchesCode &&
-      matchesProduct &&
-      matchesSupplier &&
-      matchesStock &&
-      matchesAddress &&
-      matchesControlType &&
-      matchesCategory &&
-      matchesSector &&
-      matchesStatus &&
-      matchesBuyDay
-    );
-  });
-  // .sort((a, b) => a.code.localeCompare(b.code));
 
   function handleProductSelection(
     productCode: string,
@@ -118,9 +80,7 @@ export default function CustomReports() {
   }
 
   function handleSelectAll() {
-    const allFilteredProductCodes = filteredProducts.map(
-      (product) => product.code,
-    );
+    const allFilteredProductCodes = products.map((product) => product.code);
 
     setSelectedProducts((prevSelectedProducts) => [
       ...new Set([...prevSelectedProducts, ...allFilteredProductCodes]),
@@ -925,8 +885,8 @@ export default function CustomReports() {
           </TableComponent.Line>
         )}
         {products?.length > 0 && !isLoading && !error ? (
-          filteredProducts?.length > 0 ? (
-            filteredProducts
+          products?.length > 0 ? (
+            products
               ?.sort((a, b) => alphanumericSort(a.code, b.code))
               .map((product, index) => (
                 <TableComponent.Line

@@ -1,5 +1,16 @@
 import z from "zod";
 
+const getAllProps = z
+  .object({
+    filters: z.object({
+      name: z.string().optional(),
+      modules: z.array(z.string()).optional(),
+    }),
+  })
+  .optional();
+
+type GetAllProps = z.infer<typeof getAllProps>;
+
 const registerProps = z.object({
   name: z.string(),
   modules: z.array(z.number()),
@@ -31,12 +42,14 @@ const deleteProps = z.object({
 type DeleteProps = z.infer<typeof deleteProps>;
 
 export const roleRepositorySchema = {
+  getAllProps,
   registerProps,
   editProps,
   deleteProps,
 };
 
 export type RoleRepositoryInterfaces = {
+  GetAllProps: GetAllProps;
   RegisterProps: RegisterProps;
   EditProps: EditProps;
   DeleteProps: DeleteProps;

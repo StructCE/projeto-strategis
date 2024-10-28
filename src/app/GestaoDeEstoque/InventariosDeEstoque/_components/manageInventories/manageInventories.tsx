@@ -31,23 +31,7 @@ export default function ManageInventoriesTable() {
     error,
     isLoading,
   } = api.inventory.getAllInventories.useQuery({
-    // filters: { date: date, responsible: inputResponsible },'
-  });
-
-  const filteredInventories = inventories.filter((inventory) => {
-    const matchesDate =
-      !date ||
-      (inventory.date.getDate() === date.getDate() &&
-        inventory.date.getMonth() === date.getMonth() + 1 &&
-        inventory.date.getFullYear() === date.getFullYear());
-
-    const matchesResponsible =
-      inputResponsible === "" ||
-      inventory.responsibleName
-        .toLowerCase()
-        .includes(inputResponsible.toLowerCase());
-
-    return matchesDate && matchesResponsible;
+    filters: { date: date, responsible: inputResponsible },
   });
 
   return (
@@ -130,8 +114,8 @@ export default function ManageInventoriesTable() {
           </TableComponent.Line>
         )}
         {inventories.length > 0 && !isLoading && !error ? (
-          filteredInventories.length > 0 ? (
-            filteredInventories
+          inventories.length > 0 ? (
+            inventories
               .sort((a, b) => b.date.getTime() - a.date.getTime())
               .map((inventory, index) => (
                 <TableComponent.Line

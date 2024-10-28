@@ -27,18 +27,16 @@ export const ManageAccessProfilesTable = () => {
   const [inputName, setInputName] = useState("");
   const [selectModules, setSelectModules] = useState<string[]>([]);
 
-  const { data: roles = [], error, isLoading } = api.role.getAll.useQuery();
-
-  const roleMatchesSelectedModules = (roleModules: string[]) => {
-    if (selectModules.length === 0) return true;
-    return roleModules.some((module) => selectModules.includes(module));
-  };
-
-  const filteredRoles = roles.filter(
-    (role) =>
-      role.name.toLowerCase().includes(inputName.toLowerCase()) && // Filtrar pelo nome do cargo
-      roleMatchesSelectedModules(role.modules.map((module) => module.name)), // Filtrar pelos módulos selecionados
-  );
+  const {
+    data: roles = [],
+    error,
+    isLoading,
+  } = api.role.getAll.useQuery({
+    filters: {
+      name: inputName,
+      modules: selectModules,
+    },
+  });
 
   return (
     <TableComponent>
@@ -115,8 +113,8 @@ export const ManageAccessProfilesTable = () => {
           </TableComponent.Line>
         )}
         {roles.length > 0 && !isLoading && !error ? (
-          filteredRoles.length > 0 ? (
-            filteredRoles.map((role, index) => (
+          roles.length > 0 ? (
+            roles.map((role, index) => (
               <TableComponent.Line
                 className={`grid-cols-[1fr_3fr_130px] gap-4 ${index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""}`}
                 key={index}

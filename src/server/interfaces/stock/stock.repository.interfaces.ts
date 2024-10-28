@@ -1,11 +1,14 @@
 import { z } from "zod";
 
-const getAllProps = z.object({
-  // filters: z.object({
-  //   name: z.string(),
-  //   company: z.string(),
-  // }),
-});
+const getAllProps = z
+  .object({
+    filters: z.object({
+      name: z.string().optional(),
+      company: z.string().optional(),
+      managerName: z.string().optional(),
+    }),
+  })
+  .optional();
 
 type GetAllProps = z.infer<typeof getAllProps>;
 

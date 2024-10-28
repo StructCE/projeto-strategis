@@ -2,12 +2,66 @@ import { db } from "../db";
 import type { AdjustRepositoryInterfaces } from "../interfaces/adjust/adjust.repository.interfaces";
 
 async function getAll(props: AdjustRepositoryInterfaces["GetAllProps"]) {
-  const adjusts = await db.adjust.findMany({
-    // where: {
-    //   stock: {
-    //     companyId: props.companyId,
-    //   },
-    // },
+  if (props) {
+    const { filters } = props;
+    const adjusts = await db.adjust.findMany({
+      where: {
+        AND: [
+          {
+            responsible: { user: { name: { contains: filters?.responsible } } },
+          },
+          { type: { contains: filters?.adjustType } },
+          {
+            date: {
+              gte: filters?.date
+                ? new Date(
+                    `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date?.getDate()}T00:00:00.000Z`
+                  )
+                : undefined,
+            },
+          },
+          {
+            date: {
+              lt: filters?.date
+                ? new Date(
+                    `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date.getDate() + 1}T00:00:00.000Z`
+                  )
+                : undefined,
+            },
+          },
+        ],
+      },
+      include: {
+        stock: true,
+        responsible: { include: { user: true } },
+        ProductAdjust: {
+          include: {
+            product: {
+              include: {
+                unit: true,
+                shelf: {
+                  include: {
+                    cabinet: {
+                      include: {
+                        StockCabinet: {
+                          include: {
+                            stock: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            reason: true,
+          },
+        },
+      },
+    });
+    return adjusts;
+  }
+  return await db.adjust.findMany({
     include: {
       stock: true,
       responsible: { include: { user: true } },
@@ -36,7 +90,6 @@ async function getAll(props: AdjustRepositoryInterfaces["GetAllProps"]) {
       },
     },
   });
-  return adjusts;
 }
 
 async function register(props: AdjustRepositoryInterfaces["RegisterProps"]) {

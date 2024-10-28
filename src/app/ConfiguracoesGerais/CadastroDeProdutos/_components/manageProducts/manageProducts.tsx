@@ -42,16 +42,26 @@ export default function ManageProductsTable() {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery(undefined, {
-    refetchInterval: 10000, // Atualiza a cada 10 segundos
-  });
+  } = api.product.getAllWhere.useQuery(
+    {
+      filters: {
+        buyDay: selectBuyDay,
+        code: inputCode,
+        controlType: selectControlType,
+        name: inputProduct,
+        productCategory: selectCategory,
+        sectorOfUse: selectSector,
+        status: selectStatus,
+        stock: selectStock,
+        suppliers: selectSuppliers,
+      },
+    },
+    { refetchInterval: 10000 },
+  );
+  console.log(products);
 
-  // console.log(products);
-
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
-    filters: {},
-  });
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
   const { data: useSectors = [] } =
@@ -63,54 +73,6 @@ export default function ManageProductsTable() {
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
     });
-
-  const filteredProducts = products.filter((product) => {
-    const matchesCode = inputCode === "" || product.code.includes(inputCode);
-    const matchesProduct =
-      inputProduct === "" ||
-      product.name.toLowerCase().includes(inputProduct.toLowerCase());
-    const matchesSupplier =
-      selectSuppliers.length === 0 ||
-      product.ProductSupplier.some((supplier) =>
-        selectSuppliers.includes(supplier.supplier.name),
-      );
-    const matchesStock =
-      selectStock === "" ||
-      product.shelf?.cabinet.StockCabinet.some((stockCabinet) =>
-        stockCabinet.stock.name
-          .toLowerCase()
-          .includes(selectStock.toLowerCase()),
-      );
-    const matchesAddress =
-      selectAddress === "" ||
-      `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
-        .toLowerCase()
-        .includes(selectAddress.toLowerCase());
-    const matchesControlType =
-      selectControlType === "" ||
-      product.controlType?.name === selectControlType;
-    const matchesCategory =
-      selectCategory === "" || product.category?.name === selectCategory;
-    const matchesSector =
-      selectSector === "" || product.sectorOfUse?.name === selectSector;
-    const matchesStatus =
-      selectStatus === "" || product.status === selectStatus;
-    const matchesBuyDay =
-      selectBuyDay === "" || product.buyDay === selectBuyDay;
-
-    return (
-      matchesCode &&
-      matchesProduct &&
-      matchesSupplier &&
-      matchesStock &&
-      matchesAddress &&
-      matchesControlType &&
-      matchesCategory &&
-      matchesSector &&
-      matchesStatus &&
-      matchesBuyDay
-    );
-  });
 
   function alphanumericSort(a: string, b: string) {
     const regex = /(\d+)|(\D+)/g;
@@ -500,8 +462,8 @@ export default function ManageProductsTable() {
           </TableComponent.Line>
         )}
         {products?.length > 0 && !isLoading && !error ? (
-          filteredProducts?.length > 0 ? (
-            filteredProducts
+          products?.length > 0 ? (
+            products
               ?.sort((a, b) => alphanumericSort(a.code, b.code))
               .map((product, index) => (
                 <TableComponent.Line

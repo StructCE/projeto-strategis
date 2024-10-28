@@ -2,25 +2,144 @@ import { db } from "../db";
 import type { InvoiceRepositoryInterfaces } from "../interfaces/invoice/invoice.repository.interfaces";
 
 async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
-  // const { filters } = props;
-  const invoices = await db.invoice.findMany({
-    // where: {
-    //   AND: [
-    //     {
-    //       documentDate: {
-    //         gte: filters.startDate,
-    //         lte: filters.endDate,
-    //       },
-    //     },
-    //     {
-    //       InvoiceProduct: {
-    //         every: {
-    //           productSupplier: { supplier: { name: filters.supplier } },
-    //         },
-    //       },
-    //     },
-    //   ],
-    // },
+  if (props) {
+    const { filters } = props;
+    const invoices = await db.invoice.findMany({
+      where: {
+        AND: [
+          {
+            documentDate: {
+              gte: filters?.startDate,
+              lte: filters?.endDate,
+            },
+          },
+          {
+            company: {
+              name: { contains: filters?.company },
+            },
+          },
+          {
+            InvoiceProduct: {
+              every: {
+                productSupplier: {
+                  supplier: { name: { contains: filters?.supplier } },
+                },
+              },
+            },
+          },
+          { documentNumber: { contains: filters?.nfNumber } },
+          { confirmedStatus: { contains: filters?.status } },
+          { bank: { name: { contains: filters?.bank } } },
+          {
+            documentDate: {
+              gte: filters?.documentDate
+                ? new Date(
+                    `${filters?.documentDate.getFullYear()}-${filters?.documentDate.getMonth() + 1}-${filters?.documentDate?.getDate()}T00:00:00.000Z`
+                  )
+                : undefined,
+            },
+          },
+          {
+            documentDate: {
+              lt: filters?.documentDate
+                ? new Date(
+                    `${filters?.documentDate.getFullYear()}-${filters?.documentDate.getMonth() + 1}-${filters?.documentDate.getDate() + 1}T00:00:00.000Z`
+                  )
+                : undefined,
+            },
+          },
+          { expenseType: { contains: filters?.expenseType } },
+          {
+            paymentDate: {
+              gte: filters?.paymentDate
+                ? new Date(
+                    `${filters?.paymentDate.getFullYear()}-${filters?.paymentDate.getMonth() + 1}-${filters?.paymentDate?.getDate()}T00:00:00.000Z`
+                  )
+                : undefined,
+            },
+          },
+          {
+            paymentDate: {
+              lt: filters?.paymentDate
+                ? new Date(
+                    `${filters?.paymentDate.getFullYear()}-${filters?.paymentDate.getMonth() + 1}-${filters?.paymentDate.getDate() + 1}T00:00:00.000Z`
+                  )
+                : undefined,
+            },
+          },
+          { confirmedStatus: { contains: filters?.status } },
+          { supplier: { name: { contains: filters?.supplier } } },
+          {
+            deadlineDate: {
+              gte: filters?.deadlineDate
+                ? new Date(
+                    `${filters?.deadlineDate.getFullYear()}-${filters?.deadlineDate.getMonth() + 1}-${filters?.deadlineDate?.getDate()}T00:00:00.000Z`
+                  )
+                : undefined,
+            },
+          },
+          {
+            deadlineDate: {
+              lt: filters?.deadlineDate
+                ? new Date(
+                    `${filters?.deadlineDate.getFullYear()}-${filters?.deadlineDate.getMonth() + 1}-${filters?.deadlineDate.getDate() + 1}T00:00:00.000Z`
+                  )
+                : undefined,
+            },
+          },
+          {
+            account: {
+              accountPlan: { name: { contains: filters?.accountPlan } },
+            },
+          },
+          { group: { name: { contains: filters?.group } } },
+          { project: { name: { contains: filters?.project } } },
+          { documentType: { name: { contains: filters?.documentType } } },
+        ],
+      },
+      include: {
+        account: { include: { accountPlan: { include: { accounts: true } } } },
+        documentType: true,
+        group: true,
+        project: true,
+        company: true,
+        supplier: true,
+        bank: true,
+        InvoiceProduct: {
+          include: {
+            productSupplier: {
+              include: {
+                product: {
+                  include: {
+                    unit: true,
+                    category: true,
+                    controlType: true,
+                    sectorOfUse: true,
+                    shelf: {
+                      include: {
+                        cabinet: {
+                          include: {
+                            StockCabinet: {
+                              include: {
+                                stock: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                supplier: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return invoices;
+  }
+  return await db.invoice.findMany({
     include: {
       account: { include: { accountPlan: { include: { accounts: true } } } },
       documentType: true,
@@ -61,7 +180,6 @@ async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
       },
     },
   });
-  return invoices;
 }
 
 async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
@@ -110,7 +228,7 @@ async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
         });
       }
       return registeredInvoiceProduct;
-    },
+    }
   );
 
   // Aguarda o registro de todos os produtos
@@ -120,7 +238,7 @@ async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
 }
 
 async function autoRegister(
-  props: InvoiceRepositoryInterfaces["AutoRegisterProps"],
+  props: InvoiceRepositoryInterfaces["AutoRegisterProps"]
 ) {
   const { company, supplier, invoiceProducts, ...invoiceData } = props;
 
