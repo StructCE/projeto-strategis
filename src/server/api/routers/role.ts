@@ -4,9 +4,9 @@ import { roleRepository } from "~/server/repositories/role.repository";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const roleRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(
-    async (): Promise<RoleRouteInterfaces["RoleWithModules"][]> => {
-      const roles = await roleRepository.getAll();
+  getAll: protectedProcedure.input(roleRepositorySchema.getAllProps).query(
+    async ({input}): Promise<RoleRouteInterfaces["RoleWithModules"][]> => {
+      const roles = await roleRepository.getAll(input);
       const serializedRoles = roles.map((role) => ({
         id: role.id,
         name: role.name,
@@ -15,7 +15,16 @@ export const roleRouter = createTRPCRouter({
           code: roleModule.module.code,
         })),
       }));
-      return serializedRoles;
+      if (input?.filters.modules?.length && input.filters.modules.length > 0) {
+        const {modules} = input.filters
+        return serializedRoles.filter((serializedRole) => {
+          for (let i = 0; i < serializedRole.modules.length; i++) {
+            if (modules.includes(serializedRole.modules[i]?.name?? ""))
+            return true
+          }
+        });
+      } 
+      return serializedRoles
     },
   ),
 

@@ -55,126 +55,35 @@ export default function CustomReports() {
   const [filterProduce, setFilterProduce] = useState(false);
   const [filterDontProduce, setFilterDontProduce] = useState(false);
 
-  const areAllFiltersEmpty =
-    inputCode === "" &&
-    inputProduct === "" &&
-    selectSuppliers.length === 0 &&
-    selectStock === "" &&
-    selectAddress === "" &&
-    selectControlType === "" &&
-    selectCategory === "" &&
-    selectSector === "" &&
-    selectStatus === "" &&
-    selectBuyDay === "";
-
   const {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery();
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
-    filters: {},
+  } = api.product.getAllWhere.useQuery({
+    filters: {
+      code: inputCode,
+      controlType: selectControlType,
+      name: inputProduct,
+      productCategory: selectCategory,
+      sectorOfUse: selectSector,
+      stock: selectStock,
+      suppliers: selectSuppliers,
+      status: selectStatus,
+      buyDay: selectBuyDay,
+    },
   });
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
     api.generalParameters.controlType.getAll.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
     });
-
-  const filteredProducts = areAllFiltersEmpty
-    ? []
-    : products
-        .filter((product) => {
-          // Se nenhum estoque for selecionado, não mostrar nenhum produto
-          if (selectStock === "") {
-            return false;
-          }
-
-          const stockCurrent = Number(product.currentStock);
-          const stockMin = Number(product.minimunStock);
-          const stockThreshold = stockMin + stockMin * 0.1; // 110% do estoque mínimo
-
-          // Verifica se o produto está com estoque baixo
-          const isLowStock = stockCurrent > 0 && stockCurrent <= stockThreshold;
-          const isNoStock = stockCurrent === 0;
-          const isAdequateStock = stockCurrent > stockThreshold;
-
-          // Filtros auxiliares
-          const matchesCode =
-            inputCode === "" || product.code.includes(inputCode);
-          const matchesProduct =
-            inputProduct === "" ||
-            product.name.toLowerCase().includes(inputProduct.toLowerCase());
-          const matchesSupplier =
-            selectSuppliers.length === 0 ||
-            product.ProductSupplier.some((supplier) =>
-              selectSuppliers.includes(supplier.supplier.name),
-            );
-          const matchesStock =
-            selectStock === "" ||
-            product.shelf?.cabinet.StockCabinet.some(
-              (stockCabinet) =>
-                stockCabinet.stock.name.toLowerCase() ===
-                selectStock.toLowerCase(),
-            );
-          const matchesAddress =
-            selectAddress === "" ||
-            `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
-              .toLowerCase()
-              .includes(selectAddress.toLowerCase());
-          const matchesControlType =
-            selectControlType === "" ||
-            product.controlType?.name === selectControlType;
-          const matchesCategory =
-            selectCategory === "" || product.category?.name === selectCategory;
-          const matchesSector =
-            selectSector === "" || product.sectorOfUse?.name === selectSector;
-          const matchesStatus =
-            selectStatus === "" || product.status === selectStatus;
-          const matchesBuyDay =
-            selectBuyDay === "" || product.buyDay === selectBuyDay;
-
-          const filterConditions = []; // Filtros de estoque com base nos botões e checkboxes
-
-          if (lowStock) filterConditions.push(isLowStock);
-          if (noStock) filterConditions.push(isNoStock);
-          if (filterBuy) filterConditions.push(isLowStock || isNoStock);
-          if (filterDontBuy) filterConditions.push(isAdequateStock);
-          if (filterProduce)
-            filterConditions.push(
-              (isLowStock || isNoStock) &&
-                product.controlType?.name === "Produtos de Produção",
-            );
-          if (filterDontProduce)
-            filterConditions.push(
-              isAdequateStock &&
-                product.controlType?.name === "Produtos de Produção",
-            );
-
-          const satisfiesStockFilters =
-            filterConditions.length === 0 || filterConditions.some(Boolean);
-
-          return (
-            satisfiesStockFilters &&
-            matchesCode &&
-            matchesProduct &&
-            matchesSupplier &&
-            matchesStock &&
-            matchesAddress &&
-            matchesControlType &&
-            matchesCategory &&
-            matchesSector &&
-            matchesStatus &&
-            matchesBuyDay
-          );
-        })
-        .sort((a, b) => a.code.localeCompare(b.code));
 
   const allProducts = products.filter((product) => {
     const matchesStock = product.shelf?.cabinet.StockCabinet.some(
@@ -226,9 +135,7 @@ export default function CustomReports() {
   }
 
   function handleSelectAll() {
-    const allFilteredProductCodes = filteredProducts.map(
-      (product) => product.code,
-    );
+    const allFilteredProductCodes = products.map((product) => product.code);
 
     setSelectedProducts((prevSelectedProducts) => [
       ...new Set([...prevSelectedProducts, ...allFilteredProductCodes]),
@@ -1005,20 +912,16 @@ export default function CustomReports() {
             </TableComponent.Value>
           </TableComponent.Line>
         )}
-        {!areAllFiltersEmpty &&
-          !isLoading &&
+        {!isLoading && !error && products.length === 0 && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Nenhum produto encontrado com os filtros aplicados
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {!isLoading &&
           !error &&
-          filteredProducts.length === 0 && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-              <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
-              </TableComponent.Value>
-            </TableComponent.Line>
-          )}
-        {!areAllFiltersEmpty &&
-          !isLoading &&
-          !error &&
-          filteredProducts.map((product, index) => (
+          products.map((product, index) => (
             <TableComponent.Line
               className={`grid-cols-[85px_70px_1fr_120px_90px_90px_90px_130px] gap-4 md:gap-8 ${
                 index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""

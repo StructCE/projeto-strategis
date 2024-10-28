@@ -11,15 +11,68 @@ async function countPendentRequests() {
 }
 
 async function getAll(props: RequestRepositoryInterfaces["GetAllProps"]) {
-  // const { filters } = props;
-  const requests = await db.request.findMany({
-    // where: {
-    //   AND: [
-    //     { requestDate: filters.date },
-    //     { status: filters.status },
-    //     { responsible: { user: { name: filters.requestResponsible } } },
-    //   ],
-    // },
+  if (props) {
+    const { filters } = props;
+    const requests = await db.request.findMany({
+      where: {
+        AND: [
+          {
+            requestDate: {
+              gte: filters?.date
+                ? new Date(
+                    `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date?.getDate()}T00:00:00.000Z`
+                  )
+                : undefined,
+            },
+          },
+          {
+            requestDate: {
+              lt: filters?.date
+                ? new Date(
+                    `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date.getDate() + 1}T00:00:00.000Z`
+                  )
+                : undefined,
+            },
+          },
+          {
+            responsible: {
+              user: { name: { contains: filters?.requestResponsible } },
+            },
+          },
+          { status: { contains: filters?.status } },
+        ],
+      },
+      include: {
+        responsible: { include: { user: true } },
+        statusResponsible: { include: { user: true } },
+        RequestProduct: {
+          include: {
+            product: {
+              include: {
+                unit: true,
+                shelf: {
+                  include: {
+                    cabinet: {
+                      include: {
+                        StockCabinet: {
+                          include: {
+                            stock: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return requests;
+  }
+  return await db.request.findMany({
     include: {
       responsible: { include: { user: true } },
       statusResponsible: { include: { user: true } },
@@ -47,8 +100,6 @@ async function getAll(props: RequestRepositoryInterfaces["GetAllProps"]) {
       },
     },
   });
-
-  return requests;
 }
 
 async function register(props: RequestRepositoryInterfaces["RegisterProps"]) {
@@ -94,7 +145,7 @@ async function register(props: RequestRepositoryInterfaces["RegisterProps"]) {
 
       if (!productExists) {
         throw new Error(
-          `Produto com ID ${requestProduct.productId} não foi encontrado.`,
+          `Produto com ID ${requestProduct.productId} não foi encontrado.`
         );
       }
 
@@ -111,10 +162,10 @@ async function register(props: RequestRepositoryInterfaces["RegisterProps"]) {
 
       console.log(
         "Produto da requisição registrado:",
-        registeredRequestProduct,
+        registeredRequestProduct
       );
       return registeredRequestProduct;
-    }),
+    })
   );
 
   await Promise.all(registeredRequestProducts);
@@ -167,7 +218,7 @@ async function edit(props: RequestRepositoryInterfaces["EditProps"]) {
 
         if (!existingRequestProduct) {
           throw new Error(
-            `Produto de requisição não encontrado: ${requestProduct.id}`,
+            `Produto de requisição não encontrado: ${requestProduct.id}`
           );
         }
 
@@ -177,7 +228,7 @@ async function edit(props: RequestRepositoryInterfaces["EditProps"]) {
             releasedQuantity: requestProduct.releasedQuantity ?? null, // Atualizar a quantidade liberada
           },
         });
-      }),
+      })
     );
   }
 

@@ -11,33 +11,69 @@ async function countProducts() {
 }
 
 async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
-  const { filters } = props;
+  if (props) {
+    const { filters } = props;
+    const products = await db.product.findMany({
+      where: {
+        AND: [
+          { name: { contains: filters.name } },
+          {
+            controlType: {
+              name: { contains: filters.controlType },
+            },
+          },
+          {
+            category: {
+              name: { contains: filters.productCategory },
+            },
+          },
+          {
+            shelf: {
+              cabinet: {
+                StockCabinet: { some: { stock: { name: filters.stock } } },
+              },
+            },
+          },
+          { id: { contains: filters.code } },
+          { category: { name: { contains: filters.productCategory } } },
+          { status: { contains: filters.status } },
+          { buyDay: { contains: filters.buyDay } },
+          {
+            sectorOfUse: {
+              name: { contains: filters.sectorOfUse },
+            },
+          },
+        ],
+      },
+      include: {
+        unit: true,
+        controlType: true,
+        category: true,
+        sectorOfUse: true,
+        shelf: {
+          include: {
+            cabinet: {
+              include: {
+                StockCabinet: {
+                  include: {
+                    stock: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        usersWithPermission: true,
+        ProductSupplier: {
+          include: {
+            supplier: true,
+          },
+        },
+      },
+    });
+    return products;
+  }
   const products = await db.product.findMany({
-    where: {
-      AND: [
-        { name: filters.name },
-        {
-          controlType: {
-            name: filters.controlType,
-          },
-        },
-        {
-          category: {
-            name: filters.productCategory,
-          },
-        },
-        // {
-        //   stock: {
-        //     name: filters.stock,
-        //   },
-        // },
-        {
-          sectorOfUse: {
-            name: filters.sectorOfUse,
-          },
-        },
-      ],
-    },
     include: {
       unit: true,
       controlType: true,

@@ -30,24 +30,11 @@ export default function ManageAcceptedRequestsTable() {
     data: requests = [],
     error,
     isLoading,
-  } = api.request.getAll.useQuery({});
-
-  const filteredRequests = requests.filter((request) => {
-    const matchesStatus = request.status == "Confirmada";
-
-    const matchesDate =
-      !date ||
-      (request.requestDate.getDate() === date.getDate() &&
-        request.requestDate.getMonth() === date.getMonth() + 1 &&
-        request.requestDate.getFullYear() === date.getFullYear());
-
-    const matchesResponsible =
-      inputResponsible === "" ||
-      request.responsibleName
-        ?.toLowerCase()
-        .includes(inputResponsible.toLowerCase());
-
-    return matchesStatus && matchesDate && matchesResponsible;
+  } = api.request.getAll.useQuery({
+    filters: {
+      date: date,
+      requestResponsible: inputResponsible,
+    },
   });
 
   return (
@@ -131,8 +118,8 @@ export default function ManageAcceptedRequestsTable() {
           </TableComponent.Line>
         )}
         {requests.length > 0 && !isLoading && !error ? (
-          filteredRequests.length > 0 ? (
-            filteredRequests
+          requests.length > 0 ? (
+            requests
               .sort((a, b) => b.requestDate.getTime() - a.requestDate.getTime())
               .map((request, index) => (
                 <TableComponent.Line

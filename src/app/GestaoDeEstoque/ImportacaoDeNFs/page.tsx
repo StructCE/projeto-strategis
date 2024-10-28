@@ -44,62 +44,18 @@ export default function ImportacaoDeNFs() {
     data: invoices = [],
     error,
     isLoading,
-  } = api.invoice.getAll.useQuery({});
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
-    filters: {},
+  } = api.invoice.getAll.useQuery({
+    filters: {
+      startDate: dateBegin,
+      endDate: dateEnd,
+      supplier: selectSupplier,
+      company: selectCompany,
+      nfNumber: inputDescription,
+      status: selectedTab,
+    },
   });
-  const { data: companies = [] } = api.company.getAllCompanies.useQuery({});
-
-  const filteredInvoices = invoices.filter((invoice) => {
-    // Filtro de status com base na aba selecionada
-    const matchesStatus =
-      (selectedTab === "pending" && invoice.confirmedStatus === "Pendente") ||
-      (selectedTab === "confirmed" &&
-        invoice.confirmedStatus === "Confirmada") ||
-      (selectedTab === "denied" && invoice.confirmedStatus === "Rejeitada");
-
-    const adjustedDateBegin = dateBegin
-      ? new Date(
-          dateBegin.getFullYear(),
-          dateBegin.getMonth() + 1,
-          dateBegin.getDate(),
-        )
-      : undefined;
-    const adjustedDateEnd = dateEnd
-      ? new Date(
-          dateEnd.getFullYear(),
-          dateEnd.getMonth() + 1,
-          dateEnd.getDate(),
-          23,
-          59,
-          59,
-        )
-      : undefined;
-
-    const matchesDates =
-      (!adjustedDateBegin || invoice.documentDate >= adjustedDateBegin) &&
-      (!adjustedDateEnd || invoice.documentDate <= adjustedDateEnd);
-
-    const matchesDescription =
-      !inputDescription ||
-      invoice.documentNumber
-        .toLowerCase()
-        .includes(inputDescription.toLowerCase());
-
-    const matchesSupplier =
-      !selectSupplier || invoice.supplier.name === selectSupplier;
-
-    const matchesCompany =
-      !selectCompany || invoice.company.name === selectCompany;
-
-    return (
-      matchesStatus &&
-      matchesDates &&
-      matchesDescription &&
-      matchesSupplier &&
-      matchesCompany
-    );
-  });
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
 
   const calculateInvoiceTotal = (invoice: SerializedInvoice): number => {
     return invoice.invoiceProducts.reduce((total, product) => {
@@ -323,8 +279,8 @@ export default function ImportacaoDeNFs() {
                 </TableComponent.Line>
               )}
               {invoices.length > 0 && !isLoading && !error ? (
-                filteredInvoices.length > 0 ? (
-                  filteredInvoices
+                invoices.length > 0 ? (
+                  invoices
                     .sort(
                       (a, b) =>
                         b.documentDate.getTime() - a.documentDate.getTime(),
