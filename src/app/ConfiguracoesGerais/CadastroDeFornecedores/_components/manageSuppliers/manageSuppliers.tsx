@@ -19,8 +19,8 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 
+import { states } from "prisma/seed-data/states";
 import { api } from "~/trpc/react";
-import { states } from "../supplierData";
 import { SupplierEdit } from "./editSuppliers/supplierEdit";
 
 export const ManageSuppliersTable = () => {
@@ -40,7 +40,7 @@ export const ManageSuppliersTable = () => {
       supplier.name.toLowerCase().includes(inputName?.toLowerCase());
     const matchesEmail =
       inputEmail === "" ||
-      supplier.email.toLowerCase().includes(inputEmail?.toLowerCase());
+      supplier.email?.toLowerCase().includes(inputEmail?.toLowerCase());
     const matchesState =
       selectState === "" || supplier.federativeUnit === selectState;
 

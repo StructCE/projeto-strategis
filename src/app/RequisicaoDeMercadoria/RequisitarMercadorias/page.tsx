@@ -101,14 +101,14 @@ export default function CreatePurchaseOrder() {
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
           selectStock === "" ||
-          product.shelf.cabinet.StockCabinet.some(
+          product.shelf?.cabinet.StockCabinet.some(
             (stockCabinet) =>
               stockCabinet.stock.name.toLowerCase() ===
               selectStock.toLowerCase(),
           );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.shelf.cabinet.name} - ${product.shelf.name}`
+          `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
@@ -484,7 +484,7 @@ export default function CreatePurchaseOrder() {
                     </TableComponent.Value>
                     <TableComponent.Value>{product.name}</TableComponent.Value>
                     <TableComponent.Value>
-                      {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                      {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                     </TableComponent.Value>
                     <TableComponent.Value className="text-center">
                       {product.currentStock}
@@ -631,7 +631,7 @@ export default function CreatePurchaseOrder() {
                             <span className="font-semibold">
                               Endereço de Estoque:
                             </span>{" "}
-                            {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                            {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                           </p>
                           <div className="text-base">
                             <span className="font-semibold">
@@ -828,7 +828,7 @@ export default function CreatePurchaseOrder() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                        {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                       </p>
                       <div className="text-base">
                         <span className="font-semibold">

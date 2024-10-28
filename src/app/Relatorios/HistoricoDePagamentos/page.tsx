@@ -64,7 +64,11 @@ export default function PaymentHistory() {
   const [selectExpenseType, setSelectExpenseType] = useState("");
 
   // Dados do BD
-  const { data: invoices = [] } = api.invoice.getAll.useQuery({});
+  const {
+    data: invoices = [],
+    error,
+    isLoading,
+  } = api.invoice.getAll.useQuery({});
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({
     filters: {},
@@ -78,7 +82,7 @@ export default function PaymentHistory() {
   const { data: accountPlans = [] } =
     api.generalParameters.accountPlan.getAll.useQuery();
 
-  console.log(invoices);
+  // console.log(invoices);
 
   // Filtragem dos pagamentos
   const filteredInvoices = invoices.filter((invoice) => {
@@ -733,95 +737,133 @@ export default function PaymentHistory() {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {filteredInvoices
-          .sort((a, b) => a.documentDate.getTime() - b.documentDate.getTime())
-          .map((invoice, index) => (
-            <TableComponent.Line
-              className={`grid-cols-[85px_1fr_170px_120px_120px_0.6fr_130px] gap-4 md:gap-8 ${
-                index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-              }`}
-              key={index}
-            >
-              <TableComponent.Value className="text-center">
-                <Checkbox
-                  checked={selectedPayments.includes(invoice.documentNumber)}
-                  onCheckedChange={(checked) =>
-                    handlePaymentSelection(invoice.documentNumber, checked)
-                  }
-                />
-              </TableComponent.Value>
-              <TableComponent.Value className="tracking-tight">
-                {paymentDescription(
-                  parseInt(
-                    invoice.documentNumber.replace(/\./g, ""),
-                    10,
-                  ).toString(),
-                  invoice.invoiceValue,
-                  invoice.invoiceProducts,
-                )}
-              </TableComponent.Value>
-              <TableComponent.Value className="text-center">
-                <span
-                  className={`${
-                    invoice.payedStatus === "Pago"
-                      ? "text-verde_botao"
-                      : invoice.payedStatus === "Em Aberto"
-                        ? "text-amarelo_botao"
-                        : invoice.payedStatus === "Cancelado"
-                          ? "text-vermelho_botao_2"
-                          : ""
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Erro ao mostrar pagamentos: {error.message}
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando pagamentos...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {invoices?.length > 0 && !isLoading && !error ? (
+          filteredInvoices?.length > 0 ? (
+            filteredInvoices
+              .sort(
+                (a, b) => a.documentDate.getTime() - b.documentDate.getTime(),
+              )
+              .map((invoice, index) => (
+                <TableComponent.Line
+                  className={`grid-cols-[85px_1fr_170px_120px_120px_0.6fr_130px] gap-4 md:gap-8 ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                   }`}
+                  key={index}
                 >
-                  {invoice.payedStatus}
-                </span>
-                {" - "}
-                <span
-                  className={`${
-                    invoice.paymentDate &&
-                    invoice.paymentDate <= invoice.deadlineDate
-                      ? "text-verde_botao"
-                      : "text-vermelho_botao_2"
-                  }`}
-                >
-                  {invoice.deadlineDate && new Date() <= invoice.deadlineDate
-                    ? "Em Dia"
-                    : "Atrasado"}
-                </span>
-              </TableComponent.Value>
-              <TableComponent.Value className="text-center">
-                {`${String(invoice.documentDate.getDate()).padStart(2, "0")}/${String(invoice.documentDate.getMonth()).padStart(2, "0")}/${String(invoice.documentDate.getFullYear()).padStart(2, "0")}`}
-              </TableComponent.Value>
-              <TableComponent.Value className="text-center">{`${String(invoice.deadlineDate.getDate()).padStart(2, "0")}/${String(invoice.deadlineDate.getMonth()).padStart(2, "0")}/${String(invoice.deadlineDate.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
-              <TableComponent.Value>
-                {invoice.company.name}
-              </TableComponent.Value>
-
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                    Detalhes
-                  </Button>
-                </DialogTrigger>
-                <DialogContent
-                  aria-describedby={undefined}
-                  className="max-h-[90vh] overflow-y-auto sm:max-w-4xl"
-                >
-                  <DialogHeader>
-                    <DialogTitle className="pb-1.5">
-                      Informações do Pagamento:
-                    </DialogTitle>
-                    <DialogDescription></DialogDescription>
-
-                    {invoice.payedStatus === "Em Aberto" ? (
-                      <PaymentDetails invoice={invoice} />
-                    ) : (
-                      <PaymentCompleteDetails invoice={invoice} />
+                  <TableComponent.Value className="text-center">
+                    <Checkbox
+                      checked={selectedPayments.includes(
+                        invoice.documentNumber,
+                      )}
+                      onCheckedChange={(checked) =>
+                        handlePaymentSelection(invoice.documentNumber, checked)
+                      }
+                    />
+                  </TableComponent.Value>
+                  <TableComponent.Value className="tracking-tight">
+                    {paymentDescription(
+                      parseInt(
+                        invoice.documentNumber.replace(/\./g, ""),
+                        10,
+                      ).toString(),
+                      invoice.invoiceValue,
+                      invoice.invoiceProducts,
                     )}
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    <span
+                      className={`${
+                        invoice.payedStatus === "Pago"
+                          ? "text-verde_botao"
+                          : invoice.payedStatus === "Em Aberto"
+                            ? "text-amarelo_botao"
+                            : invoice.payedStatus === "Cancelado"
+                              ? "text-vermelho_botao_2"
+                              : ""
+                      }`}
+                    >
+                      {invoice.payedStatus}
+                    </span>
+                    {" - "}
+                    <span
+                      className={`${
+                        invoice.paymentDate &&
+                        invoice.paymentDate <= invoice.deadlineDate
+                          ? "text-verde_botao"
+                          : "text-vermelho_botao_2"
+                      }`}
+                    >
+                      {invoice.deadlineDate &&
+                      new Date() <= invoice.deadlineDate
+                        ? "Em Dia"
+                        : "Atrasado"}
+                    </span>
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {`${String(invoice.documentDate.getDate()).padStart(2, "0")}/${String(invoice.documentDate.getMonth()).padStart(2, "0")}/${String(invoice.documentDate.getFullYear()).padStart(2, "0")}`}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">{`${String(invoice.deadlineDate.getDate()).padStart(2, "0")}/${String(invoice.deadlineDate.getMonth()).padStart(2, "0")}/${String(invoice.deadlineDate.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
+                  <TableComponent.Value>
+                    {invoice.company.name}
+                  </TableComponent.Value>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="max-h-[90vh] overflow-y-auto sm:max-w-4xl"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="pb-1.5">
+                          Informações do Pagamento:
+                        </DialogTitle>
+                        <DialogDescription></DialogDescription>
+
+                        {invoice.payedStatus === "Em Aberto" ? (
+                          <PaymentDetails invoice={invoice} />
+                        ) : (
+                          <PaymentCompleteDetails invoice={invoice} />
+                        )}
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum pagamento encontrado com os filtros aplicados
+              </TableComponent.Value>
             </TableComponent.Line>
-          ))}
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum pagamento encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">

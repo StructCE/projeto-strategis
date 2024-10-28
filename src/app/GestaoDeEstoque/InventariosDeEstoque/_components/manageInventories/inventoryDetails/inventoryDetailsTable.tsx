@@ -77,11 +77,11 @@ export default function InventoryDetails(props: InventoryType) {
               {product.inventoryQuantity}
             </TableComponent.Value>
             <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-              {product.inventoryQuantity - product.stockQuantity}
+              {product.inventoryQuantity - (product.stockQuantity ?? 0)}
             </TableComponent.Value>
             <TableComponent.Value className="text-[13px] sm:text-[15px]">
               {handleProductDescription(
-                product.stockQuantity,
+                product.stockQuantity ?? 0,
                 product.inventoryQuantity,
               )}
             </TableComponent.Value>

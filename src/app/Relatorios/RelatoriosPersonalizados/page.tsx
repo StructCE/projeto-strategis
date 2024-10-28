@@ -3,6 +3,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
+import { customReportOptions } from "prisma/seed-data/customReportOptions";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { Filter } from "~/components/filter";
@@ -18,7 +19,6 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { api } from "~/trpc/react";
-import { report_options } from "./_components/customReportsData";
 import { default as CustomReportPDF } from "./_components/pdfReport";
 
 export default function CustomReports() {
@@ -56,54 +56,53 @@ export default function CustomReports() {
       stockName: selectStock ? selectStock : "",
     });
 
-  const filteredProducts = products
-    .filter((product) => {
-      const matchesCode = inputCode === "" || product.code.includes(inputCode);
-      const matchesProduct =
-        inputProduct === "" ||
-        product.name.toLowerCase().includes(inputProduct.toLowerCase());
-      const matchesSupplier =
-        selectSuppliers.length === 0 ||
-        product.ProductSupplier.some((supplier) =>
-          selectSuppliers.includes(supplier.supplier.name),
-        );
-      const matchesStock =
-        selectStock === "" ||
-        product.shelf?.cabinet.StockCabinet.some(
-          (stockCabinet) =>
-            stockCabinet.stock.name.toLowerCase() === selectStock.toLowerCase(),
-        );
-      const matchesAddress =
-        selectAddress === "" ||
-        `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
-          .toLowerCase()
-          .includes(selectAddress.toLowerCase());
-      const matchesControlType =
-        selectControlType === "" ||
-        product.controlType?.name === selectControlType;
-      const matchesCategory =
-        selectCategory === "" || product.category?.name === selectCategory;
-      const matchesSector =
-        selectSector === "" || product.sectorOfUse?.name === selectSector;
-      const matchesStatus =
-        selectStatus === "" || product.status === selectStatus;
-      const matchesBuyDay =
-        selectBuyDay === "" || product.buyDay === selectBuyDay;
-
-      return (
-        matchesCode &&
-        matchesProduct &&
-        matchesSupplier &&
-        matchesStock &&
-        matchesAddress &&
-        matchesControlType &&
-        matchesCategory &&
-        matchesSector &&
-        matchesStatus &&
-        matchesBuyDay
+  const filteredProducts = products.filter((product) => {
+    const matchesCode = inputCode === "" || product.code.includes(inputCode);
+    const matchesProduct =
+      inputProduct === "" ||
+      product.name.toLowerCase().includes(inputProduct.toLowerCase());
+    const matchesSupplier =
+      selectSuppliers.length === 0 ||
+      product.ProductSupplier.some((supplier) =>
+        selectSuppliers.includes(supplier.supplier.name),
       );
-    })
-    .sort((a, b) => a.code.localeCompare(b.code));
+    const matchesStock =
+      selectStock === "" ||
+      product.shelf?.cabinet.StockCabinet.some(
+        (stockCabinet) =>
+          stockCabinet.stock.name.toLowerCase() === selectStock.toLowerCase(),
+      );
+    const matchesAddress =
+      selectAddress === "" ||
+      `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
+        .toLowerCase()
+        .includes(selectAddress.toLowerCase());
+    const matchesControlType =
+      selectControlType === "" ||
+      product.controlType?.name === selectControlType;
+    const matchesCategory =
+      selectCategory === "" || product.category?.name === selectCategory;
+    const matchesSector =
+      selectSector === "" || product.sectorOfUse?.name === selectSector;
+    const matchesStatus =
+      selectStatus === "" || product.status === selectStatus;
+    const matchesBuyDay =
+      selectBuyDay === "" || product.buyDay === selectBuyDay;
+
+    return (
+      matchesCode &&
+      matchesProduct &&
+      matchesSupplier &&
+      matchesStock &&
+      matchesAddress &&
+      matchesControlType &&
+      matchesCategory &&
+      matchesSector &&
+      matchesStatus &&
+      matchesBuyDay
+    );
+  });
+  // .sort((a, b) => a.code.localeCompare(b.code));
 
   function handleProductSelection(
     productCode: string,
@@ -573,6 +572,30 @@ export default function CustomReports() {
     })),
   };
 
+  function alphanumericSort(a: string, b: string) {
+    const regex = /(\d+)|(\D+)/g;
+    const aParts = a.match(regex) ?? [];
+    const bParts = b.match(regex) ?? [];
+
+    for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+      const aPart = aParts[i] ?? "";
+      const bPart = bParts[i] ?? "";
+
+      // Se a parte for um número, faça comparação numérica
+      if (/\d/.test(aPart) && /\d/.test(bPart)) {
+        const diff = parseInt(aPart, 10) - parseInt(bPart, 10);
+        if (diff !== 0) return diff;
+      }
+
+      // Se não for número, faça comparação lexicográfica
+      if (aPart !== bPart) {
+        return aPart.localeCompare(bPart);
+      }
+    }
+
+    return 0;
+  }
+
   return (
     <TableComponent>
       <TableComponent.Title>Gerar Relatório Personalizado</TableComponent.Title>
@@ -585,9 +608,9 @@ export default function CustomReports() {
         <div className="font-inter m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] font-normal text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
           <MultiSelect
             FilterIcon={Search}
-            options={report_options.flatMap((report_option) => ({
-              label: report_option.description,
-              value: report_option.description,
+            options={customReportOptions.flatMap((option) => ({
+              label: option.description,
+              value: option.description,
             }))}
             onValueChange={setSelectReportOptions}
             defaultValue={selectReportOptions}
@@ -889,74 +912,107 @@ export default function CustomReports() {
           </TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {filteredProducts.map((product, index) => (
-          <TableComponent.Line
-            className={`w-max grid-cols-[85px_70px_500px_500px_70px_300px_150px_120px_150px_90px_90px_90px_200px_250px_200px_500px_500px] gap-4 md:gap-8 ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
-            <TableComponent.Value className="text-center">
-              <Checkbox
-                checked={selectedProducts.includes(product.code)}
-                onCheckedChange={(checked) =>
-                  handleProductSelection(product.code, checked)
-                }
-              />
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {product.code}
-            </TableComponent.Value>
-            <TableComponent.Value>{product.name}</TableComponent.Value>
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
-              {product.ProductSupplier.length
-                ? product.ProductSupplier.map(
-                    (supplier) => supplier.supplier.name,
-                  ).join(", ")
-                : "N/A"}
-            </TableComponent.Value>
-            <TableComponent.Value>{product.status}</TableComponent.Value>
-            <TableComponent.Value>
-              {product.parentProduct?.name ?? "Não tem produto pai"}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {product.unit.name} ({product.unit.abbreviation}) -{" "}
-              {product.unit.unitsPerPack}
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {product.buyQuantity}
-            </TableComponent.Value>
-            <TableComponent.Value>{product.buyDay}</TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {product.currentStock}
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {product.minimunStock}
-            </TableComponent.Value>
-            <TableComponent.Value className="text-center">
-              {product.maximumStock}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {product.controlType?.name ?? "Não informado"}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {product.category?.name ?? "Não informado"}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {product.sectorOfUse?.name ?? "Não informado"}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
-            </TableComponent.Value>
-            <TableComponent.Value>
-              {product.usersWithPermission.length > 0
-                ? product.usersWithPermission
-                    .map((user) => user.user.name)
-                    .join(", ")
-                : "Sem usuários"}
+              Erro ao mostrar produtos: {error.message}
             </TableComponent.Value>
           </TableComponent.Line>
-        ))}
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>Carregando produtos...</TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {products?.length > 0 && !isLoading && !error ? (
+          filteredProducts?.length > 0 ? (
+            filteredProducts
+              ?.sort((a, b) => alphanumericSort(a.code, b.code))
+              .map((product, index) => (
+                <TableComponent.Line
+                  className={`w-max grid-cols-[85px_70px_500px_500px_70px_300px_150px_120px_150px_90px_90px_90px_200px_250px_200px_500px_500px] gap-4 md:gap-8 ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value className="text-center">
+                    <Checkbox
+                      checked={selectedProducts.includes(product.code)}
+                      onCheckedChange={(checked) =>
+                        handleProductSelection(product.code, checked)
+                      }
+                    />
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {product.code}
+                  </TableComponent.Value>
+                  <TableComponent.Value>{product.name}</TableComponent.Value>
+                  <TableComponent.Value>
+                    {product.ProductSupplier.length
+                      ? product.ProductSupplier.map(
+                          (supplier) => supplier.supplier.name,
+                        ).join(", ")
+                      : "N/A"}
+                  </TableComponent.Value>
+                  <TableComponent.Value>{product.status}</TableComponent.Value>
+                  <TableComponent.Value>
+                    {product.parentProduct?.name ?? "Não tem produto pai"}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {product.unit.name} ({product.unit.abbreviation}) -{" "}
+                    {product.unit.unitsPerPack}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {product.buyQuantity}
+                  </TableComponent.Value>
+                  <TableComponent.Value>{product.buyDay}</TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {product.currentStock}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {product.minimunStock}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {product.maximumStock}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {product.controlType?.name ?? "Não informado"}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {product.category?.name ?? "Não informado"}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {product.sectorOfUse?.name ?? "Não informado"}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {product.usersWithPermission.length > 0
+                      ? product.usersWithPermission
+                          .map((user) => user.user.name)
+                          .join(", ")
+                      : "Sem usuários"}
+                  </TableComponent.Value>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum produto encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum produto encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">

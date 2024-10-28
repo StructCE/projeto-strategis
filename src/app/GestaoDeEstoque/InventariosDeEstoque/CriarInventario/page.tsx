@@ -98,14 +98,14 @@ export default function CreateInventory() {
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
           selectStockId === "" ||
-          product.shelf.cabinet.StockCabinet.some(
+          product.shelf?.cabinet.StockCabinet.some(
             (stockCabinet) =>
               stockCabinet.stock.id.toLowerCase() ===
               selectStockId.toLowerCase(),
           );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.shelf.cabinet.name} - ${product.shelf.name}`
+          `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
@@ -466,7 +466,7 @@ export default function CreateInventory() {
                       {product.currentStock}
                     </TableComponent.Value>
                     <TableComponent.Value>
-                      {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                      {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                     </TableComponent.Value>
                     <Button
                       onClick={() =>
@@ -475,9 +475,11 @@ export default function CreateInventory() {
                           productId: product.id,
                           code: product.code,
                           name: product.name,
+                          ncm: product.ncm,
+                          cfop: product.cfop,
                           unit: product.unit,
                           inventoryQuantity: 0,
-                          stockQuantity: product.currentStock,
+                          stockQuantity: product.currentStock ?? 0,
                           shelf: product.shelf,
                         })
                       }
@@ -590,7 +592,7 @@ export default function CreateInventory() {
                             <span className="font-semibold">
                               Endereço de Estoque:
                             </span>{" "}
-                            {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                            {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                           </p>
                           <p className="text-base">
                             <span className="font-semibold">
@@ -634,6 +636,8 @@ export default function CreateInventory() {
                                   productId: product.id,
                                   code: product.code,
                                   name: product.name,
+                                  ncm: product.ncm,
+                                  cfop: product.cfop,
                                   unit: product.unit,
                                   inventoryQuantity: 0,
                                   stockQuantity: product.currentStock,
@@ -801,7 +805,7 @@ export default function CreateInventory() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                        {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">

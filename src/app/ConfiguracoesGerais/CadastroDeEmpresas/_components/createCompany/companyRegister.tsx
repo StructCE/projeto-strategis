@@ -1,4 +1,5 @@
 "use client";
+import { states } from "prisma/seed-data/states";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -17,7 +18,6 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { api } from "~/trpc/react";
-import { states } from "../../../CadastroDeFornecedores/_components/supplierData";
 import { useCompanyForm } from "./useCompanyForm";
 
 export const CompanyRegister = () => {
