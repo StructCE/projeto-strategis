@@ -6,6 +6,7 @@ const getAllProps = z
       .object({
         date: z.date().optional(),
         requestResponsible: z.string().optional(),
+        status: z.string().optional(),
       })
       .optional(),
   })

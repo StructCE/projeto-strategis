@@ -39,6 +39,7 @@ async function getAll(props: RequestRepositoryInterfaces["GetAllProps"]) {
               user: { name: { contains: filters?.requestResponsible } },
             },
           },
+          { status: { contains: filters?.status } },
         ],
       },
       include: {

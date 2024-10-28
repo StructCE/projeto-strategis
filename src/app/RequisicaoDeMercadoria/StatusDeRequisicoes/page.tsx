@@ -34,25 +34,12 @@ export default function ManageRequestsTable() {
     data: requests = [],
     error,
     isLoading,
-  } = api.request.getAll.useQuery({});
-
-  const filteredRequests = requests.filter((request) => {
-    const matchesDate =
-      !date ||
-      (request.requestDate.getDate() === date.getDate() &&
-        request.requestDate.getMonth() === date.getMonth() + 1 &&
-        request.requestDate.getFullYear() === date.getFullYear());
-
-    const matchesResponsible =
-      inputResponsible === "" ||
-      request.responsibleName
-        ?.toLowerCase()
-        .includes(inputResponsible.toLowerCase());
-
-    const matchesStuatus =
-      selectStatus === "" || request.status == selectStatus;
-
-    return matchesDate && matchesResponsible && matchesStuatus;
+  } = api.request.getAll.useQuery({
+    filters: {
+      date: date,
+      requestResponsible: inputResponsible,
+      status: selectStatus,
+    },
   });
 
   function handleRequestStatus(status: string) {
@@ -66,7 +53,7 @@ export default function ManageRequestsTable() {
 
   function handleRequestDetailsPage(
     status: string,
-    request: SerializedRequest,
+    request: SerializedRequest
   ) {
     if (status == "Esperando Confirmação")
       return <PendingRequestDetails request={request} />;
@@ -175,8 +162,8 @@ export default function ManageRequestsTable() {
           </TableComponent.Line>
         )}
         {requests.length > 0 && !isLoading && !error ? (
-          filteredRequests.length > 0 ? (
-            filteredRequests
+          requests.length > 0 ? (
+            requests
               .sort((a, b) => b.requestDate.getTime() - a.requestDate.getTime())
               .map((request, index) => (
                 <TableComponent.Line
