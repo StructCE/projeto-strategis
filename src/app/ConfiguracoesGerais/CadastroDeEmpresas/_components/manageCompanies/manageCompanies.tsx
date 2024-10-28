@@ -1,7 +1,6 @@
 "use client";
 import { Eraser, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { states } from "prisma/seed-data/states";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table/index";
@@ -13,6 +12,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { api } from "~/trpc/react";
+import { states } from "../states";
 
 export function ManageCompaniesTable() {
   const [inputCnpj, setInputCnpj] = useState("");

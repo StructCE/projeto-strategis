@@ -1,6 +1,7 @@
 "use client";
 import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
+import { states } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/states";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
@@ -18,8 +19,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-
-import { states } from "prisma/seed-data/states";
 import { api } from "~/trpc/react";
 import { SupplierEdit } from "./editSuppliers/supplierEdit";
 

@@ -1,5 +1,5 @@
 "use client";
-import { states } from "prisma/seed-data/states";
+import { states } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/states";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,

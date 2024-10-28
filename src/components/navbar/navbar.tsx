@@ -73,6 +73,7 @@ export default function Navbar({ session }: { session: Session | null }) {
             <SelectValue placeholder="Empresa a Operar" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="all_companies">Todas Empresas</SelectItem>
             {companies.map((company, index) => (
               <SelectItem value={company.id} key={index}>
                 {company.name}
