@@ -67,68 +67,28 @@ export default function CreatePurchaseOrder() {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery();
+  } = api.product.getAllWhere.useQuery({
+    filters: {
+      code: inputCode,
+      controlType: selectControlType,
+      name: inputProduct,
+      productCategory: selectCategory,
+      sectorOfUse: selectSector,
+      stock: selectStock,
+    },
+  });
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
     api.generalParameters.controlType.getAll.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
     });
   const { data: users = [] } = api.user.getAll.useQuery();
-
-  const areAllFiltersEmpty =
-    inputCode === "" &&
-    inputProduct === "" &&
-    selectStock === "" &&
-    selectAddress === "" &&
-    selectControlType === "" &&
-    selectCategory === "" &&
-    selectSector === "";
-
-  // Função para filtrar produtos
-  const filteredProducts = areAllFiltersEmpty
-    ? []
-    : products.filter((product) => {
-        const matchesCode =
-          inputCode === "" || product.code.includes(inputCode);
-        const matchesProduct =
-          inputProduct === "" ||
-          product.name.toLowerCase().includes(inputProduct.toLowerCase());
-        const matchesStock =
-          selectStock === "" ||
-          product.shelf.cabinet.StockCabinet.some(
-            (stockCabinet) =>
-              stockCabinet.stock.name.toLowerCase() ===
-              selectStock.toLowerCase(),
-          );
-        const matchesAddress =
-          selectAddress === "" ||
-          `${product.shelf.cabinet.name} - ${product.shelf.name}`
-            .toLowerCase()
-            .includes(selectAddress.toLowerCase());
-        const matchesControlType =
-          selectControlType === "" ||
-          product.controlType?.name === selectControlType;
-        const matchesCategory =
-          selectCategory === "" || product.category?.name === selectCategory;
-        const matchesSector =
-          selectSector === "" || product.sectorOfUse?.name === selectSector;
-
-        return (
-          matchesCode &&
-          matchesProduct &&
-          matchesStock &&
-          matchesAddress &&
-          matchesControlType &&
-          matchesCategory &&
-          matchesSector
-        );
-      });
 
   // Função para adicionar produtos a requisição
   const handleAddProduct = (product: ProductWithFeatures) => {
@@ -138,7 +98,7 @@ export default function CreatePurchaseOrder() {
   // Função para remover produtos da requisição
   const handleRemoveProduct = (productCode: string) => {
     setAddedProducts((prev) =>
-      prev.filter((product) => product.code !== productCode),
+      prev.filter((product) => product.code !== productCode)
     );
     setQuantities((prev) => {
       const newQuantities = { ...prev };
@@ -159,10 +119,10 @@ export default function CreatePurchaseOrder() {
 
   function hasPermission(
     product: ProductWithFeatures,
-    user: UserWithRoles | null | undefined,
+    user: UserWithRoles | null | undefined
   ) {
     return product.usersWithPermission?.some(
-      (permittedUser) => permittedUser.user.id === user?.id,
+      (permittedUser) => permittedUser.user.id === user?.id
     );
   }
 
@@ -316,7 +276,7 @@ export default function CreatePurchaseOrder() {
                       key={shelf.id}
                       value={`${cabinet.name} - ${shelf.name}`}
                     />
-                  )),
+                  ))
                 )
               )}
             </Filter.Select>
@@ -444,33 +404,26 @@ export default function CreatePurchaseOrder() {
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {areAllFiltersEmpty &&
-            !isLoading &&
-            !error &&
-            products?.length > 0 && (
-              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-                <TableComponent.Value>
-                  Utilize os filtros acima para encontrar produtos cadastrados
-                  no estoque
-                </TableComponent.Value>
-              </TableComponent.Line>
-            )}
-          {!areAllFiltersEmpty &&
-            !isLoading &&
-            !error &&
-            filteredProducts.length === 0 && (
-              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-                <TableComponent.Value>
-                  Nenhum produto encontrado com os filtros aplicados
-                </TableComponent.Value>
-              </TableComponent.Line>
-            )}
+          {!isLoading && !error && products?.length > 0 && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Utilize os filtros acima para encontrar produtos cadastrados no
+                estoque
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
+          {!!isLoading && !error && products.length === 0 && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum produto encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
           {products?.length > 0 &&
-            !areAllFiltersEmpty &&
             !isLoading &&
             !error &&
-            (filteredProducts?.length > 0 ? (
-              filteredProducts
+            (products?.length > 0 ? (
+              products
                 ?.sort((a, b) => a.code.localeCompare(b.code))
                 .map((product, index) => (
                   <TableComponent.Line
@@ -484,7 +437,7 @@ export default function CreatePurchaseOrder() {
                     </TableComponent.Value>
                     <TableComponent.Value>{product.name}</TableComponent.Value>
                     <TableComponent.Value>
-                      {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                      {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                     </TableComponent.Value>
                     <TableComponent.Value className="text-center">
                       {product.currentStock}
@@ -545,33 +498,26 @@ export default function CreatePurchaseOrder() {
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {areAllFiltersEmpty &&
-            !isLoading &&
-            !error &&
-            products?.length > 0 && (
-              <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-                <TableComponent.Value>
-                  Utilize os filtros acima para encontrar produtos cadastrados
-                  no estoque
-                </TableComponent.Value>
-              </TableComponent.Line>
-            )}
-          {!areAllFiltersEmpty &&
-            !isLoading &&
-            !error &&
-            filteredProducts.length === 0 && (
-              <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-                <TableComponent.Value>
-                  Nenhum produto encontrado com os filtros aplicados
-                </TableComponent.Value>
-              </TableComponent.Line>
-            )}
+          {!isLoading && !error && products?.length > 0 && (
+            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Utilize os filtros acima para encontrar produtos cadastrados no
+                estoque
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
+          {!!isLoading && !error && products.length === 0 && (
+            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum produto encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
           {products?.length > 0 &&
-            !areAllFiltersEmpty &&
-            !isLoading &&
+            !!isLoading &&
             !error &&
-            (filteredProducts?.length > 0 ? (
-              filteredProducts
+            (products?.length > 0 ? (
+              products
                 ?.sort((a, b) => a.code.localeCompare(b.code))
                 .map((product, index) => (
                   <TableComponent.Line
@@ -631,7 +577,7 @@ export default function CreatePurchaseOrder() {
                             <span className="font-semibold">
                               Endereço de Estoque:
                             </span>{" "}
-                            {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                            {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                           </p>
                           <div className="text-base">
                             <span className="font-semibold">
@@ -643,7 +589,7 @@ export default function CreatePurchaseOrder() {
                               onChange={(e) =>
                                 handleQuantityChange(
                                   product.code,
-                                  e.target.value,
+                                  e.target.value
                                 )
                               }
                               className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
@@ -828,7 +774,7 @@ export default function CreatePurchaseOrder() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                        {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                       </p>
                       <div className="text-base">
                         <span className="font-semibold">
