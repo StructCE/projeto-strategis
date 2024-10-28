@@ -65,7 +65,23 @@ export default function PaymentHistory() {
   const [selectExpenseType, setSelectExpenseType] = useState("");
 
   // Dados do BD
-  const { data: invoices = [] } = api.invoice.getAll.useQuery({});
+  const { data: invoices = [] } = api.invoice.getAll.useQuery({
+    filters: {
+      bank: selectBank,
+      company: selectCompany,
+      description: inputDescription,
+      documentDate: dateDocument,
+      expenseType: selectExpenseType,
+      paymentDate: datePayment,
+      status: selectStatus,
+      supplier: selectSupplier,
+      deadlineDate: dateDeadline,
+      accountPlan: selectAccountPlan,
+      group: selectGroup,
+      project: selectProject,
+      documentType: selectDocumentType,
+    },
+  });
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();
   const { data: suppliers = [] } = api.supplier.getAll.useQuery();
   const { data: banks = [] } = api.generalParameters.bank.getAll.useQuery();
@@ -79,95 +95,10 @@ export default function PaymentHistory() {
 
   console.log(invoices);
 
-  // Filtragem dos pagamentos
-  const filteredInvoices = invoices.filter((invoice) => {
-    const matchesConfirmedStatus = invoice.confirmedStatus != "Rejeitada";
-
-    const matchesDateDocument =
-      !dateDocument ||
-      (invoice.documentDate.getDate() === dateDocument.getDate() &&
-        invoice.documentDate.getMonth() === dateDocument.getMonth() + 1 &&
-        invoice.documentDate.getFullYear() === dateDocument.getFullYear());
-
-    const matchesDateDeadline =
-      !dateDeadline ||
-      (invoice.deadlineDate.getDate() === dateDeadline.getDate() &&
-        invoice.deadlineDate.getMonth() === dateDeadline.getMonth() + 1 &&
-        invoice.deadlineDate.getFullYear() === dateDeadline.getFullYear());
-
-    const matchesDatePayment =
-      !datePayment ||
-      (invoice.paymentDate &&
-        invoice.paymentDate.getDate() === datePayment.getDate() &&
-        invoice.paymentDate.getMonth() === datePayment.getMonth() + 1 &&
-        invoice.paymentDate.getFullYear() === datePayment.getFullYear());
-
-    const matchesDescription =
-      inputDescription === "" ||
-      invoice.documentNumber.includes(inputDescription) ||
-      invoice.invoiceValue.toString().includes(inputDescription) ||
-      invoice.invoiceProducts.some((invoiceProduct) =>
-        invoiceProduct.name.includes(inputDescription),
-      );
-
-    const matchesBank = selectBank === "" || invoice.bank?.name === selectBank;
-
-    const matchesSupplier =
-      selectSupplier === "" || invoice.supplier.name === selectSupplier;
-
-    const matchesCompany =
-      selectCompany === "" || invoice.company.name === selectCompany;
-
-    const matchesTypeOfStatus =
-      selectTypeOfStatus === "" || invoice.payedStatus === selectTypeOfStatus;
-
-    const invoiceStatus =
-      invoice.deadlineDate && new Date() <= invoice.deadlineDate
-        ? "Em Dia"
-        : "Atrasado";
-
-    const matchesStatus = selectStatus === "" || invoiceStatus === selectStatus;
-
-    const matchesAccountPlan =
-      selectAccountPlan === "" ||
-      invoice.accountPlan?.name === selectAccountPlan;
-
-    const matchesGroup =
-      selectGroup === "" || invoice.group?.name === selectGroup;
-
-    const matchesProject =
-      selectProject === "" || invoice.project?.name === selectProject;
-
-    const matchesExpenseType =
-      selectExpenseType === "" || invoice.expenseType === selectExpenseType;
-
-    const matchesDocumentType =
-      selectDocumentType === "" ||
-      invoice.documentType?.name === selectDocumentType;
-
-    return (
-      matchesConfirmedStatus &&
-      matchesDateDocument &&
-      matchesDateDeadline &&
-      matchesDatePayment &&
-      matchesDescription &&
-      matchesBank &&
-      matchesSupplier &&
-      matchesCompany &&
-      matchesTypeOfStatus &&
-      matchesStatus &&
-      matchesAccountPlan &&
-      matchesGroup &&
-      matchesProject &&
-      matchesExpenseType &&
-      matchesDocumentType
-    );
-  });
-
   // Seleção dos pagamentos via checkbox
   function handlePaymentSelection(
     paymentDocumentNumber: string,
-    checked: string | boolean,
+    checked: string | boolean
   ) {
     if (checked) {
       setSelectedPayments((prevSelected) => [
@@ -176,14 +107,14 @@ export default function PaymentHistory() {
       ]);
     } else {
       setSelectedPayments((prevSelected) =>
-        prevSelected.filter((code) => code !== paymentDocumentNumber),
+        prevSelected.filter((code) => code !== paymentDocumentNumber)
       );
     }
   }
 
   function handleSelectAll() {
-    const allFilteredPayments = filteredInvoices.map(
-      (payment) => payment.documentNumber,
+    const allFilteredPayments = invoices.map(
+      (payment) => payment.documentNumber
     );
 
     setSelectedPayments((prevSelectedPayments) => [
@@ -197,14 +128,14 @@ export default function PaymentHistory() {
   }
 
   function calculateTotalValue() {
-    const selectedPaymentObjects = filteredInvoices.filter((payment) =>
-      selectedPayments.includes(payment.documentNumber),
+    const selectedPaymentObjects = invoices.filter((payment) =>
+      selectedPayments.includes(payment.documentNumber)
     );
 
     const totalValue = selectedPaymentObjects.reduce(
       (total, payment) =>
         total + (payment.invoiceValue ? payment.invoiceValue : 0),
-      0,
+      0
     );
 
     return totalValue.toLocaleString("pt-BR", {
@@ -223,7 +154,7 @@ export default function PaymentHistory() {
   function paymentDescription(
     nota_fiscal: string,
     valor: number,
-    produtos: { name: string }[],
+    produtos: { name: string }[]
   ): string {
     const productsString = produtos
       .map((product) => capitalizeFirstLetter(product.name))
@@ -265,7 +196,7 @@ export default function PaymentHistory() {
 
   function exportSelectedProductData(fileType: string) {
     const paymentsToPrint = invoices.filter((payment) =>
-      selectedPayments.includes(payment.documentNumber),
+      selectedPayments.includes(payment.documentNumber)
     );
 
     const paymentReportData = {
@@ -291,7 +222,7 @@ export default function PaymentHistory() {
         paymentDate: payment.paymentDate ?? null,
         payedStatus: payment.payedStatus ?? "Não informado",
         invoiceProductNames: payment.invoiceProducts.map(
-          (invoiceProduct) => invoiceProduct.name,
+          (invoiceProduct) => invoiceProduct.name
         ),
       })),
     };
@@ -312,7 +243,7 @@ export default function PaymentHistory() {
 
   function exportToJson(paymentReportData: PaymentReportData) {
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(paymentReportData),
+      JSON.stringify(paymentReportData)
     )}`;
     const link = document.createElement("a");
     link.href = jsonString;
@@ -385,11 +316,11 @@ export default function PaymentHistory() {
     XLSX.utils.book_append_sheet(
       workbook,
       worksheet,
-      "Relatório de Pagamentos",
+      "Relatório de Pagamentos"
     );
     XLSX.writeFile(
       workbook,
-      `Relatorio_Pagamentos_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      `Relatorio_Pagamentos_${new Date().toISOString().slice(0, 10)}.xlsx`
     );
   }
 
@@ -732,7 +663,7 @@ export default function PaymentHistory() {
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {filteredInvoices
+        {invoices
           .sort((a, b) => a.documentDate.getTime() - b.documentDate.getTime())
           .map((invoice, index) => (
             <TableComponent.Line
@@ -753,10 +684,10 @@ export default function PaymentHistory() {
                 {paymentDescription(
                   parseInt(
                     invoice.documentNumber.replace(/\./g, ""),
-                    10,
+                    10
                   ).toString(),
                   invoice.invoiceValue,
-                  invoice.invoiceProducts,
+                  invoice.invoiceProducts
                 )}
               </TableComponent.Value>
               <TableComponent.Value className="text-center">
