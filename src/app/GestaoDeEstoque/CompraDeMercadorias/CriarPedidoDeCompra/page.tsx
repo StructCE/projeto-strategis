@@ -504,7 +504,7 @@ export default function CreatePurchaseOrder() {
           </TooltipProvider>
         </TableComponent.FiltersLine>
 
-        {/* TELAS GRANDES */}
+        {/* ESTOQUE - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8">
             <TableComponent.ValueTitle className="text-center">
@@ -608,7 +608,7 @@ export default function CreatePurchaseOrder() {
             ))}
         </TableComponent.Table>
 
-        {/*  TELAS PEQUENAS */}
+        {/* ESTOQUE - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">
@@ -777,7 +777,7 @@ export default function CreatePurchaseOrder() {
           Pedido de Compra
         </TableComponent.Title>
 
-        {/* TELAS GRANDES */}
+        {/* COMPRA - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_90px_120px_110px_110px_1fr_86px] gap-6 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
@@ -883,7 +883,7 @@ export default function CreatePurchaseOrder() {
           )}
         </TableComponent.Table>
 
-        {/* TELAS PEQUENAS */}
+        {/* COMPRA - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">

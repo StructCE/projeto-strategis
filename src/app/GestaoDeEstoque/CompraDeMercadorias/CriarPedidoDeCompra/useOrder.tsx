@@ -48,10 +48,29 @@ const FinalizeOrder: React.FC<FinalizeOrderProps> = ({
         position: "top-center",
       });
       return;
-    } else if (addedProducts.length === 0) {
+    }
+    if (addedProducts.length === 0) {
       toast.warn("Adicione pelo menos um produto.", {
         position: "top-center",
       });
+      return;
+    }
+
+    const invalidProducts = addedProducts.filter((product) => {
+      const supplierSelected = selectedSuppliers[product.id];
+      const quantitySelected = Number(quantities[product.id]);
+
+      // Retorna true para produtos sem fornecedor ou quantidade válida
+      return !supplierSelected || quantitySelected <= 0;
+    });
+
+    if (invalidProducts.length > 0) {
+      toast.warn(
+        "Certifique-se de que todos os produtos tenham um fornecedor selecionado e uma quantidade válida.",
+        {
+          position: "top-center",
+        },
+      );
       return;
     }
 
