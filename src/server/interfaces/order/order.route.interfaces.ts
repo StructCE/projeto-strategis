@@ -58,7 +58,7 @@ export type OrderProduct = {
 export type SerializedOrder = {
   id: string;
   date: Date;
-  responsible: { id: string; name: string };
+  responsible: { id: string; name: string; company: string };
   status: boolean;
   // stock: { id: string; name: string };
   orderProducts: OrderProduct[];

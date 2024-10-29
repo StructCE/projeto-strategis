@@ -60,8 +60,8 @@ const FinalizeOrder: React.FC<FinalizeOrderProps> = ({
       responsibleId: selectResponsible,
       status: false,
       orderProducts: addedProducts.map((product) => ({
-        productSupplierId: selectedSuppliers[product.code] ?? "",
-        purchaseQuantity: Number(quantities[product.code]) || 0,
+        productSupplierId: selectedSuppliers[product.id] ?? "",
+        purchaseQuantity: Number(quantities[product.id]) || 0,
       })),
     };
 

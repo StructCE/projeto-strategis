@@ -2,6 +2,7 @@ import { orderRepositorySchema } from "~/server/interfaces/order/order.repositor
 import type { OrderRouteInterfaces } from "~/server/interfaces/order/order.route.interfaces";
 import { orderRepository } from "~/server/repositories/order.repository";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { companies } from "./../../../components/navbar/_components/userData";
 
 export const orderRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -15,6 +16,9 @@ export const orderRouter = createTRPCRouter({
           responsible: {
             id: order.responsible.user.id,
             name: order.responsible.user.name,
+            company: order.responsible.user.UserRole.map(
+              (userRole) => userRole.company.name,
+            ).join(", "),
           },
           status: order.status,
           // stock: { id: order.stock.id, name: order.stock.name },
@@ -35,15 +39,7 @@ export const orderRouter = createTRPCRouter({
             shelf: orderProduct.product.product.shelf,
           })),
         }));
-
-        return serializedOrders.filter((serializedOrder) => {
-          for (let i = 0; i < serializedOrder.orderProducts.length; i++) {
-            const productSupplier = serializedOrder.orderProducts[i]?.ProductSupplier.supplier.name
-            if (!input?.filters.suppliers?.includes(productSupplier?? ""))
-              return false
-          }
-          return true
-        });
+        return serializedOrders;
       },
     ),
 

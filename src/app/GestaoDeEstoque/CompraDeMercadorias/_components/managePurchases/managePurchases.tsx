@@ -33,156 +33,35 @@ export default function ManagePurchasesTable() {
   const [inputResponsible, setInputResponsible] = useState("");
   const [selectSupplier, setSelectSupplier] = useState("");
 
-  const {
-    data: orders = [],
-    error,
-    isLoading,
-  } = api.order.getAll.useQuery({
-    filters: {
-      date: date,
-      responsibleName: inputResponsible,
-      supplier: selectSupplier,
-    },
+  const { data: orders = [], error, isLoading } = api.order.getAll.useQuery();
+
+  const filteredOrders = orders.filter((order) => {
+    const matchesDate =
+      !date ||
+      (order.date.getDate() === date.getDate() &&
+        order.date.getMonth() === date.getMonth() + 1 &&
+        order.date.getFullYear() === date.getFullYear());
+
+    const matchesResponsible =
+      inputResponsible === "" ||
+      order.responsible.name
+        .toLowerCase()
+        .includes(inputResponsible.toLowerCase());
+    const matchesSupplier =
+      selectSupplier === "" ||
+      order.orderProducts.some(
+        (product) => selectSupplier == product.ProductSupplier.supplier.name,
+      );
+
+    return matchesDate && matchesResponsible && matchesSupplier;
   });
-  console.log(orders);
 
   const { data: suppliers = [] } = api.supplier.getAll.useQuery();
-
-  // function exportData(order: SerializedOrder) {
-  //   const purchaseData = {
-  //     date: order.date,
-  //     responsible: order.responsible.name,
-  //     orderProducts: order.orderProducts.map((product) => ({
-  //       code: product.code,
-  //       name: product.name,
-  //       unit: product.unit,
-  //       currentStock: product.currentStock,
-  //       minimunStock: product.minimunStock,
-  //       purchaseQuantity: product.purchaseQuantity,
-  //       ProductSupplier: product.ProductSupplier,
-  //       shelf: product.shelf,
-  //     })),
-  //   };
-
-  //   const doc = new jsPDF();
-
-  //   doc.setFont("helvetica", "bold");
-  //   doc.setFontSize(16);
-  //   doc.text(
-  //     `Pedido de Compra - ${new Date(purchaseData.date).toLocaleDateString()}`,
-  //     14,
-  //     20,
-  //   );
-
-  //   doc.setFontSize(12);
-  //   let yPosition = 25;
-  //   const lineHeight = 5.5; // Altura entre as linhas de texto
-  //   const pageHeight = 280; // Limite de altura da página
-
-  //   function addKeyValuePair(
-  //     key: string,
-  //     value: string | number,
-  //     x1: number,
-  //     x2: number,
-  //     y: number,
-  //   ) {
-  //     doc.setFont("helvetica", "bold");
-  //     doc.text(`${key}:`, x1, y); // Chave
-  //     doc.setFont("helvetica", "normal");
-
-  //     const splitText: string[] = doc.splitTextToSize(
-  //       `${value}`,
-  //       120,
-  //     ) as string[];
-  //     doc.text(splitText, x2, y);
-
-  //     return splitText.length * lineHeight;
-  //   }
-
-  //   yPosition += addKeyValuePair(
-  //     "Responsável",
-  //     order.responsible.name,
-  //     14,
-  //     70,
-  //     (yPosition += lineHeight),
-  //   );
-  //   yPosition += 5;
-
-  //   purchaseData.orderProducts.forEach((product) => {
-  //     const productHeight = 12 * lineHeight + 14;
-
-  //     if (yPosition + productHeight > pageHeight) {
-  //       doc.addPage();
-  //       yPosition = 14;
-  //     }
-
-  //     yPosition += addKeyValuePair(
-  //       "Código",
-  //       product.code,
-  //       14,
-  //       70,
-  //       (yPosition += lineHeight),
-  //     );
-  //     yPosition += addKeyValuePair(
-  //       "Nome",
-  //       product.name,
-  //       14,
-  //       70,
-  //       (yPosition += lineHeight),
-  //     );
-  //     yPosition += addKeyValuePair(
-  //       "Unidade de Compra",
-  //       `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`,
-  //       14,
-  //       70,
-  //       (yPosition += lineHeight),
-  //     );
-  //     yPosition += addKeyValuePair(
-  //       "Estoque Atual",
-  //       product.currentStock,
-  //       14,
-  //       70,
-  //       (yPosition += lineHeight),
-  //     );
-  //     yPosition += addKeyValuePair(
-  //       "Estoque Mínimo",
-  //       product.minimunStock,
-  //       14,
-  //       70,
-  //       (yPosition += lineHeight),
-  //     );
-
-  //     yPosition += addKeyValuePair(
-  //       "Quantidade a Comprar",
-  //       product.purchaseQuantity,
-  //       14,
-  //       70,
-  //       (yPosition += lineHeight),
-  //     );
-  //     yPosition += addKeyValuePair(
-  //       "Fornecedor",
-  //       product.ProductSupplier.supplier.name,
-  //       14,
-  //       70,
-  //       (yPosition += lineHeight),
-  //     );
-  //     yPosition += addKeyValuePair(
-  //       "Endereço de Estoque",
-  //       `${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`,
-  //       14,
-  //       70,
-  //       (yPosition += lineHeight),
-  //     );
-
-  //     yPosition += 10;
-  //   });
-
-  //   doc.save(`Pedido_Compra_${order.date.toISOString().slice(0, 10)}.pdf`);
-  // }
 
   function orderData(order: SerializedOrder) {
     const purchaseData = {
       date: order.date,
+      company: order.responsible.company,
       responsible: order.responsible.name,
       orderProducts: order.orderProducts.map((product) => ({
         code: product.code,
@@ -303,8 +182,8 @@ export default function ManagePurchasesTable() {
           </TableComponent.Line>
         )}
         {orders.length > 0 && !isLoading && !error ? (
-          orders.length > 0 ? (
-            orders
+          filteredOrders.length > 0 ? (
+            filteredOrders
               .sort((a, b) => b.date.getTime() - a.date.getTime())
               .map((order, index) => (
                 <TableComponent.Line
@@ -349,7 +228,7 @@ export default function ManagePurchasesTable() {
                     </DialogTrigger>
                     <DialogContent
                       aria-describedby={undefined}
-                      className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
+                      className="max-h-[90vh] max-w-7xl overflow-x-auto overflow-y-auto p-3 pb-5 pt-10 sm:p-6"
                     >
                       <DialogHeader>
                         <DialogTitle className="w-fit pb-1.5">

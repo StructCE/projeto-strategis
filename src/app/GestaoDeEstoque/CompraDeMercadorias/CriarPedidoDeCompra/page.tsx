@@ -162,14 +162,14 @@ export default function CreatePurchaseOrder() {
     // Definir o valor de quantidade inicial com o buyQuantity do produto
     setQuantities((prev) => ({
       ...prev,
-      [product.code]: product.buyQuantity ? String(product.buyQuantity) : "0", // Define o valor padrão como buyQuantity ou "0" se não existir
+      [product.id]: product.buyQuantity ? String(product.buyQuantity) : "0", // Define o valor padrão como buyQuantity ou "0" se não existir
     }));
   };
 
   // Função para remover produtos do pedido
   const handleRemoveProduct = (productCode: string) => {
     setAddedProducts((prev) =>
-      prev.filter((product) => product.code !== productCode),
+      prev.filter((product) => product.id !== productCode),
     );
     setQuantities((prev) => {
       const newQuantities = { ...prev };
@@ -714,12 +714,9 @@ export default function CreatePurchaseOrder() {
                             </span>
                             <Input
                               type="number"
-                              value={quantities[product.code] ?? ""}
+                              value={quantities[product.id] ?? ""}
                               onChange={(e) =>
-                                handleQuantityChange(
-                                  product.code,
-                                  e.target.value,
-                                )
+                                handleQuantityChange(product.id, e.target.value)
                               }
                               className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
                             ></Input>
@@ -728,18 +725,16 @@ export default function CreatePurchaseOrder() {
                             <span className="font-semibold">
                               Quantidade a Comprar (unidade):{" "}
                             </span>
-                            {Number(quantities[product.code] ?? 0) *
+                            {Number(quantities[product.id] ?? 0) *
                               product.unit.unitsPerPack}
                           </p>
                           <div className="text-base">
                             <span className="font-semibold">Fornecedor: </span>
                             <Select
                               onValueChange={(value) =>
-                                handleSupplierChange(product.code, value)
+                                handleSupplierChange(product.id, value)
                               }
-                              defaultValue={
-                                selectedSuppliers[product.code] ?? ""
-                              }
+                              defaultValue={selectedSuppliers[product.id] ?? ""}
                             >
                               <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
                                 <SelectValue placeholder="Selecione um fornecedor" />
@@ -846,23 +841,23 @@ export default function CreatePurchaseOrder() {
                 <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
                   <Input
                     type="number"
-                    value={quantities[product.code] ?? ""}
+                    value={quantities[product.id] ?? ""}
                     onChange={(e) =>
-                      handleQuantityChange(product.code, e.target.value)
+                      handleQuantityChange(product.id, e.target.value)
                     }
                     className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
                   ></Input>
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {Number(quantities[product.code] ?? 0) *
+                  {Number(quantities[product.id] ?? 0) *
                     product.unit.unitsPerPack}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-[13px] sm:text-[15px]">
                   <Select
                     onValueChange={(value) =>
-                      handleSupplierChange(product.code, value)
+                      handleSupplierChange(product.id, value)
                     }
-                    defaultValue={selectedSuppliers[product.code] ?? ""}
+                    defaultValue={selectedSuppliers[product.id] ?? ""}
                   >
                     <SelectTrigger className="h-7 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
                       <SelectValue placeholder="Selecione um fornecedor" />
@@ -878,7 +873,7 @@ export default function CreatePurchaseOrder() {
                 </TableComponent.Value>
 
                 <Button
-                  onClick={() => handleRemoveProduct(product.code)}
+                  onClick={() => handleRemoveProduct(product.id)}
                   className="mb-0 h-8 bg-transparent text-[14px] font-medium text-black hover:bg-transparent hover:text-hover_preto sm:text-[16px]"
                 >
                   <Trash2 size={20} />
@@ -974,9 +969,9 @@ export default function CreatePurchaseOrder() {
                         </span>
                         <Input
                           type="number"
-                          value={quantities[product.code] ?? ""}
+                          value={quantities[product.id] ?? ""}
                           onChange={(e) =>
-                            handleQuantityChange(product.code, e.target.value)
+                            handleQuantityChange(product.id, e.target.value)
                           }
                           className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
                         ></Input>
@@ -985,16 +980,16 @@ export default function CreatePurchaseOrder() {
                         <span className="font-semibold">
                           Quantidade a Comprar (unidade):{" "}
                         </span>
-                        {Number(quantities[product.code] ?? 0) *
+                        {Number(quantities[product.id] ?? 0) *
                           product.unit.unitsPerPack}
                       </p>
                       <div className="text-base">
                         <span className="font-semibold">Fornecedor: </span>
                         <Select
                           onValueChange={(value) =>
-                            handleSupplierChange(product.code, value)
+                            handleSupplierChange(product.id, value)
                           }
-                          defaultValue={selectedSuppliers[product.code] ?? ""}
+                          defaultValue={selectedSuppliers[product.id] ?? ""}
                         >
                           <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
                             <SelectValue placeholder="Selecione um fornecedor" />
@@ -1015,7 +1010,7 @@ export default function CreatePurchaseOrder() {
                 </Dialog>
 
                 <Button
-                  onClick={() => handleRemoveProduct(product.code)}
+                  onClick={() => handleRemoveProduct(product.id)}
                   className="mb-0 h-fit w-fit bg-transparent px-0 py-0 text-[14px] font-medium text-black hover:bg-transparent hover:text-hover_preto sm:text-[16px]"
                 >
                   <Trash2 size={24} />

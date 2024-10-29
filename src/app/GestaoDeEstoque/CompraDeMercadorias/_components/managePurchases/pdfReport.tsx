@@ -9,8 +9,13 @@ const styles = StyleSheet.create({
   titleView: {
     marginBottom: 24,
   },
+  subtitleView: {
+    flexDirection: "row",
+    gap: 32,
+    justifyContent: "center", // Centered subtitle
+  },
   title: {
-    fontSize: 28, 
+    fontSize: 28,
     fontWeight: "bold", // Changed to bold for a stronger appearance
     color: "#2C3E50", // Darker color for the title
     marginBottom: 4, // Reduced margin for a tighter look
@@ -54,6 +59,7 @@ const styles = StyleSheet.create({
 
 type PurchaseData = {
   date: Date;
+  company: string;
   responsible: string;
   orderProducts: {
     code: string;
@@ -92,9 +98,15 @@ const CustomReportPDF = (props: PurchaseOrderType) => (
           Relatório de Compra de Mercadorias -{" "}
           {`${String(props.purchaseData.date.getDate()).padStart(2, "0")}/${String(props.purchaseData.date.getMonth() + 1).padStart(2, "0")}/${String(props.purchaseData.date.getFullYear()).padStart(2, "0")}`}
         </Text>
-        <Text style={styles.subtitle}>
-          Responsável - {props.purchaseData.responsible}
-        </Text>
+
+        <View style={styles.subtitleView}>
+          <Text style={styles.subtitle}>
+            Empresa - {props.purchaseData.company}
+          </Text>
+          <Text style={styles.subtitle}>
+            Responsável - {props.purchaseData.responsible}
+          </Text>
+        </View>
       </View>
 
       <View style={styles.table}>
