@@ -17,14 +17,19 @@ import Shelves from "./_components/Stocks/Shelves";
 import Storages from "./_components/Stocks/Storages";
 
 export default function GeneralParametersRegister() {
-  const session = useSession();
+  const { data: session, status } = useSession();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
+    if (
+      status === "authenticated" &&
+      !session?.user.allowedPagesPath.includes(pathname)
+    ) {
       redirect("/");
     }
-  }, [session, pathname]);
+  }, [session, status, pathname]);
+
+  if (status === "loading") return null;
 
   return (
     <div className="flex w-full flex-col bg-fundo_branco">

@@ -1,19 +1,13 @@
 "use client";
 import { UserRound } from "lucide-react";
 import { type Session } from "next-auth";
-import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import {
   Select,
@@ -44,20 +38,7 @@ export default function Navbar({ session }: { session: Session | null }) {
     return role ? role.name : "Cargo não encontrado";
   };
 
-  const [selectCompanyId, setSelectCompanyId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedCompanyId = localStorage.getItem("selectCompanyId");
-      setSelectCompanyId(storedCompanyId ?? "all_companies");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (selectCompanyId) {
-      localStorage.setItem("selectCompanyId", selectCompanyId);
-    }
-  }, [selectCompanyId]);
+  const { selectedCompany, setSelectedCompany } = useCompany();
 
   return (
     <nav className="z-10 flex h-[64px] w-full items-center justify-end gap-8 bg-black px-2 sm:h-[74px] sm:gap-12 sm:px-16 lg:h-[87px]">
@@ -65,30 +46,23 @@ export default function Navbar({ session }: { session: Session | null }) {
       {user?.UserRole.some(
         (userRole) => userRole.role.name === "Administrador",
       ) && (
-        <TooltipProvider delayDuration={300}>
-          <Tooltip>
-            <TooltipTrigger className="flex cursor-pointer self-center">
-              <Select
-                onValueChange={setSelectCompanyId}
-                value={selectCompanyId ?? ""}
-                defaultValue={selectCompanyId ?? ""}
-              >
-                <SelectTrigger className="h-fit w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-3 py-1.5 text-[12px] text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-4 sm:py-2 sm:text-base">
-                  <SelectValue placeholder="Empresa a Operar" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all_companies">Todas Empresas</SelectItem>
-                  {companies.map((company, index) => (
-                    <SelectItem value={company.id} key={index}>
-                      {company.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </TooltipTrigger>
-            <TooltipContent side="left">Empresa a Operar</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Select
+          onValueChange={setSelectedCompany}
+          value={selectedCompany ?? ""}
+          defaultValue={selectedCompany ?? ""}
+        >
+          <SelectTrigger className="h-fit w-fit gap-4 rounded-xl border-[1.5px] border-vermelho_botao_1 bg-black px-3 py-1.5 text-[12px] text-white ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-4 sm:py-2 sm:text-base">
+            <SelectValue placeholder="Empresa a Operar" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all_companies">Todas Empresas</SelectItem>
+            {companies.map((company, index) => (
+              <SelectItem value={company.name} key={index}>
+                {company.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       )}
 
       {/* Dropdown */}

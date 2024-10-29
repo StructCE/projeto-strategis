@@ -6,14 +6,19 @@ import { ProductRegister } from "./_components/createProducts/productRegister";
 import ManageProductsTable from "./_components/manageProducts/manageProducts";
 
 export default function ProductsRegister() {
-  const session = useSession();
+  const { data: session, status } = useSession();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
+    if (
+      status === "authenticated" &&
+      !session?.user.allowedPagesPath.includes(pathname)
+    ) {
       redirect("/");
     }
-  }, [session, pathname]);
+  }, [session, status, pathname]);
+
+  if (status === "loading") return null;
 
   return (
     <div className="flex w-full flex-col gap-4 bg-fundo_branco">

@@ -11,9 +11,7 @@ import {
   Truck,
   X,
 } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { redirect, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as XLSX from "xlsx";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -39,15 +37,6 @@ import PaymentDetails from "./_components/editPayment/paymentDetails";
 import PaymentCompleteDetails from "./_components/paymentCompleteDetails";
 
 export default function PaymentHistory() {
-  const session = useSession();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
-      redirect("/");
-    }
-  }, [session, pathname]);
-
   // Checkboxes dos pagamentos
   const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
 

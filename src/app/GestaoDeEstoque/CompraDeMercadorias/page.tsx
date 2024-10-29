@@ -6,14 +6,21 @@ import { TableButtonComponent } from "~/components/tableButton";
 import ManagePurchasesTable from "./_components/managePurchases/managePurchases";
 
 export default function PurchaseOrders() {
-  const session = useSession();
+  const { data: session, status } = useSession();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
+    if (
+      status === "authenticated" &&
+      !session?.user.allowedPagesPath.some((allowedPath) =>
+        pathname.startsWith(allowedPath),
+      )
+    ) {
       redirect("/");
     }
-  }, [session, pathname]);
+  }, [session, status, pathname]);
+
+  if (status === "loading") return null;
 
   return (
     <div className="flex w-full flex-col bg-fundo_branco">

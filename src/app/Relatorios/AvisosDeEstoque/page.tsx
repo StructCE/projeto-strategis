@@ -3,9 +3,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { redirect, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as XLSX from "xlsx";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -32,15 +30,6 @@ import CustomReportPDF from "./_components/pdfReport";
 import ProductDetails from "./_components/productDetails";
 
 export default function CustomReports() {
-  const session = useSession();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
-      redirect("/");
-    }
-  }, [session, pathname]);
-
   // Checkboxes dos produtos
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 

@@ -1,9 +1,7 @@
 "use client";
 import { format } from "date-fns";
 import { CalendarIcon, Search, Trash2 } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { redirect, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { FormComponent } from "~/components/forms";
 import {
@@ -45,15 +43,6 @@ import { api } from "~/trpc/react";
 import { useManualCreateInvoiceForm } from "./useManualCreateInvoiceForm";
 
 export default function ManuallyImportInvoice() {
-  const session = useSession();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
-      redirect("/");
-    }
-  }, [session, pathname]);
-
   const invoiceCreateForm = useManualCreateInvoiceForm();
 
   // const [selectedStockId, setSelectedStockId] = useState<string>();

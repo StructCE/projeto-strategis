@@ -9,8 +9,7 @@ import {
   UserCog2,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { redirect, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
@@ -43,13 +42,6 @@ import FinalizeOrder from "./useOrder";
 
 export default function CreatePurchaseOrder() {
   const session = useSession();
-  const pathname = usePathname();
-
-  useEffect(() => {
-    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
-      redirect("/");
-    }
-  }, [session, pathname]);
 
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
