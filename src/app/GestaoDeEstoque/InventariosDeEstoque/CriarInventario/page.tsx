@@ -9,7 +9,8 @@ import {
   UserCog2,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { redirect, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
@@ -40,10 +41,18 @@ import { api } from "~/trpc/react";
 import FinalizeInventory from "./useInventory";
 
 export default function CreateInventory() {
+  const session = useSession();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
+      redirect("/");
+    }
+  }, [session, pathname]);
+
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
 
-  const session = useSession();
   const userId = session.data?.user.id;
   const [selectResponsible, setSelectResponsible] = useState<
     string | undefined
@@ -80,7 +89,9 @@ export default function CreateInventory() {
     api.generalParameters.controlType.getAll.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: {},
+  });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockId: selectStockId ? selectStockId : "",

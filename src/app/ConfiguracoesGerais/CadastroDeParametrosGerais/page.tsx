@@ -1,9 +1,13 @@
+"use client";
 import { Accordion } from "~/components/ui/accordion";
 // import AccountPlans from "./_components/Payments/AccountPlans";
 // import Banks from "./_components/Payments/Banks";
 // import DocumentTypes from "./_components/Payments/DocumentTypes";
 // import Groups from "./_components/Payments/Groups";
 // import Projects from "./_components/Payments/Projects";
+import { useSession } from "next-auth/react";
+import { redirect, usePathname } from "next/navigation";
+import { useEffect } from "react";
 import ProductCategories from "./_components/Products/ProductCategories";
 import Reasons from "./_components/Products/Reasons";
 import SectorsOfUse from "./_components/Products/SectorsOfUse";
@@ -13,6 +17,15 @@ import Shelves from "./_components/Stocks/Shelves";
 import Storages from "./_components/Stocks/Storages";
 
 export default function GeneralParametersRegister() {
+  const session = useSession();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
+      redirect("/");
+    }
+  }, [session, pathname]);
+
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
       <h1 className="text-[32px] font-medium">Parâmetros Gerais de Estoques</h1>

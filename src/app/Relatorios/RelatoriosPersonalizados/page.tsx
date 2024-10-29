@@ -3,8 +3,10 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { redirect, usePathname } from "next/navigation";
 import { customReportOptions } from "prisma/seed-data/customReportOptions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as XLSX from "xlsx";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -22,6 +24,15 @@ import { api } from "~/trpc/react";
 import { default as CustomReportPDF } from "./_components/pdfReport";
 
 export default function CustomReports() {
+  const session = useSession();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
+      redirect("/");
+    }
+  }, [session, pathname]);
+
   const [selectReportOptions, setSelectReportOptions] = useState<string[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 

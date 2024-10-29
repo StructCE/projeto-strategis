@@ -1,6 +1,8 @@
 "use client";
 import { Calendar, Eraser, Search, UserCog2 } from "lucide-react";
-import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { redirect, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { Button } from "~/components/ui/button";
@@ -25,6 +27,15 @@ import PendingRequestDetails from "./_components/pendingRequestDetailsTable";
 import RejectedRequestDetails from "./_components/rejectedRequestDetailsTable";
 
 export default function ManageRequestsTable() {
+  const session = useSession();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
+      redirect("/");
+    }
+  }, [session, pathname]);
+
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
@@ -53,7 +64,7 @@ export default function ManageRequestsTable() {
 
   function handleRequestDetailsPage(
     status: string,
-    request: SerializedRequest
+    request: SerializedRequest,
   ) {
     if (status == "Esperando Confirmação")
       return <PendingRequestDetails request={request} />;

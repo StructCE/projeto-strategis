@@ -1,17 +1,19 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { redirect, usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { ProductRegister } from "./_components/createProducts/productRegister";
 import ManageProductsTable from "./_components/manageProducts/manageProducts";
 
 export default function ProductsRegister() {
-  const [selectCompanyId, setSelectCompanyId] = useState<string>("");
+  const session = useSession();
+  const pathname = usePathname();
 
   useEffect(() => {
-    const storedCompanyId = localStorage.getItem("selectCompanyId");
-    if (storedCompanyId) {
-      setSelectCompanyId(storedCompanyId);
+    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
+      redirect("/");
     }
-  }, [selectCompanyId]);
+  }, [session, pathname]);
 
   return (
     <div className="flex w-full flex-col gap-4 bg-fundo_branco">

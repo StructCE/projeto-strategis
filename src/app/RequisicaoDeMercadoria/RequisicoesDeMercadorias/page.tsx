@@ -1,3 +1,7 @@
+"use client";
+import { useSession } from "next-auth/react";
+import { redirect, usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { TableComponent } from "~/components/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import ManageAcceptedRequestsTable from "./_components/manageRequests/acceptedRequests/manageAcceptedRequests";
@@ -5,6 +9,15 @@ import ManagePendingRequestsTable from "./_components/manageRequests/pendingRequ
 import ManageRejectedRequestsTable from "./_components/manageRequests/rejectedRequests/manageRejectedRequests";
 
 export default function RequestsHistory() {
+  const session = useSession();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!session.data?.user.allowedPagesPath.includes(pathname)) {
+      redirect("/");
+    }
+  }, [session, pathname]);
+
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
       <TableComponent>

@@ -1,8 +1,8 @@
+import { type User } from "~/components/navbar/_components/userData";
 import { TableComponent } from "~/components/table";
-import { type Operation } from "./operationsData";
 
 type OperationType = {
-  operation: Operation;
+  operation: { date: Date; operator: User; operation: string };
 };
 
 export default function OperationDetails(props: OperationType) {
