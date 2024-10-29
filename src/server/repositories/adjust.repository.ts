@@ -4,32 +4,42 @@ import type { AdjustRepositoryInterfaces } from "../interfaces/adjust/adjust.rep
 async function getAll(props: AdjustRepositoryInterfaces["GetAllProps"]) {
   if (props) {
     const { filters } = props;
+    const conditions = [];
+
+    if (filters?.responsible) {
+      conditions.push({
+        responsible: { user: { name: { contains: filters?.responsible } } },
+      });
+    }
+    if (filters?.adjustType) {
+      conditions.push({ type: { contains: filters?.adjustType } });
+    }
+    if (filters?.date) {
+      conditions.push(
+        {
+          date: {
+            gte: filters?.date
+              ? new Date(
+                  `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date?.getDate()}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+        {
+          date: {
+            lt: filters?.date
+              ? new Date(
+                  `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date.getDate() + 1}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+      );
+    }
+
     const adjusts = await db.adjust.findMany({
       where: {
-        AND: [
-          {
-            responsible: { user: { name: { contains: filters?.responsible } } },
-          },
-          { type: { contains: filters?.adjustType } },
-          {
-            date: {
-              gte: filters?.date
-                ? new Date(
-                    `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date?.getDate()}T00:00:00.000Z`
-                  )
-                : undefined,
-            },
-          },
-          {
-            date: {
-              lt: filters?.date
-                ? new Date(
-                    `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date.getDate() + 1}T00:00:00.000Z`
-                  )
-                : undefined,
-            },
-          },
-        ],
+        AND: conditions,
       },
       include: {
         stock: true,

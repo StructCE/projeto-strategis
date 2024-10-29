@@ -111,7 +111,7 @@ export const ManageSuppliersTable = () => {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[2fr_4fr_3fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[2fr_4fr_3fr_130px] gap-4 sm:gap-8">
           <TableComponent.ValueTitle>Fornecedor</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Endereço</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Email</TableComponent.ValueTitle>
@@ -136,7 +136,7 @@ export const ManageSuppliersTable = () => {
           suppliers.length > 0 ? (
             suppliers.map((supplier, index) => (
               <TableComponent.Line
-                className={`grid-cols-[2fr_4fr_3fr_130px] ${
+                className={`grid-cols-[2fr_4fr_3fr_130px] gap-4 sm:gap-8 ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}

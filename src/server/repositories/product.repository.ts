@@ -13,37 +13,67 @@ async function countProducts() {
 async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
   if (props) {
     const { filters } = props;
+    const conditions = [];
+
+    if (filters.name) {
+      conditions.push({ name: { contains: filters.name } });
+    }
+    if (filters.controlType) {
+      conditions.push({
+        controlType: {
+          name: { contains: filters.controlType },
+        },
+      });
+    }
+    if (filters.productCategory) {
+      conditions.push({
+        category: {
+          name: { contains: filters.productCategory },
+        },
+      });
+    }
+    if (filters.stock) {
+      conditions.push({
+        shelf: {
+          cabinet: {
+            StockCabinet: {
+              some: { stock: { name: { contains: filters.stock } } },
+            },
+          },
+        },
+      });
+    }
+    if (filters.code) {
+      conditions.push({ code: { contains: filters.code } });
+    }
+    if (filters.status) {
+      conditions.push({ status: { contains: filters.status } });
+    }
+    if (filters.buyDay) {
+      conditions.push({ buyDay: { contains: filters.buyDay } });
+    }
+    if (filters.sectorOfUse) {
+      conditions.push({
+        sectorOfUse: {
+          name: { contains: filters.sectorOfUse },
+        },
+      });
+    }
+    if (filters.supplier) {
+      conditions.push({
+        ProductSupplier: {
+          some: {
+            supplier: {
+              name: { contains: filters.supplier },
+            },
+          },
+        },
+      });
+    }
+
     const products = await db.product.findMany({
       where: {
-        AND: [
-          { name: { contains: filters.name } },
-          {
-            controlType: {
-              name: { contains: filters.controlType },
-            },
-          },
-          {
-            category: {
-              name: { contains: filters.productCategory },
-            },
-          },
-          {
-            shelf: {
-              cabinet: {
-                StockCabinet: { some: { stock: { name: filters.stock } } },
-              },
-            },
-          },
-          { id: { contains: filters.code } },
-          { category: { name: { contains: filters.productCategory } } },
-          { status: { contains: filters.status } },
-          { buyDay: { contains: filters.buyDay } },
-          {
-            sectorOfUse: {
-              name: { contains: filters.sectorOfUse },
-            },
-          },
-        ],
+        AND: conditions,
       },
       include: {
         unit: true,
@@ -63,7 +93,7 @@ async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
             },
           },
         },
-        usersWithPermission: true,
+        usersWithPermission: { include: { user: true } },
         ProductSupplier: {
           include: {
             supplier: true,
@@ -92,7 +122,7 @@ async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
           },
         },
       },
-      usersWithPermission: true,
+      usersWithPermission: { include: { user: true } },
       ProductSupplier: {
         include: {
           supplier: true,

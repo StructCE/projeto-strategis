@@ -34,6 +34,7 @@ export default function ManageRejectedRequestsTable() {
     filters: {
       date: date,
       requestResponsible: inputResponsible,
+      status: "Rejeitada",
     },
   });
 
@@ -55,7 +56,7 @@ export default function ManageRejectedRequestsTable() {
             setDate={setDate}
             open={open}
             setOpen={setOpen}
-            placeholder="Data"
+            placeholder="Selecione uma data"
           />
         </Filter>
 

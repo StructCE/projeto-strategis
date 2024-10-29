@@ -40,19 +40,7 @@ export default function CustomReportsPage() {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAllWhere.useQuery({
-    filters: {
-      code: inputCode,
-      controlType: selectControlType,
-      name: inputProduct,
-      productCategory: selectCategory,
-      sectorOfUse: selectSector,
-      stock: selectStock,
-      suppliers: selectSuppliers,
-      status: selectStatus,
-      buyDay: selectBuyDay,
-    },
-  });
+  } = api.product.getAllWhere.useQuery();
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
@@ -65,6 +53,52 @@ export default function CustomReportsPage() {
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
     });
+
+  const filteredProducts = products.filter((product) => {
+    const matchesCode = inputCode === "" || product.code.includes(inputCode);
+    const matchesProduct =
+      inputProduct === "" ||
+      product.name.toLowerCase().includes(inputProduct.toLowerCase());
+    const matchesSupplier =
+      selectSuppliers.length === 0 ||
+      product.ProductSupplier.some((supplier) =>
+        selectSuppliers.includes(supplier.supplier.name),
+      );
+    const matchesStock =
+      selectStock === "" ||
+      product.shelf?.cabinet.StockCabinet.some(
+        (stockCabinet) =>
+          stockCabinet.stock.name.toLowerCase() === selectStock.toLowerCase(),
+      );
+    const matchesAddress =
+      selectAddress === "" ||
+      `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
+        .toLowerCase()
+        .includes(selectAddress.toLowerCase());
+    const matchesControlType =
+      selectControlType === "" ||
+      product.controlType?.name === selectControlType;
+    const matchesCategory =
+      selectCategory === "" || product.category?.name === selectCategory;
+    const matchesSector =
+      selectSector === "" || product.sectorOfUse?.name === selectSector;
+    const matchesStatus =
+      selectStatus === "" || product.status === selectStatus;
+    const matchesBuyDay =
+      selectBuyDay === "" || product.buyDay === selectBuyDay;
+    return (
+      matchesCode &&
+      matchesProduct &&
+      matchesSupplier &&
+      matchesStock &&
+      matchesAddress &&
+      matchesControlType &&
+      matchesCategory &&
+      matchesSector &&
+      matchesStatus &&
+      matchesBuyDay
+    );
+  });
 
   function handleProductSelection(
     productCode: string,
@@ -80,7 +114,9 @@ export default function CustomReportsPage() {
   }
 
   function handleSelectAll() {
-    const allFilteredProductCodes = products.map((product) => product.code);
+    const allFilteredProductCodes = filteredProducts.map(
+      (product) => product.code,
+    );
 
     setSelectedProducts((prevSelectedProducts) => [
       ...new Set([...prevSelectedProducts, ...allFilteredProductCodes]),
@@ -885,8 +921,8 @@ export default function CustomReportsPage() {
           </TableComponent.Line>
         )}
         {products?.length > 0 && !isLoading && !error ? (
-          products?.length > 0 ? (
-            products
+          filteredProducts?.length > 0 ? (
+            filteredProducts
               ?.sort((a, b) => alphanumericSort(a.code, b.code))
               .map((product, index) => (
                 <TableComponent.Line

@@ -21,17 +21,27 @@ async function getUserById(props: UserRepositoryInterfaces["GetUserById"]) {
 async function getAll(props: UserRepositoryInterfaces["GetAllProps"]) {
   if (props) {
     const { filters } = props;
+    const conditions = [];
+
+    if (filters.name) {
+      conditions.push({ name: { contains: filters.name } });
+    }
+    if (filters.company) {
+      conditions.push({
+        Company: { every: { name: { contains: filters?.company } } },
+      });
+    }
+    if (filters.role) {
+      conditions.push({
+        UserRole: {
+          every: { role: { name: { contains: filters?.role } } },
+        },
+      });
+    }
+
     const users = await db.user.findMany({
       where: {
-        AND: [
-          { name: { contains: filters?.name } },
-          { Company: { every: { name: { contains: filters?.company } } } },
-          {
-            UserRole: {
-              every: { role: { name: { contains: filters?.role } } },
-            },
-          },
-        ],
+        AND: conditions,
       },
       include: {
         UserRole: {

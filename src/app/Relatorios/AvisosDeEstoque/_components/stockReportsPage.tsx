@@ -55,24 +55,24 @@ export default function StockReportsPage() {
   const [filterProduce, setFilterProduce] = useState(false);
   const [filterDontProduce, setFilterDontProduce] = useState(false);
 
+  const areAllFiltersEmpty =
+    inputCode === "" &&
+    inputProduct === "" &&
+    selectSuppliers.length === 0 &&
+    selectStock === "" &&
+    selectAddress === "" &&
+    selectControlType === "" &&
+    selectCategory === "" &&
+    selectSector === "" &&
+    selectStatus === "" &&
+    selectBuyDay === "";
+
   const {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAllWhere.useQuery({
-    filters: {
-      code: inputCode,
-      controlType: selectControlType,
-      name: inputProduct,
-      productCategory: selectCategory,
-      sectorOfUse: selectSector,
-      stock: selectStock,
-      suppliers: selectSuppliers,
-      status: selectStatus,
-      buyDay: selectBuyDay,
-    },
-  });
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
+  } = api.product.getAll.useQuery();
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
@@ -84,6 +84,86 @@ export default function StockReportsPage() {
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
     });
+
+  const filteredProducts = areAllFiltersEmpty
+    ? []
+    : products.filter((product) => {
+        // Se nenhum estoque for selecionado, não mostrar nenhum produto
+        if (selectStock === "") {
+          return false;
+        }
+        const stockCurrent = Number(product.currentStock);
+        const stockMin = Number(product.minimunStock);
+        const stockThreshold = stockMin + stockMin * 0.1; // 110% do estoque mínimo
+        // Verifica se o produto está com estoque baixo
+        const isLowStock = stockCurrent > 0 && stockCurrent <= stockThreshold;
+        const isNoStock = stockCurrent === 0;
+        const isAdequateStock = stockCurrent > stockThreshold;
+        // Filtros auxiliares
+        const matchesCode =
+          inputCode === "" || product.code.includes(inputCode);
+        const matchesProduct =
+          inputProduct === "" ||
+          product.name.toLowerCase().includes(inputProduct.toLowerCase());
+        const matchesSupplier =
+          selectSuppliers.length === 0 ||
+          product.ProductSupplier.some((supplier) =>
+            selectSuppliers.includes(supplier.supplier.name),
+          );
+        const matchesStock =
+          selectStock === "" ||
+          product.shelf?.cabinet.StockCabinet.some(
+            (stockCabinet) =>
+              stockCabinet.stock.name.toLowerCase() ===
+              selectStock.toLowerCase(),
+          );
+        const matchesAddress =
+          selectAddress === "" ||
+          `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
+            .toLowerCase()
+            .includes(selectAddress.toLowerCase());
+        const matchesControlType =
+          selectControlType === "" ||
+          product.controlType?.name === selectControlType;
+        const matchesCategory =
+          selectCategory === "" || product.category?.name === selectCategory;
+        const matchesSector =
+          selectSector === "" || product.sectorOfUse?.name === selectSector;
+        const matchesStatus =
+          selectStatus === "" || product.status === selectStatus;
+        const matchesBuyDay =
+          selectBuyDay === "" || product.buyDay === selectBuyDay;
+        const filterConditions = []; // Filtros de estoque com base nos botões e checkboxes
+        if (lowStock) filterConditions.push(isLowStock);
+        if (noStock) filterConditions.push(isNoStock);
+        if (filterBuy) filterConditions.push(isLowStock || isNoStock);
+        if (filterDontBuy) filterConditions.push(isAdequateStock);
+        if (filterProduce)
+          filterConditions.push(
+            (isLowStock || isNoStock) &&
+              product.controlType?.name === "Produtos de Produção",
+          );
+        if (filterDontProduce)
+          filterConditions.push(
+            isAdequateStock &&
+              product.controlType?.name === "Produtos de Produção",
+          );
+        const satisfiesStockFilters =
+          filterConditions.length === 0 || filterConditions.some(Boolean);
+        return (
+          satisfiesStockFilters &&
+          matchesCode &&
+          matchesProduct &&
+          matchesSupplier &&
+          matchesStock &&
+          matchesAddress &&
+          matchesControlType &&
+          matchesCategory &&
+          matchesSector &&
+          matchesStatus &&
+          matchesBuyDay
+        );
+      });
 
   const allProducts = products.filter((product) => {
     const matchesStock = product.shelf?.cabinet.StockCabinet.some(
@@ -135,7 +215,9 @@ export default function StockReportsPage() {
   }
 
   function handleSelectAll() {
-    const allFilteredProductCodes = products.map((product) => product.code);
+    const allFilteredProductCodes = filteredProducts.map(
+      (product) => product.code,
+    );
 
     setSelectedProducts((prevSelectedProducts) => [
       ...new Set([...prevSelectedProducts, ...allFilteredProductCodes]),
@@ -518,6 +600,30 @@ export default function StockReportsPage() {
       ),
     })),
   };
+
+  function alphanumericSort(a: string, b: string) {
+    const regex = /(\d+)|(\D+)/g;
+    const aParts = a.match(regex) ?? [];
+    const bParts = b.match(regex) ?? [];
+
+    for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+      const aPart = aParts[i] ?? "";
+      const bPart = bParts[i] ?? "";
+
+      // Se a parte for um número, faça comparação numérica
+      if (/\d/.test(aPart) && /\d/.test(bPart)) {
+        const diff = parseInt(aPart, 10) - parseInt(bPart, 10);
+        if (diff !== 0) return diff;
+      }
+
+      // Se não for número, faça comparação lexicográfica
+      if (aPart !== bPart) {
+        return aPart.localeCompare(bPart);
+      }
+    }
+
+    return 0;
+  }
 
   return (
     <TableComponent>
@@ -912,70 +1018,77 @@ export default function StockReportsPage() {
             </TableComponent.Value>
           </TableComponent.Line>
         )}
-        {!isLoading && !error && products.length === 0 && (
-          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-            <TableComponent.Value>
-              Nenhum produto encontrado com os filtros aplicados
-            </TableComponent.Value>
-          </TableComponent.Line>
-        )}
+        {!areAllFiltersEmpty &&
+          !isLoading &&
+          !error &&
+          filteredProducts.length === 0 && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum produto encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
         {!isLoading &&
           !error &&
-          products.map((product, index) => (
-            <TableComponent.Line
-              className={`grid-cols-[85px_70px_1fr_120px_90px_90px_90px_130px] gap-4 md:gap-8 ${
-                index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-              }`}
-              key={index}
-            >
-              <TableComponent.Value className="text-center">
-                <Checkbox
-                  checked={selectedProducts.includes(product.code)}
-                  onCheckedChange={(checked) =>
-                    handleProductSelection(product.code, checked)
-                  }
-                />
-              </TableComponent.Value>
-              <TableComponent.Value className="text-center">
-                {product.code}
-              </TableComponent.Value>
-              <TableComponent.Value>{product.name}</TableComponent.Value>
-              <TableComponent.Value>
-                {product.unit.name} ({product.unit.abbreviation})
-              </TableComponent.Value>
-              <TableComponent.Value className="text-center">
-                {product.currentStock}
-              </TableComponent.Value>
-              <TableComponent.Value className="text-center">
-                {product.minimunStock}
-              </TableComponent.Value>
-              <TableComponent.Value className="text-center">
-                {Number(product.currentStock) - Number(product.minimunStock) > 0
-                  ? `+${Number(product.currentStock) - Number(product.minimunStock)}`
-                  : Number(product.currentStock) - Number(product.minimunStock)}
-              </TableComponent.Value>
+          filteredProducts
+            .sort((a, b) => alphanumericSort(a.code, b.code))
+            .map((product, index) => (
+              <TableComponent.Line
+                className={`grid-cols-[85px_70px_1fr_120px_90px_90px_90px_130px] gap-4 md:gap-8 ${
+                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                }`}
+                key={index}
+              >
+                <TableComponent.Value className="text-center">
+                  <Checkbox
+                    checked={selectedProducts.includes(product.code)}
+                    onCheckedChange={(checked) =>
+                      handleProductSelection(product.code, checked)
+                    }
+                  />
+                </TableComponent.Value>
+                <TableComponent.Value className="text-center">
+                  {product.code}
+                </TableComponent.Value>
+                <TableComponent.Value>{product.name}</TableComponent.Value>
+                <TableComponent.Value>
+                  {product.unit.name} ({product.unit.abbreviation})
+                </TableComponent.Value>
+                <TableComponent.Value className="text-center">
+                  {product.currentStock}
+                </TableComponent.Value>
+                <TableComponent.Value className="text-center">
+                  {product.minimunStock}
+                </TableComponent.Value>
+                <TableComponent.Value className="text-center">
+                  {Number(product.currentStock) - Number(product.minimunStock) >
+                  0
+                    ? `+${Number(product.currentStock) - Number(product.minimunStock)}`
+                    : Number(product.currentStock) -
+                      Number(product.minimunStock)}
+                </TableComponent.Value>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                    Detalhes
-                  </Button>
-                </DialogTrigger>
-                <DialogContent
-                  aria-describedby={undefined}
-                  className="sm:max-w-4xl"
-                >
-                  <DialogHeader>
-                    <DialogTitle>Informações do Produto:</DialogTitle>
-                  </DialogHeader>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                      Detalhes
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent
+                    aria-describedby={undefined}
+                    className="sm:max-w-4xl"
+                  >
+                    <DialogHeader>
+                      <DialogTitle>Informações do Produto:</DialogTitle>
+                    </DialogHeader>
 
-                  <DialogDescription className="text-black">
-                    <ProductDetails product={product} />
-                  </DialogDescription>
-                </DialogContent>
-              </Dialog>
-            </TableComponent.Line>
-          ))}
+                    <DialogDescription className="text-black">
+                      <ProductDetails product={product} />
+                    </DialogDescription>
+                  </DialogContent>
+                </Dialog>
+              </TableComponent.Line>
+            ))}
       </TableComponent.Table>
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">

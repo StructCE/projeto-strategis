@@ -68,23 +68,7 @@ export default function PaymentsHistoryPage() {
     data: invoices = [],
     error,
     isLoading,
-  } = api.invoice.getAll.useQuery({
-    filters: {
-      bank: selectBank,
-      company: selectCompany,
-      description: inputDescription,
-      documentDate: dateDocument,
-      expenseType: selectExpenseType,
-      paymentDate: datePayment,
-      status: selectStatus,
-      supplier: selectSupplier,
-      deadlineDate: dateDeadline,
-      accountPlan: selectAccountPlan,
-      group: selectGroup,
-      project: selectProject,
-      documentType: selectDocumentType,
-    },
-  });
+  } = api.invoice.getAll.useQuery();
 
   const { data: companies = [] } = api.company.getAllCompanies.useQuery();
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({
@@ -98,6 +82,74 @@ export default function PaymentsHistoryPage() {
     api.generalParameters.documentType.getAll.useQuery();
   const { data: accountPlans = [] } =
     api.generalParameters.accountPlan.getAll.useQuery();
+
+  const filteredInvoices = invoices.filter((invoice) => {
+    const matchesConfirmedStatus = invoice.confirmedStatus != "Rejeitada";
+    const matchesDateDocument =
+      !dateDocument ||
+      (invoice.documentDate.getDate() === dateDocument.getDate() &&
+        invoice.documentDate.getMonth() === dateDocument.getMonth() + 1 &&
+        invoice.documentDate.getFullYear() === dateDocument.getFullYear());
+    const matchesDateDeadline =
+      !dateDeadline ||
+      (invoice.deadlineDate.getDate() === dateDeadline.getDate() &&
+        invoice.deadlineDate.getMonth() === dateDeadline.getMonth() + 1 &&
+        invoice.deadlineDate.getFullYear() === dateDeadline.getFullYear());
+    const matchesDatePayment =
+      !datePayment ||
+      (invoice.paymentDate &&
+        invoice.paymentDate.getDate() === datePayment.getDate() &&
+        invoice.paymentDate.getMonth() === datePayment.getMonth() + 1 &&
+        invoice.paymentDate.getFullYear() === datePayment.getFullYear());
+    const matchesDescription =
+      inputDescription === "" ||
+      invoice.documentNumber.includes(inputDescription) ||
+      invoice.invoiceValue.toString().includes(inputDescription) ||
+      invoice.invoiceProducts.some((invoiceProduct) =>
+        invoiceProduct.name.includes(inputDescription),
+      );
+    const matchesBank = selectBank === "" || invoice.bank?.name === selectBank;
+    const matchesSupplier =
+      selectSupplier === "" || invoice.supplier.name === selectSupplier;
+    const matchesCompany =
+      selectCompany === "" || invoice.company.name === selectCompany;
+    const matchesTypeOfStatus =
+      selectTypeOfStatus === "" || invoice.payedStatus === selectTypeOfStatus;
+    const invoiceStatus =
+      invoice.deadlineDate && new Date() <= invoice.deadlineDate
+        ? "Em Dia"
+        : "Atrasado";
+    const matchesStatus = selectStatus === "" || invoiceStatus === selectStatus;
+    const matchesAccountPlan =
+      selectAccountPlan === "" ||
+      invoice.accountPlan?.name === selectAccountPlan;
+    const matchesGroup =
+      selectGroup === "" || invoice.group?.name === selectGroup;
+    const matchesProject =
+      selectProject === "" || invoice.project?.name === selectProject;
+    const matchesExpenseType =
+      selectExpenseType === "" || invoice.expenseType === selectExpenseType;
+    const matchesDocumentType =
+      selectDocumentType === "" ||
+      invoice.documentType?.name === selectDocumentType;
+    return (
+      matchesConfirmedStatus &&
+      matchesDateDocument &&
+      matchesDateDeadline &&
+      matchesDatePayment &&
+      matchesDescription &&
+      matchesBank &&
+      matchesSupplier &&
+      matchesCompany &&
+      matchesTypeOfStatus &&
+      matchesStatus &&
+      matchesAccountPlan &&
+      matchesGroup &&
+      matchesProject &&
+      matchesExpenseType &&
+      matchesDocumentType
+    );
+  });
 
   // console.log(invoices);
 
@@ -128,7 +180,6 @@ export default function PaymentsHistoryPage() {
     ]);
   }
 
-  // Deselecionar tudo
   function handleDeselectAll() {
     setSelectedPayments([]);
   }
@@ -166,12 +217,12 @@ export default function PaymentsHistoryPage() {
       .map((product) => capitalizeFirstLetter(product.name))
       .join(",");
 
-    return `NF:${nota_fiscal}-VG:${valor
+    return `NF:${nota_fiscal} | ${valor
       .toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
       })
-      .replace(/\s/g, "")}-[${productsString}]`;
+      .replace(/\s/g, "")} | [${productsString}]`;
   }
 
   interface PaymentReportData {
@@ -684,8 +735,8 @@ export default function PaymentsHistoryPage() {
           </TableComponent.Line>
         )}
         {invoices?.length > 0 && !isLoading && !error ? (
-          invoices?.length > 0 ? (
-            invoices
+          filteredInvoices?.length > 0 ? (
+            filteredInvoices
               .sort(
                 (a, b) => a.documentDate.getTime() - b.documentDate.getTime(),
               )

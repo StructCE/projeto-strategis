@@ -34,6 +34,7 @@ export default function ManageAcceptedRequestsTable() {
     filters: {
       date: date,
       requestResponsible: inputResponsible,
+      status: "Confirmada",
     },
   });
 
@@ -55,7 +56,7 @@ export default function ManageAcceptedRequestsTable() {
             setDate={setDate}
             open={open}
             setOpen={setOpen}
-            placeholder="Data"
+            placeholder="Selecione uma data"
           />
         </Filter>
 

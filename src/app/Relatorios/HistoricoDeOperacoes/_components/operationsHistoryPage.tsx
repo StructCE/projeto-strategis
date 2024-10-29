@@ -25,14 +25,18 @@ export default function OperationsHistoryPage() {
   const [open, setOpen] = useState(false);
   const [inputOperator, setInputOperator] = useState("");
   const [selectCompany, setSelectCompany] = useState("");
-  const [selectOperation, setSelectOperation] = useState("");
+  // const [selectOperation, setSelectOperation] = useState("");
 
   const companies = api.company.getAllCompanies.useQuery();
-  const operations = api.operation.getAllOperations.useQuery({
+  const {
+    data: operations = [],
+    error,
+    isLoading,
+  } = api.operation.getAllOperations.useQuery({
     filters: {
       date: date,
       company: selectCompany,
-      operationType: selectOperation,
+      // operationType: selectOperation,
       operator: inputOperator,
     },
   });
@@ -94,7 +98,7 @@ export default function OperationsHistoryPage() {
           </Filter.Select>
         </Filter>
 
-        <Filter>
+        {/* <Filter>
           <Filter.Icon
             icon={({ className }: { className: string }) => (
               <Settings className={className} />
@@ -105,14 +109,14 @@ export default function OperationsHistoryPage() {
             state={selectOperation}
             setState={setSelectOperation}
           >
-            {operations.data?.map((operation, index) => (
+            {operations.map((operation, index) => (
               <Filter.SelectItems
                 value={operation.description}
                 key={index}
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
-        </Filter>
+        </Filter> */}
 
         <TooltipProvider delayDuration={300}>
           <Tooltip>
@@ -123,7 +127,7 @@ export default function OperationsHistoryPage() {
                   setDate(undefined);
                   setInputOperator("");
                   setSelectCompany("");
-                  setSelectOperation("");
+                  // setSelectOperation("");
                 }}
               />
             </TooltipTrigger>
@@ -142,57 +146,84 @@ export default function OperationsHistoryPage() {
           <TableComponent.ValueTitle>Descrição</TableComponent.ValueTitle>
         </TableComponent.LineTitle>
 
-        {operations.data?.map((operation, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[1fr_1fr_1fr_2fr] gap-8 ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
-              {`${String(operation.date.getDate()).padStart(2, "0")}/${String(operation.date.getMonth()).padStart(2, "0")}/${String(operation.date.getFullYear()).padStart(2, "0")}`}
+              Erro ao mostrar operações: {error.message}
             </TableComponent.Value>
-            <TableComponent.Value>{operation.company}</TableComponent.Value>
-            <TableComponent.Value>{operation.responsible}</TableComponent.Value>
-            <TableComponent.Value>{operation.description}</TableComponent.Value>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
-                aria-describedby={undefined}
-              >
-                <DialogHeader>
-                  <DialogTitle className="w-fit pb-1.5">
-                    Informações da Requisição de Mercadorias
-                  </DialogTitle>
-                  <DialogDescription className="w-fit text-base text-black">
-                    <p className="w-fit">
-                      <span className="font-semibold">Data da Operação:</span>{" "}
-                      {`${String(operation.date.getDate()).padStart(2, "0")}/${String(operation.date.getMonth()).padStart(2, "0")}/${String(operation.date.getFullYear()).padStart(2, "0")}`}
-                    </p>
-                    <p className="w-fit">
-                      <span className="font-semibold">Esmpresa:</span>{" "}
-                      {operation.company}
-                    </p>
-                    <p className="w-fit">
-                      <span className="font-semibold">Operador:</span>{" "}
-                      {operation.responsible}
-                    </p>
-                    <p className="w-fit">
-                      <span className="font-semibold">Operação:</span>{" "}
-                      {operation.description}
-                    </p>
-                    {/* <p className="w-fit font-semibold">Produtos solicitados:</p> ACHO MELHOR NAO TER ISSO AQ*/}
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
           </TableComponent.Line>
-        ))}
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>Carregando operações...</TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {operations?.length > 0 && !isLoading && !error
+          ? operations.map((operation, index) => (
+              <TableComponent.Line
+                className={`grid-cols-[1fr_1fr_1fr_2fr] gap-8 ${
+                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                }`}
+                key={index}
+              >
+                <TableComponent.Value>
+                  {`${String(operation.date.getDate()).padStart(2, "0")}/${String(operation.date.getMonth()).padStart(2, "0")}/${String(operation.date.getFullYear()).padStart(2, "0")}`}
+                </TableComponent.Value>
+                <TableComponent.Value>{operation.company}</TableComponent.Value>
+                <TableComponent.Value>
+                  {operation.responsible}
+                </TableComponent.Value>
+                <TableComponent.Value>
+                  {operation.description}
+                </TableComponent.Value>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                      Detalhes
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent
+                    className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
+                    aria-describedby={undefined}
+                  >
+                    <DialogHeader>
+                      <DialogTitle className="w-fit pb-1.5">
+                        Informações da Requisição de Mercadorias
+                      </DialogTitle>
+                      <DialogDescription className="w-fit text-base text-black">
+                        <p className="w-fit">
+                          <span className="font-semibold">
+                            Data da Operação:
+                          </span>{" "}
+                          {`${String(operation.date.getDate()).padStart(2, "0")}/${String(operation.date.getMonth()).padStart(2, "0")}/${String(operation.date.getFullYear()).padStart(2, "0")}`}
+                        </p>
+                        <p className="w-fit">
+                          <span className="font-semibold">Esmpresa:</span>{" "}
+                          {operation.company}
+                        </p>
+                        <p className="w-fit">
+                          <span className="font-semibold">Operador:</span>{" "}
+                          {operation.responsible}
+                        </p>
+                        <p className="w-fit">
+                          <span className="font-semibold">Operação:</span>{" "}
+                          {operation.description}
+                        </p>
+                        {/* <p className="w-fit font-semibold">Produtos solicitados:</p> ACHO MELHOR NAO TER ISSO AQ*/}
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </TableComponent.Line>
+            ))
+          : !isLoading &&
+            !error && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum pagamento encontrado
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
       </TableComponent.Table>
     </TableComponent>
   );

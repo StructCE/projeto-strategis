@@ -15,7 +15,6 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Tooltip,
   TooltipContent,
@@ -29,7 +28,7 @@ import { ProductEdit } from "./editProducts/productEdit";
 export default function ManageProductsTable() {
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
-  const [selectSuppliers, setSelectSuppliers] = useState<string[]>([]);
+  const [selectSupplier, setSelectSupplier] = useState("");
   const [selectStock, setSelectStock] = useState("");
   const [selectAddress, setSelectAddress] = useState("");
   const [selectControlType, setSelectControlType] = useState("");
@@ -53,12 +52,12 @@ export default function ManageProductsTable() {
         sectorOfUse: selectSector,
         status: selectStatus,
         stock: selectStock,
-        suppliers: selectSuppliers,
+        supplier: selectSupplier,
       },
     },
     { refetchInterval: 10000 },
   );
-  console.log(products);
+  // console.log(products);
 
   const { data: suppliers = [] } = api.supplier.getAll.useQuery();
   const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
@@ -236,21 +235,25 @@ export default function ManageProductsTable() {
           />
         </Filter>
 
-        <div className="font-inter m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] font-normal text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
-          <MultiSelect
-            FilterIcon={Search}
-            options={suppliers.flatMap((supplier) => ({
-              label: supplier.name,
-              value: supplier.name,
-            }))}
-            onValueChange={setSelectSuppliers}
-            defaultValue={selectSuppliers}
-            placeholder="Fornecedores"
-            variant="inverted"
-            maxCount={2}
-            className="font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] font-normal text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
           />
-        </div>
+          <Filter.Select
+            placeholder="Fornecedor"
+            state={selectSupplier}
+            setState={setSelectSupplier}
+          >
+            {suppliers.map((supplier, index) => (
+              <Filter.SelectItems
+                key={index}
+                value={supplier.name}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
 
         <Filter>
           <Filter.Icon
@@ -412,7 +415,7 @@ export default function ManageProductsTable() {
                 onClick={() => {
                   setInputCode("");
                   setInputProduct("");
-                  setSelectSuppliers([]);
+                  setSelectSupplier("");
                   setSelectStock("");
                   setSelectAddress("");
                   setSelectControlType("");

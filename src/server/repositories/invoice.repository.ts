@@ -4,98 +4,178 @@ import type { InvoiceRepositoryInterfaces } from "../interfaces/invoice/invoice.
 async function getAll(props: InvoiceRepositoryInterfaces["GetAllProps"]) {
   if (props) {
     const { filters } = props;
+    const conditions = [];
+
+    if (filters?.company) {
+      conditions.push({
+        company: {
+          name: { contains: filters.company },
+        },
+      });
+    }
+    if (filters?.supplier) {
+      conditions.push({
+        InvoiceProduct: {
+          every: {
+            productSupplier: {
+              supplier: { name: { contains: filters.supplier } },
+            },
+          },
+        },
+      });
+    }
+    if (filters?.nfNumber) {
+      conditions.push({
+        documentNumber: { contains: filters.nfNumber },
+      });
+    }
+    if (filters?.status) {
+      conditions.push({
+        confirmedStatus: { contains: filters.status },
+      });
+    }
+    if (filters?.bank) {
+      conditions.push({
+        bank: { name: { contains: filters.bank } },
+      });
+    }
+    if (filters?.startDocumentDate) {
+      const startDate =
+        new Date(
+          filters.startDocumentDate.getFullYear(),
+          filters.startDocumentDate.getMonth() + 1, // Já está correto pois getMonth() retorna de 0 a 11
+          filters.startDocumentDate.getDate(),
+        )
+          .toISOString()
+          .split("T")[0] + "T00:00:00.000Z";
+
+      conditions.push({
+        documentDate: {
+          gte: startDate,
+        },
+      });
+    }
+
+    if (filters?.endDocumentDate) {
+      const endDate =
+        new Date(
+          filters.endDocumentDate.getFullYear(),
+          filters.endDocumentDate.getMonth() + 1,
+          filters.endDocumentDate.getDate(),
+        )
+          .toISOString()
+          .split("T")[0] + "T23:59:59.999Z";
+
+      conditions.push({
+        documentDate: {
+          lte: endDate,
+        },
+      });
+    }
+    if (filters?.expenseType) {
+      conditions.push({
+        expenseType: { contains: filters.expenseType },
+      });
+    }
+
+    if (filters?.documentDate) {
+      conditions.push(
+        {
+          documentDate: {
+            gte: filters?.documentDate
+              ? new Date(
+                  `${filters?.documentDate.getFullYear()}-${filters?.documentDate.getMonth() + 1}-${filters?.documentDate?.getDate()}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+        {
+          documentDate: {
+            lt: filters?.documentDate
+              ? new Date(
+                  `${filters?.documentDate.getFullYear()}-${filters?.documentDate.getMonth() + 1}-${filters?.documentDate.getDate() + 1}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+      );
+    }
+    if (filters?.paymentDate) {
+      conditions.push(
+        {
+          paymentDate: {
+            gte: filters?.paymentDate
+              ? new Date(
+                  `${filters?.paymentDate.getFullYear()}-${filters?.paymentDate.getMonth() + 1}-${filters?.paymentDate?.getDate()}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+        {
+          paymentDate: {
+            lt: filters?.paymentDate
+              ? new Date(
+                  `${filters?.paymentDate.getFullYear()}-${filters?.paymentDate.getMonth() + 1}-${filters?.paymentDate.getDate() + 1}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+      );
+    }
+    if (filters?.deadlineDate) {
+      conditions.push(
+        {
+          deadlineDate: {
+            gte: filters?.deadlineDate
+              ? new Date(
+                  `${filters?.deadlineDate.getFullYear()}-${filters?.deadlineDate.getMonth() + 1}-${filters?.deadlineDate?.getDate()}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+        {
+          deadlineDate: {
+            lt: filters?.deadlineDate
+              ? new Date(
+                  `${filters?.deadlineDate.getFullYear()}-${filters?.deadlineDate.getMonth() + 1}-${filters?.deadlineDate.getDate() + 1}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+      );
+    }
+
+    if (filters?.supplier) {
+      conditions.push({
+        supplier: { name: { contains: filters.supplier } },
+      });
+    }
+    if (filters?.accountPlan) {
+      conditions.push({
+        account: {
+          accountPlan: { name: { contains: filters.accountPlan } },
+        },
+      });
+    }
+    if (filters?.group) {
+      conditions.push({
+        group: { name: { contains: filters.group } },
+      });
+    }
+    if (filters?.project) {
+      conditions.push({
+        project: { name: { contains: filters.project } },
+      });
+    }
+    if (filters?.documentType) {
+      conditions.push({
+        documentType: { name: { contains: filters.documentType } },
+      });
+    }
+
     const invoices = await db.invoice.findMany({
       where: {
-        AND: [
-          {
-            documentDate: {
-              gte: filters?.startDate,
-              lte: filters?.endDate,
-            },
-          },
-          {
-            company: {
-              name: { contains: filters?.company },
-            },
-          },
-          {
-            InvoiceProduct: {
-              every: {
-                productSupplier: {
-                  supplier: { name: { contains: filters?.supplier } },
-                },
-              },
-            },
-          },
-          { documentNumber: { contains: filters?.nfNumber } },
-          { confirmedStatus: { contains: filters?.status } },
-          { bank: { name: { contains: filters?.bank } } },
-          {
-            documentDate: {
-              gte: filters?.documentDate
-                ? new Date(
-                    `${filters?.documentDate.getFullYear()}-${filters?.documentDate.getMonth() + 1}-${filters?.documentDate?.getDate()}T00:00:00.000Z`
-                  )
-                : undefined,
-            },
-          },
-          {
-            documentDate: {
-              lt: filters?.documentDate
-                ? new Date(
-                    `${filters?.documentDate.getFullYear()}-${filters?.documentDate.getMonth() + 1}-${filters?.documentDate.getDate() + 1}T00:00:00.000Z`
-                  )
-                : undefined,
-            },
-          },
-          { expenseType: { contains: filters?.expenseType } },
-          {
-            paymentDate: {
-              gte: filters?.paymentDate
-                ? new Date(
-                    `${filters?.paymentDate.getFullYear()}-${filters?.paymentDate.getMonth() + 1}-${filters?.paymentDate?.getDate()}T00:00:00.000Z`
-                  )
-                : undefined,
-            },
-          },
-          {
-            paymentDate: {
-              lt: filters?.paymentDate
-                ? new Date(
-                    `${filters?.paymentDate.getFullYear()}-${filters?.paymentDate.getMonth() + 1}-${filters?.paymentDate.getDate() + 1}T00:00:00.000Z`
-                  )
-                : undefined,
-            },
-          },
-          { confirmedStatus: { contains: filters?.status } },
-          { supplier: { name: { contains: filters?.supplier } } },
-          {
-            deadlineDate: {
-              gte: filters?.deadlineDate
-                ? new Date(
-                    `${filters?.deadlineDate.getFullYear()}-${filters?.deadlineDate.getMonth() + 1}-${filters?.deadlineDate?.getDate()}T00:00:00.000Z`
-                  )
-                : undefined,
-            },
-          },
-          {
-            deadlineDate: {
-              lt: filters?.deadlineDate
-                ? new Date(
-                    `${filters?.deadlineDate.getFullYear()}-${filters?.deadlineDate.getMonth() + 1}-${filters?.deadlineDate.getDate() + 1}T00:00:00.000Z`
-                  )
-                : undefined,
-            },
-          },
-          {
-            account: {
-              accountPlan: { name: { contains: filters?.accountPlan } },
-            },
-          },
-          { group: { name: { contains: filters?.group } } },
-          { project: { name: { contains: filters?.project } } },
-          { documentType: { name: { contains: filters?.documentType } } },
-        ],
+        AND: conditions,
       },
       include: {
         account: { include: { accountPlan: { include: { accounts: true } } } },
@@ -228,7 +308,7 @@ async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
         });
       }
       return registeredInvoiceProduct;
-    }
+    },
   );
 
   // Aguarda o registro de todos os produtos
@@ -238,7 +318,7 @@ async function register(props: InvoiceRepositoryInterfaces["RegisterProps"]) {
 }
 
 async function autoRegister(
-  props: InvoiceRepositoryInterfaces["AutoRegisterProps"]
+  props: InvoiceRepositoryInterfaces["AutoRegisterProps"],
 ) {
   const { company, supplier, invoiceProducts, ...invoiceData } = props;
 

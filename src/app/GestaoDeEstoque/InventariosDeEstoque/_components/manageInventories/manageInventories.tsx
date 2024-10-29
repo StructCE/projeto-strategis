@@ -49,7 +49,7 @@ export default function ManageInventoriesTable() {
             setDate={setDate}
             open={open}
             setOpen={setOpen}
-            placeholder="Data"
+            placeholder="Selecione uma data"
           />
         </Filter>
 

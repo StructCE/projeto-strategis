@@ -1,14 +1,18 @@
-
 import { db } from "../db";
 import type { InventoryRepositoryInterfaces } from "../interfaces/inventory/inventory.repository.interfaces";
 
 async function getAll(props: InventoryRepositoryInterfaces["GetAllProps"]) {
   if (props) {
-
     const { filters } = props;
-    const inventories = await db.inventory.findMany({
-    where: {
-      AND: [
+    const conditions = [];
+
+    if (filters?.responsible) {
+      conditions.push({
+        responsible: { user: { name: { contains: filters?.responsible } } },
+      });
+    }
+    if (filters?.date) {
+      conditions.push(
         {
           date: {
             gte: filters?.date
@@ -27,9 +31,43 @@ async function getAll(props: InventoryRepositoryInterfaces["GetAllProps"]) {
               : undefined,
           },
         },
-        { responsible: { user: {name: {contains: filters?.responsible}}}},
-      ],
-    },
+      );
+    }
+
+    const inventories = await db.inventory.findMany({
+      where: {
+        AND: conditions,
+      },
+      include: {
+        stock: true,
+        responsible: { include: { user: true } },
+        ProductInventory: {
+          include: {
+            product: {
+              include: {
+                unit: true,
+                shelf: {
+                  include: {
+                    cabinet: {
+                      include: {
+                        StockCabinet: {
+                          include: {
+                            stock: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+    return inventories;
+  }
+  return await db.inventory.findMany({
     include: {
       stock: true,
       responsible: { include: { user: true } },
@@ -57,42 +95,11 @@ async function getAll(props: InventoryRepositoryInterfaces["GetAllProps"]) {
       },
     },
   });
-  return inventories;
-}
-return await db.inventory.findMany({
-   include: {
-     stock: true,
-     responsible: { include: { user: true } },
-     ProductInventory: {
-       include: {
-         product: {
-           include: {
-             unit: true,
-             shelf: {
-               include: {
-                 cabinet: {
-                   include: {
-                     StockCabinet: {
-                       include: {
-                         stock: true,
-                       },
-                     },
-                   },
-                 },
-               },
-             },
-           },
-         },
-       },
-     },
-   },
-  
- })
 }
 
 async function register(props: InventoryRepositoryInterfaces["RegisterProps"]) {
   const { inventoryProducts, responsibleId: userId, ...inventoryData } = props;
-  
+
   // Encontra o UserRole correspondente ao userId
   const userRole = await db.userRole.findFirst({
     where: {

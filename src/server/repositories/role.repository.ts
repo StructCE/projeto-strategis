@@ -4,9 +4,15 @@ import type { RoleRepositoryInterfaces } from "../interfaces/role/role.repositor
 async function getAll(props: RoleRepositoryInterfaces["GetAllProps"]) {
   if (props) {
     const { filters } = props;
+    const conditions = [];
+
+    if (filters.name) {
+      conditions.push({ name: { contains: filters.name } });
+    }
+
     const roleWithModules = await db.role.findMany({
       where: {
-        AND: [{ name: { contains: filters.name } }],
+        AND: conditions,
       },
       include: {
         RoleModule: { include: { module: true } },

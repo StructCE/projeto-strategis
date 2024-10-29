@@ -139,7 +139,7 @@ export default function ManageAdjustmentsTable() {
                   }`}
                   key={index}
                 >
-                  <TableComponent.Value>{`${adjustment.date.getDate()}/${adjustment.date.getMonth()}/${adjustment.date.getFullYear()}`}</TableComponent.Value>
+                  <TableComponent.Value>{`${String(adjustment.date.getDate()).padStart(2, "0")}/${String(adjustment.date.getMonth()).padStart(2, "0")}/${String(adjustment.date.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
                   <TableComponent.Value>
                     {adjustment.responsibleName}
                   </TableComponent.Value>

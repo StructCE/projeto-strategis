@@ -9,7 +9,7 @@ const getAllProps = z
       productCategory: z.string().optional(),
       sectorOfUse: z.string().optional(),
       code: z.string().optional(),
-      suppliers: z.array(z.string()).optional(),
+      supplier: z.string().optional(),
       status: z.string().optional(),
       buyDay: z.string().optional(),
     }),

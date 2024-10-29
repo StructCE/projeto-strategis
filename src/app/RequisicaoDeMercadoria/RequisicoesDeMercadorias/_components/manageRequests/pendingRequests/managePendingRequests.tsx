@@ -34,6 +34,7 @@ export default function ManagePendingRequestsTable() {
     filters: {
       date: date,
       requestResponsible: inputResponsible,
+      status: "Esperando Confirmação",
     },
   });
 
@@ -55,7 +56,7 @@ export default function ManagePendingRequestsTable() {
             setDate={setDate}
             open={open}
             setOpen={setOpen}
-            placeholder="Data"
+            placeholder="Selecione uma data"
           />
         </Filter>
 

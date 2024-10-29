@@ -4,23 +4,29 @@ import type { StockRepositoryInterfaces } from "../interfaces/stock/stock.reposi
 async function getAll(props: StockRepositoryInterfaces["GetAllProps"]) {
   if (props) {
     const { filters } = props;
+    const conditions = [];
+
+    if (filters.name) {
+      conditions.push({ name: { contains: filters.name } });
+    }
+    if (filters.company) {
+      conditions.push({
+        company: {
+          name: { contains: filters.company },
+        },
+      });
+    }
+    if (filters.managerName) {
+      conditions.push({
+        legalResponsible: {
+          user: { name: { contains: filters.managerName } },
+        },
+      });
+    }
+
     const stocks = await db.stock.findMany({
       where: {
-        AND: [
-          {
-            name: { contains: filters.name },
-          },
-          {
-            company: {
-              name: { contains: filters.company },
-            },
-          },
-          {
-            legalResponsible: {
-              user: { name: { contains: filters.managerName } },
-            },
-          },
-        ],
+        AND: conditions,
       },
       include: {
         legalResponsible: {

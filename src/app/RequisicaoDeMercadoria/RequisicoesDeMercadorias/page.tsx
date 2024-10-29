@@ -29,25 +29,28 @@ export default function RequestsHistory() {
         <TableComponent.Title>
           Requisições de Mercadorias do Estoque
         </TableComponent.Title>
-        <Tabs defaultValue="pending" className="w-fill h-fill">
+        <Tabs defaultValue="Esperando Confirmação" className="w-fill h-fill">
           <TabsList className="my-3 flex h-fit w-full justify-start gap-4 bg-[#DBDBDB] p-2">
-            <TabsTrigger className="py-1 text-[16px]" value="pending">
+            <TabsTrigger
+              className="py-1 text-[16px]"
+              value="Esperando Confirmação"
+            >
               Pendentes
             </TabsTrigger>
-            <TabsTrigger className="py-1 text-[16px]" value="accepted">
+            <TabsTrigger className="py-1 text-[16px]" value="Confirmada">
               Confirmadas
             </TabsTrigger>
-            <TabsTrigger className="py-1 text-[16px]" value="denied">
+            <TabsTrigger className="py-1 text-[16px]" value="Rejeitada">
               Rejeitadas
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="pending">
+          <TabsContent value="Esperando Confirmação">
             <ManagePendingRequestsTable />
           </TabsContent>
-          <TabsContent value="accepted">
+          <TabsContent value="Confirmada">
             <ManageAcceptedRequestsTable />
           </TabsContent>
-          <TabsContent value="denied">
+          <TabsContent value="Rejeitada">
             <ManageRejectedRequestsTable />
           </TabsContent>
         </Tabs>

@@ -68,16 +68,55 @@ export default function RequestProductsPage() {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAllWhere.useQuery({
-    filters: {
-      code: inputCode,
-      controlType: selectControlType,
-      name: inputProduct,
-      productCategory: selectCategory,
-      sectorOfUse: selectSector,
-      stock: selectStock,
-    },
-  });
+  } = api.product.getAllWhere.useQuery({ filters: {} });
+
+  const areAllFiltersEmpty =
+    inputCode === "" &&
+    inputProduct === "" &&
+    selectStock === "" &&
+    selectAddress === "" &&
+    selectControlType === "" &&
+    selectCategory === "" &&
+    selectSector === "";
+
+  const filteredProducts = areAllFiltersEmpty
+    ? []
+    : products.filter((product) => {
+        const matchesCode =
+          inputCode === "" || product.code.includes(inputCode);
+        const matchesProduct =
+          inputProduct === "" ||
+          product.name.toLowerCase().includes(inputProduct.toLowerCase());
+        const matchesStock =
+          selectStock === "" ||
+          product.shelf?.cabinet.StockCabinet.some(
+            (stockCabinet) =>
+              stockCabinet.stock.name.toLowerCase() ===
+              selectStock.toLowerCase(),
+          );
+        const matchesAddress =
+          selectAddress === "" ||
+          `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
+            .toLowerCase()
+            .includes(selectAddress.toLowerCase());
+        const matchesControlType =
+          selectControlType === "" ||
+          product.controlType?.name === selectControlType;
+        const matchesCategory =
+          selectCategory === "" || product.category?.name === selectCategory;
+        const matchesSector =
+          selectSector === "" || product.sectorOfUse?.name === selectSector;
+
+        return (
+          matchesCode &&
+          matchesProduct &&
+          matchesStock &&
+          matchesAddress &&
+          matchesControlType &&
+          matchesCategory &&
+          matchesSector
+        );
+      });
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
@@ -125,6 +164,30 @@ export default function RequestProductsPage() {
     return product.usersWithPermission?.some(
       (permittedUser) => permittedUser.user.id === user?.id,
     );
+  }
+
+  function alphanumericSort(a: string, b: string) {
+    const regex = /(\d+)|(\D+)/g;
+    const aParts = a.match(regex) ?? [];
+    const bParts = b.match(regex) ?? [];
+
+    for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+      const aPart = aParts[i] ?? "";
+      const bPart = bParts[i] ?? "";
+
+      // Se a parte for um número, faça comparação numérica
+      if (/\d/.test(aPart) && /\d/.test(bPart)) {
+        const diff = parseInt(aPart, 10) - parseInt(bPart, 10);
+        if (diff !== 0) return diff;
+      }
+
+      // Se não for número, faça comparação lexicográfica
+      if (aPart !== bPart) {
+        return aPart.localeCompare(bPart);
+      }
+    }
+
+    return 0;
   }
 
   return (
@@ -405,27 +468,34 @@ export default function RequestProductsPage() {
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!isLoading && !error && products?.length > 0 && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-              <TableComponent.Value>
-                Utilize os filtros acima para encontrar produtos cadastrados no
-                estoque
-              </TableComponent.Value>
-            </TableComponent.Line>
-          )}
-          {!!isLoading && !error && products.length === 0 && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-              <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
-              </TableComponent.Value>
-            </TableComponent.Line>
-          )}
-          {products?.length > 0 &&
+          {areAllFiltersEmpty &&
             !isLoading &&
             !error &&
-            (products?.length > 0 ? (
-              products
-                ?.sort((a, b) => a.code.localeCompare(b.code))
+            products?.length > 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Utilize os filtros acima para encontrar produtos cadastrados
+                  no estoque
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {!areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => alphanumericSort(a.code, b.code))
                 .map((product, index) => (
                   <TableComponent.Line
                     className={`grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8 ${
@@ -438,7 +508,9 @@ export default function RequestProductsPage() {
                     </TableComponent.Value>
                     <TableComponent.Value>{product.name}</TableComponent.Value>
                     <TableComponent.Value>
-                      {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
+                      {product.shelf
+                        ? `${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`
+                        : ""}
                     </TableComponent.Value>
                     <TableComponent.Value className="text-center">
                       {product.currentStock}
@@ -499,7 +571,7 @@ export default function RequestProductsPage() {
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!isLoading && !error && products?.length > 0 && (
+          {!isLoading && !error && filteredProducts?.length > 0 && (
             <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Utilize os filtros acima para encontrar produtos cadastrados no
@@ -507,7 +579,7 @@ export default function RequestProductsPage() {
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!!isLoading && !error && products.length === 0 && (
+          {!!isLoading && !error && filteredProducts.length === 0 && (
             <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Nenhum produto encontrado com os filtros aplicados
@@ -517,9 +589,9 @@ export default function RequestProductsPage() {
           {products?.length > 0 &&
             !!isLoading &&
             !error &&
-            (products?.length > 0 ? (
-              products
-                ?.sort((a, b) => a.code.localeCompare(b.code))
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => alphanumericSort(a.code, b.code))
                 .map((product, index) => (
                   <TableComponent.Line
                     className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${

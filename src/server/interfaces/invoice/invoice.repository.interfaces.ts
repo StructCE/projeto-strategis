@@ -4,8 +4,8 @@ const getAllProps = z
   .object({
     filters: z
       .object({
-        startDate: z.date().optional(),
-        endDate: z.date().optional(),
+        startDocumentDate: z.date().optional(),
+        endDocumentDate: z.date().optional(),
         documentDate: z.date().optional(),
         deadlineDate: z.date().optional(),
         paymentDate: z.date().optional(),
@@ -62,7 +62,7 @@ const registerProps = z.object({
       // categoryId: z.string(),
       // sectorOfUseId: z.string(),
       // shelfId: z.string(),
-    })
+    }),
   ),
 });
 
@@ -124,7 +124,7 @@ const autoRegisterProps = z.object({
       // categoryId: z.string(),
       // sectorOfUseId: z.string(),
       // shelfId: z.string(),
-    })
+    }),
   ),
 });
 
