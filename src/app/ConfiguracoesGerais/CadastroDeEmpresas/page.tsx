@@ -12,7 +12,9 @@ export default function CompanyRegistration() {
   useEffect(() => {
     if (
       status === "authenticated" &&
-      !session?.user.allowedPagesPath.includes(pathname)
+      !session?.user.allowedPagesPath.some((allowedPath) =>
+        pathname.startsWith(allowedPath),
+      )
     ) {
       redirect("/");
     }
