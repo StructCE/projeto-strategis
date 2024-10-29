@@ -60,7 +60,7 @@ export const companyRouter = createTRPCRouter({
             await CompanyRepository.countRegisteredSuppliers({
               id: company.id,
             }),
-          lowStockProductsCount: await CompanyRepository.countLowStockProducts({
+          registeredUsersCount: await CompanyRepository.countRegisteredUsers({
             id: company.id,
           }),
         }));
@@ -76,18 +76,20 @@ export const companyRouter = createTRPCRouter({
       }): Promise<CompanyRouteInterfaces["CompanySuppliers"]> => {
         const companySuppliers =
           await CompanyRepository.getCompanySuppliers(input);
-        const serializedSuppliers = companySuppliers.map((supplier) => ({
-          cnpj: supplier.cnpj,
-          name: supplier.name,
-          email: supplier.email,
-          address: supplier.address,
-          phone: supplier.phone,
-          stateRegistration: supplier.stateRegistration,
-          neighborhood: supplier.neighborhood,
-          city: supplier.city,
-          federativeUnit: supplier.federativeUnit,
-          cep: supplier.cep,
-          contacts: supplier.Contact.map((contact) => ({
+        const serializedSuppliers = companySuppliers.map((companySupplier) => ({
+          id: companySupplier.id,
+          supplierId: companySupplier.supplier.id,
+          cnpj: companySupplier.supplier.cnpj,
+          name: companySupplier.supplier.name,
+          email: companySupplier.supplier.email,
+          address: companySupplier.supplier.address,
+          phone: companySupplier.supplier.phone,
+          stateRegistration: companySupplier.supplier.stateRegistration,
+          neighborhood: companySupplier.supplier.neighborhood,
+          city: companySupplier.supplier.city,
+          federativeUnit: companySupplier.supplier.federativeUnit,
+          cep: companySupplier.supplier.cep,
+          contacts: companySupplier.supplier.contacts.map((contact) => ({
             id: contact.id,
             name: contact.name,
             email: contact.email,

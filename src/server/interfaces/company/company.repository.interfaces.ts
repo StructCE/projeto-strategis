@@ -27,12 +27,12 @@ const countRegisteredSuppliers = z.object({
 
 type CountRegisteredSuppliers = z.infer<typeof countRegisteredProducts>;
 
-const countLowStockProducts = z.object({
+const countRegisteredUsers = z.object({
   id: z.string().optional(),
   cnpj: z.string().optional(),
 });
 
-type CountLowStockProducts = z.infer<typeof countLowStockProducts>;
+type CountRegisteredUsers = z.infer<typeof countRegisteredUsers>;
 
 const getOneProps = z.object({
   id: z.string().optional(),
@@ -123,7 +123,7 @@ export const companyRepositorySchema = {
   getAllProps,
   countRegisteredProducts,
   countRegisteredSuppliers,
-  countLowStockProducts,
+  countRegisteredUsers,
 };
 
 export type CompanyRepositoryInterfaces = {
@@ -137,5 +137,5 @@ export type CompanyRepositoryInterfaces = {
   GetCompanyStocksProps: GetCompanyStocksProps;
   CountRegisteredProducts: CountRegisteredProducts;
   CountRegisteredSuppliers: CountRegisteredSuppliers;
-  CountLowStockProducts: CountLowStockProducts;
+  CountRegisteredUsers: CountRegisteredUsers;
 };

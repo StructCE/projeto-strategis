@@ -48,38 +48,42 @@ export const userRouter = createTRPCRouter({
       },
     ),
 
-  getAll: protectedProcedure.query(
-    async (): Promise<UserRouteInterfaces["UserWithRoles"][]> => {
-      const usersWithRoles = await userRepository.getAll();
-      const serializedUsersWithRoles = usersWithRoles.map((userWithRoles) => ({
-        id: userWithRoles.id,
-        name: userWithRoles.name,
-        email: userWithRoles.email,
-        phone: userWithRoles.phone,
-        UserRole: userWithRoles.UserRole.map((userRole) => ({
-          id: userRole.id,
-          companyId: userRole.companyId,
-          roleId: userRole.roleId,
-          company: {
-            id: userRole.company.id,
-            name: userRole.company.name,
-          },
-          role: {
-            id: userRole.role.id,
-            name: userRole.role.name,
-            modules: userRole.role.RoleModule.map((roleModule) => ({
-              id: roleModule.module.id,
-              name: roleModule.module.name,
-              pagePath: roleModule.module.pagePath,
-              allowedRouter: roleModule.module.allowedRouter,
+  getAll: protectedProcedure
+    .input(userRepositorySchema.getAllProps)
+    .query(
+      async ({ input }): Promise<UserRouteInterfaces["UserWithRoles"][]> => {
+        const usersWithRoles = await userRepository.getAll(input);
+        const serializedUsersWithRoles = usersWithRoles.map(
+          (userWithRoles) => ({
+            id: userWithRoles.id,
+            name: userWithRoles.name,
+            email: userWithRoles.email,
+            phone: userWithRoles.phone,
+            UserRole: userWithRoles.UserRole.map((userRole) => ({
+              id: userRole.id,
+              companyId: userRole.companyId,
+              roleId: userRole.roleId,
+              company: {
+                id: userRole.company.id,
+                name: userRole.company.name,
+              },
+              role: {
+                id: userRole.role.id,
+                name: userRole.role.name,
+                modules: userRole.role.RoleModule.map((roleModule) => ({
+                  id: roleModule.module.id,
+                  name: roleModule.module.name,
+                  pagePath: roleModule.module.pagePath,
+                  allowedRouter: roleModule.module.allowedRouter,
+                })),
+              },
             })),
-          },
-        })),
-      }));
+          }),
+        );
 
-      return serializedUsersWithRoles;
-    },
-  ),
+        return serializedUsersWithRoles;
+      },
+    ),
 
   registerUser: protectedProcedure
     .input(userRepositorySchema.registerProps)

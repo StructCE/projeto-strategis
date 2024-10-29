@@ -41,10 +41,11 @@ import { api } from "~/trpc/react";
 import FinalizeOrder from "./useOrder";
 
 export default function CreatePurchaseOrder() {
+  const session = useSession();
+
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
 
-  const session = useSession();
   const userId = session.data?.user.id;
   const [selectResponsible, setSelectResponsible] = useState<
     string | undefined
@@ -90,7 +91,9 @@ export default function CreatePurchaseOrder() {
     api.generalParameters.controlType.getAll.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: {},
+  });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
@@ -189,6 +192,30 @@ export default function CreatePurchaseOrder() {
       [productCode]: supplier,
     }));
   };
+
+  function alphanumericSort(a: string, b: string) {
+    const regex = /(\d+)|(\D+)/g;
+    const aParts = a.match(regex) ?? [];
+    const bParts = b.match(regex) ?? [];
+
+    for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+      const aPart = aParts[i] ?? "";
+      const bPart = bParts[i] ?? "";
+
+      // Se a parte for um número, faça comparação numérica
+      if (/\d/.test(aPart) && /\d/.test(bPart)) {
+        const diff = parseInt(aPart, 10) - parseInt(bPart, 10);
+        if (diff !== 0) return diff;
+      }
+
+      // Se não for número, faça comparação lexicográfica
+      if (aPart !== bPart) {
+        return aPart.localeCompare(bPart);
+      }
+    }
+
+    return 0;
+  }
 
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
@@ -540,7 +567,7 @@ export default function CreatePurchaseOrder() {
             !error &&
             (filteredProducts?.length > 0 ? (
               filteredProducts
-                ?.sort((a, b) => a.code.localeCompare(b.code))
+                ?.sort((a, b) => alphanumericSort(a.code, b.code))
                 .map((product, index) => (
                   <TableComponent.Line
                     className={`grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8 ${
@@ -614,7 +641,7 @@ export default function CreatePurchaseOrder() {
             !error &&
             (filteredProducts?.length > 0 ? (
               filteredProducts
-                ?.sort((a, b) => a.code.localeCompare(b.code))
+                ?.sort((a, b) => alphanumericSort(a.code, b.code))
                 .map((product, index) => (
                   <TableComponent.Line
                     className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${

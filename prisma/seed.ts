@@ -11,7 +11,6 @@ import { modules } from "./seed-data/modules";
 import { projects } from "./seed-data/projects";
 import { roles } from "./seed-data/roles";
 import { sectorsOfUse } from "./seed-data/sectorOfUse";
-import { units } from "./seed-data/units";
 
 async function createModule(props: {
   name: string;
@@ -58,17 +57,6 @@ async function createControlType(props: { name: string }) {
     data: { ...props },
   });
   return createdControlType;
-}
-
-async function createUnit(props: {
-  name: string;
-  abbreviation: string;
-  unitsPerPack: number;
-}) {
-  const createdUnit = await db.unit.create({
-    data: { ...props },
-  });
-  return createdUnit;
 }
 
 async function createBank(props: { name: string }) {
@@ -156,37 +144,28 @@ async function createUserWithRole({
 }
 
 async function main() {
-  const createdCategories = categories.map(async (category) => {
-    const createdCategory = await createCategory({ name: category.name });
-    return createdCategory;
-  });
-  await Promise.all(createdCategories);
-  const createdReasons = adjustementReasons.map(async (reason) => {
-    const createdReason = await createAdjustmentReason({ name: reason.name });
-    return createdReason;
-  });
-  await Promise.all(createdReasons);
-  const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
-    const createdSector = await createSectorOfUse({ name: sector.name });
-    return createdSector;
-  });
-  await Promise.all(createdSectorOfUse);
-  const createdControlType = controlTypes.map(async (controlType) => {
-    const createdControlType = await createControlType({
-      name: controlType.name,
-    });
-    return createdControlType;
-  });
-  await Promise.all(createdControlType);
-  const createdUnits = units.map(async (unit) => {
-    const createdUnit = await createUnit({
-      name: unit.name,
-      abbreviation: unit.abbreviation,
-      unitsPerPack: unit.unitsPerPack,
-    });
-    return createdUnit;
-  });
-  await Promise.all(createdUnits);
+  // const createdCategories = categories.map(async (category) => {
+  //   const createdCategory = await createCategory({ name: category.name });
+  //   return createdCategory;
+  // });
+  // await Promise.all(createdCategories);
+  // const createdReasons = adjustementReasons.map(async (reason) => {
+  //   const createdReason = await createAdjustmentReason({ name: reason.name });
+  //   return createdReason;
+  // });
+  // await Promise.all(createdReasons);
+  // const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
+  //   const createdSector = await createSectorOfUse({ name: sector.name });
+  //   return createdSector;
+  // });
+  // await Promise.all(createdSectorOfUse);
+  // const createdControlType = controlTypes.map(async (controlType) => {
+  //   const createdControlType = await createControlType({
+  //     name: controlType.name,
+  //   });
+  //   return createdControlType;
+  // });
+  // await Promise.all(createdControlType);
 
   const createdBanks = banks.map(async (bank) => {
     const createdBank = await createBank({

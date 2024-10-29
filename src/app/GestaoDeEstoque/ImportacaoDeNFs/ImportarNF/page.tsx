@@ -55,7 +55,9 @@ export default function ManuallyImportInvoice() {
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({
     filters: {},
   });
-  const { data: companies = [] } = api.company.getAllCompanies.useQuery({});
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery({
+    filters: {},
+  });
   const { data: documentTypes = [] } =
     api.generalParameters.documentType.getAll.useQuery();
   const { data: groups = [] } = api.generalParameters.group.getAll.useQuery();
@@ -63,21 +65,6 @@ export default function ManuallyImportInvoice() {
     api.generalParameters.project.getAll.useQuery();
   const { data: accountPlans = [] } =
     api.generalParameters.accountPlan.getAll.useQuery();
-  // const { data: products = [] } = api.product.getProductsBySupplierId.useQuery({
-  //   supplierId: selectSupplierId,
-  // });
-  // const { data: controlTypes = [] } =
-  //   api.generalParameters.controlType.getAll.useQuery();
-  // const { data: productCategories = [] } =
-  //   api.generalParameters.productCategory.getAll.useQuery();
-  // const { data: sectorsOfUse = [] } =
-  //   api.generalParameters.useSector.getAll.useQuery();
-  // const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
-  // const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
-  // const { data: cabinets = [] } =
-  //   api.generalParameters.cabinet.getCabinetFromStock.useQuery({
-  //     stockId: selectedStockId ? selectedStockId : "",
-  //   });
   const { data: productSuppliers = [] } =
     api.product.getAllProductSupplier.useQuery();
 

@@ -30,24 +30,12 @@ export default function ManageAdjustmentsTable() {
     data: adjusts = [],
     error,
     isLoading,
-  } = api.adjust.getAll.useQuery({});
-
-  const filteredAdjustments = adjusts.filter((adjustment) => {
-    const matchesDate =
-      !date ||
-      (adjustment.date.getDate() === date.getDate() &&
-        adjustment.date.getMonth() === date.getMonth() + 1 &&
-        adjustment.date.getFullYear() === date.getFullYear());
-
-    const matchesResponsible =
-      inputResponsible === "" ||
-      adjustment.responsibleName
-        .toLowerCase()
-        .includes(inputResponsible.toLowerCase());
-
-    const matchesType = selectType === "" || adjustment.type === selectType;
-
-    return matchesDate && matchesResponsible && matchesType;
+  } = api.adjust.getAll.useQuery({
+    filters: {
+      adjustType: selectType,
+      date: date,
+      responsible: inputResponsible,
+    },
   });
 
   return (
@@ -141,8 +129,8 @@ export default function ManageAdjustmentsTable() {
           </TableComponent.Line>
         )}
         {adjusts.length > 0 && !isLoading && !error ? (
-          filteredAdjustments.length > 0 ? (
-            filteredAdjustments
+          adjusts.length > 0 ? (
+            adjusts
               .sort((a, b) => b.date.getTime() - a.date.getTime())
               .map((adjustment, index) => (
                 <TableComponent.Line
@@ -151,7 +139,7 @@ export default function ManageAdjustmentsTable() {
                   }`}
                   key={index}
                 >
-                  <TableComponent.Value>{`${adjustment.date.getDate()}/${adjustment.date.getMonth()}/${adjustment.date.getFullYear()}`}</TableComponent.Value>
+                  <TableComponent.Value>{`${String(adjustment.date.getDate()).padStart(2, "0")}/${String(adjustment.date.getMonth()).padStart(2, "0")}/${String(adjustment.date.getFullYear()).padStart(2, "0")}`}</TableComponent.Value>
                   <TableComponent.Value>
                     {adjustment.responsibleName}
                   </TableComponent.Value>

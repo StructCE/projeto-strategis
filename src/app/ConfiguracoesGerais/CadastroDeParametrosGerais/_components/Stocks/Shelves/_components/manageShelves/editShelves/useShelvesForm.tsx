@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -12,6 +13,7 @@ import {
 } from "./shelvesEditFormSchema";
 
 export const useShelfForm = (shelf: Shelf) => {
+  const router = useRouter();
   const [isDeleted, setIsDeleted] = useState(false);
 
   const shelfMutation = api.generalParameters.shelf.editShelf.useMutation({
@@ -26,7 +28,7 @@ export const useShelfForm = (shelf: Shelf) => {
         );
       }
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
@@ -48,7 +50,7 @@ export const useShelfForm = (shelf: Shelf) => {
           },
         );
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {

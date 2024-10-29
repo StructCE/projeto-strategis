@@ -1,5 +1,7 @@
 import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -13,20 +15,20 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
 import { api } from "~/trpc/react";
 import { ProductEdit } from "./editProducts/productEdit";
 
 export default function ManageProductsTable() {
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
-  const [selectSuppliers, setSelectSuppliers] = useState<string[]>([]);
+  const [selectSupplier, setSelectSupplier] = useState("");
   const [selectStock, setSelectStock] = useState("");
   const [selectAddress, setSelectAddress] = useState("");
   const [selectControlType, setSelectControlType] = useState("");
@@ -39,14 +41,26 @@ export default function ManageProductsTable() {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery();
-
+  } = api.product.getAllWhere.useQuery(
+    {
+      filters: {
+        buyDay: selectBuyDay,
+        code: inputCode,
+        controlType: selectControlType,
+        name: inputProduct,
+        productCategory: selectCategory,
+        sectorOfUse: selectSector,
+        status: selectStatus,
+        stock: selectStock,
+        supplier: selectSupplier,
+      },
+    },
+    { refetchInterval: 10000 },
+  );
   // console.log(products);
 
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
-    filters: {},
-  });
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
   const { data: useSectors = [] } =
@@ -58,54 +72,6 @@ export default function ManageProductsTable() {
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
     });
-
-  const filteredProducts = products.filter((product) => {
-    const matchesCode = inputCode === "" || product.code.includes(inputCode);
-    const matchesProduct =
-      inputProduct === "" ||
-      product.name.toLowerCase().includes(inputProduct.toLowerCase());
-    const matchesSupplier =
-      selectSuppliers.length === 0 ||
-      product.ProductSupplier.some((supplier) =>
-        selectSuppliers.includes(supplier.supplier.name),
-      );
-    const matchesStock =
-      selectStock === "" ||
-      product.shelf?.cabinet.StockCabinet.some((stockCabinet) =>
-        stockCabinet.stock.name
-          .toLowerCase()
-          .includes(selectStock.toLowerCase()),
-      );
-    const matchesAddress =
-      selectAddress === "" ||
-      `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
-        .toLowerCase()
-        .includes(selectAddress.toLowerCase());
-    const matchesControlType =
-      selectControlType === "" ||
-      product.controlType?.name === selectControlType;
-    const matchesCategory =
-      selectCategory === "" || product.category?.name === selectCategory;
-    const matchesSector =
-      selectSector === "" || product.sectorOfUse?.name === selectSector;
-    const matchesStatus =
-      selectStatus === "" || product.status === selectStatus;
-    const matchesBuyDay =
-      selectBuyDay === "" || product.buyDay === selectBuyDay;
-
-    return (
-      matchesCode &&
-      matchesProduct &&
-      matchesSupplier &&
-      matchesStock &&
-      matchesAddress &&
-      matchesControlType &&
-      matchesCategory &&
-      matchesSector &&
-      matchesStatus &&
-      matchesBuyDay
-    );
-  });
 
   function alphanumericSort(a: string, b: string) {
     const regex = /(\d+)|(\D+)/g;
@@ -129,6 +95,108 @@ export default function ManageProductsTable() {
     }
 
     return 0;
+  }
+
+  const [editedProducts, setEditedProducts] = useState<ProductWithFeatures[]>(
+    [],
+  );
+  const [updatedName, setUpdatedName] = useState<Record<string, string>>({});
+  const [updatedCurrentStock, setUpdatedCurrentStock] = useState<
+    Record<string, number>
+  >({});
+  const [updatedMinimumStock, setUpdatedMinimumStock] = useState<
+    Record<string, number>
+  >({});
+  const [updatedMaximumStock, setUpdatedMaximumStock] = useState<
+    Record<string, number>
+  >({});
+
+  const addEditedProduct = (product: ProductWithFeatures) => {
+    setEditedProducts((prev) => {
+      // Verifica se o produto já está na lista para evitar duplicatas
+      const isAlreadyEdited = prev.some((p) => p.id === product.id);
+      return isAlreadyEdited ? prev : [...prev, product];
+    });
+  };
+
+  const handleProductNameChange = (
+    product: ProductWithFeatures,
+    value: string,
+  ) => {
+    setUpdatedName((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const handleProductCurrentStockChange = (
+    product: ProductWithFeatures,
+    value: number,
+  ) => {
+    setUpdatedCurrentStock((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const handleProductMinimumStockChange = (
+    product: ProductWithFeatures,
+    value: number,
+  ) => {
+    setUpdatedMinimumStock((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const handleProductMaximumStockChange = (
+    product: ProductWithFeatures,
+    value: number,
+  ) => {
+    setUpdatedMaximumStock((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const productMutation = api.product.editProduct.useMutation({
+    onSuccess: (updatedProduct) => {
+      console.log("Product updated successfully:", updatedProduct);
+      toast.success("Produto atualizado com sucesso.", {
+        position: "bottom-right",
+      });
+      setTimeout(function () {
+        location.reload();
+      }, 2000);
+    },
+    onError: (error) => {
+      console.error("Error updating product:", error);
+      toast.error("Erro ao atualizar produto.", {
+        position: "bottom-right",
+      });
+    },
+  });
+
+  function onSubmitEdit() {
+    for (const product of editedProducts) {
+      try {
+        productMutation.mutate({
+          id: product.id,
+          data: {
+            name: updatedName[product.id],
+            currentStock: updatedCurrentStock[product.id],
+            minimunStock: updatedMinimumStock[product.id],
+            maximumStock: updatedMaximumStock[product.id],
+          },
+        });
+      } catch (error) {
+        console.error("Error submitting update form:", error);
+      }
+    }
   }
 
   return (
@@ -167,21 +235,25 @@ export default function ManageProductsTable() {
           />
         </Filter>
 
-        <div className="font-inter m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] font-normal text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
-          <MultiSelect
-            FilterIcon={Search}
-            options={suppliers.flatMap((supplier) => ({
-              label: supplier.name,
-              value: supplier.name,
-            }))}
-            onValueChange={setSelectSuppliers}
-            defaultValue={selectSuppliers}
-            placeholder="Fornecedores"
-            variant="inverted"
-            maxCount={2}
-            className="font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] font-normal text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
           />
-        </div>
+          <Filter.Select
+            placeholder="Fornecedor"
+            state={selectSupplier}
+            setState={setSelectSupplier}
+          >
+            {suppliers.map((supplier, index) => (
+              <Filter.SelectItems
+                key={index}
+                value={supplier.name}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
 
         <Filter>
           <Filter.Icon
@@ -343,7 +415,7 @@ export default function ManageProductsTable() {
                 onClick={() => {
                   setInputCode("");
                   setInputProduct("");
-                  setSelectSuppliers([]);
+                  setSelectSupplier("");
                   setSelectStock("");
                   setSelectAddress("");
                   setSelectControlType("");
@@ -393,8 +465,8 @@ export default function ManageProductsTable() {
           </TableComponent.Line>
         )}
         {products?.length > 0 && !isLoading && !error ? (
-          filteredProducts?.length > 0 ? (
-            filteredProducts
+          products?.length > 0 ? (
+            products
               ?.sort((a, b) => alphanumericSort(a.code, b.code))
               .map((product, index) => (
                 <TableComponent.Line
@@ -408,7 +480,10 @@ export default function ManageProductsTable() {
                   </TableComponent.Value>
                   <TableComponent.Value>
                     <Input
-                      defaultValue={product.name}
+                      value={updatedName[product.id] ?? product.name}
+                      onChange={(e) =>
+                        handleProductNameChange(product, e.target.value)
+                      }
                       className="h-7 bg-cinza_destaque sm:h-8"
                     />
                   </TableComponent.Value>
@@ -417,19 +492,52 @@ export default function ManageProductsTable() {
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.currentStock ?? ""}
+                      type="number"
+                      value={
+                        updatedCurrentStock[product.id] ??
+                        product.currentStock ??
+                        undefined
+                      }
+                      onChange={(e) =>
+                        handleProductCurrentStockChange(
+                          product,
+                          Number(e.target.value),
+                        )
+                      }
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.minimunStock ?? ""}
+                      type="number"
+                      value={
+                        updatedMinimumStock[product.id] ??
+                        product.minimunStock ??
+                        undefined
+                      }
+                      onChange={(e) =>
+                        handleProductMinimumStockChange(
+                          product,
+                          Number(e.target.value),
+                        )
+                      }
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>
                   <TableComponent.Value className="items-center justify-center text-center">
                     <Input
-                      defaultValue={product.maximumStock ?? ""}
+                      type="number"
+                      value={
+                        updatedMaximumStock[product.id] ??
+                        product.maximumStock ??
+                        undefined
+                      }
+                      onChange={(e) =>
+                        handleProductMaximumStockChange(
+                          product,
+                          Number(e.target.value),
+                        )
+                      }
                       className="h-7 bg-cinza_destaque text-center sm:h-8"
                     />
                   </TableComponent.Value>
@@ -476,9 +584,11 @@ export default function ManageProductsTable() {
         )}
       </TableComponent.Table>
 
-      {/* Ver, durante a integração, se é possível fazer essa atualizações na tabela mesmo */}
       <TableButtonComponent className="pt-0.5 sm:pt-1">
-        <TableButtonComponent.Button className="min-w-0 rounded-md bg-cinza_borda_acordeao px-5 py-1 hover:bg-[#606060]">
+        <TableButtonComponent.Button
+          className="min-w-0 rounded-md bg-cinza_borda_acordeao px-5 py-1 hover:bg-[#606060]"
+          handlePress={onSubmitEdit}
+        >
           Salvar Alterações
         </TableButtonComponent.Button>
       </TableButtonComponent>

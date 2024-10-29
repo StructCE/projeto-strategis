@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,6 +10,7 @@ import {
 } from "./productRegisterFormSchema";
 
 export const useProductForm = () => {
+  const router = useRouter();
   const productMutation = api.product.createProduct.useMutation({
     onSuccess: (newProduct) => {
       console.log("Product created successfully:", newProduct);
@@ -16,7 +18,7 @@ export const useProductForm = () => {
         position: "bottom-right",
       });
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

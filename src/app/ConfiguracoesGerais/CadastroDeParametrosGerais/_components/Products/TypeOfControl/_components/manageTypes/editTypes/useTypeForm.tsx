@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ import {
 } from "./typeEditFormSchema";
 
 export const useTypeForm = (controlType: ControlType) => {
+  const router = useRouter();
   const [isDeleted, setIsDeleted] = useState(false);
 
   const controlTypeMutation =
@@ -26,7 +28,7 @@ export const useTypeForm = (controlType: ControlType) => {
           );
         }
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {
@@ -48,7 +50,7 @@ export const useTypeForm = (controlType: ControlType) => {
           },
         );
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {

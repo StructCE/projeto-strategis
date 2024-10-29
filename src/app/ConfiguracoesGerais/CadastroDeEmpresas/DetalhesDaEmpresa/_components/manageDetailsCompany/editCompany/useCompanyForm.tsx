@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,13 +13,14 @@ import { api } from "~/trpc/react";
 export const useCompanyForm = (
   company: CompanyRouteInterfaces["EditCompany"],
 ) => {
+  const router = useRouter();
   const editCompany = api.company.editCompany.useMutation({
     onSuccess: () => {
       toast.success("Empresa atualizada com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {
@@ -35,7 +37,7 @@ export const useCompanyForm = (
         position: "bottom-right",
       });
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

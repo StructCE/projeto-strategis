@@ -1,5 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -12,6 +13,7 @@ import {
 } from "./storageEditFormSchema";
 
 export const useStorageForm = (cabinet: Cabinet) => {
+  const router = useRouter();
   const [isDeleted, setIsDeleted] = useState(false);
 
   const cabinetMutation = api.generalParameters.cabinet.editCabinet.useMutation(
@@ -27,7 +29,7 @@ export const useStorageForm = (cabinet: Cabinet) => {
           );
         }
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {
@@ -50,7 +52,7 @@ export const useStorageForm = (cabinet: Cabinet) => {
           },
         );
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {

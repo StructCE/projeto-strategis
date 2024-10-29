@@ -18,48 +18,28 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import { StockEdit } from "./editStocks/stockEdit";
 
 export const ManageStocksTable = () => {
   const [inputStockName, setInputStockName] = useState("");
   const [inputManagerName, setInputManagerName] = useState("");
-  const [selectCompany, setSelectCompany] = useState("");
+
+  const { selectedCompany } = useCompany();
 
   const {
     data: stocks = [],
     error,
     isLoading,
   } = api.stock.getAllStocks.useQuery({
-    // filters: {
-    //   company: selectCompany,
-    //   name: inputStockName,
-    // },
+    filters: {
+      company: selectedCompany === "all_companies" ? "" : selectedCompany,
+      name: inputStockName,
+      managerName: inputManagerName,
+    },
   });
-  const { data: companies = [] } = api.company.getAllCompanies.useQuery({
-    // filters: {
-    // cnpj: "",
-    // name: "",
-    // state: "",
-    // taxRegime: "",
-    // },
-  });
-
-  const filteredStocks = stocks.filter((stock) => {
-    const stockNameMatches = stock.name
-      .toLowerCase()
-      .includes(inputStockName.toLowerCase());
-
-    const companyMatches = selectCompany
-      ? stock.company.name === selectCompany
-      : true;
-
-    const managerNameMatches = stock.legalResponsible.name
-      .toLowerCase()
-      .includes(inputManagerName.toLowerCase());
-
-    return stockNameMatches && companyMatches && managerNameMatches;
-  });
+  // const { data: companies = [] } = api.company.getAllCompanies.useQuery();
 
   return (
     <TableComponent>
@@ -82,7 +62,7 @@ export const ManageStocksTable = () => {
           />
         </Filter>
 
-        <Filter>
+        {/* <Filter>
           <Filter.Icon
             icon={({ className }: { className: string }) => (
               <Search className={className} />
@@ -90,7 +70,7 @@ export const ManageStocksTable = () => {
           />
           <Filter.Select
             placeholder="Empresa"
-            state={selectCompany}
+            state={selectCompany ?? ""}
             setState={setSelectCompany}
           >
             {companies.map((company, index) => (
@@ -100,7 +80,7 @@ export const ManageStocksTable = () => {
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
-        </Filter>
+        </Filter> */}
 
         <Filter>
           <Filter.Icon
@@ -122,22 +102,23 @@ export const ManageStocksTable = () => {
                 size={20}
                 onClick={() => {
                   setInputStockName("");
-                  setSelectCompany("");
+                  // setSelectCompany("");
                   setInputManagerName("");
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1.25fr_0.6fr_1.5fr_1.5fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[1.25fr_1.5fr_1.5fr_1.5fr_130px] gap-8">
           <TableComponent.ValueTitle>Nome</TableComponent.ValueTitle>
-          <TableComponent.ValueTitle>Sigla</TableComponent.ValueTitle>
+          {/* <TableComponent.ValueTitle>Sigla</TableComponent.ValueTitle> */}
+          <TableComponent.ValueTitle className="leading-6">
+            Empresa
+          </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="leading-6">
             Nome do Responsável
           </TableComponent.ValueTitle>
@@ -160,22 +141,25 @@ export const ManageStocksTable = () => {
           </TableComponent.Line>
         )}
         {stocks.length > 0 && !isLoading && !error ? (
-          filteredStocks.length > 0 ? (
-            filteredStocks
+          stocks.length > 0 ? (
+            stocks
               .sort((a, b) => a.name.localeCompare(b.name))
               .map((stock, index) => (
                 <TableComponent.Line
-                  className={`grid-cols-[1.25fr_0.6fr_1.5fr_1.5fr_130px] ${
+                  className={`grid-cols-[1.25fr_1.5fr_1.5fr_1.5fr_130px] gap-8 ${
                     index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                   }`}
                   key={index}
                 >
                   <TableComponent.Value>{stock.name}</TableComponent.Value>
-                  <TableComponent.Value>
+                  {/* <TableComponent.Value>
                     {`${stock.name
                       .split(" ")
                       .map((word) => word.charAt(0).toUpperCase())
                       .join("")}-${stock.company.name.split(" ")[0]}`}
+                  </TableComponent.Value> */}
+                  <TableComponent.Value>
+                    {stock.company.name}
                   </TableComponent.Value>
                   <TableComponent.Value>
                     {stock.legalResponsible.name}

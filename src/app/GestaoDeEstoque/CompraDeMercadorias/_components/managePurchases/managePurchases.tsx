@@ -1,6 +1,6 @@
 "use client";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import { Calendar, Download, Eraser, Search, UserCog2 } from "lucide-react";
+import { Calendar, Download, Eraser, Truck, UserCog2 } from "lucide-react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -14,7 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Tooltip,
   TooltipContent,
@@ -32,40 +31,22 @@ export default function ManagePurchasesTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
-  const [selectSuppliers, setSelectSuppliers] = useState<string[]>([]);
+  const [selectSupplier, setSelectSupplier] = useState("");
 
   const {
     data: orders = [],
     error,
     isLoading,
   } = api.order.getAll.useQuery({
-    // filters: { date: date ?? new Date(), responsibleName: inputResponsible },
+    filters: {
+      date: date,
+      responsibleName: inputResponsible,
+      supplier: selectSupplier,
+    },
   });
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
-    filters: {},
-  });
+  console.log(orders);
 
-  const filteredOrders = orders.filter((order) => {
-    const matchesDate =
-      !date ||
-      (order.date.getDate() === date.getDate() &&
-        order.date.getMonth() === date.getMonth() + 1 &&
-        order.date.getFullYear() === date.getFullYear());
-
-    const matchesResponsible =
-      inputResponsible === "" ||
-      order.responsible.name
-        .toLowerCase()
-        .includes(inputResponsible.toLowerCase());
-
-    const matchesSupplier =
-      selectSuppliers.length === 0 ||
-      order.orderProducts.some((product) =>
-        selectSuppliers.includes(product.ProductSupplier.supplier.name),
-      );
-
-    return matchesDate && matchesResponsible && matchesSupplier;
-  });
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
 
   // function exportData(order: SerializedOrder) {
   //   const purchaseData = {
@@ -257,21 +238,25 @@ export default function ManagePurchasesTable() {
           />
         </Filter>
 
-        <div className="font-inter m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] font-normal text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
-          <MultiSelect
-            FilterIcon={Search}
-            options={suppliers.flatMap((supplier) => ({
-              label: supplier.name,
-              value: supplier.name,
-            }))}
-            onValueChange={setSelectSuppliers}
-            defaultValue={selectSuppliers}
-            placeholder="Fornecedores"
-            variant="inverted"
-            maxCount={2}
-            className="font-inter min-h-8 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] font-normal text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Truck className={className} />
+            )}
           />
-        </div>
+          <Filter.Select
+            placeholder="Fornecedor"
+            state={selectSupplier}
+            setState={setSelectSupplier}
+          >
+            {suppliers.map((supplier, index) => (
+              <Filter.SelectItems
+                value={supplier.name}
+                key={index}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
 
         <TooltipProvider delayDuration={300}>
           <Tooltip>
@@ -281,7 +266,7 @@ export default function ManagePurchasesTable() {
                 onClick={() => {
                   setDate(undefined);
                   setInputResponsible("");
-                  setSelectSuppliers([]);
+                  setSelectSupplier("");
                 }}
               />
             </TooltipTrigger>
@@ -318,8 +303,8 @@ export default function ManagePurchasesTable() {
           </TableComponent.Line>
         )}
         {orders.length > 0 && !isLoading && !error ? (
-          filteredOrders.length > 0 ? (
-            filteredOrders
+          orders.length > 0 ? (
+            orders
               .sort((a, b) => b.date.getTime() - a.date.getTime())
               .map((order, index) => (
                 <TableComponent.Line

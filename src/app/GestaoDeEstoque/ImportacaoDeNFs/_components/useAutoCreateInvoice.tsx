@@ -1,3 +1,4 @@
+// import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -7,18 +8,20 @@ import { type InvoiceProduct } from "~/server/interfaces/invoice/invoice.route.i
 import { api } from "~/trpc/react";
 
 const AutoCreateInvoice = () => {
+  // const router = useRouter();
   const invoiceMutation = api.invoice.autoRegisterInvoice.useMutation({
     onSuccess: (newInvoice) => {
       console.log("Nota fiscal importada com sucesso:", newInvoice);
       toast.success(
-        "Nota fiscal importada com sucesso. Atualizando a página...",
+        "Nota fiscal importada com sucesso. Atualize a página para ver as alterações...",
         {
           position: "bottom-right",
+          autoClose: 5000,
         },
       );
-      setTimeout(() => {
-        location.reload();
-      }, 2000);
+      // setTimeout(() => {
+      //   router.refresh();
+      // }, 5000);
     },
     onError: (error) => {
       console.error("Erro ao importar nota fiscal:", error);

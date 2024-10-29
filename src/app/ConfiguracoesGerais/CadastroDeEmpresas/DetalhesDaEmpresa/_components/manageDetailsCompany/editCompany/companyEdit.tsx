@@ -1,4 +1,5 @@
 "use client";
+import { states } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/states";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -17,7 +18,6 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import type { CompanyRouteInterfaces } from "~/server/interfaces/company/company.route.interfaces";
-import { states } from "../../../../../CadastroDeFornecedores/_components/supplierData";
 import { useCompanyForm } from "./useCompanyForm";
 
 type CompanyEditProps = {

@@ -6,7 +6,7 @@ const getAll = z
       name: z.string().optional(),
       email: z.string().optional(),
       federativeUnit: z.string().optional(),
-    }),
+    }).optional(),
   })
   .optional();
 

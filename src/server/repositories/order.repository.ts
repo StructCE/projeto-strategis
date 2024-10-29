@@ -2,14 +2,91 @@ import { db } from "../db";
 import type { OrderRepositoryInterfaces } from "../interfaces/order/order.repository.interfaces";
 
 async function getAll(props: OrderRepositoryInterfaces["GetAllProps"]) {
-  // const { filters } = props;
+  if (props) {
+    const { filters } = props;
+    const conditions = [];
+
+    if (filters?.responsibleName) {
+      conditions.push({
+        responsible: { user: { name: { contains: filters?.responsibleName } } },
+      });
+    }
+
+    if (filters?.supplier) {
+      conditions.push({
+        OrderProduct: {
+          some: {
+            product: {
+              supplier: { name: { contains: filters?.supplier } },
+            },
+          },
+        },
+      });
+    }
+
+    if (filters?.date) {
+      conditions.push(
+        {
+          date: {
+            gte: filters?.date
+              ? new Date(
+                  `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date?.getDate()}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+        {
+          date: {
+            lt: filters?.date
+              ? new Date(
+                  `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date.getDate() + 1}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+      );
+    }
+
+    const filteredOrders = await db.order.findMany({
+      where: {
+        AND: conditions,
+      },
+      include: {
+        responsible: { include: { user: true } },
+        // stock: true,
+        OrderProduct: {
+          include: {
+            product: {
+              include: {
+                product: {
+                  include: {
+                    unit: true,
+                    shelf: {
+                      include: {
+                        cabinet: {
+                          include: {
+                            StockCabinet: {
+                              include: {
+                                stock: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                supplier: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return filteredOrders;
+  }
+
   const orders = await db.order.findMany({
-    // where: {
-    //   AND: [
-    //     { date: filters.date },
-    //     { responsible: { user: { name: filters.responsibleName } } },
-    //   ],
-    // },
     include: {
       responsible: { include: { user: true } },
       // stock: true,

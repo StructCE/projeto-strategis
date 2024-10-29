@@ -1,6 +1,7 @@
 "use client";
 import { Eraser, Search } from "lucide-react";
 import { useState } from "react";
+import { states } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/states";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
@@ -18,9 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-
 import { api } from "~/trpc/react";
-import { states } from "../supplierData";
 import { SupplierEdit } from "./editSuppliers/supplierEdit";
 
 export const ManageSuppliersTable = () => {
@@ -32,19 +31,12 @@ export const ManageSuppliersTable = () => {
     data: suppliers = [],
     error,
     isLoading,
-  } = api.supplier.getAll.useQuery({ filters: {} });
-
-  const filteredSuppliers = suppliers.filter((supplier) => {
-    const matchesName =
-      inputName === "" ||
-      supplier.name.toLowerCase().includes(inputName?.toLowerCase());
-    const matchesEmail =
-      inputEmail === "" ||
-      supplier.email.toLowerCase().includes(inputEmail?.toLowerCase());
-    const matchesState =
-      selectState === "" || supplier.federativeUnit === selectState;
-
-    return matchesName && matchesEmail && matchesState;
+  } = api.supplier.getAll.useQuery({
+    filters: {
+      name: inputName,
+      email: inputEmail,
+      federativeUnit: selectState,
+    },
   });
 
   return (
@@ -119,7 +111,7 @@ export const ManageSuppliersTable = () => {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[2fr_4fr_3fr_130px]">
+        <TableComponent.LineTitle className="grid-cols-[2fr_4fr_3fr_130px] gap-4 sm:gap-8">
           <TableComponent.ValueTitle>Fornecedor</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Endereço</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Email</TableComponent.ValueTitle>
@@ -141,10 +133,10 @@ export const ManageSuppliersTable = () => {
           </TableComponent.Line>
         )}
         {suppliers.length > 0 && !isLoading && !error ? (
-          filteredSuppliers.length > 0 ? (
-            filteredSuppliers.map((supplier, index) => (
+          suppliers.length > 0 ? (
+            suppliers.map((supplier, index) => (
               <TableComponent.Line
-                className={`grid-cols-[2fr_4fr_3fr_130px] ${
+                className={`grid-cols-[2fr_4fr_3fr_130px] gap-4 sm:gap-8 ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}

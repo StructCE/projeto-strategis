@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ import {
 } from "./sectorEditFormSchema";
 
 export const useSectorForm = (sector: UseSector) => {
+  const router = useRouter();
   const [isDeleted, setIsDeleted] = useState(false);
 
   const sectorMutation =
@@ -26,7 +28,7 @@ export const useSectorForm = (sector: UseSector) => {
           );
         }
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {
@@ -45,7 +47,7 @@ export const useSectorForm = (sector: UseSector) => {
           position: "bottom-right",
         });
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {

@@ -1,9 +1,7 @@
 "use client";
-
 import { Eraser, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { states } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table/index";
 import { Button } from "~/components/ui/button";
@@ -14,6 +12,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { api } from "~/trpc/react";
+import { states } from "../states";
 
 export function ManageCompaniesTable() {
   const [inputCnpj, setInputCnpj] = useState("");
@@ -21,7 +20,7 @@ export function ManageCompaniesTable() {
   const [selectState, setSelectState] = useState("");
   const [selectTaxRegime, setSelectTaxRegime] = useState("");
 
-  const companies = api.company.getManageCompanies.useQuery({
+  const { data: companies = [] } = api.company.getManageCompanies.useQuery({
     filters: {
       cnpj: inputCnpj,
       name: inputName,
@@ -76,9 +75,9 @@ export function ManageCompaniesTable() {
             state={selectState}
             setState={setSelectState}
           >
-            {states.map((tributo, index) => (
+            {states.map((state, index) => (
               <Filter.SelectItems
-                value={tributo.value}
+                value={state.value}
                 key={index}
               ></Filter.SelectItems>
             ))}
@@ -135,20 +134,27 @@ export function ManageCompaniesTable() {
             Cadastrados
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle className="text-center">
-            Produtos com
+            Usuários
             <br />
-            Estoque Baixo
+            Cadastrados
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {companies.data?.map((company, index) => (
+        {companies.map((company, index) => (
           <TableComponent.Line
             className={`grid-cols-[1fr_2fr_1fr_1fr_1fr_130px] ${
               index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
             }`}
             key={index}
           >
-            <TableComponent.Value>{company.cnpj}</TableComponent.Value>
+            <TableComponent.Value>
+              {company.cnpj
+                .replace(/\D/g, "")
+                .replace(
+                  /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
+                  "$1.$2.$3/$4-$5",
+                )}
+            </TableComponent.Value>
             <TableComponent.Value>{company.name}</TableComponent.Value>
             <TableComponent.Value className="text-center">
               {company.registeredProductsCount}
@@ -157,7 +163,7 @@ export function ManageCompaniesTable() {
               {company.registeredSuppliersCount}
             </TableComponent.Value>
             <TableComponent.Value className="text-center">
-              {company.lowStockProductsCount}
+              {company.registeredUsersCount}
             </TableComponent.Value>
 
             <Button

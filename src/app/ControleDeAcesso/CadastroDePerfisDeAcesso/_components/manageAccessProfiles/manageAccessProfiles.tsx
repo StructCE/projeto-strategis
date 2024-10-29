@@ -27,7 +27,15 @@ export const ManageAccessProfilesTable = () => {
   const [inputName, setInputName] = useState("");
   const [selectModules, setSelectModules] = useState<string[]>([]);
 
-  const { data: roles = [], error, isLoading } = api.role.getAll.useQuery();
+  const {
+    data: roles = [],
+    error,
+    isLoading,
+  } = api.role.getAll.useQuery({
+    filters: {
+      name: inputName,
+    },
+  });
 
   const roleMatchesSelectedModules = (roleModules: string[]) => {
     if (selectModules.length === 0) return true;
@@ -36,7 +44,6 @@ export const ManageAccessProfilesTable = () => {
 
   const filteredRoles = roles.filter(
     (role) =>
-      role.name.toLowerCase().includes(inputName.toLowerCase()) && // Filtrar pelo nome do cargo
       roleMatchesSelectedModules(role.modules.map((module) => module.name)), // Filtrar pelos módulos selecionados
   );
 

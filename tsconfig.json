@@ -37,7 +37,8 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts",
-    "src/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/createCompany"
+    "src/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/createCompany",
+    "src/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/manageCompanies"
   ],
   "exclude": ["node_modules"]
 }

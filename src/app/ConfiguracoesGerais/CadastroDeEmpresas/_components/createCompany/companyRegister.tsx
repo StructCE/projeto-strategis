@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { api } from "~/trpc/react";
-import { states } from "../../../CadastroDeFornecedores/_components/supplierData";
+import { states } from "../states";
 import { useCompanyForm } from "./useCompanyForm";
 
 export const CompanyRegister = () => {

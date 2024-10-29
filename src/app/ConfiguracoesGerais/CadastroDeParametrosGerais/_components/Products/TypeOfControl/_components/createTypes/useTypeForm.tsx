@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,6 +10,7 @@ import {
 } from "./typeRegisterFormSchema";
 
 export const useTypeForm = () => {
+  const router = useRouter();
   const controlTypeMutation =
     api.generalParameters.controlType.registerControlType.useMutation({
       onSuccess: (newControlType) => {
@@ -20,7 +22,7 @@ export const useTypeForm = () => {
           },
         );
         setTimeout(() => {
-          location.reload();
+          router.refresh();
         }, 2000);
       },
       onError: (error) => {

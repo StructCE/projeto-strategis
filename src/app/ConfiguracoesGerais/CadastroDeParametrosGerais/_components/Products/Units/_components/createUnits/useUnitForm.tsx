@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,6 +10,7 @@ import {
 } from "./unitRegisterFormSchema";
 
 export const useUnitForm = () => {
+  const router = useRouter();
   const unitMutation = api.generalParameters.unit.registerUnit.useMutation({
     onSuccess: (newUnit) => {
       console.log("Unit created successfully:", newUnit);
@@ -16,7 +18,7 @@ export const useUnitForm = () => {
         position: "bottom-right",
       });
       setTimeout(() => {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

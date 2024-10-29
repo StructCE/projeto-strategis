@@ -11,33 +11,99 @@ async function countProducts() {
 }
 
 async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
-  const { filters } = props;
+  if (props) {
+    const { filters } = props;
+    const conditions = [];
+
+    if (filters.name) {
+      conditions.push({ name: { contains: filters.name } });
+    }
+    if (filters.controlType) {
+      conditions.push({
+        controlType: {
+          name: { contains: filters.controlType },
+        },
+      });
+    }
+    if (filters.productCategory) {
+      conditions.push({
+        category: {
+          name: { contains: filters.productCategory },
+        },
+      });
+    }
+    if (filters.stock) {
+      conditions.push({
+        shelf: {
+          cabinet: {
+            StockCabinet: {
+              some: { stock: { name: { contains: filters.stock } } },
+            },
+          },
+        },
+      });
+    }
+    if (filters.code) {
+      conditions.push({ code: { contains: filters.code } });
+    }
+    if (filters.status) {
+      conditions.push({ status: { contains: filters.status } });
+    }
+    if (filters.buyDay) {
+      conditions.push({ buyDay: { contains: filters.buyDay } });
+    }
+    if (filters.sectorOfUse) {
+      conditions.push({
+        sectorOfUse: {
+          name: { contains: filters.sectorOfUse },
+        },
+      });
+    }
+    if (filters.supplier) {
+      conditions.push({
+        ProductSupplier: {
+          some: {
+            supplier: {
+              name: { contains: filters.supplier },
+            },
+          },
+        },
+      });
+    }
+
+    const products = await db.product.findMany({
+      where: {
+        AND: conditions,
+      },
+      include: {
+        unit: true,
+        controlType: true,
+        category: true,
+        sectorOfUse: true,
+        shelf: {
+          include: {
+            cabinet: {
+              include: {
+                StockCabinet: {
+                  include: {
+                    stock: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        usersWithPermission: { include: { user: true } },
+        ProductSupplier: {
+          include: {
+            supplier: true,
+          },
+        },
+      },
+    });
+    return products;
+  }
   const products = await db.product.findMany({
-    where: {
-      AND: [
-        { name: filters.name },
-        {
-          controlType: {
-            name: filters.controlType,
-          },
-        },
-        {
-          category: {
-            name: filters.productCategory,
-          },
-        },
-        // {
-        //   stock: {
-        //     name: filters.stock,
-        //   },
-        // },
-        {
-          sectorOfUse: {
-            name: filters.sectorOfUse,
-          },
-        },
-      ],
-    },
     include: {
       unit: true,
       controlType: true,
@@ -56,7 +122,7 @@ async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
           },
         },
       },
-      usersWithPermission: true,
+      usersWithPermission: { include: { user: true } },
       ProductSupplier: {
         include: {
           supplier: true,
@@ -211,9 +277,6 @@ async function edit(props: ProductRepositoryInterfaces["EditProps"]) {
   const existingProduct = await db.product.findUnique({
     where: { id },
   });
-  if (existingProduct) {
-    console.log(existingProduct);
-  }
   if (!existingProduct) {
     throw new Error("Produto não encontrado.");
   }
@@ -331,6 +394,25 @@ async function edit(props: ProductRepositoryInterfaces["EditProps"]) {
 }
 
 async function remove(props: ProductRepositoryInterfaces["RemoveProps"]) {
+  // Exclui as permissões relacionadas ao produto
+  await db.productPermission.deleteMany({ where: { productId: props.id } });
+
+  // Exclui os fornecedores relacionados ao produto
+  await db.productSupplier.deleteMany({ where: { productId: props.id } });
+
+  // Exclui os ajustes relacionados ao produto
+  await db.productAdjust.deleteMany({ where: { productId: props.id } });
+
+  // Exclui os registros de inventário relacionados ao produto
+  await db.productInventory.deleteMany({ where: { productId: props.id } });
+
+  // Exclui os produtos em solicitações relacionados ao produto
+  await db.requestProduct.deleteMany({ where: { productId: props.id } });
+
+  // Exclui o produto principal (caso existam produtos filhos associados)
+  await db.product.deleteMany({ where: { parentProductId: props.id } });
+
+  // Exclui o próprio produto
   const deletedProduct = await db.product.delete({
     where: {
       id: props.id,

@@ -88,7 +88,6 @@ model Company {
     UserRole         UserRole[]        @relation("CompanyEmployees")
     Stock            Stock[]
     Invoice          Invoice[]
-    // Contact         Contact[]
     CompanySupplier  CompanySupplier[]
 }
 
@@ -102,8 +101,8 @@ model UserRole {
     company                    Company     @relation("CompanyEmployees", fields: [companyId], references: [id])
     role                       Role        @relation(fields: [roleId], references: [id])
     StockResponsible           Stock[]     @relation("StockResponsible")
-    OutputResponsible          Output[]    @relation("OutputResponsible")
-    OutputApplicant            Output[]    @relation("OutputApplicant")
+    // OutputResponsible          Output[]    @relation("OutputResponsible")
+    // OutputApplicant            Output[]    @relation("OutputApplicant")
     AdjustResponsible          Adjust[]    @relation("AdjustResponsible")
     OrderResponsible           Order[]     @relation("OrderResponsible")
     RequestResponsible         Request[]   @relation("RequestResponsible")
@@ -149,21 +148,10 @@ model Supplier {
     city              String
     federativeUnit    String
     cep               String
-    contacts          Contact[]
     ProductSupplier   ProductSupplier[]
-    ProductOutput     ProductOutput[]
+    // ProductOutput     ProductOutput[]
     CompanySupplier   CompanySupplier[]
     Invoice           Invoice[]
-}
-
-model Contact {
-    id         String @id @default(cuid())
-    name       String
-    email      String
-    phone      String
-    supplierId String
-
-    supplier Supplier @relation(fields: [supplierId], references: [id])
 }
 
 model CompanySupplier {
@@ -203,11 +191,11 @@ model Product {
     controlType   ControlType?     @relation(fields: [controlTypeId], references: [id])
     category      ProductCategory? @relation(fields: [categoryId], references: [id])
     sectorOfUse   UseSector?       @relation(fields: [sectorOfUseId], references: [id])
-    shelf         Shelf?           @relation(fields: [shelfId], references: [id], onDelete: Cascade)
+    shelf         Shelf?           @relation(fields: [shelfId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
     childProducts    Product[]          @relation("ProductToParent")
     ProductSupplier  ProductSupplier[]
-    ProductOutput    ProductOutput[]
+    // ProductOutput    ProductOutput[]
     ProductAdjust    ProductAdjust[]
     RequestProduct   RequestProduct[]
     ProductInventory ProductInventory[]
@@ -219,7 +207,7 @@ model ProductPermission {
     productId String
 
     user    User    @relation(fields: [userId], references: [id])
-    product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    product Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model ProductSupplier {
@@ -228,7 +216,7 @@ model ProductSupplier {
     productId  String
     supplierId String
 
-    product        Product          @relation(fields: [productId], references: [id])
+    product        Product          @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     supplier       Supplier         @relation(fields: [supplierId], references: [id])
     OrderProduct   OrderProduct[]
     InvoiceProduct InvoiceProduct[]
@@ -272,8 +260,8 @@ model StockCabinet {
     stockId   String
     cabinetId String
 
-    stock   Stock   @relation(fields: [stockId], references: [id], onDelete: Cascade) // O estoque pode remover a relação
-    cabinet Cabinet @relation(fields: [cabinetId], references: [id], onDelete: Cascade) // O cabinet pode remover a relação
+    stock   Stock   @relation(fields: [stockId], references: [id], onDelete: Cascade, onUpdate: Cascade) // O estoque pode remover a relação
+    cabinet Cabinet @relation(fields: [cabinetId], references: [id], onDelete: Cascade, onUpdate: Cascade) // O cabinet pode remover a relação
     // Product Product[]
 }
 
@@ -282,7 +270,7 @@ model Shelf {
     name      String
     cabinetId String // Relacionamento direto com o Cabinet
 
-    cabinet Cabinet   @relation(fields: [cabinetId], references: [id], onDelete: Cascade) // Shelf associada a um Cabinet
+    cabinet Cabinet   @relation(fields: [cabinetId], references: [id], onDelete: Cascade, onUpdate: Cascade) // Shelf associada a um Cabinet
     Product Product[]
 }
 
@@ -305,32 +293,32 @@ model UseSector {
     Product Product[]
 }
 
-model Output {
-    id            String   @id @default(cuid())
-    number        Int
-    date          DateTime
-    responsibleId String
-    applicantId   String
-    requestArea   String
-    operationId   String
+// model Output {
+//     id            String   @id @default(cuid())
+//     number        Int
+//     date          DateTime
+//     responsibleId String
+//     applicantId   String
+//     requestArea   String
+//     operationId   String
 
-    responsible UserRole @relation("OutputResponsible", fields: [responsibleId], references: [id])
-    applicant   UserRole @relation("OutputApplicant", fields: [applicantId], references: [id])
+//     responsible UserRole @relation("OutputResponsible", fields: [responsibleId], references: [id])
+//     applicant   UserRole @relation("OutputApplicant", fields: [applicantId], references: [id])
 
-    ProductOutput ProductOutput[]
-}
+//     ProductOutput ProductOutput[]
+// }
 
-model ProductOutput {
-    id         String @id @default(cuid())
-    outputId   String
-    productId  String
-    supplierId String
-    quantity   Int
+// model ProductOutput {
+//     id         String @id @default(cuid())
+//     outputId   String
+//     productId  String
+//     supplierId String
+//     quantity   Int
 
-    output   Output   @relation(fields: [outputId], references: [id])
-    product  Product  @relation(fields: [productId], references: [id])
-    supplier Supplier @relation(fields: [supplierId], references: [id])
-}
+//     output   Output   @relation(fields: [outputId], references: [id])
+//     product  Product  @relation(fields: [productId], references: [id])
+//     supplier Supplier @relation(fields: [supplierId], references: [id])
+// }
 
 model Inventory {
     id            String   @id @default(cuid())
@@ -352,7 +340,7 @@ model ProductInventory {
     productId         String
     inventoryId       String
 
-    product   Product   @relation(fields: [productId], references: [id])
+    product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     inventory Inventory @relation(fields: [inventoryId], references: [id])
 }
 
@@ -378,7 +366,7 @@ model ProductAdjust {
     reasonId      String
 
     adjust  Adjust       @relation(fields: [adjustId], references: [id])
-    product Product      @relation(fields: [productId], references: [id])
+    product Product      @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     reason  AdjustReason @relation(fields: [reasonId], references: [id])
 }
 
@@ -408,7 +396,7 @@ model OrderProduct {
     productSupplierId String
 
     order   Order           @relation(fields: [orderId], references: [id])
-    product ProductSupplier @relation(fields: [productSupplierId], references: [id])
+    product ProductSupplier @relation(fields: [productSupplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Request {
@@ -435,7 +423,7 @@ model RequestProduct {
     // unitId            String
 
     request Request @relation(fields: [requestId], references: [id])
-    product Product @relation(fields: [productId], references: [id])
+    product Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     // unit    Unit    @relation(fields: [unitId], references: [id])
 }
 
@@ -529,6 +517,6 @@ model InvoiceProduct {
     productSupplierId String
 
     // unit            Unit            @relation(fields: [unitId], references: [id])
-    productSupplier ProductSupplier @relation(fields: [productSupplierId], references: [id])
+    productSupplier ProductSupplier @relation(fields: [productSupplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     invoice         Invoice         @relation(fields: [invoiceId], references: [id])
 }

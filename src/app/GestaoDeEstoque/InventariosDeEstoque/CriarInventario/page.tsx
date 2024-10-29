@@ -40,10 +40,11 @@ import { api } from "~/trpc/react";
 import FinalizeInventory from "./useInventory";
 
 export default function CreateInventory() {
+  const session = useSession();
+
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
 
-  const session = useSession();
   const userId = session.data?.user.id;
   const [selectResponsible, setSelectResponsible] = useState<
     string | undefined
@@ -80,7 +81,9 @@ export default function CreateInventory() {
     api.generalParameters.controlType.getAll.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: {},
+  });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockId: selectStockId ? selectStockId : "",
@@ -98,14 +101,14 @@ export default function CreateInventory() {
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
           selectStockId === "" ||
-          product.shelf.cabinet.StockCabinet.some(
+          product.shelf?.cabinet.StockCabinet.some(
             (stockCabinet) =>
               stockCabinet.stock.id.toLowerCase() ===
               selectStockId.toLowerCase(),
           );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.shelf.cabinet.name} - ${product.shelf.name}`
+          `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
@@ -167,6 +170,30 @@ export default function CreateInventory() {
     setAddedProducts([]); // Limpar produtos ao mudar o estoque
     setQuantities({});
   };
+
+  function alphanumericSort(a: string, b: string) {
+    const regex = /(\d+)|(\D+)/g;
+    const aParts = a.match(regex) ?? [];
+    const bParts = b.match(regex) ?? [];
+
+    for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+      const aPart = aParts[i] ?? "";
+      const bPart = bParts[i] ?? "";
+
+      // Se a parte for um número, faça comparação numérica
+      if (/\d/.test(aPart) && /\d/.test(bPart)) {
+        const diff = parseInt(aPart, 10) - parseInt(bPart, 10);
+        if (diff !== 0) return diff;
+      }
+
+      // Se não for número, faça comparação lexicográfica
+      if (aPart !== bPart) {
+        return aPart.localeCompare(bPart);
+      }
+    }
+
+    return 0;
+  }
 
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
@@ -450,7 +477,7 @@ export default function CreateInventory() {
             !error &&
             (filteredProducts?.length > 0 ? (
               filteredProducts
-                ?.sort((a, b) => a.code.localeCompare(b.code))
+                ?.sort((a, b) => alphanumericSort(a.code, b.code))
                 .map((product, index) => (
                   <TableComponent.Line
                     className={`grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16 ${
@@ -466,7 +493,7 @@ export default function CreateInventory() {
                       {product.currentStock}
                     </TableComponent.Value>
                     <TableComponent.Value>
-                      {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                      {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                     </TableComponent.Value>
                     <Button
                       onClick={() =>
@@ -475,9 +502,11 @@ export default function CreateInventory() {
                           productId: product.id,
                           code: product.code,
                           name: product.name,
+                          ncm: product.ncm,
+                          cfop: product.cfop,
                           unit: product.unit,
                           inventoryQuantity: 0,
-                          stockQuantity: product.currentStock,
+                          stockQuantity: product.currentStock ?? 0,
                           shelf: product.shelf,
                         })
                       }
@@ -549,7 +578,7 @@ export default function CreateInventory() {
             !error &&
             (filteredProducts?.length > 0 ? (
               filteredProducts
-                ?.sort((a, b) => a.code.localeCompare(b.code))
+                ?.sort((a, b) => alphanumericSort(a.code, b.code))
                 .map((product, index) => (
                   <TableComponent.Line
                     className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
@@ -590,7 +619,7 @@ export default function CreateInventory() {
                             <span className="font-semibold">
                               Endereço de Estoque:
                             </span>{" "}
-                            {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                            {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                           </p>
                           <p className="text-base">
                             <span className="font-semibold">
@@ -634,6 +663,8 @@ export default function CreateInventory() {
                                   productId: product.id,
                                   code: product.code,
                                   name: product.name,
+                                  ncm: product.ncm,
+                                  cfop: product.cfop,
                                   unit: product.unit,
                                   inventoryQuantity: 0,
                                   stockQuantity: product.currentStock,
@@ -801,7 +832,7 @@ export default function CreateInventory() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf.cabinet.name}, ${product.shelf.name}`}
+                        {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">

@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,6 +11,7 @@ import {
 } from "./paymentEditFormSchema";
 
 export const usePaymentForm = (invoice: SerializedInvoice) => {
+  const router = useRouter();
   const invoiceMutation = api.invoice.editInvoice.useMutation({
     onSuccess: (updatedInvoice) => {
       console.log("Invoice updated successfully:", updatedInvoice);
@@ -20,7 +22,7 @@ export const usePaymentForm = (invoice: SerializedInvoice) => {
         },
       );
       setTimeout(function () {
-        location.reload();
+        router.refresh();
       }, 2000);
     },
     onError: (error) => {

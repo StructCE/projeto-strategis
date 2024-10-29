@@ -1,6 +1,5 @@
 import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
 import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
-import { api } from "~/trpc/react";
 
 type ProductType = {
   product: ProductWithFeatures;
@@ -109,7 +108,7 @@ export default function ProductDetails(props: ProductType) {
             Tipo de Controle
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.controlType.name}
+            {props.product.controlType?.name}
           </TableCell>
         </TableRow>
 
@@ -118,7 +117,7 @@ export default function ProductDetails(props: ProductType) {
             Categoria do Produto
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.category.name}
+            {props.product.category?.name}
           </TableCell>
         </TableRow>
 
@@ -127,7 +126,7 @@ export default function ProductDetails(props: ProductType) {
             Setor de Utilização
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {props.product.sectorOfUse.name}
+            {props.product.sectorOfUse?.name}
           </TableCell>
         </TableRow>
 
@@ -136,7 +135,7 @@ export default function ProductDetails(props: ProductType) {
             Endereço de Estoque
           </TableCell>
           <TableCell className="px-[10px] py-[5px]">
-            {`${props.product.shelf.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${props.product.shelf.cabinet.name}, ${props.product.shelf.name}`}
+            {`${props.product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${props.product.shelf?.cabinet.name}, ${props.product.shelf?.name}`}
           </TableCell>
         </TableRow>
 
