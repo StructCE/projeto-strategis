@@ -167,72 +167,72 @@ async function main() {
   // });
   // await Promise.all(createdControlType);
 
-  // const createdBanks = banks.map(async (bank) => {
-  //   const createdBank = await createBank({
-  //     name: bank.name,
-  //   });
-  //   return createdBank;
-  // });
-  // await Promise.all(createdBanks);
+  const createdBanks = banks.map(async (bank) => {
+    const createdBank = await createBank({
+      name: bank.name,
+    });
+    return createdBank;
+  });
+  await Promise.all(createdBanks);
 
-  // const createdProjects = projects.map(async (project) => {
-  //   const createdProject = await createProject({
-  //     name: project.name,
-  //   });
-  //   return createdProject;
-  // });
-  // await Promise.all(createdProjects);
+  const createdProjects = projects.map(async (project) => {
+    const createdProject = await createProject({
+      name: project.name,
+    });
+    return createdProject;
+  });
+  await Promise.all(createdProjects);
 
-  // const createdGroups = groups.map(async (group) => {
-  //   const createdGroup = await createGroup({
-  //     name: group.name,
-  //   });
-  //   return createdGroup;
-  // });
-  // await Promise.all(createdGroups);
+  const createdGroups = groups.map(async (group) => {
+    const createdGroup = await createGroup({
+      name: group.name,
+    });
+    return createdGroup;
+  });
+  await Promise.all(createdGroups);
 
-  // const createdDocumentTypes = documentTypes.map(async (type) => {
-  //   const createdDocumentType = await createDocumentType({
-  //     name: type.name,
-  //   });
-  //   return createdDocumentType;
-  // });
-  // await Promise.all(createdDocumentTypes);
+  const createdDocumentTypes = documentTypes.map(async (type) => {
+    const createdDocumentType = await createDocumentType({
+      name: type.name,
+    });
+    return createdDocumentType;
+  });
+  await Promise.all(createdDocumentTypes);
 
-  // for (const plan of account_plans) {
-  //   // 1. Cria InvoiceAccountPlan
-  //   const createdPlan = await db.invoiceAccountPlan.create({
-  //     data: {
-  //       name: plan.name,
-  //       abbreviation: plan.abbreviation,
-  //     },
-  //   });
+  for (const plan of account_plans) {
+    // 1. Cria InvoiceAccountPlan
+    const createdPlan = await db.invoiceAccountPlan.create({
+      data: {
+        name: plan.name,
+        abbreviation: plan.abbreviation,
+      },
+    });
 
-  //   // 2. Para cada conta no plano, cria InvoiceAccount
-  //   for (const account of plan.accounts) {
-  //     await db.invoiceAccount.create({
-  //       data: {
-  //         name: account.name,
-  //         accountPlanId: createdPlan.id, // Relaciona com o plano recém-criado
-  //       },
-  //     });
-  //   }
-  // }
+    // 2. Para cada conta no plano, cria InvoiceAccount
+    for (const account of plan.accounts) {
+      await db.invoiceAccount.create({
+        data: {
+          name: account.name,
+          accountPlanId: createdPlan.id, // Relaciona com o plano recém-criado
+        },
+      });
+    }
+  }
 
-  // const createdModules = modules.map(async (module) => {
-  //   const createdModule = await createModule(module);
-  //   return createdModule;
-  // });
-  // await Promise.all(createdModules);
-  // const createdRoles = roles.map(async (role) => {
-  //   const createdRole = await createRole({ name: role.name });
-  //   const createdRoleModules = await createRoleModules({
-  //     roleId: createdRole.id,
-  //     modules: role.modules,
-  //   });
-  //   return createdRoleModules;
-  // });
-  // await Promise.all(createdRoles);
+  const createdModules = modules.map(async (module) => {
+    const createdModule = await createModule(module);
+    return createdModule;
+  });
+  await Promise.all(createdModules);
+  const createdRoles = roles.map(async (role) => {
+    const createdRole = await createRole({ name: role.name });
+    const createdRoleModules = await createRoleModules({
+      roleId: createdRole.id,
+      modules: role.modules,
+    });
+    return createdRoleModules;
+  });
+  await Promise.all(createdRoles);
 
   const companyStruct = await db.company.create({
     data: {

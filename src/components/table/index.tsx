@@ -3,12 +3,13 @@ import { cn } from "~/lib/utils";
 
 type TableProps = {
   className?: string;
+  id?: string;
   children: React.ReactNode;
 };
 
 export const TableComponent = (props: TableProps) => {
   const rootStyle = cn("flex flex-col gap-[4px]", props.className);
-  return <div className={rootStyle}>{props.children}</div>;
+  return <div className={rootStyle} id={props.id}>{props.children}</div>;
 };
 
 type TableComponentTitleProps = {
