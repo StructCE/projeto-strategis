@@ -92,77 +92,77 @@ export const UserRegister = () => {
             </FormComponent.Frame>
           </FormComponent.Line>
 
-          <FormComponent.BoxSpecify boxName="Empresas/Cargos">
-            {userForm.fieldsArray.map((UserRole, index) => (
-              <FormComponent.Line key={index}>
-                <FormComponent.Frame>
-                  <FormComponent.Label>Empresa</FormComponent.Label>
-                  <FormField
-                    control={userForm.form.control}
-                    name={`UserRole.${index}.companyId`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                              <SelectValue placeholder="Selecione uma empresa" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {companies.map((company, index) => (
-                              <SelectItem value={company.id} key={index}>
-                                {company.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
+          {/* <FormComponent.BoxSpecify boxName="Empresas/Cargos"> */}
+          {userForm.fieldsArray.map((UserRole, index) => (
+            <FormComponent.Line key={index}>
+              <FormComponent.Frame>
+                <FormComponent.Label>Empresa</FormComponent.Label>
+                <FormField
+                  control={userForm.form.control}
+                  name={`UserRole.${index}.companyId`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                            <SelectValue placeholder="Selecione uma empresa" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {companies.map((company, index) => (
+                            <SelectItem value={company.id} key={index}>
+                              {company.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
 
-                <FormComponent.Frame>
-                  <FormComponent.Label>Cargo</FormComponent.Label>
-                  <FormField
-                    control={userForm.form.control}
-                    name={`UserRole.${index}.roleId`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                              <SelectValue placeholder="Selecione um cargo" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {roles.map((role, index) => (
-                              <SelectItem value={role.id} key={index}>
-                                {role.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
+              <FormComponent.Frame>
+                <FormComponent.Label>Cargo</FormComponent.Label>
+                <FormField
+                  control={userForm.form.control}
+                  name={`UserRole.${index}.roleId`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                            <SelectValue placeholder="Selecione um cargo" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {roles.map((role, index) => (
+                            <SelectItem value={role.id} key={index}>
+                              {role.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
 
-                <FormComponent.ButtonRemove
+              {/* <FormComponent.ButtonRemove
                   handlePress={() => userForm.arrayRemove(index)}
-                ></FormComponent.ButtonRemove>
-              </FormComponent.Line>
-            ))}
-          </FormComponent.BoxSpecify>
+                ></FormComponent.ButtonRemove> */}
+            </FormComponent.Line>
+          ))}
+          {/* </FormComponent.BoxSpecify> */}
 
-          <FormComponent.ButtonLayout className="flex justify-end">
+          {/* <FormComponent.ButtonLayout className="flex justify-end">
             <button
               onClick={() =>
                 userForm.arrayAppend({ companyId: "", roleId: "" })
@@ -174,7 +174,7 @@ export const UserRegister = () => {
                 Adicionar Empresa
               </p>
             </button>
-          </FormComponent.ButtonLayout>
+          </FormComponent.ButtonLayout> */}
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
