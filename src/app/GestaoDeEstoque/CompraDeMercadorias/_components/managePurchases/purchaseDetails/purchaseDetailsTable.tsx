@@ -7,7 +7,7 @@ type OrderType = {
 
 export default function PurchaseDetails(props: OrderType) {
   return (
-    <TableComponent className="gap-3 text-left">
+    <TableComponent className="gap-3 text-left" id="detail-purchase-table">
       <TableComponent.Table>
         <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_90px_120px_110px_110px_1fr] gap-6 sm:px-[16px]">
           <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">

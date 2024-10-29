@@ -10,47 +10,46 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   title: {
-    fontSize: 24, // Tailwind's text-2xl
-    fontWeight: "semibold", // Tailwind's font-semibold
-    marginBottom: 8,
+    fontSize: 28, 
+    fontWeight: "bold", // Changed to bold for a stronger appearance
+    color: "#2C3E50", // Darker color for the title
+    marginBottom: 4, // Reduced margin for a tighter look
+    textAlign: "center", // Centered title
   },
   subtitle: {
     fontSize: 16,
-    fontWeight: "semibold", // Tailwind's font-semibold
+    fontWeight: "medium", // Changed weight to medium for contrast
+    color: "#7F8C8D", // Lighter color for the subtitle
+    marginBottom: 12, // Increased bottom margin for spacing
+    textAlign: "center", // Centered subtitle
   },
   table: {
-    display: "flex",
     width: "100%",
+    borderColor: "#000",
+    marginBottom: 24,
+  },
+  tableRow: {
     flexDirection: "row",
-    marginBottom: 24, // Tailwind's mb-6
-    borderWidth: 1,
-    borderColor: "#000",
-  },
-  tableColumn: {
-    width: "30%", // Corresponds to grid-cols-[30%_70%]
-    borderWidth: 1,
-    borderColor: "#000",
-  },
-  tableColumnContent: {
-    width: "70%", // Corresponds to grid-cols-[30%_70%]
-    borderWidth: 1,
-    borderColor: "#000",
-  },
-  tableCell: {
-    paddingVertical: 6, // Tailwind's py-2
-    paddingHorizontal: 8, // Tailwind's px-6
-    fontSize: 12, // Tailwind's text-base
-    borderBottomWidth: 1,
-    borderBottomColor: "#000",
+    width: "100%",
   },
   tableCellHeader: {
-    paddingVertical: 6, // Tailwind's py-2
-    paddingHorizontal: 8, // Tailwind's px-6
-    fontSize: 12, // Tailwind's text-base
+    fontSize: 12,
     fontWeight: "bold",
-    borderBottomWidth: 1,
-    borderBottomColor: "#000",
+    padding: 6,
+    backgroundColor: "#bfbfbf",
+    display: "flex",
+    alignItems: "center",
+    // textAlign:"center"
   },
+  tableCell: {
+    fontSize: 12,
+    padding: 6,
+  },
+  // Define column styles directly here
+  columnSmall: { width: "5%" },
+  columnNarrow: { width: "10%" },
+  columnMedium: { width: "20%" },
+  columnWide: { width: "25%" },
 });
 
 type PurchaseData = {
@@ -74,9 +73,20 @@ type PurchaseOrderType = {
   purchaseData: PurchaseData;
 };
 
+const columns = [
+  { title: "Cód.", style: styles.columnSmall },
+  { title: "Produto", style: styles.columnMedium },
+  { title: "Quantidade em Estoque", style: styles.columnNarrow },
+  { title: "Estoque Mínimo", style: styles.columnNarrow },
+  { title: "Unidade", style: styles.columnNarrow },
+  { title: "Quantidade a Comprar (unidade)", style: styles.columnNarrow },
+  { title: "Quantidade a Comprar (fardo)", style: styles.columnNarrow },
+  { title: "Fornecedor", style: styles.columnWide },
+];
+
 const CustomReportPDF = (props: PurchaseOrderType) => (
   <Document>
-    <Page size="A4" style={styles.page}>
+    <Page size="A4" style={styles.page} orientation="landscape">
       <View style={styles.titleView}>
         <Text style={styles.title}>
           Relatório de Compra de Mercadorias -{" "}
@@ -86,37 +96,54 @@ const CustomReportPDF = (props: PurchaseOrderType) => (
           Responsável - {props.purchaseData.responsible}
         </Text>
       </View>
-      {props.purchaseData.orderProducts.map((product, index) => (
-        <View style={styles.table} key={index}>
-          <View style={styles.tableColumn}>
-            <Text style={styles.tableCellHeader}>Código</Text>
-            <Text style={styles.tableCellHeader}>Nome</Text>
-            <Text style={styles.tableCellHeader}>Fornecedor</Text>
-            <Text style={styles.tableCellHeader}>Unidade de Compra</Text>
-            <Text style={styles.tableCellHeader}>Quantidade de Compra</Text>
-            <Text style={styles.tableCellHeader}>Estoque Atual</Text>
-            <Text style={styles.tableCellHeader}>Estoque Mínimo</Text>
-            <Text style={styles.tableCellHeader}>Endereço do Estoque</Text>
-          </View>
 
-          <View style={styles.tableColumnContent}>
-            <Text style={styles.tableCell}>{product.code}</Text>
-            <Text style={styles.tableCell}>{product.name}</Text>
-            <Text style={styles.tableCell}>
+      <View style={styles.table}>
+        {/* Header Row */}
+        <View style={styles.tableRow}>
+          {columns.map((col, index) => (
+            <Text key={index} style={[col.style, styles.tableCellHeader]}>
+              {col.title}
+            </Text>
+          ))}
+        </View>
+
+        {/* Data Rows */}
+        {props.purchaseData.orderProducts.map((product, index) => (
+          <View
+            style={[
+              styles.tableRow,
+              { backgroundColor: index % 2 === 0 ? "white" : "#dedede" }, // Alternate row color
+            ]}
+            key={index}
+          >
+            {" "}
+            <Text style={[styles.columnSmall, styles.tableCell]}>
+              {product.code}
+            </Text>
+            <Text style={[styles.columnMedium, styles.tableCell]}>
+              {product.name}
+            </Text>
+            <Text style={[styles.columnNarrow, styles.tableCell]}>
+              {product.currentStock ?? 0}
+            </Text>
+            <Text style={[styles.columnNarrow, styles.tableCell]}>
+              {product.minimunStock ?? 0}
+            </Text>
+            <Text style={[styles.columnNarrow, styles.tableCell]}>
+              {product.unit}
+            </Text>
+            <Text style={[styles.columnNarrow, styles.tableCell]}>
+              {product.purchaseQuantity ?? 0}
+            </Text>
+            <Text style={[styles.columnNarrow, styles.tableCell]}>
+              {product.purchaseQuantity ?? 0}
+            </Text>
+            <Text style={[styles.columnWide, styles.tableCell]}>
               {product.ProductSupplier ?? "Não informado"}
             </Text>
-            <Text style={styles.tableCell}>{product.unit}</Text>
-            <Text style={styles.tableCell}>
-              {product.purchaseQuantity ?? "Não informado"}
-            </Text>
-            <Text style={styles.tableCell}>{product.currentStock ?? 0}</Text>
-            <Text style={styles.tableCell}>{product.minimunStock ?? 0}</Text>
-            <Text style={styles.tableCell}>
-              {`${product.stock}, ${product.cabinet}, ${product.shelf}`}
-            </Text>
           </View>
-        </View>
-      ))}
+        ))}
+      </View>
     </Page>
   </Document>
 );
