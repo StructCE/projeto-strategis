@@ -232,12 +232,23 @@ async function edit(props: RequestRepositoryInterfaces["EditProps"]) {
           );
         }
 
-        return db.requestProduct.update({
+        await db.requestProduct.update({
           where: { id: requestProduct.id }, // Usar o id do produto da requisição
           data: {
             releasedQuantity: requestProduct.releasedQuantity ?? null, // Atualizar a quantidade liberada
           },
         });
+
+        if (requestProduct.releasedQuantity) {
+          await db.product.update({
+            where: { id: existingRequestProduct.productId },
+            data: {
+              currentStock: {
+                decrement: requestProduct.releasedQuantity, // Reduz o estoque conforme a quantidade liberada
+              },
+            },
+          });
+        }
       }),
     );
   }
