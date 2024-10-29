@@ -654,7 +654,7 @@ export default function CreateAdjustment() {
                       </DialogTrigger>
                       <DialogContent
                         aria-describedby={undefined}
-                        className="w-full gap-2 p-5"
+                        className="max-h-[90vh] w-full gap-2 overflow-y-auto p-5"
                       >
                         <DialogHeader>
                           <DialogTitle className="text-left text-xl">
@@ -900,7 +900,7 @@ export default function CreateAdjustment() {
                   </DialogTrigger>
                   <DialogContent
                     aria-describedby={undefined}
-                    className="w-full gap-2 p-5"
+                    className="max-h-[90vh] w-full gap-2 overflow-y-auto p-5"
                   >
                     <DialogHeader>
                       <DialogTitle className="text-left text-xl">

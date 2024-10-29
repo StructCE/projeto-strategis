@@ -1076,7 +1076,7 @@ export default function StockReportsPage() {
                   </DialogTrigger>
                   <DialogContent
                     aria-describedby={undefined}
-                    className="sm:max-w-4xl"
+                    className="max-h-[90vh] overflow-y-auto sm:max-w-4xl"
                   >
                     <DialogHeader>
                       <DialogTitle>Informações do Produto:</DialogTitle>

@@ -61,7 +61,7 @@ export const ManageSectorsTable = () => {
                     </DialogTrigger>
                     <DialogContent
                       aria-describedby={undefined}
-                      className="sm:max-w-7xl"
+                      className="max-h-[90vh] overflow-y-auto sm:max-w-7xl"
                     >
                       <DialogHeader>
                         <DialogTitle className="pb-1.5">

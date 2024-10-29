@@ -61,7 +61,7 @@ export const ManageTypesTable = () => {
                     </DialogTrigger>
                     <DialogContent
                       aria-describedby={undefined}
-                      className="sm:max-w-7xl"
+                      className="sm:max-w-7xl max-h-[90vh] overflow-y-auto"
                     >
                       <DialogHeader>
                         <DialogTitle className="pb-1.5">
