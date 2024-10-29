@@ -4,6 +4,7 @@ export const modules: {
   pagePath: string;
   allowedRouter: string;
 }[] = [
+  // Configurações Gerais
   {
     name: "Cadastrar Empresas",
     code: 1,
@@ -34,6 +35,7 @@ export const modules: {
     pagePath: "/ConfiguracoesGerais/CadastroDeParametrosGerais",
     allowedRouter: "generalParameters",
   },
+  // Controle de Acesso
   {
     name: "Cadastrar Usuários",
     code: 6,
@@ -46,81 +48,72 @@ export const modules: {
     pagePath: "/ControleDeAcesso/CadastroDePerfisDeAcesso",
     allowedRouter: "role",
   },
+  // Gestão de Estoque
   {
-    name: "Importar NFs de Qualquer Empresa",
+    name: "Importar Notas Fiscais",
     code: 8,
     pagePath: "/GestaoDeEstoque/ImportacaoDeNFs",
     allowedRouter: "invoice",
   },
-  // {
-  //   name: "Dar Entrada de Mercadorias",
-  //   code: 9,
-  //   pagePath: "/GestaoDeEstoque/EntradaDeMercadorias",
-  //   allowedRouter: "",
-  // },
-  // {
-  //   name: "Dar Saída de Mercadorias",
-  //   code: 10,
-  //   pagePath: "/GestaoDeEstoque/SaidaDeMercadorias",
-  //   allowedRouter: "",
-  // },
   {
     name: "Comprar Mercadorias",
-    code: 11,
+    code: 9,
     pagePath: "/GestaoDeEstoque/CompraDeMercadorias",
     allowedRouter: "order",
   },
   {
     name: "Fazer Inventários",
-    code: 12,
+    code: 10,
     pagePath: "/GestaoDeEstoque/InventariosDeEstoque",
     allowedRouter: "inventory",
   },
   {
     name: "Fazer Ajustes de Estoque",
-    code: 13,
+    code: 11,
     pagePath: "/GestaoDeEstoque/AjustesDeEstoque",
     allowedRouter: "adjust",
   },
+  // Requisição de Mercadorias
   {
     name: "Requisitar Mercadorias do Estoque",
-    code: 14,
+    code: 12,
     pagePath: "/RequisicaoDeMercadoria/RequisitarMercadorias",
     allowedRouter: "request",
   },
   {
-    name: "Dar Aceite de Mercadorias Recebidas",
-    code: 15,
+    name: "Dar Aceite de Mercadorias",
+    code: 13,
     pagePath: "/RequisicaoDeMercadoria/RequisicoesDeMercadorias",
     allowedRouter: "request",
   },
   {
     name: "Checar Status de Requisições",
-    code: 16,
+    code: 14,
     pagePath: "/RequisicaoDeMercadoria/StatusDeRequisicoes",
     allowedRouter: "request",
   },
+  // Relatórios
   {
     name: "Gerar Relatórios de Aviso de Estoque",
-    code: 17,
+    code: 15,
     pagePath: "/Relatorios/AvisosDeEstoque",
     allowedRouter: "",
   },
   {
     name: "Gerar Relatórios Personalizados de Estoque",
-    code: 18,
+    code: 16,
     pagePath: "/Relatorios/RelatoriosPersonalizados",
     allowedRouter: "",
   },
   {
     name: "Checar Histórico de Operações",
-    code: 19,
+    code: 17,
     pagePath: "/Relatorios/HistoricoDeOperacoes",
     allowedRouter: "operation",
   },
   {
     name: "Checar Histórico de Pagamentos",
-    code: 20,
+    code: 18,
     pagePath: "/Relatorios/HistoricoDePagamentos",
     allowedRouter: "invoice",
   },
