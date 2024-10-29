@@ -50,7 +50,7 @@ export const ProductEdit = (props: ProductEditForm) => {
 
   const [selectedStockId, setSelectedStockId] = useState<string>(selectedStock);
 
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockId: selectedStockId ? selectedStockId : "",

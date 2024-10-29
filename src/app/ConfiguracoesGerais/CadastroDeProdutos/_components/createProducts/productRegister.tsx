@@ -39,7 +39,7 @@ export const ProductRegister = () => {
     api.generalParameters.controlType.getAll.useQuery();
   const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
 
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({});
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockId: selectedStockId ? selectedStockId : "",
