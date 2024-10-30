@@ -1,4 +1,5 @@
 "use client";
+import { useSession } from "next-auth/react";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -15,16 +16,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import { useStockForm } from "./useStockForm";
 
 export const StockRegister = () => {
   const stockForm = useStockForm();
 
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
   const { data: companies = [] } = api.company.getAllCompanies.useQuery({
     filters: {},
   });
-  const { data: users = [] } = api.user.getAll.useQuery();
+  const { data: users = [] } = api.user.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetsWithoutStock.useQuery();
 

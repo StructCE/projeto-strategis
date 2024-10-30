@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { FormComponent } from "~/components/forms";
 import {
@@ -16,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import { useProductForm } from "./useProductForm";
 
@@ -24,11 +26,31 @@ export const ProductRegister = () => {
 
   const [selectedStockId, setSelectedStockId] = useState<string>();
 
-  const { data: users = [] } = api.user.getAll.useQuery();
+  const session = useSession();
 
-  const { data: products = [] } = api.product.getAll.useQuery();
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
+  const { data: users = [] } = api.user.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
+
+  const { data: products = [] } = api.product.getAllWhere.useQuery({
+    filters: { company: companyFilter },
+  });
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({
-    filters: {},
+    filters: { company: companyFilter },
   });
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
@@ -38,7 +60,9 @@ export const ProductRegister = () => {
     api.generalParameters.controlType.getAll.useQuery();
   const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
 
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: { company: companyFilter },
+  });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockId: selectedStockId ? selectedStockId : "",

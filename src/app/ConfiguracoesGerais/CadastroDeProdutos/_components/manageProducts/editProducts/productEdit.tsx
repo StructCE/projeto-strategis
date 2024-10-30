@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { FormComponent } from "~/components/forms";
 import {
@@ -16,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { useCompany } from "~/lib/companyProvider";
 import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
 import { api } from "~/trpc/react";
 import { useProductForm } from "./useProductForm";
@@ -27,11 +29,31 @@ type ProductEditForm = {
 export const ProductEdit = (props: ProductEditForm) => {
   const productEditForm = useProductForm(props.product);
 
-  const { data: products = [] } = api.product.getAll.useQuery();
+  const session = useSession();
 
-  const { data: users = [] } = api.user.getAll.useQuery();
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
+  const { data: products = [] } = api.product.getAllWhere.useQuery({
+    filters: { company: companyFilter },
+  });
+
+  const { data: users = [] } = api.user.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({
-    filters: {},
+    filters: { company: companyFilter },
   });
   const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
   const { data: productCategories = [] } =
@@ -49,7 +71,9 @@ export const ProductEdit = (props: ProductEditForm) => {
 
   const [selectedStockId, setSelectedStockId] = useState<string>(selectedStock);
 
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: { company: companyFilter },
+  });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockId: selectedStockId ? selectedStockId : "",
