@@ -1,5 +1,9 @@
 import { controlTypeRepositorySchema } from "~/server/interfaces/controlType/controlType.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 import type { ControlTypeRouteInterfaces } from "~/server/interfaces/controlType/controlType.route.interfaces";
 import { controlTypeRepository } from "~/server/repositories/controlType.repository";
 
@@ -11,7 +15,7 @@ export const controlTypeRouter = createTRPCRouter({
     },
   ),
 
-  registerControlType: protectedProcedure
+  registerControlType: operationProcedure
     .input(controlTypeRepositorySchema.registerProps)
     .mutation(
       async ({ input }): Promise<ControlTypeRouteInterfaces["ControlType"]> => {
@@ -21,7 +25,7 @@ export const controlTypeRouter = createTRPCRouter({
       },
     ),
 
-  editControlType: protectedProcedure
+  editControlType: operationProcedure
     .input(controlTypeRepositorySchema.editProps)
     .mutation(
       async ({ input }): Promise<ControlTypeRouteInterfaces["ControlType"]> => {
@@ -30,7 +34,7 @@ export const controlTypeRouter = createTRPCRouter({
       },
     ),
 
-  removeControlType: protectedProcedure
+  removeControlType: operationProcedure
     .input(controlTypeRepositorySchema.removeProps)
     .mutation(
       async ({ input }): Promise<ControlTypeRouteInterfaces["ControlType"]> => {

@@ -1,7 +1,11 @@
 import { companyRepositorySchema } from "~/server/interfaces/company/company.repository.interfaces";
 import type { CompanyRouteInterfaces } from "~/server/interfaces/company/company.route.interfaces";
 import { CompanyRepository } from "~/server/repositories/company.repository";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const companyRouter = createTRPCRouter({
   getOneCompany: protectedProcedure
@@ -136,21 +140,21 @@ export const companyRouter = createTRPCRouter({
       },
     ),
 
-  registerCompany: protectedProcedure
+  registerCompany: operationProcedure
     .input(companyRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
       const registeredCompany = await CompanyRepository.register(input);
       return registeredCompany;
     }),
 
-  editCompany: protectedProcedure
+  editCompany: operationProcedure
     .input(companyRepositorySchema.editProps)
     .mutation(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
       const editedCompany = await CompanyRepository.edit(input);
       return editedCompany;
     }),
 
-  deleteCompany: protectedProcedure
+  deleteCompany: operationProcedure
     .input(companyRepositorySchema.deleteProps)
     .mutation(async ({ input }): Promise<CompanyRouteInterfaces["Company"]> => {
       const deletedCompany = await CompanyRepository.remove(input);

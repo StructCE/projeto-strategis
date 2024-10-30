@@ -1,8 +1,11 @@
 import { orderRepositorySchema } from "~/server/interfaces/order/order.repository.interfaces";
 import type { OrderRouteInterfaces } from "~/server/interfaces/order/order.route.interfaces";
 import { orderRepository } from "~/server/repositories/order.repository";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { companies } from "./../../../components/navbar/_components/userData";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const orderRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -43,21 +46,21 @@ export const orderRouter = createTRPCRouter({
       },
     ),
 
-  registerOrder: protectedProcedure
+  registerOrder: operationProcedure
     .input(orderRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<OrderRouteInterfaces["Order"]> => {
       const registeredOrder = await orderRepository.register(input);
       return registeredOrder;
     }),
 
-  editOrder: protectedProcedure
+  editOrder: operationProcedure
     .input(orderRepositorySchema.editProps)
     .mutation(async ({ input }): Promise<OrderRouteInterfaces["Order"]> => {
       const editedOrder = await orderRepository.edit(input);
       return editedOrder;
     }),
 
-  deleteOrder: protectedProcedure
+  deleteOrder: operationProcedure
     .input(orderRepositorySchema.deleteProps)
     .mutation(async ({ input }): Promise<OrderRouteInterfaces["Order"]> => {
       const deletedOrder = await orderRepository.remove(input);

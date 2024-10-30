@@ -1,7 +1,11 @@
 import { inventoryRepositorySchema } from "~/server/interfaces/inventory/inventory.repository.interfaces";
 import type { InventoryRouteInterfaces } from "~/server/interfaces/inventory/inventory.route.interfaces";
 import { inventoryRepository } from "~/server/repositories/inventory.repository";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const inventoryRouter = createTRPCRouter({
   getAllInventories: protectedProcedure
@@ -36,7 +40,7 @@ export const inventoryRouter = createTRPCRouter({
       },
     ),
 
-  registerInventory: protectedProcedure
+  registerInventory: operationProcedure
     .input(inventoryRepositorySchema.registerProps)
     .mutation(
       async ({ input }): Promise<InventoryRouteInterfaces["Inventory"]> => {
@@ -45,7 +49,7 @@ export const inventoryRouter = createTRPCRouter({
       },
     ),
 
-  editInventory: protectedProcedure
+  editInventory: operationProcedure
     .input(inventoryRepositorySchema.editProps)
     .mutation(
       async ({ input }): Promise<InventoryRouteInterfaces["Inventory"]> => {

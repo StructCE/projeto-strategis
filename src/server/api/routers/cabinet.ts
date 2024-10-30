@@ -1,7 +1,11 @@
 import { cabinetRepositorySchema } from "~/server/interfaces/cabinet/cabinet.repository.interfaces";
 import type { CabinetRouteInterfaces } from "~/server/interfaces/cabinet/cabinet.route.interfaces";
 import { cabinetRepository } from "~/server/repositories/cabinet.repository";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const cabinetRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -45,21 +49,21 @@ export const cabinetRouter = createTRPCRouter({
       },
     ),
 
-  registerCabinet: protectedProcedure
+  registerCabinet: operationProcedure
     .input(cabinetRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<CabinetRouteInterfaces["Cabinet"]> => {
       const registeredCabinet = await cabinetRepository.register(input);
       return registeredCabinet;
     }),
 
-  editCabinet: protectedProcedure
+  editCabinet: operationProcedure
     .input(cabinetRepositorySchema.editProps)
     .mutation(async ({ input }): Promise<CabinetRouteInterfaces["Cabinet"]> => {
       const editedCabinet = await cabinetRepository.edit(input);
       return editedCabinet;
     }),
 
-  removeCabinet: protectedProcedure
+  removeCabinet: operationProcedure
     .input(cabinetRepositorySchema.removeProps)
     .mutation(async ({ input }): Promise<CabinetRouteInterfaces["Cabinet"]> => {
       const deletedCabinet = await cabinetRepository.remove(input);
