@@ -5,6 +5,19 @@ async function getAll(props: SupplierRepositoryInterfaces["GetAll"]) {
   if (props) {
     const { filters } = props;
     const conditions = [];
+
+    if (filters?.company) {
+      // Adiciona condição para buscar fornecedores associados à empresa com o nome especificado
+      conditions.push({
+        CompanySupplier: {
+          some: {
+            company: {
+              name: { contains: filters?.company },
+            },
+          },
+        },
+      });
+    }
     if (filters?.name) {
       conditions.push({ name: { contains: filters?.name } });
     }
@@ -21,13 +34,25 @@ async function getAll(props: SupplierRepositoryInterfaces["GetAll"]) {
       where: {
         AND: conditions,
       },
-      // include: { contacts: true },
+      include: {
+        CompanySupplier: {
+          include: {
+            company: true, // Incluir dados da empresa para verificação
+          },
+        },
+      },
     });
 
     return suppliers;
   }
   const suppliers = await db.supplier.findMany({
-    // include: { contacts: true },
+    include: {
+      CompanySupplier: {
+        include: {
+          company: true, // Incluir dados da empresa para verificação
+        },
+      },
+    },
   });
   return suppliers;
 }

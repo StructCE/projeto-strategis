@@ -1,5 +1,6 @@
 "use client";
 import { Eraser, Search } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { states } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/states";
 import { Filter } from "~/components/filter";
@@ -19,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import { SupplierEdit } from "./editSuppliers/supplierEdit";
 
@@ -27,12 +29,29 @@ export const ManageSuppliersTable = () => {
   const [inputEmail, setInputEmail] = useState("");
   const [selectState, setSelectState] = useState("");
 
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
   const {
     data: suppliers = [],
     error,
     isLoading,
   } = api.supplier.getAll.useQuery({
     filters: {
+      company: companyFilter,
       name: inputName,
       email: inputEmail,
       federativeUnit: selectState,

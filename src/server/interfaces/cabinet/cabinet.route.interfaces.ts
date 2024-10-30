@@ -1,3 +1,8 @@
+export type Stock = {
+  id: string;
+  name: string;
+};
+
 export type Cabinet = {
   id: string;
   name: string;
@@ -17,7 +22,15 @@ export type CabinetWithShelves = {
   shelf: Shelf[]; // Inclui as prateleiras associadas ao Cabinet
 };
 
+export type CabinetWithStock = {
+  id: string;
+  name: string;
+  stock: Stock | undefined; // Adiciona a relação com o estoque
+  shelf: Shelf[]; // Inclui as prateleiras associadas ao Cabinet
+};
+
 export type CabinetRouteInterfaces = {
   Cabinet: Cabinet;
   CabinetWithShelves: CabinetWithShelves;
+  CabinetWithStock: CabinetWithStock;
 };

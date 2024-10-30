@@ -1,5 +1,6 @@
 "use client";
 import { Eraser, Search } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table/index";
@@ -26,7 +27,21 @@ export const ManageStocksTable = () => {
   const [inputStockName, setInputStockName] = useState("");
   const [inputManagerName, setInputManagerName] = useState("");
 
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
   const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
 
   const {
     data: stocks = [],
@@ -34,7 +49,7 @@ export const ManageStocksTable = () => {
     isLoading,
   } = api.stock.getAllStocks.useQuery({
     filters: {
-      company: selectedCompany === "all_companies" ? "" : selectedCompany,
+      company: companyFilter,
       name: inputStockName,
       managerName: inputManagerName,
     },

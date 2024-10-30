@@ -2,11 +2,14 @@ import { z } from "zod";
 
 const getAll = z
   .object({
-    filters: z.object({
-      name: z.string().optional(),
-      email: z.string().optional(),
-      federativeUnit: z.string().optional(),
-    }).optional(),
+    filters: z
+      .object({
+        company: z.string().optional(),
+        name: z.string().optional(),
+        email: z.string().optional(),
+        federativeUnit: z.string().optional(),
+      })
+      .optional(),
   })
   .optional();
 

@@ -1,7 +1,35 @@
 import { db } from "../db";
 import type { ShelfRepositoryInterfaces } from "../interfaces/shelf/shelf.repository.interfaces";
 
-async function getAll() {
+async function getAll(props: ShelfRepositoryInterfaces["GetAll"]) {
+  if (props) {
+    const { filters } = props;
+    const conditions = [];
+
+    if (filters?.company) {
+      conditions.push({
+        cabinet: {
+          StockCabinet: {
+            some: {
+              stock: {
+                company: {
+                  name: filters.company,
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    const shelves = await db.shelf.findMany({
+      where: {
+        AND: conditions,
+      },
+    });
+
+    return shelves;
+  }
   const shelves = await db.shelf.findMany();
   return shelves;
 }

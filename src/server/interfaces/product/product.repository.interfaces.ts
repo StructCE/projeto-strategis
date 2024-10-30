@@ -3,6 +3,7 @@ import { z } from "zod";
 const getAllProps = z
   .object({
     filters: z.object({
+      company: z.string().optional(),
       name: z.string().optional(),
       stock: z.string().optional(),
       controlType: z.string().optional(),

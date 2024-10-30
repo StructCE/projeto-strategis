@@ -4,12 +4,28 @@ import { cabinetRepository } from "~/server/repositories/cabinet.repository";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const cabinetRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(
-    async (): Promise<CabinetRouteInterfaces["CabinetWithShelves"][]> => {
-      const cabinets = await cabinetRepository.getAll();
-      return cabinets;
-    },
-  ),
+  getAll: protectedProcedure
+    .input(cabinetRepositorySchema.getAll)
+    .query(
+      async ({
+        input,
+      }): Promise<CabinetRouteInterfaces["CabinetWithStock"][]> => {
+        const cabinets = await cabinetRepository.getAll(input);
+
+        // Mapeia os dados para corresponder ao tipo esperado de retorno
+        const mappedCabinets = cabinets.map((cabinet) => {
+          return {
+            id: cabinet.id,
+            name: cabinet.name,
+            // Assume que cada Cabinet possui apenas um Stock associado por meio de StockCabinet
+            stock: cabinet.StockCabinet?.[0]?.stock, // Pega o primeiro Stock associado
+            shelf: cabinet.Shelf, // A lista de Shelf já está na estrutura esperada
+          };
+        });
+
+        return mappedCabinets;
+      },
+    ),
 
   getCabinetsWithoutStock: protectedProcedure.query(
     async (): Promise<CabinetRouteInterfaces["CabinetWithShelves"][]> => {

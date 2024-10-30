@@ -28,7 +28,11 @@ async function getAll(props: UserRepositoryInterfaces["GetAllProps"]) {
     }
     if (filters.company) {
       conditions.push({
-        Company: { every: { name: { contains: filters?.company } } },
+        UserRole: {
+          some: {
+            company: { name: { contains: filters.company } },
+          },
+        },
       });
     }
     if (filters.role) {

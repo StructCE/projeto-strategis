@@ -5,19 +5,77 @@ import {
   type Shelf,
 } from "../interfaces/cabinet/cabinet.route.interfaces";
 
-async function getAll() {
+async function getAll(props: CabinetRepositoryInterfaces["GetAll"]) {
+  if (props) {
+    const { filters } = props;
+    const conditions = [];
+
+    if (filters?.company) {
+      conditions.push({
+        OR: [
+          {
+            StockCabinet: {
+              some: {
+                stock: {
+                  company: {
+                    name: filters.company,
+                  },
+                },
+              },
+            },
+          },
+          {
+            StockCabinet: {
+              none: {},
+            },
+          },
+        ],
+      });
+    }
+
+    const cabinets = await db.cabinet.findMany({
+      where: filters?.includeUnassociated
+        ? {
+            OR: [
+              { AND: conditions }, // Condição para cabinets com associação de estoque
+              { StockCabinet: { none: {} } }, // Condição para cabinets sem associação de estoque
+            ],
+          }
+        : {
+            AND: conditions,
+          },
+      include: {
+        StockCabinet: {
+          include: {
+            stock: {
+              include: {
+                company: true,
+              },
+            },
+          },
+        },
+        Shelf: true,
+      },
+    });
+
+    return cabinets;
+  }
+
   const cabinets = await db.cabinet.findMany({
     include: {
+      StockCabinet: {
+        include: {
+          stock: {
+            include: {
+              company: true, // Inclui os detalhes da empresa para validar o filtro
+            },
+          },
+        },
+      },
       Shelf: true,
     },
   });
-  return cabinets.map(
-    (cabinet): CabinetWithShelves => ({
-      id: cabinet.id,
-      name: cabinet.name,
-      shelf: cabinet.Shelf as Shelf[], // Define explicitamente o tipo de Shelf
-    }),
-  );
+  return cabinets;
 }
 
 async function getCabinetsWithoutStock() {

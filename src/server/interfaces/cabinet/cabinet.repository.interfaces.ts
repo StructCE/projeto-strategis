@@ -1,5 +1,18 @@
 import z from "zod";
 
+const getAll = z
+  .object({
+    filters: z
+      .object({
+        company: z.string().optional(),
+        includeUnassociated: z.boolean().optional(),
+      })
+      .optional(),
+  })
+  .optional();
+
+type GetAll = z.infer<typeof getAll>;
+
 const cabinetFromStockProps = z.object({
   stockId: z.string().optional(),
   stockName: z.string().optional(),
@@ -29,6 +42,7 @@ const removeProps = z.object({
 type RemoveProps = z.infer<typeof removeProps>;
 
 export const cabinetRepositorySchema = {
+  getAll,
   cabinetFromStockProps,
   registerProps,
   editProps,
@@ -36,6 +50,7 @@ export const cabinetRepositorySchema = {
 };
 
 export type CabinetRepositoryInterfaces = {
+  GetAll: GetAll;
   CabinetFromStockProps: CabinetFromStockProps;
   RegisterProps: RegisterProps;
   EditProps: EditProps;

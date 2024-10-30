@@ -15,6 +15,42 @@ async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
     const { filters } = props;
     const conditions = [];
 
+    if (filters?.company) {
+      conditions.push({
+        OR: [
+          {
+            shelf: {
+              cabinet: {
+                StockCabinet: {
+                  some: {
+                    stock: {
+                      company: {
+                        name: { contains: filters.company },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          {
+            ProductSupplier: {
+              some: {
+                supplier: {
+                  CompanySupplier: {
+                    some: {
+                      company: {
+                        name: { contains: filters.company },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+      });
+    }
     if (filters.name) {
       conditions.push({ name: { contains: filters.name } });
     }

@@ -1,4 +1,5 @@
 import { Eraser, Search } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -21,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
 import { api } from "~/trpc/react";
 import { ProductEdit } from "./editProducts/productEdit";
@@ -37,6 +39,22 @@ export default function ManageProductsTable() {
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
 
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
   const {
     data: products = [],
     error,
@@ -44,6 +62,7 @@ export default function ManageProductsTable() {
   } = api.product.getAllWhere.useQuery(
     {
       filters: {
+        company: companyFilter,
         buyDay: selectBuyDay,
         code: inputCode,
         controlType: selectControlType,

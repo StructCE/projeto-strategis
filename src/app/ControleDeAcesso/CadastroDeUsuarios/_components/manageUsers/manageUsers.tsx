@@ -1,5 +1,6 @@
 "use client";
-import { Building2, Eraser, Search, UserCog } from "lucide-react";
+import { Eraser, Search, UserCog } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -18,13 +19,30 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import { UserEdit } from "./editUsers/userEdit";
 
 export const ManageUsersTable = () => {
   const [inputName, setInputName] = useState("");
-  const [selectCompany, setSelectCompany] = useState("");
+  // const [selectCompany, setSelectCompany] = useState("");
   const [selectRole, setSelectRole] = useState("");
+
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
 
   const {
     data: users = [],
@@ -33,7 +51,7 @@ export const ManageUsersTable = () => {
   } = api.user.getAll.useQuery({
     filters: {
       name: inputName,
-      company: selectCompany,
+      company: companyFilter,
       role: selectRole,
     },
   });
@@ -71,7 +89,7 @@ export const ManageUsersTable = () => {
           />
         </Filter>
 
-        <Filter>
+        {/* <Filter>
           <Filter.Icon
             icon={({ className }: { className: string }) => (
               <Building2 className={className} />
@@ -89,7 +107,7 @@ export const ManageUsersTable = () => {
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
-        </Filter>
+        </Filter> */}
 
         <Filter>
           <Filter.Icon
@@ -118,7 +136,7 @@ export const ManageUsersTable = () => {
                 size={20}
                 onClick={() => {
                   setInputName("");
-                  setSelectCompany("");
+                  // setSelectCompany("");
                   setSelectRole("");
                 }}
               />

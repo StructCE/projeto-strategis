@@ -1,5 +1,17 @@
 import z from "zod";
 
+const getAll = z
+  .object({
+    filters: z
+      .object({
+        company: z.string().optional(),
+      })
+      .optional(),
+  })
+  .optional();
+
+type GetAll = z.infer<typeof getAll>;
+
 const registerProps = z.object({
   cabinetId: z.string(),
   name: z.string(),
@@ -23,12 +35,14 @@ const removeProps = z.object({
 type RemoveProps = z.infer<typeof removeProps>;
 
 export const shelfRepositorySchema = {
+  getAll,
   registerProps,
   editProps,
   removeProps,
 };
 
 export type ShelfRepositoryInterfaces = {
+  GetAll: GetAll;
   RegisterProps: RegisterProps;
   EditProps: EditProps;
   RemoveProps: RemoveProps;

@@ -1,15 +1,15 @@
 import { shelfRepositorySchema } from "~/server/interfaces/shelf/shelf.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { shelfRepository } from "~/server/repositories/shelf.repository";
 import type { ShelfRouteInterfaces } from "~/server/interfaces/shelf/shelf.route.interfaces";
+import { shelfRepository } from "~/server/repositories/shelf.repository";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const shelfRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(
-    async (): Promise<ShelfRouteInterfaces["Shelf"][]> => {
-      const shelves = await shelfRepository.getAll();
+  getAll: protectedProcedure
+    .input(shelfRepositorySchema.getAll)
+    .query(async ({ input }): Promise<ShelfRouteInterfaces["Shelf"][]> => {
+      const shelves = await shelfRepository.getAll(input);
       return shelves;
-    },
-  ),
+    }),
 
   registerShelf: protectedProcedure
     .input(shelfRepositorySchema.registerProps)
