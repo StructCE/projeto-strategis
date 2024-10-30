@@ -36,6 +36,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
 import { api } from "~/trpc/react";
 import FinalizeOrder from "./useOrder";
@@ -80,11 +81,25 @@ export default function CreatePurchaseOrder() {
     selectStatus === "" &&
     selectBuyDay === "";
 
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
   const {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery();
+  } = api.product.getAllWhere.useQuery({ filters: { company: companyFilter } });
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
@@ -92,15 +107,17 @@ export default function CreatePurchaseOrder() {
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
   const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
-    filters: {},
+    filters: { company: companyFilter },
   });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
     });
-  const { data: users = [] } = api.user.getAll.useQuery();
+  const { data: users = [] } = api.user.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({
-    filters: {},
+    filters: { company: companyFilter },
   });
 
   // Função para filtrar produtos
@@ -551,10 +568,20 @@ export default function CreatePurchaseOrder() {
                 </TableComponent.Value>
               </TableComponent.Line>
             )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
           {!areAllFiltersEmpty &&
             !isLoading &&
             !error &&
-            filteredProducts.length === 0 && (
+            (filteredProducts.length === 0 || products?.length === 0) && (
               <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
                   Nenhum produto encontrado com os filtros aplicados
@@ -620,6 +647,20 @@ export default function CreatePurchaseOrder() {
             <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
 
+          {error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Erro ao mostrar produtos: {error.message}
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
+          {isLoading && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Carregando produtos...
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
           {areAllFiltersEmpty && (
             <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
@@ -635,6 +676,16 @@ export default function CreatePurchaseOrder() {
               </TableComponent.Value>
             </TableComponent.Line>
           )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
           {products?.length > 0 &&
             !areAllFiltersEmpty &&
             !isLoading &&

@@ -1,4 +1,5 @@
 import { Calendar, Eraser, Search, UserCog2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -17,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import AdjustmentDetails from "./adjustmentDetails/adjustmentDetailsTable";
 
@@ -25,6 +27,22 @@ export default function ManageAdjustmentsTable() {
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
   const [selectType, setSelectType] = useState("");
+
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
 
   const {
     data: adjusts = [],
@@ -35,6 +53,7 @@ export default function ManageAdjustmentsTable() {
       adjustType: selectType,
       date: date,
       responsible: inputResponsible,
+      company: companyFilter,
     },
   });
 

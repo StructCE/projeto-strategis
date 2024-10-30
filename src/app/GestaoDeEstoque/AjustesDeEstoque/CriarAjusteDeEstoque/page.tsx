@@ -35,6 +35,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { type AdjustProduct } from "~/server/interfaces/adjust/adjust.route.interfaces";
 import { api } from "~/trpc/react";
 import FinalizeAdjust from "./useAdjust";
@@ -66,11 +67,34 @@ export default function CreateAdjustment() {
     Record<string, string>
   >({});
 
+  const areAllFiltersEmpty =
+    inputCode === "" &&
+    inputProduct === "" &&
+    selectStockId === "" &&
+    selectAddress === "" &&
+    selectControlType === "" &&
+    selectCategory === "" &&
+    selectSector === "";
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
   const {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery();
+  } = api.product.getAllWhere.useQuery({ filters: { company: companyFilter } });
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
@@ -80,22 +104,15 @@ export default function CreateAdjustment() {
   const { data: adjustReasons = [] } =
     api.generalParameters.adjustReason.getAll.useQuery();
   const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
-    filters: {},
+    filters: { company: companyFilter },
   });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStockId ? selectStockId : "",
     });
-  const { data: users = [] } = api.user.getAll.useQuery();
-
-  const areAllFiltersEmpty =
-    inputCode === "" &&
-    inputProduct === "" &&
-    selectStockId === "" &&
-    selectAddress === "" &&
-    selectControlType === "" &&
-    selectCategory === "" &&
-    selectSector === "";
+  const { data: users = [] } = api.user.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
 
   // Função para filtrar produtos
   const filteredProducts = areAllFiltersEmpty
@@ -280,6 +297,7 @@ export default function CreateAdjustment() {
           </div> */}
         </TableComponent.FiltersLine>
 
+        {/* Select (Filtro) do Estoque */}
         <div className="my-2 flex flex-col items-center gap-1 sm:flex-row sm:gap-3">
           <div className="font-inter text-[13px] font-normal sm:text-[15px]">
             Selecione um estoque e produtos dele para fazer um ajuste de estoque{" "}
@@ -330,6 +348,7 @@ export default function CreateAdjustment() {
           </div> */}
         </div>
 
+        {/* Filtros - linha 1 */}
         <TableComponent.FiltersLine>
           <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[130px]">
             <Filter.Icon
@@ -392,6 +411,7 @@ export default function CreateAdjustment() {
           </Filter>
         </TableComponent.FiltersLine>
 
+        {/* Filtros - linha 2 */}
         <TableComponent.FiltersLine>
           <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
@@ -477,7 +497,7 @@ export default function CreateAdjustment() {
           </TooltipProvider>
         </TableComponent.FiltersLine>
 
-        {/* TELAS GRANDES */}
+        {/* ESTOQUE - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16">
             <TableComponent.ValueTitle className="text-center">
@@ -519,6 +539,16 @@ export default function CreateAdjustment() {
             !isLoading &&
             !error &&
             filteredProducts.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
               <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
                   Nenhum produto encontrado com os filtros aplicados
@@ -580,7 +610,7 @@ export default function CreateAdjustment() {
             ))}
         </TableComponent.Table>
 
-        {/*  TELAS PEQUENAS */}
+        {/* ESTOQUE - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">
@@ -614,6 +644,16 @@ export default function CreateAdjustment() {
                 <TableComponent.Value>
                   Utilize os filtros acima para encontrar produtos cadastrados
                   no estoque
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
               </TableComponent.Line>
             )}
@@ -768,7 +808,7 @@ export default function CreateAdjustment() {
           Ajuste de Estoque
         </TableComponent.Title>
 
-        {/* TELAS GRANDES */}
+        {/* AJUSTE - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_100px_100px_92px_1fr_86px] gap-6 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
@@ -860,7 +900,7 @@ export default function CreateAdjustment() {
           )}
         </TableComponent.Table>
 
-        {/* TELAS PEQUENAS */}
+        {/* AJUSTE - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">

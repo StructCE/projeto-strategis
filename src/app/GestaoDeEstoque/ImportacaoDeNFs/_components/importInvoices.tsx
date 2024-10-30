@@ -2,13 +2,14 @@
 import { DialogTitle } from "@radix-ui/react-dialog";
 import {
   ArrowRight,
-  Building2,
+  // Building2,
   Calendar,
   Eraser,
   ExternalLink,
   Search,
   Truck,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -23,22 +24,38 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { type SerializedInvoice } from "~/server/interfaces/invoice/invoice.route.interfaces";
 import { api } from "~/trpc/react";
 import { default as InvoiceDetails } from "./invoiceDetails/invoiceDetails";
 import AutoCreateInvoice from "./useAutoCreateInvoice";
 
 export default function ImportacaoDeNFs() {
-  const [selectedTab, setSelectedTab] = useState("Pendente");
-
   // Filtros
+  const [selectedTab, setSelectedTab] = useState("Pendente");
   const [dateBegin, setDateBegin] = useState<Date | undefined>(undefined);
   const [openDatePickerBegin, setOpenDatePickerBegin] = useState(false);
   const [dateEnd, setDateEnd] = useState<Date | undefined>(undefined);
   const [openDatePickerEnd, setOpenDatePickerEnd] = useState(false);
   const [inputDescription, setInputDescription] = useState("");
   const [selectSupplier, setSelectSupplier] = useState("");
-  const [selectCompany, setSelectCompany] = useState("");
+  // const [selectCompany, setSelectCompany] = useState("");
+
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
 
   const {
     data: invoices = [],
@@ -49,14 +66,15 @@ export default function ImportacaoDeNFs() {
       startDocumentDate: dateBegin,
       endDocumentDate: dateEnd,
       supplier: selectSupplier,
-      company: selectCompany,
+      company: companyFilter,
       nfNumber: inputDescription,
       status: selectedTab,
     },
   });
-  console.log(dateBegin);
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
-  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
+  // const { data: companies = [] } = api.company.getAllCompanies.useQuery();
 
   const calculateInvoiceTotal = (invoice: SerializedInvoice): number => {
     return invoice.invoiceProducts.reduce((total, product) => {
@@ -175,7 +193,7 @@ export default function ImportacaoDeNFs() {
             />
           </Filter>
 
-          <Filter>
+          {/* <Filter>
             <Filter.Icon
               icon={({ className }: { className: string }) => (
                 <Building2 className={className} />
@@ -193,7 +211,7 @@ export default function ImportacaoDeNFs() {
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
-          </Filter>
+          </Filter> */}
 
           <Filter>
             <Filter.Icon
@@ -238,7 +256,7 @@ export default function ImportacaoDeNFs() {
                     setDateEnd(undefined);
                     setInputDescription("");
                     setSelectSupplier("");
-                    setSelectCompany("");
+                    // setSelectCompany("");
                   }}
                 />
               </TooltipTrigger>

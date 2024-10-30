@@ -36,6 +36,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
 import { type UserWithRoles } from "~/server/interfaces/user/user.route.interfaces";
 import { api } from "~/trpc/react";
@@ -64,12 +65,6 @@ export default function RequestProductsPage() {
   const [quantities, setQuantities] = useState<Record<string, string>>({});
   const [requestDescription, setRequestDescription] = useState("");
 
-  const {
-    data: products = [],
-    error,
-    isLoading,
-  } = api.product.getAllWhere.useQuery({ filters: {} });
-
   const areAllFiltersEmpty =
     inputCode === "" &&
     inputProduct === "" &&
@@ -78,6 +73,42 @@ export default function RequestProductsPage() {
     selectControlType === "" &&
     selectCategory === "" &&
     selectSector === "";
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
+  const {
+    data: products = [],
+    error,
+    isLoading,
+  } = api.product.getAllWhere.useQuery({ filters: { company: companyFilter } });
+  const { data: sectorsOfUse = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: typesOfControl = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
+  const { data: productCategories = [] } =
+    api.generalParameters.productCategory.getAll.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: { company: companyFilter },
+  });
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getCabinetFromStock.useQuery({
+      stockName: selectStock ? selectStock : "",
+    });
+  const { data: users = [] } = api.user.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
 
   const filteredProducts = areAllFiltersEmpty
     ? []
@@ -117,18 +148,6 @@ export default function RequestProductsPage() {
           matchesSector
         );
       });
-  const { data: sectorsOfUse = [] } =
-    api.generalParameters.useSector.getAll.useQuery();
-  const { data: typesOfControl = [] } =
-    api.generalParameters.controlType.getAll.useQuery();
-  const { data: productCategories = [] } =
-    api.generalParameters.productCategory.getAll.useQuery();
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
-  const { data: cabinets = [] } =
-    api.generalParameters.cabinet.getCabinetFromStock.useQuery({
-      stockName: selectStock ? selectStock : "",
-    });
-  const { data: users = [] } = api.user.getAll.useQuery();
 
   // Função para adicionar produtos a requisição
   const handleAddProduct = (product: ProductWithFeatures) => {
@@ -154,8 +173,6 @@ export default function RequestProductsPage() {
       [productCode]: value,
     }));
   };
-
-  const { data: user } = api.user.getUserById.useQuery({ id: userId });
 
   function hasPermission(
     product: ProductWithFeatures,
@@ -264,6 +281,7 @@ export default function RequestProductsPage() {
           Selecione produtos do estoque para fazer requisição.
         </TableComponent.Subtitle>
 
+        {/* Filtros - linha 1 */}
         <TableComponent.FiltersLine>
           <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[130px]">
             <Filter.Icon
@@ -347,6 +365,7 @@ export default function RequestProductsPage() {
           </Filter>
         </TableComponent.FiltersLine>
 
+        {/* Filtros - linha 2 */}
         <TableComponent.FiltersLine>
           <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
@@ -432,7 +451,7 @@ export default function RequestProductsPage() {
           </TooltipProvider>
         </TableComponent.FiltersLine>
 
-        {/*  TELAS GRANDES */}
+        {/* ESTOQUE - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.2fr_1fr_130px_90px_90px_130px] gap-8">
             <TableComponent.ValueTitle className="text-center">
@@ -476,6 +495,16 @@ export default function RequestProductsPage() {
                 <TableComponent.Value>
                   Utilize os filtros acima para encontrar produtos cadastrados
                   no estoque
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
               </TableComponent.Line>
             )}
@@ -545,7 +574,7 @@ export default function RequestProductsPage() {
             ))}
         </TableComponent.Table>
 
-        {/*  TELAS PEQUENAS */}
+        {/* ESTOQUE - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">
@@ -586,6 +615,16 @@ export default function RequestProductsPage() {
               </TableComponent.Value>
             </TableComponent.Line>
           )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
           {products?.length > 0 &&
             !!isLoading &&
             !error &&
@@ -703,7 +742,7 @@ export default function RequestProductsPage() {
           relatório.
         </TableComponent.Subtitle>
 
-        {/*  TELAS GRANDES */}
+        {/* REQUISIÇÃO - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[100px_1fr_110px_110px_110px_86px] gap-16 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
@@ -775,7 +814,7 @@ export default function RequestProductsPage() {
           )}
         </TableComponent.Table>
 
-        {/*  TELAS PEQUENAS */}
+        {/* REQUISIÇÃO - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">

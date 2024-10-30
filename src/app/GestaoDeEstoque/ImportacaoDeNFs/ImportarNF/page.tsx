@@ -181,9 +181,7 @@ export default function ManuallyImportInvoice() {
               </FormComponent.Frame>
 
               <FormComponent.Frame>
-                <FormComponent.Label className="text-[#444444]">
-                  Valor Total da Nota
-                </FormComponent.Label>
+                <FormComponent.Label>Valor Total da Nota</FormComponent.Label>
                 <FormField
                   control={invoiceCreateForm.form.control}
                   name={`invoiceValue`}

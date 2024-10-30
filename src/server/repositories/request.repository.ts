@@ -15,6 +15,13 @@ async function getAll(props: RequestRepositoryInterfaces["GetAllProps"]) {
     const { filters } = props;
     const conditions = [];
 
+    if (filters?.company) {
+      conditions.push({
+        responsible: {
+          company: { name: { contains: filters.company } },
+        },
+      });
+    }
     if (filters?.requestResponsible) {
       conditions.push({
         responsible: {

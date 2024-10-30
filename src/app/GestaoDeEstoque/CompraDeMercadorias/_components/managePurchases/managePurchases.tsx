@@ -1,6 +1,7 @@
 "use client";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Calendar, Download, Eraser, Truck, UserCog2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -20,6 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { type SerializedOrder } from "~/server/interfaces/order/order.route.interfaces";
 import { api } from "~/trpc/react";
 import CustomReportPDF from "./pdfReport";
@@ -32,6 +34,22 @@ export default function ManagePurchasesTable() {
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
   const [selectSupplier, setSelectSupplier] = useState("");
+
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
 
   const { data: orders = [], error, isLoading } = api.order.getAll.useQuery();
 
@@ -52,8 +70,12 @@ export default function ManagePurchasesTable() {
       order.orderProducts.some(
         (product) => selectSupplier == product.ProductSupplier.supplier.name,
       );
+    const matchesCompany =
+      !companyFilter || order.responsible.company === companyFilter;
 
-    return matchesDate && matchesResponsible && matchesSupplier;
+    return (
+      matchesDate && matchesResponsible && matchesSupplier && matchesCompany
+    );
   });
 
   const { data: suppliers = [] } = api.supplier.getAll.useQuery();

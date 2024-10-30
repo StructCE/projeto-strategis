@@ -1,8 +1,7 @@
 "use client";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { customReportOptions } from "prisma/seed-data/customReportOptions";
 import { useState } from "react";
 import * as XLSX from "xlsx";
@@ -18,6 +17,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import { default as CustomReportPDF } from "./pdfReport";
 
@@ -36,19 +36,39 @@ export default function CustomReportsPage() {
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
 
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
   const {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAllWhere.useQuery();
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  } = api.product.getAllWhere.useQuery({ filters: { company: companyFilter } });
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
     api.generalParameters.controlType.getAll.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: { company: companyFilter },
+  });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
@@ -198,9 +218,6 @@ export default function CustomReportsPage() {
       case "csv":
         exportToCSV(customReportsData);
         break;
-      case "pdf":
-        exportToPDF(customReportsData);
-        break;
       default:
         break;
     }
@@ -214,219 +231,6 @@ export default function CustomReportsPage() {
     link.href = jsonString;
     link.download = `Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
-  }
-
-  function exportToPDF(customReportsData: CustomReportsData) {
-    const doc = new jsPDF();
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text(
-      `Relatório Personalizado - ${new Date(
-        customReportsData.date,
-      ).toLocaleDateString()}`,
-      14,
-      20,
-    );
-
-    doc.setFontSize(12);
-    let yPosition = 25;
-    const lineHeight = 5.5;
-    const pageHeight = 280;
-
-    function addKeyValuePair(
-      key: string,
-      value: string | number,
-      x1: number,
-      x2: number,
-      y: number,
-    ) {
-      doc.setFont("helvetica", "bold");
-      doc.text(`${key}:`, x1, y);
-      doc.setFont("helvetica", "normal");
-
-      const splitText: string[] = doc.splitTextToSize(
-        `${value}`,
-        120,
-      ) as string[];
-      doc.text(splitText, x2, y);
-
-      return splitText.length * lineHeight;
-    }
-
-    customReportsData.products.forEach((product) => {
-      const productHeight = Object.keys(product).length * lineHeight + 14;
-
-      if (yPosition + productHeight > pageHeight) {
-        doc.addPage();
-        yPosition = 14;
-      }
-
-      // Inclui os dados conforme os atributos selecionados
-      if (selectReportOptions.includes("Código")) {
-        yPosition += addKeyValuePair(
-          "Código",
-          product.code,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Nome")) {
-        yPosition += addKeyValuePair(
-          "Nome",
-          product.name,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Fornecedores")) {
-        yPosition += addKeyValuePair(
-          "Fornecedores",
-          product.ProductSupplierName.length > 0
-            ? product.ProductSupplierName.join(", ")
-            : "Sem fornecedores",
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Status")) {
-        yPosition += addKeyValuePair(
-          "Status",
-          product.status,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Produto Pai")) {
-        yPosition += addKeyValuePair(
-          "Produto Pai",
-          product.parentProductName,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Unidade de Compra")) {
-        yPosition += addKeyValuePair(
-          "Unidade de Compra",
-          `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Quantidade de Compra")) {
-        yPosition += addKeyValuePair(
-          "Quantidade de Compra",
-          product.buyQuantity,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Dia de Compra")) {
-        yPosition += addKeyValuePair(
-          "Dia de Compra",
-          product.buyDay,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Estoque Atual")) {
-        yPosition += addKeyValuePair(
-          "Estoque Atual",
-          product.currentStock,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Estoque Mínimo")) {
-        yPosition += addKeyValuePair(
-          "Estoque Mínimo",
-          product.minimunStock,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Estoque Máximo")) {
-        yPosition += addKeyValuePair(
-          "Estoque Máximo",
-          product.maximumStock,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Tipo de Controle")) {
-        yPosition += addKeyValuePair(
-          "Tipo de Controle",
-          product.controlTypeName,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Categoria do Produto")) {
-        yPosition += addKeyValuePair(
-          "Categoria do Produto",
-          product.categoryName,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Setor de Utilização")) {
-        yPosition += addKeyValuePair(
-          "Setor de Utilização",
-          product.sectorOfUseName,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Estoque")) {
-        yPosition += addKeyValuePair(
-          "Endereço do Estoque",
-          product.stockName,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Endereço do Estoque")) {
-        yPosition += addKeyValuePair(
-          "Endereço do Estoque",
-          `${product.cabinetName}, ${product.shelfName}`,
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-      if (selectReportOptions.includes("Usuários com Permissão")) {
-        yPosition += addKeyValuePair(
-          "Usuários com Permissão",
-          product.usersWithPermissionNames.length > 0
-            ? product.usersWithPermissionNames.join(", ")
-            : "Sem usuários",
-          14,
-          70,
-          (yPosition += lineHeight),
-        );
-      }
-
-      yPosition += 10;
-    });
-
-    doc.save(
-      `Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.pdf`,
-    );
   }
 
   function exportToCSV(customReportsData: CustomReportsData) {
@@ -826,6 +630,7 @@ export default function CustomReportsPage() {
               <Eraser
                 size={20}
                 onClick={() => {
+                  setSelectStock("");
                   setInputCode("");
                   setInputProduct("");
                   setSelectSuppliers([]);

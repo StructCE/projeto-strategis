@@ -6,6 +6,15 @@ async function getAll(props: AdjustRepositoryInterfaces["GetAllProps"]) {
     const { filters } = props;
     const conditions = [];
 
+    if (filters?.company) {
+      conditions.push({
+        stock: {
+          company: {
+            name: { contains: filters?.company },
+          },
+        },
+      });
+    }
     if (filters?.responsible) {
       conditions.push({
         responsible: { user: { name: { contains: filters?.responsible } } },

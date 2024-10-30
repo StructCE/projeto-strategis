@@ -35,6 +35,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { type InventoryProduct } from "~/server/interfaces/inventory/inventory.route.interfaces";
 import { api } from "~/trpc/react";
 import FinalizeInventory from "./useInventory";
@@ -70,11 +71,25 @@ export default function CreateInventory() {
     selectCategory === "" &&
     selectSector === "";
 
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
   const {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery();
+  } = api.product.getAllWhere.useQuery({ filters: { company: companyFilter } });
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
@@ -82,13 +97,15 @@ export default function CreateInventory() {
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
   const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
-    filters: {},
+    filters: { company: companyFilter },
   });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockId: selectStockId ? selectStockId : "",
     });
-  const { data: users = [] } = api.user.getAll.useQuery();
+  const { data: users = [] } = api.user.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
 
   // Função para filtrar produtos
   const filteredProducts = areAllFiltersEmpty
@@ -420,7 +437,7 @@ export default function CreateInventory() {
           </TooltipProvider>
         </TableComponent.FiltersLine>
 
-        {/* TELAS GRANDES */}
+        {/* ESTOQUE - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16">
             <TableComponent.ValueTitle className="text-center">
@@ -458,6 +475,16 @@ export default function CreateInventory() {
                 <TableComponent.Value>
                   Utilize os filtros acima para encontrar produtos cadastrados
                   no estoque
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
               </TableComponent.Line>
             )}
@@ -525,7 +552,7 @@ export default function CreateInventory() {
             ))}
         </TableComponent.Table>
 
-        {/* TELAS PEQUENAS */}
+        {/* ESTOQUE - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">
@@ -559,6 +586,16 @@ export default function CreateInventory() {
                 <TableComponent.Value>
                   Utilize os filtros acima para encontrar produtos cadastrados
                   no estoque
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
               </TableComponent.Line>
             )}
@@ -692,7 +729,7 @@ export default function CreateInventory() {
 
         <TableComponent.Title className="mt-2">Inventário</TableComponent.Title>
 
-        {/* TELAS GRANDES */}
+        {/* INVENTÁRIO - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_130px_92px_1fr_86px] gap-8 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
@@ -772,7 +809,7 @@ export default function CreateInventory() {
           )}
         </TableComponent.Table>
 
-        {/* TELAS PEQUENAS */}
+        {/* INVENTÁRIO - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">

@@ -1,8 +1,7 @@
 "use client";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { Filter } from "~/components/filter";
@@ -25,10 +24,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import CustomReportPDF from "./pdfReport";
 import ProductDetails from "./productDetails";
-
 export default function StockReportsPage() {
   // Checkboxes dos produtos
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -67,19 +66,39 @@ export default function StockReportsPage() {
     selectStatus === "" &&
     selectBuyDay === "";
 
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
   const {
     data: products = [],
     error,
     isLoading,
-  } = api.product.getAll.useQuery();
-  const { data: suppliers = [] } = api.supplier.getAll.useQuery({});
+  } = api.product.getAllWhere.useQuery({ filters: { company: companyFilter } });
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
   const { data: sectorsOfUse = [] } =
     api.generalParameters.useSector.getAll.useQuery();
   const { data: typesOfControl = [] } =
     api.generalParameters.controlType.getAll.useQuery();
   const { data: productCategories = [] } =
     api.generalParameters.productCategory.getAll.useQuery();
-  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: { company: companyFilter },
+  });
   const { data: cabinets = [] } =
     api.generalParameters.cabinet.getCabinetFromStock.useQuery({
       stockName: selectStock ? selectStock : "",
@@ -296,15 +315,9 @@ export default function StockReportsPage() {
       case "csv":
         exportToCSV(stockWarningsData);
         break;
-
       case "json":
         exportToJson(stockWarningsData);
         break;
-
-      case "pdf":
-        exportToPDF(stockWarningsData);
-        break;
-
       default:
         break;
     }
@@ -318,180 +331,6 @@ export default function StockReportsPage() {
     link.href = jsonString;
     link.download = `Avisos_Estoque_${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
-  }
-
-  function exportToPDF(stockWarningsData: StockWarningsData) {
-    const doc = new jsPDF();
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text(
-      `Relatório de Avisos de Estoque - ${new Date(stockWarningsData.date).toLocaleDateString()}`,
-      14,
-      20,
-    );
-
-    doc.setFontSize(12);
-    let yPosition = 25;
-    const lineHeight = 5.5; // Altura entre as linhas de texto
-    const pageHeight = 280; // Limite de altura da página
-
-    function addKeyValuePair(
-      key: string,
-      value: string | number,
-      x1: number,
-      x2: number,
-      y: number,
-    ) {
-      doc.setFont("helvetica", "bold");
-      doc.text(`${key}:`, x1, y); // Chave
-      doc.setFont("helvetica", "normal");
-
-      const splitText: string[] = doc.splitTextToSize(
-        `${value}`,
-        120,
-      ) as string[];
-      doc.text(splitText, x2, y);
-
-      return splitText.length * lineHeight;
-    }
-
-    stockWarningsData.products.forEach((product) => {
-      const productHeight = 12 * lineHeight + 14;
-
-      if (yPosition + productHeight > pageHeight) {
-        doc.addPage();
-        yPosition = 14;
-      }
-
-      yPosition += addKeyValuePair(
-        "Código",
-        product.code,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Nome",
-        product.name,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Fornecedores",
-        product.ProductSupplierName.length > 0
-          ? product.ProductSupplierName.join(", ")
-          : "Sem fornecedores",
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Status",
-        product.status,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Produto Pai",
-        product.parentProductName ?? "Sem produto pai",
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Unidade de Compra",
-        `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Quantidade de Compra",
-        product.buyQuantity,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Dia de Compra",
-        product.buyDay,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Estoque Atual",
-        product.currentStock,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Estoque Mínimo",
-        product.minimunStock,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Estoque Máximo",
-        product.maximumStock,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Tipo de Controle",
-        product.controlTypeName,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Categoria do Produto",
-        product.categoryName,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Setor de Uso",
-        product.sectorOfUseName,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Endereço do Estoque",
-        product.stockName,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Endereço de Estoque",
-        `${product.cabinetName}, ${product.shelfName}`,
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-      yPosition += addKeyValuePair(
-        "Usuários com Permissão",
-        product.usersWithPermissionNames.length > 0
-          ? product.usersWithPermissionNames.join(", ")
-          : "Sem usuários",
-        14,
-        70,
-        (yPosition += lineHeight),
-      );
-
-      yPosition += 10;
-    });
-
-    doc.save(`Avisos_Estoque_${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
   function exportToCSV(stockWarningsData: StockWarningsData) {
@@ -939,6 +778,7 @@ export default function StockReportsPage() {
               <Eraser
                 size={20}
                 onClick={() => {
+                  setSelectStock("");
                   setInputCode("");
                   setInputProduct("");
                   setSelectSuppliers([]);

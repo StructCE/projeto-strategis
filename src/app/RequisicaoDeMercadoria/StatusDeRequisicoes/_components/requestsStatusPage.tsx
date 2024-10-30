@@ -1,5 +1,6 @@
 "use client";
 import { Calendar, Eraser, Search, UserCog2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -18,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { type SerializedRequest } from "~/server/interfaces/request/request.route.interfaces";
 import { api } from "~/trpc/react";
 import AcceptedRequestDetails from "./details/acceptedRequestDetailsTable";
@@ -30,6 +32,28 @@ export default function RequestsStatusPage() {
   const [inputResponsible, setInputResponsible] = useState("");
   const [selectStatus, setSelectStatus] = useState("");
 
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
+  const responsibleFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Requisitante",
+  )
+    ? user?.name
+    : "";
+
   const {
     data: requests = [],
     error,
@@ -37,8 +61,9 @@ export default function RequestsStatusPage() {
   } = api.request.getAll.useQuery({
     filters: {
       date: date,
-      requestResponsible: inputResponsible,
+      requestResponsible: responsibleFilter || inputResponsible,
       status: selectStatus,
+      company: companyFilter,
     },
   });
 
@@ -79,22 +104,28 @@ export default function RequestsStatusPage() {
             setDate={setDate}
             open={open}
             setOpen={setOpen}
-            placeholder="Data"
+            placeholder="Selecione uma data"
           />
         </Filter>
 
-        <Filter className="lg:w-[250px]">
-          <Filter.Icon
-            icon={({ className }: { className: string }) => (
-              <UserCog2 className={className} />
-            )}
-          />
-          <Filter.Input
-            placeholder="Responsável"
-            state={inputResponsible}
-            setState={setInputResponsible}
-          />
-        </Filter>
+        {user?.UserRole.some(
+          (userRole) => userRole.role.name === "Administrador",
+        ) ? (
+          <Filter className="lg:w-[250px]">
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <UserCog2 className={className} />
+              )}
+            />
+            <Filter.Input
+              placeholder="Responsável"
+              state={inputResponsible}
+              setState={setInputResponsible}
+            />
+          </Filter>
+        ) : (
+          <></>
+        )}
 
         <Filter>
           <Filter.Icon

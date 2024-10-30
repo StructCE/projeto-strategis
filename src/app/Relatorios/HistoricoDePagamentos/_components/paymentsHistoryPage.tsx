@@ -1,6 +1,6 @@
 "use client";
 import {
-  Building2,
+  // Building2,
   Calendar,
   Check,
   Clock,
@@ -11,6 +11,7 @@ import {
   Truck,
   X,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { Filter } from "~/components/filter";
@@ -32,6 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import PaymentDetails from "./editPayment/paymentDetails";
 import PaymentCompleteDetails from "./paymentCompleteDetails";
@@ -40,7 +42,7 @@ export default function PaymentsHistoryPage() {
   // Checkboxes dos pagamentos
   const [selectedPayments, setSelectedPayments] = useState<string[]>([]);
 
-  // Filtros - Linha 1
+  // Filtros
   const [dateDocument, setDateDocument] = useState<Date | undefined>(undefined);
   const [openDateDocument, setOpenDateDocument] = useState(false);
   const [dateDeadline, setDateDeadline] = useState<Date | undefined>(undefined);
@@ -48,29 +50,45 @@ export default function PaymentsHistoryPage() {
   const [datePayment, setDatePayment] = useState<Date | undefined>(undefined);
   const [openDatePayment, setOpenDatePayment] = useState(false);
   const [inputDescription, setInputDescription] = useState("");
-
-  // Filtros - Linha 2
   const [selectBank, setSelectBank] = useState("");
   const [selectSupplier, setSelectSupplier] = useState("");
-  const [selectCompany, setSelectCompany] = useState("");
+  // const [selectCompany, setSelectCompany] = useState("");
   const [selectTypeOfStatus, setSelectTypeOfStatus] = useState("");
   const [selectStatus, setSelectStatus] = useState("");
-
-  // Filtros - Linha 3
   const [selectAccountPlan, setSelectAccountPlan] = useState("");
   const [selectGroup, setSelectGroup] = useState("");
   const [selectDocumentType, setSelectDocumentType] = useState("");
   const [selectProject, setSelectProject] = useState("");
   const [selectExpenseType, setSelectExpenseType] = useState("");
 
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
   // Dados do BD
   const {
     data: invoices = [],
     error,
     isLoading,
-  } = api.invoice.getAll.useQuery();
+  } = api.invoice.getAll.useQuery({
+    filters: {
+      company: companyFilter,
+    },
+  });
 
-  const { data: companies = [] } = api.company.getAllCompanies.useQuery();
+  // const { data: companies = [] } = api.company.getAllCompanies.useQuery();
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({
     filters: {},
   });
@@ -111,8 +129,8 @@ export default function PaymentsHistoryPage() {
     const matchesBank = selectBank === "" || invoice.bank?.name === selectBank;
     const matchesSupplier =
       selectSupplier === "" || invoice.supplier.name === selectSupplier;
-    const matchesCompany =
-      selectCompany === "" || invoice.company.name === selectCompany;
+    // const matchesCompany =
+    //   selectCompany === "" || invoice.company.name === selectCompany;
     const matchesTypeOfStatus =
       selectTypeOfStatus === "" || invoice.payedStatus === selectTypeOfStatus;
     const invoiceStatus =
@@ -140,7 +158,7 @@ export default function PaymentsHistoryPage() {
       matchesDescription &&
       matchesBank &&
       matchesSupplier &&
-      matchesCompany &&
+      // matchesCompany &&
       matchesTypeOfStatus &&
       matchesStatus &&
       matchesAccountPlan &&
@@ -150,8 +168,6 @@ export default function PaymentsHistoryPage() {
       matchesDocumentType
     );
   });
-
-  // console.log(invoices);
 
   // Seleção dos pagamentos via checkbox
   function handlePaymentSelection(
@@ -493,7 +509,7 @@ export default function PaymentsHistoryPage() {
           </Filter.Select>
         </Filter>
 
-        <Filter>
+        {/* <Filter>
           <Filter.Icon
             icon={({ className }: { className: string }) => (
               <Building2 className={className} />
@@ -511,7 +527,7 @@ export default function PaymentsHistoryPage() {
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
-        </Filter>
+        </Filter> */}
 
         <Filter>
           <Filter.Icon
@@ -520,7 +536,7 @@ export default function PaymentsHistoryPage() {
             )}
           />
           <Filter.Select
-            placeholder="Tipo de Status"
+            placeholder="Status do Pagamento"
             state={selectTypeOfStatus}
             setState={setSelectTypeOfStatus}
           >
@@ -537,7 +553,7 @@ export default function PaymentsHistoryPage() {
             )}
           />
           <Filter.Select
-            placeholder="Status"
+            placeholder="Status da Data"
             state={selectStatus}
             setState={setSelectStatus}
           >
@@ -558,7 +574,7 @@ export default function PaymentsHistoryPage() {
                   setInputDescription("");
                   setSelectBank("");
                   setSelectSupplier("");
-                  setSelectCompany("");
+                  // setSelectCompany("");
                   setSelectTypeOfStatus("");
                   setSelectStatus("");
                   setSelectAccountPlan("");

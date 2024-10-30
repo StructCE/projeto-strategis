@@ -7,6 +7,7 @@ const getAllProps = z
         date: z.date().optional(),
         responsible: z.string().optional(),
         adjustType: z.string().optional(),
+        company: z.string().optional(),
       })
       .optional(),
   })
@@ -25,7 +26,7 @@ const registerProps = z.object({
       oldStock: z.number(),
       adjustedStock: z.number(),
       reasonId: z.string(),
-    })
+    }),
   ),
 });
 

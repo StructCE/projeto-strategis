@@ -7,6 +7,7 @@ const getAllProps = z
         date: z.date().optional(),
         requestResponsible: z.string().optional(),
         status: z.string().optional(),
+        company: z.string().optional(),
       })
       .optional(),
   })
@@ -30,7 +31,7 @@ const registerProps = z.object({
       // requestId: z.string(),
       productId: z.string(),
       // unitId: z.string(),
-    })
+    }),
   ),
 });
 
@@ -56,7 +57,7 @@ const editProps = z.object({
         // requestId: z.string(),
         // productId: z.string(),
         // unitId: z.string(),
-      })
+      }),
     ),
   }),
 });

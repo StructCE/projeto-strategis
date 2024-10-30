@@ -1,5 +1,6 @@
 "use client";
 import { Calendar, Eraser, UserCog2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -18,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import AcceptedRequestDetails from "./acceptedRequestDetails/requestDetailsTable";
 
@@ -25,6 +27,22 @@ export default function ManageAcceptedRequestsTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
+
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
 
   const {
     data: requests = [],
@@ -35,6 +53,7 @@ export default function ManageAcceptedRequestsTable() {
       date: date,
       requestResponsible: inputResponsible,
       status: "Confirmada",
+      company: companyFilter,
     },
   });
 
