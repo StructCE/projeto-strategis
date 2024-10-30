@@ -1,5 +1,9 @@
 import { useSectorRepositorySchema } from "~/server/interfaces/useSector/useSector.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 import { useSectorRepository } from "~/server/repositories/useSector.repository";
 import type { UseSectorRouteInterfaces } from "~/server/interfaces/useSector/useSector.route.interfaces";
 
@@ -11,7 +15,7 @@ export const useSectorRouter = createTRPCRouter({
     },
   ),
 
-  registerUseSector: protectedProcedure
+  registerUseSector: operationProcedure
     .input(useSectorRepositorySchema.registerProps)
     .mutation(
       async ({ input }): Promise<UseSectorRouteInterfaces["UseSector"]> => {
@@ -20,7 +24,7 @@ export const useSectorRouter = createTRPCRouter({
       },
     ),
 
-  editUseSector: protectedProcedure
+  editUseSector: operationProcedure
     .input(useSectorRepositorySchema.editProps)
     .mutation(
       async ({ input }): Promise<UseSectorRouteInterfaces["UseSector"]> => {
@@ -29,7 +33,7 @@ export const useSectorRouter = createTRPCRouter({
       },
     ),
 
-  removeUseSector: protectedProcedure
+  removeUseSector: operationProcedure
     .input(useSectorRepositorySchema.removeProps)
     .mutation(
       async ({ input }): Promise<UseSectorRouteInterfaces["UseSector"]> => {

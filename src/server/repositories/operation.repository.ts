@@ -8,12 +8,12 @@ async function getAll(props: OperationRepositoryInterfaces["GetAllProps"]) {
       where: {
         AND: [
           { description: { contains: filters.operationType } },
-          { responsible: { user: { name: { contains: filters.operator } } } },
+          { responsible: { name: { contains: filters.operator } } },
           {
             date: {
               gte: filters.date
                 ? new Date(
-                    `${filters.date.getFullYear()}-${filters.date.getMonth() + 1}-${filters.date?.getDate()}T00:00:00.000Z`
+                    `${filters.date.getFullYear()}-${filters.date.getMonth() + 1}-${filters.date?.getDate()}T00:00:00.000Z`,
                   )
                 : undefined,
             },
@@ -22,16 +22,20 @@ async function getAll(props: OperationRepositoryInterfaces["GetAllProps"]) {
             date: {
               lt: filters.date
                 ? new Date(
-                    `${filters.date.getFullYear()}-${filters.date.getMonth() + 1}-${filters.date.getDate() + 1}T00:00:00.000Z`
+                    `${filters.date.getFullYear()}-${filters.date.getMonth() + 1}-${filters.date.getDate() + 1}T00:00:00.000Z`,
                   )
                 : undefined,
             },
           },
-          { responsible: { company: { name: { contains: filters.company } } } },
+          {
+            responsible: {
+              Company: { every: { name: { contains: filters.company } } },
+            },
+          },
         ],
       },
       include: {
-        responsible: { include: { user: true, company: true } },
+        responsible: { include: { Company: true } },
       },
     });
     return filteredOperations;
@@ -39,14 +43,14 @@ async function getAll(props: OperationRepositoryInterfaces["GetAllProps"]) {
 
   const operations = await db.operation.findMany({
     include: {
-      responsible: { include: { user: true, company: true } },
+      responsible: { include: { Company: true } },
     },
   });
   return operations;
 }
 
 async function countOperations(
-  props: OperationRepositoryInterfaces["CountOperationProps"]
+  props: OperationRepositoryInterfaces["CountOperationProps"],
 ) {
   const today = new Date();
   const oldestDesiredPoint = new Date(today.getTime() - props.periodTime);

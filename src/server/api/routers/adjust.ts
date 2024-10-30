@@ -1,7 +1,11 @@
 import { adjustRepositorySchema } from "~/server/interfaces/adjust/adjust.repository.interfaces";
 import type { AdjustRouteInterfaces } from "~/server/interfaces/adjust/adjust.route.interfaces";
 import { adjustRepository } from "~/server/repositories/adjust.repository";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const adjustRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -38,7 +42,7 @@ export const adjustRouter = createTRPCRouter({
       },
     ),
 
-  registerAdjust: protectedProcedure
+  registerAdjust: operationProcedure
     .input(adjustRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<AdjustRouteInterfaces["Adjust"]> => {
       const registeredAdjust = await adjustRepository.register(input);

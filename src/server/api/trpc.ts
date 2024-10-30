@@ -10,7 +10,7 @@
 import { Prisma } from "@prisma/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
-import { ZodError } from "zod";
+import { date, ZodError } from "zod";
 
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
@@ -157,3 +157,69 @@ export const protectedProcedure = errorHandledProcedure.use(
     });
   },
 );
+
+const createDescriptionByPath = (path: string) => {
+  const operationModels: Record<string, string> = {
+    company: "Empresa",
+    supplier: "Fornecedor",
+    stock: "Estoque",
+    product: "Produto",
+    user: "Usuário",
+    roles: "Perfis de Acesso",
+    generalParameters: "Parâmetros Gerais",
+    inventory: "Inventário",
+    order: "Compras de Mercadorias",
+    adjust: "Ajustes de Estoque",
+    invoice: "Notas Fiscais",
+    request: "Requisições de Mercadoria",
+  };
+
+  const operations: Record<string, string> = {
+    register: "Registro",
+    create: "Criação",
+    update: "Atualiação",
+    edit: "Edição",
+    delete: "Deleção",
+    remove: "Remoção",
+  };
+
+  let model = "",
+    operation = "";
+  const splitedPath = path.split(".");
+
+  if (splitedPath.length === 2) {
+    model = splitedPath[0] ?? "";
+    operation = splitedPath[1] ?? "";
+  }
+
+  if (splitedPath.length === 3) {
+    model = splitedPath[0] ?? "";
+    operation = splitedPath[2] ?? "";
+  }
+
+  for (const key in operations) {
+    if (operation.includes(key)) operation = operations[key] ?? "";
+  }
+
+  return operation + " de " + operationModels[model];
+};
+
+export const operationProcedure = protectedProcedure.use(async function ({
+  ctx,
+  path,
+  next,
+}): Promise<any> {
+  try {
+    const procedureResult = await next();
+    await ctx.db.operation.create({
+      data: {
+        date: new Date(),
+        description: createDescriptionByPath(path),
+        responsibleId: ctx.session?.user.id,
+      },
+    });
+    return procedureResult;
+  } catch (e) {
+    console.log("Não foi possível criar a operação devido a um erro");
+  }
+});

@@ -1,7 +1,11 @@
 import { invoiceRepositorySchema } from "~/server/interfaces/invoice/invoice.repository.interfaces";
 import type { InvoiceRouteInterfaces } from "~/server/interfaces/invoice/invoice.route.interfaces";
 import { invoiceRepository } from "~/server/repositories/invoice.repository";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const invoiceRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -72,21 +76,21 @@ export const invoiceRouter = createTRPCRouter({
       },
     ),
 
-  registerInvoice: protectedProcedure
+  registerInvoice: operationProcedure
     .input(invoiceRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<InvoiceRouteInterfaces["Invoice"]> => {
       const registeredInvoice = await invoiceRepository.register(input);
       return registeredInvoice;
     }),
 
-  autoRegisterInvoice: protectedProcedure
+  autoRegisterInvoice: operationProcedure
     .input(invoiceRepositorySchema.autoRegisterProps)
     .mutation(async ({ input }): Promise<InvoiceRouteInterfaces["Invoice"]> => {
       const registeredInvoice = await invoiceRepository.autoRegister(input);
       return registeredInvoice;
     }),
 
-  editInvoice: protectedProcedure
+  editInvoice: operationProcedure
     .input(invoiceRepositorySchema.editProps)
     .mutation(async ({ input }): Promise<InvoiceRouteInterfaces["Invoice"]> => {
       const editedInvoice = await invoiceRepository.edit(input);

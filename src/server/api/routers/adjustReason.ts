@@ -1,7 +1,11 @@
 import { adjustReasonRepositorySchema } from "~/server/interfaces/adjustReason/adjustReason.repository.interfaces";
 import { type AdjustReasonRouteInterfaces } from "~/server/interfaces/adjustReason/adjustReason.route.interfaces";
 import { adjustReasonRepository } from "~/server/repositories/adjustReason.repository";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const adjustReasonRouter = createTRPCRouter({
   getReasonByName: protectedProcedure
@@ -24,7 +28,7 @@ export const adjustReasonRouter = createTRPCRouter({
     },
   ),
 
-  registerAdjustReason: protectedProcedure
+  registerAdjustReason: operationProcedure
     .input(adjustReasonRepositorySchema.registerProps)
     .mutation(
       async ({
@@ -36,7 +40,7 @@ export const adjustReasonRouter = createTRPCRouter({
       },
     ),
 
-  editAdjustReason: protectedProcedure
+  editAdjustReason: operationProcedure
     .input(adjustReasonRepositorySchema.editProps)
     .mutation(
       async ({
@@ -47,7 +51,7 @@ export const adjustReasonRouter = createTRPCRouter({
       },
     ),
 
-  removeAdjustReason: protectedProcedure
+  removeAdjustReason: operationProcedure
     .input(adjustReasonRepositorySchema.removeProps)
     .mutation(
       async ({

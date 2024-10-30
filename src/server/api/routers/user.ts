@@ -1,7 +1,11 @@
 import { userRepositorySchema } from "~/server/interfaces/user/user.repository.interfaces";
 import type { UserRouteInterfaces } from "~/server/interfaces/user/user.route.interfaces";
 import { userRepository } from "~/server/repositories/user.repository";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const userRouter = createTRPCRouter({
   getUserById: protectedProcedure
@@ -85,21 +89,21 @@ export const userRouter = createTRPCRouter({
       },
     ),
 
-  registerUser: protectedProcedure
+  registerUser: operationProcedure
     .input(userRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<UserRouteInterfaces["User"]> => {
       const registeredUser = await userRepository.register(input);
       return registeredUser;
     }),
 
-  editUser: protectedProcedure
+  editUser: operationProcedure
     .input(userRepositorySchema.editProps)
     .mutation(async ({ input }): Promise<UserRouteInterfaces["User"]> => {
       const editedUser = await userRepository.edit(input);
       return editedUser;
     }),
 
-  deleteUser: protectedProcedure
+  deleteUser: operationProcedure
     .input(userRepositorySchema.deleteProps)
     .mutation(async ({ input }): Promise<UserRouteInterfaces["User"]> => {
       const deletedUser = await userRepository.remove(input);

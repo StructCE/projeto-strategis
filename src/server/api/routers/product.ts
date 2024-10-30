@@ -2,7 +2,11 @@ import { productRepositorySchema } from "~/server/interfaces/product/product.rep
 import type { ProductRouteInterfaces } from "~/server/interfaces/product/product.route.interfaces";
 import { type ProductSupplierRouteInterfaces } from "~/server/interfaces/productSupplier/product.route.interfaces";
 import { ProductRepository } from "~/server/repositories/product.repository";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const productRouter = createTRPCRouter({
   countProducts: protectedProcedure.query(
@@ -50,21 +54,21 @@ export const productRouter = createTRPCRouter({
     },
   ),
 
-  createProduct: protectedProcedure
+  createProduct: operationProcedure
     .input(productRepositorySchema.createProps)
     .mutation(async ({ input }): Promise<ProductRouteInterfaces["Product"]> => {
       const createdProduct = await ProductRepository.create(input);
       return createdProduct;
     }),
 
-  editProduct: protectedProcedure
+  editProduct: operationProcedure
     .input(productRepositorySchema.editProps)
     .mutation(async ({ input }): Promise<ProductRouteInterfaces["Product"]> => {
       const editedProduct = await ProductRepository.edit(input);
       return editedProduct;
     }),
 
-  deleteProduct: protectedProcedure
+  deleteProduct: operationProcedure
     .input(productRepositorySchema.removeProps)
     .mutation(async ({ input }): Promise<ProductRouteInterfaces["Product"]> => {
       const deletedProduct = await ProductRepository.remove(input);

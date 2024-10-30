@@ -1,5 +1,9 @@
 import { productCategoryRepositorySchema } from "~/server/interfaces/productCategory/productCategory.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 import { productCategoryRepository } from "~/server/repositories/productCategory.repository";
 import type { ProductCategoryRouteInterfaces } from "~/server/interfaces/productCategory/productCategory.route.interfaces";
 
@@ -11,7 +15,7 @@ export const productCategoryRouter = createTRPCRouter({
     },
   ),
 
-  registerProductCategory: protectedProcedure
+  registerProductCategory: operationProcedure
     .input(productCategoryRepositorySchema.registerProps)
     .mutation(
       async ({
@@ -23,7 +27,7 @@ export const productCategoryRouter = createTRPCRouter({
       },
     ),
 
-  editProductCategory: protectedProcedure
+  editProductCategory: operationProcedure
     .input(productCategoryRepositorySchema.editProps)
     .mutation(
       async ({
@@ -35,7 +39,7 @@ export const productCategoryRouter = createTRPCRouter({
       },
     ),
 
-  removeProductCategory: protectedProcedure
+  removeProductCategory: operationProcedure
     .input(productCategoryRepositorySchema.removeProps)
     .mutation(
       async ({

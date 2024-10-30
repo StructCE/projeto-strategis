@@ -55,6 +55,7 @@ model User {
     UserRole           UserRole[]
     productPermissions ProductPermission[]
     Company            Company[]           @relation("CompanyResponsible")
+    Operation          Operation[]
 
     @@map("users")
 }
@@ -108,7 +109,6 @@ model UserRole {
     RequestResponsible         Request[]   @relation("RequestResponsible")
     RequestDeliveryResponsible Request[]   @relation("StatusResponsible")
     Inventory                  Inventory[]
-    Operation                  Operation[]
 }
 
 model Role {
@@ -432,7 +432,7 @@ model Operation {
     date          DateTime
     description   String
     responsibleId String
-    responsible   UserRole @relation(fields: [responsibleId], references: [id])
+    responsible   User     @relation(fields: [responsibleId], references: [id])
 }
 
 model Bank {

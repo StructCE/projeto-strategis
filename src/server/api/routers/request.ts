@@ -1,7 +1,11 @@
 import { requestRepositorySchema } from "~/server/interfaces/request/request.repository.interfaces";
 import type { RequestRouteInterfaces } from "~/server/interfaces/request/request.route.interfaces";
 import { requestRepository } from "~/server/repositories/request.repository";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const requestRouter = createTRPCRouter({
   countPendentRequests: protectedProcedure.query(
@@ -47,21 +51,21 @@ export const requestRouter = createTRPCRouter({
       },
     ),
 
-  registerRequest: protectedProcedure
+  registerRequest: operationProcedure
     .input(requestRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<RequestRouteInterfaces["Request"]> => {
       const registeredRequest = await requestRepository.register(input);
       return registeredRequest;
     }),
 
-  editRequest: protectedProcedure
+  editRequest: operationProcedure
     .input(requestRepositorySchema.editProps)
     .mutation(async ({ input }): Promise<RequestRouteInterfaces["Request"]> => {
       const editedRequest = await requestRepository.edit(input);
       return editedRequest;
     }),
 
-  deleteRequest: protectedProcedure
+  deleteRequest: operationProcedure
     .input(requestRepositorySchema.deleteProps)
     .mutation(async ({ input }): Promise<RequestRouteInterfaces["Request"]> => {
       const deletedRequest = await requestRepository.remove(input);
