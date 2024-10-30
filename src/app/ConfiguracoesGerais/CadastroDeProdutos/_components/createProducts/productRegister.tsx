@@ -26,7 +26,6 @@ export const ProductRegister = () => {
 
   const { data: users = [] } = api.user.getAll.useQuery();
 
-  // TODO: get only the products for the crrnt restaurant
   const { data: products = [] } = api.product.getAll.useQuery();
   const { data: suppliers = [] } = api.supplier.getAll.useQuery({
     filters: {},

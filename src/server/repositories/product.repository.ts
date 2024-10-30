@@ -169,7 +169,6 @@ async function getAllWhere(props: ProductRepositoryInterfaces["GetAllProps"]) {
   return products;
 }
 
-//TODO: logica para retornar apenas produtos do restaurante passado
 async function getAll() {
   const products = await db.product.findMany({
     include: {

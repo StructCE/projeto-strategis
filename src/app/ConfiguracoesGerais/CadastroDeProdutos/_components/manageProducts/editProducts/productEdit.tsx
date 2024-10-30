@@ -27,7 +27,6 @@ type ProductEditForm = {
 export const ProductEdit = (props: ProductEditForm) => {
   const productEditForm = useProductForm(props.product);
 
-  // TODO: get only the products for the crrnt restaurant
   const { data: products = [] } = api.product.getAll.useQuery();
 
   const { data: users = [] } = api.user.getAll.useQuery();

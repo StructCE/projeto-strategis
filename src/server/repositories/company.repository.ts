@@ -79,7 +79,7 @@ async function countRegisteredUsers(
     },
   });
 
-  return users; // Considerando 'baixo estoque' como até 120% do estoque minimo TODO verificar parametro correto
+  return users;
 }
 
 async function getOne(props: CompanyRepositoryInterfaces["GetOneProps"]) {
