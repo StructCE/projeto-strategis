@@ -345,7 +345,7 @@ async function autoRegister(
     });
   }
 
-  console.log("registeredCompany.id:", registeredCompany.name);
+  // console.log("registeredCompany.id:", registeredCompany.name);
 
   let registeredSupplier = await db.supplier.findUnique({
     where: {
@@ -369,7 +369,7 @@ async function autoRegister(
       },
     });
   }
-  console.log("registeredSupplier.id:", registeredSupplier.name);
+  // console.log("registeredSupplier.id:", registeredSupplier.name);
 
   // Cria a relação entre fornecedor e empresa se não existir
   const companySupplierRelation = await db.companySupplier.findFirst({
@@ -403,7 +403,7 @@ async function autoRegister(
     },
   });
 
-  console.log("invoiceProducts:", invoiceProducts);
+  // console.log("invoiceProducts:", invoiceProducts);
 
   const registeredProducts = [];
   const registeredInvoiceProducts = [];
@@ -433,7 +433,7 @@ async function autoRegister(
         });
       }
 
-      console.log("Unit:", registeredUnit.name);
+      // console.log("Unit:", registeredUnit.name);
 
       registeredProduct = await db.product.create({
         data: {

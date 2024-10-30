@@ -123,7 +123,7 @@ async function getAll(props: OrderRepositoryInterfaces["GetAllProps"]) {
       },
     },
   });
-  console.log(orders);
+  // console.log(orders);
   return orders;
 }
 

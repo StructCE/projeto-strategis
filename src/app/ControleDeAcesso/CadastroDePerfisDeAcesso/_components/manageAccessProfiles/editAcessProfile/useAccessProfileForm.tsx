@@ -17,7 +17,7 @@ export const useAccessProfileForm = (role: RoleWithModules) => {
 
   const roleMutation = api.role.editRole.useMutation({
     onSuccess: (updatedRole) => {
-      console.log("Role updated successfully:", updatedRole);
+      // console.log("Role updated successfully:", updatedRole);
       if (isDeleted === false) {
         toast.success("Cargo atualizado com sucesso. Atualizando a página...", {
           position: "bottom-right",
@@ -37,7 +37,7 @@ export const useAccessProfileForm = (role: RoleWithModules) => {
 
   const deleteRoleMutation = api.role.deleteRole.useMutation({
     onSuccess: (deletedRole) => {
-      console.log("Role removed successfully:", deletedRole);
+      // console.log("Role removed successfully:", deletedRole);
       toast.success("Cargo removido com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
