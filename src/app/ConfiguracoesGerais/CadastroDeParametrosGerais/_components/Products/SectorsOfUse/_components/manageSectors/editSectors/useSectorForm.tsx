@@ -18,7 +18,7 @@ export const useSectorForm = (sector: UseSector) => {
   const sectorMutation =
     api.generalParameters.useSector.editUseSector.useMutation({
       onSuccess: (updatedSector) => {
-        console.log("Sector updated successfully:", updatedSector);
+        // console.log("Sector updated successfully:", updatedSector);
         if (isDeleted === false) {
           toast.success(
             "Setor atualizado com sucesso. Atualizando a página...",
@@ -42,7 +42,7 @@ export const useSectorForm = (sector: UseSector) => {
   const deleteSectorMutation =
     api.generalParameters.useSector.removeUseSector.useMutation({
       onSuccess: (deletedSector) => {
-        console.log("Sector removed successfully:", deletedSector);
+        // console.log("Sector removed successfully:", deletedSector);
         toast.success("Setor removido com sucesso. Atualizando a página...", {
           position: "bottom-right",
         });
@@ -68,7 +68,7 @@ export const useSectorForm = (sector: UseSector) => {
 
   function onSubmitEdit(data: EditSectorFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     try {
       sectorMutation.mutate({

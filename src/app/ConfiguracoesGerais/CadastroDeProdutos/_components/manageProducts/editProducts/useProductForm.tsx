@@ -17,7 +17,7 @@ export const useProductForm = (product: ProductWithFeatures) => {
 
   const productMutation = api.product.editProduct.useMutation({
     onSuccess: (updatedProduct) => {
-      console.log("Product updated successfully:", updatedProduct);
+      // console.log("Product updated successfully:", updatedProduct);
       if (isDeleted === false) {
         toast.success(
           "Produto atualizado com sucesso. Atualizando a página...",
@@ -40,7 +40,7 @@ export const useProductForm = (product: ProductWithFeatures) => {
 
   const deleteProductMutation = api.product.deleteProduct.useMutation({
     onSuccess: (deletedProduct) => {
-      console.log("Product removed successfully:", deletedProduct);
+      // console.log("Product removed successfully:", deletedProduct);
       toast.success("Produto removido com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -95,7 +95,7 @@ export const useProductForm = (product: ProductWithFeatures) => {
 
   function onSubmitEdit(data: EditProductFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(product, null, 2));
+    // console.log(JSON.stringify(product, null, 2));
 
     try {
       productMutation.mutate({
@@ -129,7 +129,7 @@ export const useProductForm = (product: ProductWithFeatures) => {
 
   function onSubmitRemove() {
     setIsDeleted(true);
-    console.log(product.id);
+    // console.log(product.id);
     try {
       deleteProductMutation.mutate({
         id: product.id,

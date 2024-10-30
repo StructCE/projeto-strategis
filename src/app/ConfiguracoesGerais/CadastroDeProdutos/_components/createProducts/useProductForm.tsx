@@ -13,7 +13,7 @@ export const useProductForm = () => {
   const router = useRouter();
   const productMutation = api.product.createProduct.useMutation({
     onSuccess: (newProduct) => {
-      console.log("Product created successfully:", newProduct);
+      // console.log("Product created successfully:", newProduct);
       toast.success("Produto criado com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -54,7 +54,7 @@ export const useProductForm = () => {
   });
 
   function onSubmit(data: CreateProductFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const productData = {
       code: data.code,

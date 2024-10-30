@@ -21,7 +21,7 @@ const RejectRequest: React.FC<RejectRequestProps> = ({
   const router = useRouter();
   const requestMutation = api.request.editRequest.useMutation({
     onSuccess: (newRequest) => {
-      console.log("Requisição atualizada com sucesso:", newRequest);
+      // console.log("Requisição atualizada com sucesso:", newRequest);
       toast.success(
         "Requisição atualizada com sucesso. Atualizando a página...",
         {

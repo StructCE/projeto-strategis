@@ -27,7 +27,7 @@ export const useCompanyForm = (
       toast.error("Erro ao atualizar empresa.", {
         position: "bottom-right",
       });
-      console.log(error);
+      console.error(error);
     },
   });
 
@@ -44,7 +44,7 @@ export const useCompanyForm = (
       toast.error("Erro ao remover empresa.", {
         position: "bottom-right",
       });
-      console.log(error);
+      console.error(error);
     },
   });
 
@@ -64,12 +64,12 @@ export const useCompanyForm = (
 
   function onSubmitEdit(data: CompanyRepositoryInterfaces["EditProps"]) {
     editCompany.mutate(data);
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
   }
 
   function onSubmitRemove(data: CompanyRepositoryInterfaces["DeleteProps"]) {
     removeCompany.mutate(data);
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
   }
 
   return {

@@ -24,7 +24,7 @@ export const useCompanyForm = () => {
       toast.error("Erro ao criar empresa.", {
         position: "bottom-right",
       });
-      console.log(error);
+      console.error(error);
     },
   });
 
@@ -34,7 +34,7 @@ export const useCompanyForm = () => {
   });
 
   function onSubmit(data: CreateCompanyFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
     createCompany.mutate(data);
   }
 

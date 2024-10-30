@@ -14,7 +14,7 @@ export const useSectorForm = () => {
   const categoryMutation =
     api.generalParameters.useSector.registerUseSector.useMutation({
       onSuccess: (newSector) => {
-        console.log("Sector created successfully:", newSector);
+        // console.log("Sector created successfully:", newSector);
         toast.success("Setor criado com sucesso. Atualizando a página...", {
           position: "bottom-right",
         });
@@ -39,7 +39,7 @@ export const useSectorForm = () => {
   });
 
   function onSubmit(data: CreateSectorFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const categoryData = {
       name: data.name,

@@ -35,7 +35,7 @@ export const RequestDetail = (props: RequestType) => {
       })),
     };
 
-    console.log(JSON.stringify(exitData, null, 2));
+    // console.log(JSON.stringify(exitData, null, 2));
   };
 
   return (

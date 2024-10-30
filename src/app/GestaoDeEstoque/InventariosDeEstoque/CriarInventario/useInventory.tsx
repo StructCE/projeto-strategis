@@ -23,7 +23,7 @@ const FinalizeInventory: React.FC<FinalizeInventoryProps> = ({
   const router = useRouter();
   const inventoryMutation = api.inventory.registerInventory.useMutation({
     onSuccess: (newInventory) => {
-      console.log("Inventário criado com sucesso:", newInventory);
+      // console.log("Inventário criado com sucesso:", newInventory);
       toast.success("Inventário criado com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -74,7 +74,7 @@ const FinalizeInventory: React.FC<FinalizeInventoryProps> = ({
       })),
     };
 
-    console.log(inventoryData);
+    // console.log(inventoryData);
 
     try {
       inventoryMutation.mutate({ ...inventoryData });

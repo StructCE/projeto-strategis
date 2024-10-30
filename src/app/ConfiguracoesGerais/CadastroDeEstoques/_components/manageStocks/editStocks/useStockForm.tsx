@@ -17,7 +17,7 @@ export const useStockForm = (stock: StockWithCabinets) => {
 
   const stockMutation = api.stock.editStock.useMutation({
     onSuccess: (updatedStock) => {
-      console.log("Stock updated successfully:", updatedStock);
+      // console.log("Stock updated successfully:", updatedStock);
       if (isDeleted === false) {
         toast.success(
           "Estoque atualizado com sucesso. Atualizando a página...",
@@ -40,7 +40,7 @@ export const useStockForm = (stock: StockWithCabinets) => {
 
   const deleteStockMutation = api.stock.deleteStock.useMutation({
     onSuccess: (deletedStock) => {
-      console.log("Stock removed successfully:", deletedStock);
+      // console.log("Stock removed successfully:", deletedStock);
       toast.success("Estoque removido com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -76,7 +76,7 @@ export const useStockForm = (stock: StockWithCabinets) => {
 
   function onSubmitEdit(data: EditStockFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     try {
       stockMutation.mutate({

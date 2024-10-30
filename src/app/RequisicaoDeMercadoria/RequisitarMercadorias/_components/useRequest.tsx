@@ -23,7 +23,7 @@ const FinalizeRequest: React.FC<FinalizeRequestProps> = ({
   const router = useRouter();
   const requestMutation = api.request.registerRequest.useMutation({
     onSuccess: (newRequest) => {
-      console.log("Requisição criada com sucesso:", newRequest);
+      // console.log("Requisição criada com sucesso:", newRequest);
       toast.success("Requisição criada com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -69,7 +69,7 @@ const FinalizeRequest: React.FC<FinalizeRequestProps> = ({
       })),
     };
 
-    console.log(requestData);
+    // console.log(requestData);
 
     try {
       requestMutation.mutate({ ...requestData });

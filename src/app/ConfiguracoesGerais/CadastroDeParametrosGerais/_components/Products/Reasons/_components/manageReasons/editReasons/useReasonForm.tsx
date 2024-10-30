@@ -18,7 +18,7 @@ export const useReasonForm = (reason: AdjustReason) => {
   const reasonMutation =
     api.generalParameters.adjustReason.editAdjustReason.useMutation({
       onSuccess: (updatedReason) => {
-        console.log("Reason updated successfully:", updatedReason);
+        // console.log("Reason updated successfully:", updatedReason);
         if (isDeleted === false) {
           toast.success(
             "Motivo atualizado com sucesso. Atualizando a página...",
@@ -42,7 +42,7 @@ export const useReasonForm = (reason: AdjustReason) => {
   const deleteReasonMutation =
     api.generalParameters.adjustReason.removeAdjustReason.useMutation({
       onSuccess: (deletedReason) => {
-        console.log("Reason removed successfully:", deletedReason);
+        // console.log("Reason removed successfully:", deletedReason);
         toast.success("Motivo removido com sucesso. Atualizando a página...", {
           position: "bottom-right",
         });
@@ -68,7 +68,7 @@ export const useReasonForm = (reason: AdjustReason) => {
 
   function onSubmitEdit(data: EditReasonFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     try {
       reasonMutation.mutate({

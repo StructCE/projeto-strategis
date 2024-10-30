@@ -28,7 +28,7 @@ const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
   const router = useRouter();
   const adjustMutation = api.adjust.registerAdjust.useMutation({
     onSuccess: (newAdjust) => {
-      console.log("Ajuste de estoque realizado com sucesso:", newAdjust);
+      // console.log("Ajuste de estoque realizado com sucesso:", newAdjust);
       // Chama a função para atualizar o status do inventário para "Ajuste realizado"
       editInventoryMutation.mutate({
         id: inventory.id,
@@ -56,7 +56,7 @@ const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
   // Mutação para editar o inventário
   const editInventoryMutation = api.inventory.editInventory.useMutation({
     onSuccess: (editedInventory) => {
-      console.log("Inventário atualizado com sucesso:", editedInventory);
+      // console.log("Inventário atualizado com sucesso:", editedInventory);
     },
     onError: (error) => {
       console.error("Erro ao atualizar o status do inventário:", error);
@@ -87,7 +87,7 @@ const FinalizeAutoAdjust: React.FC<FinalizeAutoAdjustProps> = ({
       })),
     };
 
-    console.log(adjustData);
+    // console.log(adjustData);
 
     try {
       adjustMutation.mutate({ ...adjustData });

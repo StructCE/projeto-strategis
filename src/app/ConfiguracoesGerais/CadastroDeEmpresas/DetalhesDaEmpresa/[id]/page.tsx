@@ -1,10 +1,10 @@
 import { permanentRedirect } from "next/navigation";
 import LoadingPage from "~/app/loading";
+import { api } from "~/trpc/server";
 import { CompanyEdit } from "../_components/manageDetailsCompany/editCompany/companyEdit";
 import { ManageStocksTableFromComapany } from "../_components/manageDetailsCompany/manageStocksFromCompany";
 import { ManageSuppliersTableFromComapany } from "../_components/manageDetailsCompany/manageSupplierFromCompany";
 import { ManageUsersTableFromCompany } from "../_components/manageDetailsCompany/manageUsersFromCompany";
-import { api } from "~/trpc/server";
 
 export default async function DetalhesDaEmpresa({
   params,
@@ -16,7 +16,7 @@ export default async function DetalhesDaEmpresa({
   }
 
   const companyData = await api.company.getOneCompany({ id: params.id });
-  console.log(companyData);
+  // console.log(companyData);
   const companyUsers = await api.user.getAll();
   const companySuppliers = await api.company.getCompanySuppliers({
     id: params.id,

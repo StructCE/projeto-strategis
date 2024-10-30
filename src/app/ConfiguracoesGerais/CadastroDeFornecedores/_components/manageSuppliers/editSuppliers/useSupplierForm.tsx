@@ -17,7 +17,7 @@ export const useSupplierForm = (supplier: Supplier) => {
 
   const supplierMutation = api.supplier.editSupplier.useMutation({
     onSuccess: (updatedSupplier) => {
-      console.log("Supplier updated successfully:", updatedSupplier);
+      // console.log("Supplier updated successfully:", updatedSupplier);
       if (isDeleted === false) {
         toast.success(
           "Fornecedor atualizado com sucesso. Atualizando a página...",
@@ -40,7 +40,7 @@ export const useSupplierForm = (supplier: Supplier) => {
 
   const deleteSupplierMutation = api.supplier.removeSupplier.useMutation({
     onSuccess: (removedSupplier) => {
-      console.log("Supplier removed successfully:", removedSupplier);
+      // console.log("Supplier removed successfully:", removedSupplier);
       toast.success(
         "Fornecedor removido com sucesso. Atualizando a página...",
         {
@@ -88,7 +88,7 @@ export const useSupplierForm = (supplier: Supplier) => {
 
   function onSubmitEdit(data: EditSupplierFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     try {
       supplierMutation.mutate({

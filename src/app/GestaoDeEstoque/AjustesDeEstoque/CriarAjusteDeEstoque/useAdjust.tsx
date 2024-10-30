@@ -25,7 +25,7 @@ const FinalizeAdjust: React.FC<FinalizeAdjustProps> = ({
   const router = useRouter();
   const adjustMutation = api.adjust.registerAdjust.useMutation({
     onSuccess: (newAdjust) => {
-      console.log("Ajuste de estoque criado com sucesso:", newAdjust);
+      // console.log("Ajuste de estoque criado com sucesso:", newAdjust);
       toast.success(
         "Ajuste de estoque criado com sucesso. Atualizando a página...",
         {
@@ -68,7 +68,7 @@ const FinalizeAdjust: React.FC<FinalizeAdjustProps> = ({
       })),
     };
 
-    console.log(adjustData);
+    // console.log(adjustData);
 
     try {
       adjustMutation.mutate({ ...adjustData });

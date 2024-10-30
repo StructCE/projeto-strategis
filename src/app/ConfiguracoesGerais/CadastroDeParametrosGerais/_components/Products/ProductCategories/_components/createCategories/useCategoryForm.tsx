@@ -14,7 +14,7 @@ export const useCategoryForm = () => {
   const categoryMutation =
     api.generalParameters.productCategory.registerProductCategory.useMutation({
       onSuccess: (newCategory) => {
-        console.log("Category created successfully:", newCategory);
+        // console.log("Category created successfully:", newCategory);
         toast.success("Categoria criada com sucesso. Atualizando a página...", {
           position: "bottom-right",
         });
@@ -39,7 +39,7 @@ export const useCategoryForm = () => {
   });
 
   function onSubmit(data: CreateCategoryFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const categoryData = {
       name: data.name,

@@ -23,7 +23,7 @@ const FinalizeOrder: React.FC<FinalizeOrderProps> = ({
   const router = useRouter();
   const orderMutation = api.order.registerOrder.useMutation({
     onSuccess: (newOrder) => {
-      console.log("Pedido de compra criado com sucesso:", newOrder);
+      // console.log("Pedido de compra criado com sucesso:", newOrder);
       toast.success(
         "Pedido de compra criado com sucesso. Atualizando a página...",
         {
@@ -84,7 +84,7 @@ const FinalizeOrder: React.FC<FinalizeOrderProps> = ({
       })),
     };
 
-    console.log(orderData);
+    // console.log(orderData);
 
     try {
       orderMutation.mutate({ ...orderData });

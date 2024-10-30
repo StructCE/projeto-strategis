@@ -14,7 +14,7 @@ export const EditOrder = (props: EditOrderProps) => {
   const router = useRouter();
   const editOrderMutation = api.order.editOrder.useMutation({
     onSuccess: (updatedOrder) => {
-      console.log("Order updated successfully:", updatedOrder);
+      // console.log("Order updated successfully:", updatedOrder);
       toast.success(
         "Pedido de compra atualizado com sucesso. Atualizando a página...",
         {

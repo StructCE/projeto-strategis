@@ -18,7 +18,7 @@ export const useShelfForm = (shelf: Shelf) => {
 
   const shelfMutation = api.generalParameters.shelf.editShelf.useMutation({
     onSuccess: (updatedShelf) => {
-      console.log("Shelf updated successfully:", updatedShelf);
+      // console.log("Shelf updated successfully:", updatedShelf);
       if (isDeleted === false) {
         toast.success(
           "Prateleira atualizada com sucesso. Atualizando a página...",
@@ -42,7 +42,7 @@ export const useShelfForm = (shelf: Shelf) => {
   const deleteShelfMutation =
     api.generalParameters.shelf.removeShelf.useMutation({
       onSuccess: (deletedShelf) => {
-        console.log("Shelf removed successfully:", deletedShelf);
+        // console.log("Shelf removed successfully:", deletedShelf);
         toast.success(
           "Prateleira removida com sucesso. Atualizando a página...",
           {
@@ -71,7 +71,7 @@ export const useShelfForm = (shelf: Shelf) => {
 
   function onSubmitEdit(data: EditShelfFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     try {
       shelfMutation.mutate({

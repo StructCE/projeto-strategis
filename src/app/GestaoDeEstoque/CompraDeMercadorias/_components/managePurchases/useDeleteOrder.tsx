@@ -13,7 +13,7 @@ export const DeleteOrder = (props: DeleteOrderProps) => {
   const router = useRouter();
   const deleteOrderMutation = api.order.deleteOrder.useMutation({
     onSuccess: (deletedOrder) => {
-      console.log("Order removed successfully:", deletedOrder);
+      // console.log("Order removed successfully:", deletedOrder);
       toast.success(
         "Pedido de compra removido com sucesso. Atualizando a página...",
         {

@@ -14,7 +14,7 @@ export const useTypeForm = () => {
   const controlTypeMutation =
     api.generalParameters.controlType.registerControlType.useMutation({
       onSuccess: (newControlType) => {
-        console.log("Control type created successfully:", newControlType);
+        // console.log("Control type created successfully:", newControlType);
         toast.success(
           "Tipo de controle criado com sucesso. Atualizando a página...",
           {
@@ -42,7 +42,7 @@ export const useTypeForm = () => {
   });
 
   function onSubmit(data: CreateTypeFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const controlTypeData = {
       name: data.name,

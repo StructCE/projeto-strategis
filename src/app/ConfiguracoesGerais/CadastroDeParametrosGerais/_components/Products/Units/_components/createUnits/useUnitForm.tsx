@@ -13,7 +13,7 @@ export const useUnitForm = () => {
   const router = useRouter();
   const unitMutation = api.generalParameters.unit.registerUnit.useMutation({
     onSuccess: (newUnit) => {
-      console.log("Unit created successfully:", newUnit);
+      // console.log("Unit created successfully:", newUnit);
       toast.success("Unidade criada com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -38,7 +38,7 @@ export const useUnitForm = () => {
   });
 
   function onSubmit(data: CreateUnitFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const unitData = {
       name: data.name,

@@ -18,7 +18,7 @@ export const useCategoryForm = (category: ProductCategory) => {
   const categoryMutation =
     api.generalParameters.productCategory.editProductCategory.useMutation({
       onSuccess: (updatedCategory) => {
-        console.log("Category updated successfully:", updatedCategory);
+        // console.log("Category updated successfully:", updatedCategory);
         if (isDeleted === false) {
           toast.success(
             "Categoria atualizada com sucesso. Atualizando a página...",
@@ -42,7 +42,7 @@ export const useCategoryForm = (category: ProductCategory) => {
   const deleteCategoryMutation =
     api.generalParameters.productCategory.removeProductCategory.useMutation({
       onSuccess: (deletedCategory) => {
-        console.log("Category removed successfully:", deletedCategory);
+        // console.log("Category removed successfully:", deletedCategory);
         toast.success(
           "Categoria removida com sucesso. Atualizando a página...",
           {
@@ -71,7 +71,7 @@ export const useCategoryForm = (category: ProductCategory) => {
 
   function onSubmitEdit(data: EditCategoryFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     try {
       categoryMutation.mutate({

@@ -17,7 +17,7 @@ export const useUserForm = (user: UserWithRoles) => {
 
   const userMutation = api.user.editUser.useMutation({
     onSuccess: (updatedUser) => {
-      console.log("User updated successfully:", updatedUser);
+      // console.log("User updated successfully:", updatedUser);
       if (isDeleted === false) {
         toast.success(
           "Usuário atualizado com sucesso. Atualizando a página...",
@@ -40,7 +40,7 @@ export const useUserForm = (user: UserWithRoles) => {
 
   const deleteUserMutation = api.user.deleteUser.useMutation({
     onSuccess: (deletedUser) => {
-      console.log("User removed successfully:", deletedUser);
+      // console.log("User removed successfully:", deletedUser);
       toast.success("Usuário removido com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -77,7 +77,7 @@ export const useUserForm = (user: UserWithRoles) => {
 
   function onSubmitEdit(data: EditUserFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     try {
       userMutation.mutate({

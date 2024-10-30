@@ -14,7 +14,7 @@ export const usePaymentForm = (invoice: SerializedInvoice) => {
   const router = useRouter();
   const invoiceMutation = api.invoice.editInvoice.useMutation({
     onSuccess: (updatedInvoice) => {
-      console.log("Invoice updated successfully:", updatedInvoice);
+      // console.log("Invoice updated successfully:", updatedInvoice);
       toast.success(
         "Nota fiscal atualizada com sucesso. Atualizando a página...",
         {
@@ -45,7 +45,7 @@ export const usePaymentForm = (invoice: SerializedInvoice) => {
   });
 
   function onSubmit(data: EditPaymentFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const invoiceData = {
       bankId: data.bankId,

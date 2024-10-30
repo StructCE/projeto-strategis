@@ -184,7 +184,7 @@ export default function ManageProductsTable() {
 
   const productMutation = api.product.editProduct.useMutation({
     onSuccess: (updatedProduct) => {
-      console.log("Product updated successfully:", updatedProduct);
+      // console.log("Product updated successfully:", updatedProduct);
       toast.success("Produto atualizado com sucesso.", {
         position: "bottom-right",
       });

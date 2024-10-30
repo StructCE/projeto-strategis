@@ -14,7 +14,7 @@ export const useReasonForm = () => {
   const reasonMutation =
     api.generalParameters.adjustReason.registerAdjustReason.useMutation({
       onSuccess: (newReason) => {
-        console.log("Reason created successfully:", newReason);
+        // console.log("Reason created successfully:", newReason);
         toast.success("Motivo criado com sucesso. Atualizando a página...", {
           position: "bottom-right",
         });
@@ -39,7 +39,7 @@ export const useReasonForm = () => {
   });
 
   function onSubmit(data: CreateReasonFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const reasonData = {
       name: data.name,

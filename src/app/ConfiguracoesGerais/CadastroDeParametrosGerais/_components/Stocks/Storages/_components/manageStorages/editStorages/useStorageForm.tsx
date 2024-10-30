@@ -19,7 +19,7 @@ export const useStorageForm = (cabinet: Cabinet) => {
   const cabinetMutation = api.generalParameters.cabinet.editCabinet.useMutation(
     {
       onSuccess: (updatedCabinet) => {
-        console.log("Cabinet updated successfully:", updatedCabinet);
+        // console.log("Cabinet updated successfully:", updatedCabinet);
         if (isDeleted === false) {
           toast.success(
             "Armário/zona atualizado com sucesso. Atualizando a página...",
@@ -44,7 +44,7 @@ export const useStorageForm = (cabinet: Cabinet) => {
   const deleteCabinetMutation =
     api.generalParameters.cabinet.removeCabinet.useMutation({
       onSuccess: (deletedCabinet) => {
-        console.log("Cabinet removed successfully:", deletedCabinet);
+        // console.log("Cabinet removed successfully:", deletedCabinet);
         toast.success(
           "Armário/zona removido com sucesso. Atualizando a página...",
           {
@@ -73,7 +73,7 @@ export const useStorageForm = (cabinet: Cabinet) => {
 
   function onSubmitEdit(data: EditStorageFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     try {
       cabinetMutation.mutate({

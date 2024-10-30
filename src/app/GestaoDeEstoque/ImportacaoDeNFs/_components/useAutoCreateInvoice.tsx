@@ -11,7 +11,7 @@ const AutoCreateInvoice = () => {
   // const router = useRouter();
   const invoiceMutation = api.invoice.autoRegisterInvoice.useMutation({
     onSuccess: (newInvoice) => {
-      console.log("Nota fiscal importada com sucesso:", newInvoice);
+      // console.log("Nota fiscal importada com sucesso:", newInvoice);
       toast.success(
         "Nota fiscal importada com sucesso. Atualize a página para ver as alterações...",
         {

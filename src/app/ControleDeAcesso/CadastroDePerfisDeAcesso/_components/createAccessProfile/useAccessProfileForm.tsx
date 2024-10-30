@@ -13,7 +13,7 @@ export const useAccessProfileForm = () => {
   const router = useRouter();
   const roleMutation = api.role.registerRole.useMutation({
     onSuccess: (newRole) => {
-      console.log("Role created successfully:", newRole);
+      // console.log("Role created successfully:", newRole);
       toast.success("Cargo criado com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -39,7 +39,7 @@ export const useAccessProfileForm = () => {
   });
 
   function onSubmit(data: CreateAccessProfileFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const roleData = {
       name: data.name,

@@ -14,7 +14,7 @@ export const useEditInvoiceForm = (invoice: SerializedInvoice) => {
   const router = useRouter();
   const invoiceMutation = api.invoice.editInvoice.useMutation({
     onSuccess: (updatedInvoice) => {
-      console.log("Invoice updated successfully:", updatedInvoice);
+      // console.log("Invoice updated successfully:", updatedInvoice);
       toast.success(
         "Nota fiscal atualizada com sucesso. Atualizando a página...",
         {
@@ -35,7 +35,7 @@ export const useEditInvoiceForm = (invoice: SerializedInvoice) => {
 
   const rejectMutation = api.invoice.rejectInvoice.useMutation({
     onSuccess: (updatedInvoice) => {
-      console.log("Invoice rejected successfully:", updatedInvoice);
+      // console.log("Invoice rejected successfully:", updatedInvoice);
       toast.success(
         "Nota fiscal rejeitada com sucesso. Atualizando a página...",
         {
@@ -69,7 +69,7 @@ export const useEditInvoiceForm = (invoice: SerializedInvoice) => {
   });
 
   function onSubmitConfirm(data: EditInvoiceFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const invoiceData = {
       documentTypeId: data.documentTypeId,
@@ -93,7 +93,7 @@ export const useEditInvoiceForm = (invoice: SerializedInvoice) => {
   }
 
   function onSubmitReject(data: EditInvoiceFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const invoiceData = {
       documentTypeId: data.documentTypeId ?? "",

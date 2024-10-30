@@ -13,7 +13,7 @@ export const useManualCreateInvoiceForm = () => {
   const router = useRouter();
   const invoiceMutation = api.invoice.registerInvoice.useMutation({
     onSuccess: (newInvoice) => {
-      console.log("Invoice created successfully:", newInvoice);
+      // console.log("Invoice created successfully:", newInvoice);
       toast.success("Nota fiscal criada com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -72,7 +72,7 @@ export const useManualCreateInvoiceForm = () => {
   });
 
   function onSubmit(data: CreateInvoiceFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const invoiceData = {
       documentNumber: data.documentNumber,

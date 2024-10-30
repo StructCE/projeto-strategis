@@ -13,7 +13,7 @@ export const useStockForm = () => {
   const router = useRouter();
   const stockMutation = api.stock.registerStock.useMutation({
     onSuccess: (newStock) => {
-      console.log("Stock created successfully:", newStock);
+      // console.log("Stock created successfully:", newStock);
       toast.success("Estoque criado com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -46,7 +46,7 @@ export const useStockForm = () => {
   });
 
   function onSubmit(data: CreateStockFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const stockData = {
       name: data.name,

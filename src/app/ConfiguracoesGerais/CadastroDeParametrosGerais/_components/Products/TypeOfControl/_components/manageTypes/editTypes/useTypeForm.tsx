@@ -18,7 +18,7 @@ export const useTypeForm = (controlType: ControlType) => {
   const controlTypeMutation =
     api.generalParameters.controlType.editControlType.useMutation({
       onSuccess: (updatedControlType) => {
-        console.log("Control type updated successfully:", updatedControlType);
+        // console.log("Control type updated successfully:", updatedControlType);
         if (isDeleted === false) {
           toast.success(
             "Tipo de controle atualizado com sucesso. Atualizando a página...",
@@ -42,7 +42,7 @@ export const useTypeForm = (controlType: ControlType) => {
   const deleteControlTypeMutation =
     api.generalParameters.controlType.removeControlType.useMutation({
       onSuccess: (deletedControlType) => {
-        console.log("Control type removed successfully:", deletedControlType);
+        // console.log("Control type removed successfully:", deletedControlType);
         toast.success(
           "Tipo de controle removido com sucesso. Atualizando a página...",
           {
@@ -71,7 +71,7 @@ export const useTypeForm = (controlType: ControlType) => {
 
   function onSubmitEdit(data: EditTypeFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     try {
       controlTypeMutation.mutate({

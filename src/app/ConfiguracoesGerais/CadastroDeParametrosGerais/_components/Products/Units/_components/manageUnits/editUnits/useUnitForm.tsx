@@ -17,7 +17,7 @@ export const useUnitForm = (unit: Unit) => {
 
   const unitMutation = api.generalParameters.unit.editUnit.useMutation({
     onSuccess: (updatedUnit) => {
-      console.log("Unit updated successfully:", updatedUnit);
+      // console.log("Unit updated successfully:", updatedUnit);
       if (isDeleted === false) {
         toast.success(
           "Unidade atualizada com sucesso. Atualizando a página...",
@@ -40,7 +40,7 @@ export const useUnitForm = (unit: Unit) => {
 
   const deleteUnitMutation = api.generalParameters.unit.removeUnit.useMutation({
     onSuccess: (deletedUnit) => {
-      console.log("Unit removed successfully:", deletedUnit);
+      // console.log("Unit removed successfully:", deletedUnit);
       toast.success("Unidade removida com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -68,7 +68,7 @@ export const useUnitForm = (unit: Unit) => {
 
   function onSubmitEdit(data: EditUnitFormValues) {
     if (isDeleted) return;
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     try {
       unitMutation.mutate({

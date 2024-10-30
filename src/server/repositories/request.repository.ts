@@ -134,7 +134,7 @@ async function register(props: RequestRepositoryInterfaces["RegisterProps"]) {
     throw new Error("O usuário não tem um papel associado (UserRole).");
   }
 
-  console.log("UserRole encontrado:", userRole);
+  // console.log("UserRole encontrado:", userRole);
 
   // Criação da solicitação com o 'responsibleId' do userRole
   const createdRequest = await db.request.create({
@@ -147,7 +147,7 @@ async function register(props: RequestRepositoryInterfaces["RegisterProps"]) {
     },
   });
 
-  console.log("Requisição criada:", createdRequest);
+  // console.log("Requisição criada:", createdRequest);
 
   if (requestProducts.length === 0) {
     throw new Error("Nenhum produto foi adicionado à requisição.");
@@ -166,7 +166,7 @@ async function register(props: RequestRepositoryInterfaces["RegisterProps"]) {
         );
       }
 
-      console.log(`Produto encontrado:`, productExists);
+      // console.log(`Produto encontrado:`, productExists);
 
       // Criar o RequestProduct
       const registeredRequestProduct = await db.requestProduct.create({
@@ -177,10 +177,10 @@ async function register(props: RequestRepositoryInterfaces["RegisterProps"]) {
         },
       });
 
-      console.log(
-        "Produto da requisição registrado:",
-        registeredRequestProduct,
-      );
+      // console.log(
+      //   "Produto da requisição registrado:",
+      //   registeredRequestProduct,
+      // );
       return registeredRequestProduct;
     }),
   );

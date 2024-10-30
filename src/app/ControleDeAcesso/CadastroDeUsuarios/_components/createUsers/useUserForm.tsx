@@ -13,7 +13,7 @@ export const useUserForm = () => {
   const router = useRouter();
   const userMutation = api.user.registerUser.useMutation({
     onSuccess: (newUser) => {
-      console.log("User created successfully:", newUser);
+      // console.log("User created successfully:", newUser);
       toast.success("Usuário criado com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -51,7 +51,7 @@ export const useUserForm = () => {
   });
 
   function onSubmit(data: CreateUserFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const userData = {
       email: data.email,

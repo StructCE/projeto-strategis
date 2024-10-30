@@ -14,7 +14,7 @@ export const useStorageForm = () => {
   const cabinetMutation =
     api.generalParameters.cabinet.registerCabinet.useMutation({
       onSuccess: (newCabinet) => {
-        console.log("Cabinet created successfully:", newCabinet);
+        // console.log("Cabinet created successfully:", newCabinet);
         toast.success(
           "Armário/zona criado com sucesso. Atualizando a página...",
           {
@@ -42,7 +42,7 @@ export const useStorageForm = () => {
   });
 
   function onSubmit(data: CreateStorageFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const cabinetData = {
       name: data.name,

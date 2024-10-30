@@ -14,7 +14,7 @@ export const useSupplierForm = () => {
   const router = useRouter();
   const supplierMutation = api.supplier.createSupplier.useMutation({
     onSuccess: (newSupplier) => {
-      console.log("Supplier created successfully:", newSupplier);
+      // console.log("Supplier created successfully:", newSupplier);
       toast.success("Fornecedor criado com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -54,7 +54,7 @@ export const useSupplierForm = () => {
   });
 
   function onSubmit(data: CreateSupplierFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     const supplierData = {
       name: data.name,

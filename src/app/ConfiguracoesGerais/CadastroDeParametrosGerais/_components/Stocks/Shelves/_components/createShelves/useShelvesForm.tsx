@@ -13,7 +13,7 @@ export const useShelfForm = () => {
   const router = useRouter();
   const shelfMutation = api.generalParameters.shelf.registerShelf.useMutation({
     onSuccess: (newShelf) => {
-      console.log("Shelf created successfully:", newShelf);
+      // console.log("Shelf created successfully:", newShelf);
       toast.success("Prateleira criada com sucesso. Atualizando a página...", {
         position: "bottom-right",
       });
@@ -39,7 +39,7 @@ export const useShelfForm = () => {
   });
 
   function onSubmit(data: CreateShelfFormValues) {
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
 
     // Dados para criar a Shelf e a relação com o Cabinet
     const shelfData = {
