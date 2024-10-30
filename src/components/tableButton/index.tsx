@@ -66,3 +66,48 @@ TableButtonComponent.Link = function TableButtonComponentLink(
     </button>
   );
 };
+
+type TableButtonComponentHomepageLinkProps = {
+  handlePress?: () => void;
+  className?: string;
+  link_ref: string;
+  placeholder: string;
+  isAccessible?: boolean;
+};
+
+TableButtonComponent.HomepageLink = function TableButtonComponentHomepageLink(
+  props: TableButtonComponentHomepageLinkProps,
+) {
+  const style = cn(
+    `min-w-[288px] rounded-xl  px-[12px] py-[8px]  sm:min-w-[308px] sm:px-[20px] ${
+      !props.isAccessible
+        ? "bg-cinza_mais_escuro_botao cursor-not-allowed"
+        : "bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 cursor-pointer"
+    }`,
+    props.className,
+  );
+  return (
+    <button
+      onClick={props.handlePress}
+      className={style}
+      disabled={!props.isAccessible}
+    >
+      <Link
+        href={props.isAccessible ? props.link_ref : ""}
+        className={`flex gap-2 text-[13px] font-medium tracking-wider text-white sm:text-[16px] sm:tracking-normal ${
+          !props.isAccessible ? "cursor-not-allowed" : "cursor-pointer"
+        }`}
+      >
+        <span
+          className={
+            !props.isAccessible
+              ? "font-normal opacity-50"
+              : "font-medium opacity-100"
+          }
+        >
+          {props.placeholder}
+        </span>
+      </Link>
+    </button>
+  );
+};

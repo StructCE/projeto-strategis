@@ -9,7 +9,7 @@ export default function SignButtons() {
     <>
       <DropdownMenuLabel className="p-0">
         <Button
-          className="h-fit bg-white p-0 pt-1 text-[15px] font-bold text-vermelho_strategis hover:bg-white"
+          className="h-fit bg-white p-0 pt-1 text-[15px] font-bold text-vermelho_strategis hover:bg-white hover:text-hover_vermelho_botao_1"
           onClick={() => signOut()}
         >
           Sair
