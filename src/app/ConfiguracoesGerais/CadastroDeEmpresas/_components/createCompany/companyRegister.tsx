@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -25,6 +26,8 @@ export const CompanyRegister = () => {
   const suppliers = api.supplier.getAll.useQuery({ filters: {} });
   const users = api.user.getAll.useQuery();
   const companies = api.company.getAllCompanies.useQuery();
+
+  const [companyType, setCompanyType] = useState("");
 
   return (
     <Form {...companyForm.form}>
@@ -210,7 +213,7 @@ export const CompanyRegister = () => {
                   <FormItem>
                     <Select
                       onValueChange={(value) => {
-                        // setCompanyType(value);
+                        setCompanyType(value);
                         field.onChange(value);
                       }}
                       defaultValue={field.value}
@@ -241,7 +244,7 @@ export const CompanyRegister = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      // disabled={companyType !== "Filial"}
+                      disabled={companyType !== "Filial"}
                     >
                       <FormControl>
                         <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">

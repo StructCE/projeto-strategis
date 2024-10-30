@@ -26,7 +26,7 @@ export default async function DetalhesDaEmpresa({
   if (!companyData) return <LoadingPage />;
 
   return (
-    <div className="flex flex-col gap-4 bg-fundo_branco">
+    <div className="flex flex-col gap-8 bg-fundo_branco">
       <CompanyEdit
         company={companyData}
         users={companyUsers.map((user) => ({ id: user.id, name: user.name }))}

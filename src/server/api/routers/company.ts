@@ -58,8 +58,9 @@ export const companyRouter = createTRPCRouter({
           name: company.name,
           cnpj: company.cnpj,
           taxRegime: company.taxRegime,
-          registeredProductsCount:
-            await CompanyRepository.countRegisteredProducts({ id: company.id }),
+          registeredStocksCount: await CompanyRepository.countRegisteredStocks({
+            id: company.id,
+          }),
           registeredSuppliersCount:
             await CompanyRepository.countRegisteredSuppliers({
               id: company.id,

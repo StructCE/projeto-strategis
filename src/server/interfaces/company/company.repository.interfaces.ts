@@ -13,26 +13,26 @@ const getAllProps = z
 
 type GetAllProps = z.infer<typeof getAllProps>;
 
-const countRegisteredProducts = z.object({
-  id: z.string().optional(),
-  cnpj: z.string().optional(),
-});
-
-type CountRegisteredProducts = z.infer<typeof countRegisteredProducts>;
-
-const countRegisteredSuppliers = z.object({
-  id: z.string().optional(),
-  cnpj: z.string().optional(),
-});
-
-type CountRegisteredSuppliers = z.infer<typeof countRegisteredProducts>;
-
 const countRegisteredUsers = z.object({
   id: z.string().optional(),
   cnpj: z.string().optional(),
 });
 
 type CountRegisteredUsers = z.infer<typeof countRegisteredUsers>;
+
+const countRegisteredSuppliers = z.object({
+  id: z.string().optional(),
+  cnpj: z.string().optional(),
+});
+
+type CountRegisteredSuppliers = z.infer<typeof countRegisteredSuppliers>;
+
+const countRegisteredStocks = z.object({
+  id: z.string().optional(),
+  cnpj: z.string().optional(),
+});
+
+type CountRegisteredStocks = z.infer<typeof countRegisteredStocks>;
 
 const getOneProps = z.object({
   id: z.string().optional(),
@@ -93,7 +93,7 @@ const editProps = z.object({
   id: z.string(),
   data: z.object({
     name: z.string().optional(),
-    email: z.string(),
+    email: z.string().optional(),
     cnpj: z.string().optional(),
     type: z.string().optional(),
     headquarters: z.string().nullable().optional(),
@@ -121,9 +121,9 @@ export const companyRepositorySchema = {
   getCompanySuppliersProps,
   getCompanyStocksProps,
   getAllProps,
-  countRegisteredProducts,
-  countRegisteredSuppliers,
   countRegisteredUsers,
+  countRegisteredSuppliers,
+  countRegisteredStocks,
 };
 
 export type CompanyRepositoryInterfaces = {
@@ -135,7 +135,7 @@ export type CompanyRepositoryInterfaces = {
   GetCompanyUsersProps: GetCompanyUsersProps;
   GetCompanySuppliersProps: GetCompanySuppliersProps;
   GetCompanyStocksProps: GetCompanyStocksProps;
-  CountRegisteredProducts: CountRegisteredProducts;
-  CountRegisteredSuppliers: CountRegisteredSuppliers;
   CountRegisteredUsers: CountRegisteredUsers;
+  CountRegisteredSuppliers: CountRegisteredSuppliers;
+  CountRegisteredStocks: CountRegisteredStocks;
 };

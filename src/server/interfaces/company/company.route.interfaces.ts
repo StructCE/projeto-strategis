@@ -42,9 +42,9 @@ type ManageCompany = {
   id: string;
   name: string;
   cnpj: string;
-  registeredProductsCount: number;
-  registeredSuppliersCount: number;
   registeredUsersCount: number;
+  registeredSuppliersCount: number;
+  registeredStocksCount: number;
 };
 
 type CompanySuppliers = {

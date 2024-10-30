@@ -32,25 +32,15 @@ async function getAll(props: CompanyRepositoryInterfaces["GetAllProps"]) {
   return companies;
 }
 
-async function countRegisteredProducts(
-  props: CompanyRepositoryInterfaces["CountRegisteredProducts"],
+async function countRegisteredStocks(
+  props: CompanyRepositoryInterfaces["CountRegisteredStocks"],
 ) {
-  const registeredProducts = await db.product.count({
+  const stocks = await db.stock.count({
     where: {
-      shelf: {
-        cabinet: {
-          StockCabinet: {
-            every: {
-              stock: {
-                companyId: props.id,
-              },
-            },
-          },
-        },
-      },
+      companyId: props.id,
     },
   });
-  return registeredProducts;
+  return stocks;
 }
 
 async function countRegisteredSuppliers(
@@ -228,7 +218,7 @@ export const CompanyRepository = {
   getCompanyUsers,
   getCompanySuppliers,
   getCompanyStocks,
-  countRegisteredProducts,
-  countRegisteredSuppliers,
   countRegisteredUsers,
+  countRegisteredSuppliers,
+  countRegisteredStocks,
 };

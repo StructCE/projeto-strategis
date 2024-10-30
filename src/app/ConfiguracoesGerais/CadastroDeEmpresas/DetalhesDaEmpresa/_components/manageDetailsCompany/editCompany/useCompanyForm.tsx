@@ -56,6 +56,9 @@ export const useCompanyForm = (
       id: company.id,
       data: {
         ...company,
+        email: company.email ?? undefined,
+        type: company.type ?? undefined,
+        taxRegime: company.taxRegime ?? undefined,
         suppliers: company.suppliers.map((supplier) => supplier.id),
         legalResponsibleId: company.legalResponsibleId,
       },
