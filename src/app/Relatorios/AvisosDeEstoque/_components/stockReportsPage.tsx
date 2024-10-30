@@ -26,7 +26,7 @@ import {
 } from "~/components/ui/tooltip";
 import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
-import CustomReportPDF from "./pdfReport";
+import { default as StockWarningsReportPDF } from "./pdfReport";
 import ProductDetails from "./productDetails";
 export default function StockReportsPage() {
   // Checkboxes dos produtos
@@ -406,7 +406,8 @@ export default function StockReportsPage() {
   );
 
   const stockWarningsData = {
-    date: new Date()?.toISOString(),
+    date: new Date(),
+    company: companyFilter,
     products: productsToPrint.map((product) => ({
       code: product.code,
       name: product.name,
@@ -933,7 +934,11 @@ export default function StockReportsPage() {
 
       <TableButtonComponent className="flex w-fit flex-col justify-end pt-2 sm:pt-4 md:flex-row lg:w-full">
         <PDFDownloadLink
-          document={<CustomReportPDF customReportData={stockWarningsData} />}
+          document={
+            <StockWarningsReportPDF
+              stockWarningsReportData={stockWarningsData}
+            />
+          }
           fileName={`Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.pdf`}
         >
           <TableButtonComponent.Button
@@ -950,21 +955,6 @@ export default function StockReportsPage() {
             Exportar Dados em PDF
           </TableButtonComponent.Button>
         </PDFDownloadLink>
-
-        {/* <TableButtonComponent.Button
-          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
-          icon={
-            <Download
-              className="flex h-full cursor-pointer self-center"
-              size={20}
-              strokeWidth={2.2}
-              color="white"
-            />
-          }
-          handlePress={() => exportSelectedProductData("pdf")}
-        >
-          Exportar Dados em PDF
-        </TableButtonComponent.Button> */}
 
         <TableButtonComponent.Button
           className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"

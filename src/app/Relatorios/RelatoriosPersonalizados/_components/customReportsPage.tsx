@@ -338,7 +338,8 @@ export default function CustomReportsPage() {
   );
 
   const customReportsData = {
-    date: new Date()?.toISOString(),
+    date: new Date(),
+    company: companyFilter,
     products: productsToPrint.map((product) => ({
       code: product.code,
       name: product.name,
@@ -840,21 +841,6 @@ export default function CustomReportsPage() {
             Exportar Dados em PDF
           </TableButtonComponent.Button>
         </PDFDownloadLink>
-
-        {/* <TableButtonComponent.Button
-          className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
-          icon={
-            <Download
-              className="flex h-full cursor-pointer self-center"
-              size={20}
-              strokeWidth={2.2}
-              color="white"
-            />
-          }
-          handlePress={() => exportSelectedProductData("pdf")}
-        >
-          Exportar Dados em PDF
-        </TableButtonComponent.Button> */}
 
         <TableButtonComponent.Button
           className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"

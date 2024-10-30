@@ -9,7 +9,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24, // Tailwind's text-2xl
     fontWeight: "semibold", // Tailwind's font-semibold
-    marginBottom: 24, // Tailwind's mb-2
+    marginBottom: 4, // Tailwind's mb-2
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: "medium", // Changed weight to medium for contrast
+    color: "#333333", // Lighter color for the subtitle
+    marginBottom: 12, // Increased bottom margin for spacing
   },
   table: {
     display: "flex",
@@ -46,8 +52,9 @@ const styles = StyleSheet.create({
   },
 });
 
-type CustomReportData = {
-  date: string;
+type StockWarningsReportData = {
+  date: Date;
+  company: string | undefined;
   products: {
     code: string;
     name: string;
@@ -70,74 +77,131 @@ type CustomReportData = {
   }[];
 };
 
-type CustomReportType = {
-  customReportData: CustomReportData;
+type StockWarningsReportType = {
+  stockWarningsReportData: StockWarningsReportData;
 };
 
-const CustomReportPDF = (props: CustomReportType) => (
+const StockWarningsReportPDF = (props: StockWarningsReportType) => (
   <Document>
     <Page size="A4" style={styles.page}>
       <View style={styles.title}>
         <Text>
           Relatório de Produtos -{" "}
-          {`${String(new Date()?.getDate()).padStart(2, "0")}/${String(new Date()?.getMonth()).padStart(2, "0")}/${String(new Date()?.getFullYear()).padStart(2, "0")}`}
+          {`${String(props.stockWarningsReportData.date?.getDate()).padStart(2, "0")}/${String(props.stockWarningsReportData.date?.getMonth()).padStart(2, "0")}/${String(props.stockWarningsReportData.date?.getFullYear()).padStart(2, "0")}`}
         </Text>
       </View>
-      {props.customReportData.products.map((product, index) => (
+      {props.stockWarningsReportData.company ? (
+        <View style={styles.subtitle}>
+          <Text>Empresa: {props.stockWarningsReportData.company}</Text>
+        </View>
+      ) : (
+        <></>
+      )}
+      {props.stockWarningsReportData.products.map((product, index) => (
         <View style={styles.table} key={index}>
           <View style={styles.tableColumn}>
-            <Text style={styles.tableCellHeader}>Código</Text>
-            <Text style={styles.tableCellHeader}>Nome</Text>
-            <Text style={styles.tableCellHeader}>Fornecedores</Text>
+            <Text
+              style={[styles.tableCellHeader, { backgroundColor: "#dedede" }]}
+            >
+              Código
+            </Text>
+            <Text style={[styles.tableCellHeader, { fontWeight: "bold" }]}>
+              Nome
+            </Text>
+            <Text
+              style={[styles.tableCellHeader, { backgroundColor: "#dedede" }]}
+            >
+              Fornecedores
+            </Text>
             <Text style={styles.tableCellHeader}>Status</Text>
-            <Text style={styles.tableCellHeader}>Produto Pai</Text>
+            <Text
+              style={[styles.tableCellHeader, { backgroundColor: "#dedede" }]}
+            >
+              Produto Pai
+            </Text>
             <Text style={styles.tableCellHeader}>Unidade de Compra</Text>
-            <Text style={styles.tableCellHeader}>Quantidade de Compra</Text>
+            <Text
+              style={[styles.tableCellHeader, { backgroundColor: "#dedede" }]}
+            >
+              Quantidade de Compra
+            </Text>
             <Text style={styles.tableCellHeader}>Dia de Compra</Text>
-            <Text style={styles.tableCellHeader}>Estoque Atual</Text>
+            <Text
+              style={[
+                styles.tableCellHeader,
+                { backgroundColor: "#dedede", fontWeight: "bold" },
+              ]}
+            >
+              Estoque Atual
+            </Text>
             <Text style={styles.tableCellHeader}>Estoque Mínimo</Text>
-            <Text style={styles.tableCellHeader}>Estoque Máximo</Text>
+            <Text
+              style={[styles.tableCellHeader, { backgroundColor: "#dedede" }]}
+            >
+              Estoque Máximo
+            </Text>
             <Text style={styles.tableCellHeader}>Tipo de Controle</Text>
-            <Text style={styles.tableCellHeader}>Categoria do Produto</Text>
+            <Text
+              style={[styles.tableCellHeader, { backgroundColor: "#dedede" }]}
+            >
+              Categoria do Produto
+            </Text>
             <Text style={styles.tableCellHeader}>Setor de Utilização</Text>
-            <Text style={styles.tableCellHeader}>Endereço do Estoque</Text>
+            <Text
+              style={[styles.tableCellHeader, { backgroundColor: "#dedede" }]}
+            >
+              Endereço do Estoque
+            </Text>
             <Text style={styles.tableCellHeader}>Usuários com Permissão</Text>
           </View>
 
           <View style={styles.tableColumnContent}>
-            <Text style={styles.tableCell}>{product.code}</Text>
-            <Text style={styles.tableCell}>{product.name}</Text>
-            <Text style={styles.tableCell}>
+            <Text style={[styles.tableCell, { backgroundColor: "#dedede" }]}>
+              {product.code}
+            </Text>
+            <Text style={[styles.tableCell, { fontWeight: "bold" }]}>
+              {product.name}
+            </Text>
+            <Text style={[styles.tableCell, { backgroundColor: "#dedede" }]}>
               {product.ProductSupplierName.length > 0
                 ? product.ProductSupplierName.join(", ")
                 : "Sem fornecedores informados"}
             </Text>
             <Text style={styles.tableCell}>{product.status}</Text>
-            <Text style={styles.tableCell}>
+            <Text style={[styles.tableCell, { backgroundColor: "#dedede" }]}>
               {product.parentProductName ?? "Não tem produto pai"}
             </Text>
             <Text
               style={styles.tableCell}
             >{`${product.unit.name} - ${product.unit.abbreviation} (${product.unit.unitsPerPack})`}</Text>
-            <Text style={styles.tableCell}>
+            <Text style={[styles.tableCell, { backgroundColor: "#dedede" }]}>
               {product.buyQuantity ?? "Não informado"}
             </Text>
             <Text style={styles.tableCell}>
               {product.buyDay ?? "Não informado"}
             </Text>
-            <Text style={styles.tableCell}>{product.currentStock ?? 0}</Text>
+            <Text
+              style={[
+                styles.tableCell,
+                { backgroundColor: "#dedede", fontWeight: "bold" },
+              ]}
+            >
+              {product.currentStock ?? 0}
+            </Text>
             <Text style={styles.tableCell}>{product.minimunStock ?? 0}</Text>
-            <Text style={styles.tableCell}>{product.maximumStock ?? 0}</Text>
+            <Text style={[styles.tableCell, { backgroundColor: "#dedede" }]}>
+              {product.maximumStock ?? 0}
+            </Text>
             <Text style={styles.tableCell}>
               {product.controlTypeName ?? "Não informado"}
             </Text>
-            <Text style={styles.tableCell}>
+            <Text style={[styles.tableCell, { backgroundColor: "#dedede" }]}>
               {product.categoryName ?? "Não informado"}
             </Text>
             <Text style={styles.tableCell}>
               {product.sectorOfUseName ?? "Não informado"}
             </Text>
-            <Text style={styles.tableCell}>
+            <Text style={[styles.tableCell, { backgroundColor: "#dedede" }]}>
               {`${product.stockName}, ${product.cabinetName}, ${product.shelfName}`}
             </Text>
             <Text style={styles.tableCell}>
@@ -152,4 +216,4 @@ const CustomReportPDF = (props: CustomReportType) => (
   </Document>
 );
 
-export default CustomReportPDF;
+export default StockWarningsReportPDF;

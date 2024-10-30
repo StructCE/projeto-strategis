@@ -9,7 +9,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24, // Tailwind's text-2xl
     fontWeight: "semibold", // Tailwind's font-semibold
-    marginBottom: 24, // Tailwind's mb-2
+    marginBottom: 4, // Tailwind's mb-2
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: "medium", // Changed weight to medium for contrast
+    color: "#333333", // Lighter color for the subtitle
+    marginBottom: 12, // Increased bottom margin for spacing
   },
   table: {
     display: "flex",
@@ -47,7 +53,8 @@ const styles = StyleSheet.create({
 });
 
 type CustomReportData = {
-  date: string;
+  date: Date;
+  company: string | undefined;
   products: {
     code: string;
     name: string;
@@ -81,9 +88,16 @@ const CustomReportPDF = (props: CustomReportType) => (
       <View style={styles.title}>
         <Text>
           Relatório de Produtos -{" "}
-          {`${String(new Date()?.getDate()).padStart(2, "0")}/${String(new Date()?.getMonth()).padStart(2, "0")}/${String(new Date()?.getFullYear()).padStart(2, "0")}`}
+          {`${String(props.customReportData.date?.getDate()).padStart(2, "0")}/${String(props.customReportData.date?.getMonth()).padStart(2, "0")}/${String(props.customReportData.date?.getFullYear()).padStart(2, "0")}`}
         </Text>
       </View>
+      {props.customReportData.company ? (
+        <View style={styles.subtitle}>
+          <Text>Empresa: {props.customReportData.company}</Text>
+        </View>
+      ) : (
+        <></>
+      )}
       {props.customReportData.products.map((product, index) => (
         <View style={styles.table} key={index}>
           <View style={styles.tableColumn}>
