@@ -4,38 +4,52 @@ import { type OperationRepositoryInterfaces } from "../interfaces/operation/oper
 async function getAll(props: OperationRepositoryInterfaces["GetAllProps"]) {
   if (props) {
     const { filters } = props;
+    const conditions = [];
+
+    if (filters.operationType) {
+      conditions.push({ description: { contains: filters.operationType } });
+    }
+    if (filters.operator) {
+      conditions.push({
+        responsible: { user: { name: { contains: filters.operator } } },
+      });
+    }
+    if (filters.company) {
+      conditions.push({
+        responsible: {
+          company: { name: { contains: filters.company } },
+        },
+      });
+    }
+    if (filters?.date) {
+      conditions.push(
+        {
+          date: {
+            gte: filters?.date
+              ? new Date(
+                  `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date?.getDate()}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+        {
+          date: {
+            lt: filters?.date
+              ? new Date(
+                  `${filters?.date.getFullYear()}-${filters?.date.getMonth() + 1}-${filters?.date.getDate() + 1}T00:00:00.000Z`,
+                )
+              : undefined,
+          },
+        },
+      );
+    }
+
     const filteredOperations = await db.operation.findMany({
       where: {
-        AND: [
-          { description: { contains: filters.operationType } },
-          { responsible: { name: { contains: filters.operator } } },
-          {
-            date: {
-              gte: filters.date
-                ? new Date(
-                    `${filters.date.getFullYear()}-${filters.date.getMonth() + 1}-${filters.date?.getDate()}T00:00:00.000Z`,
-                  )
-                : undefined,
-            },
-          },
-          {
-            date: {
-              lt: filters.date
-                ? new Date(
-                    `${filters.date.getFullYear()}-${filters.date.getMonth() + 1}-${filters.date.getDate() + 1}T00:00:00.000Z`,
-                  )
-                : undefined,
-            },
-          },
-          {
-            responsible: {
-              Company: { every: { name: { contains: filters.company } } },
-            },
-          },
-        ],
+        AND: conditions,
       },
       include: {
-        responsible: { include: { Company: true } },
+        responsible: { include: { company: true, user: true } },
       },
     });
     return filteredOperations;
@@ -43,7 +57,7 @@ async function getAll(props: OperationRepositoryInterfaces["GetAllProps"]) {
 
   const operations = await db.operation.findMany({
     include: {
-      responsible: { include: { Company: true } },
+      responsible: { include: { company: true, user: true } },
     },
   });
   return operations;

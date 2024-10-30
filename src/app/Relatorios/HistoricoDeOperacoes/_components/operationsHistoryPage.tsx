@@ -1,5 +1,6 @@
 "use client";
-import { Building2, Calendar, Eraser, Settings, UserCog2 } from "lucide-react";
+import { Calendar, Eraser, Settings, UserCog2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
@@ -18,16 +19,31 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 
 export default function OperationsHistoryPage() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [inputOperator, setInputOperator] = useState("");
-  const [selectCompany, setSelectCompany] = useState("");
-  // const [selectOperation, setSelectOperation] = useState("");
+  const [inputOperation, setInputOperation] = useState("");
 
-  const companies = api.company.getAllCompanies.useQuery();
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
   const {
     data: operations = [],
     error,
@@ -35,8 +51,8 @@ export default function OperationsHistoryPage() {
   } = api.operation.getAllOperations.useQuery({
     filters: {
       date: date,
-      company: selectCompany,
-      // operationType: selectOperation,
+      company: companyFilter,
+      operationType: inputOperation,
       operator: inputOperator,
     },
   });
@@ -61,7 +77,7 @@ export default function OperationsHistoryPage() {
             setDate={setDate}
             open={open}
             setOpen={setOpen}
-            placeholder="Data"
+            placeholder="Selecione uma data"
           />
         </Filter>
 
@@ -78,7 +94,7 @@ export default function OperationsHistoryPage() {
           />
         </Filter>
 
-        <Filter>
+        {/* <Filter>
           <Filter.Icon
             icon={({ className }: { className: string }) => (
               <Building2 className={className} />
@@ -96,27 +112,20 @@ export default function OperationsHistoryPage() {
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
-        </Filter>
+        </Filter> */}
 
-        {/* <Filter>
+        <Filter>
           <Filter.Icon
             icon={({ className }: { className: string }) => (
               <Settings className={className} />
             )}
           />
-          <Filter.Select
+          <Filter.Input
             placeholder="Operação"
-            state={selectOperation}
-            setState={setSelectOperation}
-          >
-            {operations.map((operation, index) => (
-              <Filter.SelectItems
-                value={operation.description}
-                key={index}
-              ></Filter.SelectItems>
-            ))}
-          </Filter.Select>
-        </Filter> */}
+            state={inputOperation}
+            setState={setInputOperation}
+          />
+        </Filter>
 
         <TooltipProvider delayDuration={300}>
           <Tooltip>
@@ -126,8 +135,7 @@ export default function OperationsHistoryPage() {
                 onClick={() => {
                   setDate(undefined);
                   setInputOperator("");
-                  setSelectCompany("");
-                  // setSelectOperation("");
+                  setInputOperation("");
                 }}
               />
             </TooltipTrigger>
@@ -137,7 +145,7 @@ export default function OperationsHistoryPage() {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1fr_1fr_1fr_2fr] gap-8">
+        <TableComponent.LineTitle className="grid-cols-[1fr_1fr_1fr_2fr] gap-4 sm:gap-8">
           <TableComponent.ValueTitle>
             Data da Operação
           </TableComponent.ValueTitle>
@@ -161,7 +169,7 @@ export default function OperationsHistoryPage() {
         {operations?.length > 0 && !isLoading && !error
           ? operations.map((operation, index) => (
               <TableComponent.Line
-                className={`grid-cols-[1fr_1fr_1fr_2fr] gap-8 ${
+                className={`grid-cols-[1fr_1fr_1fr_2fr] gap-4 sm:gap-8 ${
                   index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                 }`}
                 key={index}
@@ -209,7 +217,6 @@ export default function OperationsHistoryPage() {
                           <span className="font-semibold">Operação:</span>{" "}
                           {operation.description}
                         </p>
-                        {/* <p className="w-fit font-semibold">Produtos solicitados:</p> ACHO MELHOR NAO TER ISSO AQ*/}
                       </DialogDescription>
                     </DialogHeader>
                   </DialogContent>
@@ -220,7 +227,7 @@ export default function OperationsHistoryPage() {
             !error && (
               <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
-                  Nenhum pagamento encontrado
+                  Nenhuma operação encontrada
                 </TableComponent.Value>
               </TableComponent.Line>
             )}

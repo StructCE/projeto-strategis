@@ -1,7 +1,7 @@
 import { operationRepositorySchema } from "~/server/interfaces/operation/operation.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { operationRepository } from "~/server/repositories/operation.repository";
 import type { OperationsRouteInterfaces } from "~/server/interfaces/operation/operation.route.interfaces";
+import { operationRepository } from "~/server/repositories/operation.repository";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const operationRouter = createTRPCRouter({
   countOperations: protectedProcedure
@@ -26,8 +26,8 @@ export const operationRouter = createTRPCRouter({
         const serializedOperations = operations.map((operation) => ({
           id: operation.id,
           date: operation.date,
-          company: operation.responsible.Company[0]?.name,
-          responsible: operation.responsible.name,
+          company: operation.responsible.company.name,
+          responsible: operation.responsible.user.name,
           description: operation.description,
         }));
 

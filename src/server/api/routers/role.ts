@@ -21,18 +21,19 @@ export const roleRouter = createTRPCRouter({
             code: roleModule.module.code,
           })),
         }));
-        if (
-          input?.filters.modules?.length &&
-          input.filters.modules.length > 0
-        ) {
+
+        if (input?.filters.modules?.length) {
           const { modules } = input.filters;
           return serializedRoles.filter((serializedRole) => {
-            for (let i = 0; i < serializedRole.modules.length; i++) {
-              if (modules.includes(serializedRole.modules[i]?.name ?? ""))
+            for (const roleModule of serializedRole.modules) {
+              if (modules.includes(roleModule?.name ?? "")) {
                 return true;
+              }
             }
+            return false;
           });
         }
+
         return serializedRoles;
       },
     ),
