@@ -789,8 +789,10 @@ export default function CreateInventory() {
                   ></Input>
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {Number(quantities[product.code] ?? 0) -
-                    Number(product.stockQuantity)}
+                  {(
+                    Number(quantities[product.code] ?? 0) -
+                    Number(product.stockQuantity)
+                  ).toFixed(2)}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-[13px] sm:text-[15px]">
                   {handleProductDescription(
@@ -892,8 +894,10 @@ export default function CreateInventory() {
                       </div>
                       <p className="text-base">
                         <span className="font-semibold">Diferença: </span>
-                        {Number(quantities[product.code] ?? 0) -
-                          Number(product.stockQuantity)}
+                        {(
+                          Number(quantities[product.code] ?? 0) -
+                          Number(product.stockQuantity)
+                        ).toFixed(2)}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Descrição: </span>

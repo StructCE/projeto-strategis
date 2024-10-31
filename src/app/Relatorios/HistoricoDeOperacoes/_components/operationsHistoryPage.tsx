@@ -56,6 +56,7 @@ export default function OperationsHistoryPage() {
       operator: inputOperator,
     },
   });
+
   return (
     <TableComponent className="gap-3">
       <TableComponent.Title>Histórico de Operações</TableComponent.Title>
@@ -145,13 +146,14 @@ export default function OperationsHistoryPage() {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[1fr_1fr_1fr_2fr] gap-4 sm:gap-8">
+        <TableComponent.LineTitle className="grid-cols-[1fr_1fr_1fr_2fr_130px] gap-4 sm:gap-8">
           <TableComponent.ValueTitle>
             Data da Operação
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Empresa</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Operador</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Descrição</TableComponent.ValueTitle>
+          <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
         {error && (
@@ -167,62 +169,74 @@ export default function OperationsHistoryPage() {
           </TableComponent.Line>
         )}
         {operations?.length > 0 && !isLoading && !error
-          ? operations.map((operation, index) => (
-              <TableComponent.Line
-                className={`grid-cols-[1fr_1fr_1fr_2fr] gap-4 sm:gap-8 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value>
-                  {`${String(operation.date.getDate()).padStart(2, "0")}/${String(operation.date.getMonth()).padStart(2, "0")}/${String(operation.date.getFullYear()).padStart(2, "0")}`}
-                </TableComponent.Value>
-                <TableComponent.Value>{operation.company}</TableComponent.Value>
-                <TableComponent.Value>
-                  {operation.responsible}
-                </TableComponent.Value>
-                <TableComponent.Value>
-                  {operation.description}
-                </TableComponent.Value>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                      Detalhes
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent
-                    className="max-h-[90vh] max-w-7xl overflow-x-auto overflow-y-auto p-3 pb-5 pt-10 sm:p-6"
-                    aria-describedby={undefined}
-                  >
-                    <DialogHeader>
-                      <DialogTitle className="w-fit pb-1.5">
-                        Informações da Requisição de Mercadorias
-                      </DialogTitle>
-                      <DialogDescription className="w-fit text-base text-black">
-                        <p className="w-fit">
-                          <span className="font-semibold">
-                            Data da Operação:
-                          </span>{" "}
-                          {`${String(operation.date.getDate()).padStart(2, "0")}/${String(operation.date.getMonth()).padStart(2, "0")}/${String(operation.date.getFullYear()).padStart(2, "0")}`}
-                        </p>
-                        <p className="w-fit">
-                          <span className="font-semibold">Esmpresa:</span>{" "}
-                          {operation.company}
-                        </p>
-                        <p className="w-fit">
-                          <span className="font-semibold">Operador:</span>{" "}
-                          {operation.responsible}
-                        </p>
-                        <p className="w-fit">
-                          <span className="font-semibold">Operação:</span>{" "}
-                          {operation.description}
-                        </p>
-                      </DialogDescription>
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
-              </TableComponent.Line>
-            ))
+          ? operations
+              .sort(
+                (a, b) =>
+                  new Date(b.date).getTime() - new Date(a.date).getTime(),
+              )
+              .slice(0, 100)
+              .map((operation, index) => (
+                <TableComponent.Line
+                  className={`grid-cols-[1fr_1fr_1fr_2fr_130px] gap-4 sm:gap-8 ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value>
+                    {`${String(operation.date.getDate()).padStart(2, "0")}/${String(operation.date.getMonth()).padStart(2, "0")}/${String(operation.date.getFullYear()).padStart(2, "0")}`}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {operation.company}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {operation.responsible}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {operation.description ===
+                    "autoRegisterInvoice de Notas Fiscais"
+                      ? "Importação de Notas Fiscais"
+                      : operation.description}
+                    {/* {operation.description} */}
+                  </TableComponent.Value>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      className="max-h-[90vh] max-w-7xl overflow-x-auto overflow-y-auto p-3 pb-5 pt-10 sm:p-6"
+                      aria-describedby={undefined}
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="w-fit pb-1.5">
+                          Informações da Requisição de Mercadorias
+                        </DialogTitle>
+                        <DialogDescription className="w-fit text-base text-black">
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Data da Operação:
+                            </span>{" "}
+                            {`${String(operation.date.getDate()).padStart(2, "0")}/${String(operation.date.getMonth()).padStart(2, "0")}/${String(operation.date.getFullYear()).padStart(2, "0")}`}
+                          </p>
+                          <p className="w-fit">
+                            <span className="font-semibold">Esmpresa:</span>{" "}
+                            {operation.company}
+                          </p>
+                          <p className="w-fit">
+                            <span className="font-semibold">Operador:</span>{" "}
+                            {operation.responsible}
+                          </p>
+                          <p className="w-fit">
+                            <span className="font-semibold">Operação:</span>{" "}
+                            {operation.description}
+                          </p>
+                        </DialogDescription>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
           : !isLoading &&
             !error && (
               <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">

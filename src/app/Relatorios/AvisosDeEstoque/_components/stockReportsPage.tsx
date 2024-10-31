@@ -904,9 +904,11 @@ export default function StockReportsPage() {
                 <TableComponent.Value className="text-center">
                   {Number(product.currentStock) - Number(product.minimunStock) >
                   0
-                    ? `+${Number(product.currentStock) - Number(product.minimunStock)}`
-                    : Number(product.currentStock) -
-                      Number(product.minimunStock)}
+                    ? `+${(Number(product.currentStock) - Number(product.minimunStock)).toFixed(2)}`
+                    : (
+                        Number(product.currentStock) -
+                        Number(product.minimunStock)
+                      ).toFixed(2)}
                 </TableComponent.Value>
 
                 <Dialog>

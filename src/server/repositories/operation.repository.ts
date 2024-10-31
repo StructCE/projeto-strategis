@@ -11,13 +11,19 @@ async function getAll(props: OperationRepositoryInterfaces["GetAllProps"]) {
     }
     if (filters.operator) {
       conditions.push({
-        responsible: { user: { name: { contains: filters.operator } } },
+        responsible: {
+          name: { contains: filters.operator },
+        },
       });
     }
     if (filters.company) {
       conditions.push({
         responsible: {
-          company: { name: { contains: filters.company } },
+          Company: {
+            some: {
+              name: { contains: filters.company },
+            },
+          },
         },
       });
     }
@@ -49,7 +55,7 @@ async function getAll(props: OperationRepositoryInterfaces["GetAllProps"]) {
         AND: conditions,
       },
       include: {
-        responsible: { include: { company: true, user: true } },
+        responsible: { include: { Company: true } },
       },
     });
     return filteredOperations;
@@ -57,9 +63,14 @@ async function getAll(props: OperationRepositoryInterfaces["GetAllProps"]) {
 
   const operations = await db.operation.findMany({
     include: {
-      responsible: { include: { company: true, user: true } },
+      responsible: {
+        include: {
+          Company: true, // Inclui os dados da empresa do responsável
+        },
+      },
     },
   });
+
   return operations;
 }
 

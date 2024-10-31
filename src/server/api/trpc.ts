@@ -177,10 +177,11 @@ const createDescriptionByPath = (path: string) => {
   const operations: Record<string, string> = {
     register: "Registro",
     create: "Criação",
-    update: "Atualiação",
+    update: "Atualização",
     edit: "Edição",
     delete: "Deleção",
     remove: "Remoção",
+    autoRegister: "Importação",
   };
 
   let model = "",

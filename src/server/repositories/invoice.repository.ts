@@ -464,6 +464,22 @@ async function autoRegister(
           },
         },
       });
+
+      const productSupplier = await db.productSupplier.findFirst({
+        where: {
+          productId: registeredProduct.id,
+          supplierId: registeredSupplier.id,
+        },
+      });
+
+      if (!productSupplier) {
+        await db.productSupplier.create({
+          data: {
+            productId: registeredProduct.id,
+            supplierId: registeredSupplier.id,
+          },
+        });
+      }
     }
 
     registeredProducts.push(registeredProduct);

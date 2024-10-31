@@ -236,7 +236,7 @@ async function main() {
 
   const companyStruct = await db.company.create({
     data: {
-      name: "Struct EJ",
+      name: "Struct Empresa Junior de Engenharia de Computação da UnB",
       email: "comercial@struct.unb.br",
       cnpj: "21803569000165",
       type: "Matriz",
@@ -248,36 +248,38 @@ async function main() {
       city: "Brasília",
       neighborhood: "Asa Norte",
       federativeUnit: "DF",
-      cep: "70910-900",
+      cep: "70910900",
+    },
+  });
+  const companyStrategis = await db.company.create({
+    data: {
+      name: "Strategis Assessoria Em Tecnologia E Negocios Empresariais Ltda",
+      email: "atendimento@strategis.com.br",
+      cnpj: "08781089000182",
+      type: "Matriz",
+      phone: "6135622162",
+      stateRegistration: "0748660700130",
+      taxRegime: "Simples Nacional (SN)",
+      address: "SDN - Conjunto A - Sala 6080 - Conjunto Nacional",
+      city: "Brasília",
+      neighborhood: "Asa Norte",
+      federativeUnit: "DF",
+      cep: "70077900",
     },
   });
   await createUserWithRole({
-    name: "Leonardo Côrtes",
-    email: "leonardo.cortes@struct.unb.br",
-    phone: "(61) 99116-4633",
+    name: "Equipe Struct",
+    email: "equipestruct@gmail.com",
+    phone: "61991164633",
     roleName: "Administrador",
     companyId: companyStruct.id,
   });
   await createUserWithRole({
-    name: "Matheus das Neves Fernandes",
-    email: "matheusnf@struct.unb.br",
-    phone: "(61) 99999-9999",
+    name: "Jefferson dos Santos Costa",
+    email: "jefferson@strategis.com.br",
+    phone: "61984505000",
     roleName: "Administrador",
-    companyId: companyStruct.id,
-  });
-  await createUserWithRole({
-    name: "Guilherme Sampaio",
-    email: "guilherme.sampaio@struct.unb.br",
-    phone: "(61) 99999-9999",
-    roleName: "Administrador",
-    companyId: companyStruct.id,
-  });
-  await createUserWithRole({
-    name: "Willyan Marques",
-    email: "willyan.marques@struct.unb.br",
-    phone: "(61) 99999-9999",
-    roleName: "Administrador",
-    companyId: companyStruct.id,
+    companyId: companyStrategis.id,
   });
 }
 

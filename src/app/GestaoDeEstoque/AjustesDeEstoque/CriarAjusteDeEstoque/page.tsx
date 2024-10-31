@@ -740,8 +740,10 @@ export default function CreateAdjustment() {
                           </div>
                           <p className="text-base">
                             <span className="font-semibold">Diferença: </span>
-                            {Number(adjustedStock[product.code] ?? 0) -
-                              Number(product.currentStock)}
+                            {(
+                              Number(adjustedStock[product.code] ?? 0) -
+                              Number(product.currentStock)
+                            ).toFixed(2)}
                           </p>
                           <div className="my-1 text-base">
                             <span className="font-semibold">Descrição: </span>
@@ -868,8 +870,10 @@ export default function CreateAdjustment() {
                   ></Input>
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {Number(adjustedStock[product.code] ?? 0) -
-                    Number(product.oldStock)}
+                  {(
+                    Number(adjustedStock[product.code] ?? 0) -
+                    Number(product.oldStock)
+                  ).toFixed(2)}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-[13px] sm:text-[15px]">
                   <Select
