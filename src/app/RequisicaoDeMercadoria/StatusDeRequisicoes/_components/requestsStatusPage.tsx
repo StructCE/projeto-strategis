@@ -163,7 +163,7 @@ export default function RequestsStatusPage() {
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
-      {/* ESTOQUE - TELAS GRANDES */}
+      {/* TELAS GRANDES */}
       <TableComponent.Table className="hidden sm:block">
         <TableComponent.LineTitle className="grid-cols-[0.7fr_1fr_0.5fr_1fr_130px] gap-8">
           <TableComponent.ValueTitle>
@@ -275,7 +275,7 @@ export default function RequestsStatusPage() {
         )}
       </TableComponent.Table>
 
-      {/* ESTOQUE - TELAS PEQUENAS */}
+      {/* TELAS PEQUENAS */}
       <TableComponent.Table className="block sm:hidden">
         <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[0.3fr_1fr_24px] gap-3 px-3">
           <TableComponent.ValueTitle className="text-[15px]">

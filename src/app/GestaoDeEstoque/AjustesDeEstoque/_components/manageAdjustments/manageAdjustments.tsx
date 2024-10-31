@@ -122,7 +122,8 @@ export default function ManageAdjustmentsTable() {
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
-      <TableComponent.Table>
+      {/* TELAS GRANDES */}
+      <TableComponent.Table className="hidden sm:block">
         <TableComponent.LineTitle className="grid-cols-[1fr_1.5fr_1.3fr_0.8fr_130px] gap-8">
           <TableComponent.ValueTitle>Data do Ajuste</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>
@@ -213,6 +214,113 @@ export default function ManageAdjustmentsTable() {
           !isLoading &&
           !error && (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum ajuste de estoque encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
+      </TableComponent.Table>
+
+      {/* TELAS PEQUENAS */}
+      <TableComponent.Table className="block sm:hidden">
+        <TableComponent.LineTitle className="min-w-[0px] grid-cols-[40px_1fr_50px_90px] gap-2 px-[8px]">
+          <TableComponent.ValueTitle className="text-sm">
+            Data
+          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-sm">
+            Estoque
+          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-sm">
+            Tipo
+          </TableComponent.ValueTitle>
+          <TableComponent.ButtonSpace className="w-[90px] sm:w-[130px]"></TableComponent.ButtonSpace>
+        </TableComponent.LineTitle>
+
+        {error && (
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Erro ao mostrar ajustes de estoque: {error.message}
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {isLoading && (
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando ajustes de estoque...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {adjusts.length > 0 && !isLoading && !error ? (
+          adjusts.length > 0 ? (
+            adjusts
+              .sort((a, b) => b.date.getTime() - a.date.getTime())
+              .map((adjustment, index) => (
+                <TableComponent.Line
+                  className={`min-w-[0px] grid-cols-[40px_1fr_50px_90px] gap-2 px-[8px] ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value className="text-[13px]">{`${String(adjustment.date.getDate()).padStart(2, "0")}/${String(adjustment.date.getMonth()).padStart(2, "0")}`}</TableComponent.Value>
+                  <TableComponent.Value className="text-[13px]">
+                    {adjustment.stockName}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-[13px]">
+                    {adjustment.type === "Automático"
+                      ? "Auto."
+                      : adjustment.type}
+                  </TableComponent.Value>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="max-h-[90vh] max-w-7xl overflow-x-auto overflow-y-auto p-3 pb-5 pt-10 sm:p-6"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="w-fit pb-1 text-base">
+                          Informações do ajuste de estoque
+                        </DialogTitle>
+                        <DialogDescription className="w-fit text-base text-black">
+                          <p className="w-fit text-sm">
+                            <span className="font-semibold">
+                              Data do Ajuste:
+                            </span>{" "}
+                            {`${String(adjustment.date.getDate()).padStart(2, "0")}/${String(adjustment.date.getMonth()).padStart(2, "0")}/${String(adjustment.date.getFullYear()).padStart(2, "0")}`}
+                          </p>
+                          <p className="w-fit text-sm">
+                            <span className="font-semibold">
+                              Responsável pelo Ajuste:
+                            </span>{" "}
+                            {adjustment.responsibleName}
+                          </p>
+                          <p className="w-fit text-sm font-semibold">
+                            Ajustes:
+                          </p>
+                        </DialogDescription>
+
+                        <AdjustmentDetails adjustment={adjustment} />
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum ajuste de estoque encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Nenhum ajuste de estoque encontrado
               </TableComponent.Value>

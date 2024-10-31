@@ -648,14 +648,14 @@ export default function CreatePurchaseOrder() {
           </TableComponent.LineTitle>
 
           {error && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
           {isLoading && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Carregando produtos...
               </TableComponent.Value>
@@ -680,7 +680,7 @@ export default function CreatePurchaseOrder() {
             !isLoading &&
             !error &&
             products?.length === 0 && (
-              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
                   Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
@@ -757,9 +757,10 @@ export default function CreatePurchaseOrder() {
                             <span className="font-semibold">
                               Unidade de Compra (quantidade):{" "}
                             </span>
-                            {product.unit.name} ({product.unit.unitsPerPack})
+                            {product.unit.abbreviation} (
+                            {product.unit.unitsPerPack})
                           </p>
-                          <div className="text-base">
+                          {/* <div className="text-base">
                             <span className="font-semibold">
                               Quantidade a Comprar (fardo):{" "}
                             </span>
@@ -801,7 +802,7 @@ export default function CreatePurchaseOrder() {
                                 ))}
                               </SelectContent>
                             </Select>
-                          </div>
+                          </div> */}
                           <div className="mt-3 flex w-full justify-end">
                             <Button
                               onClick={() => handleAddProduct(product)}
@@ -816,7 +817,7 @@ export default function CreatePurchaseOrder() {
                   </TableComponent.Line>
                 ))
             ) : (
-              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
                   Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
@@ -1012,7 +1013,8 @@ export default function CreatePurchaseOrder() {
                         <span className="font-semibold">
                           Unidade de Compra (quantidade):{" "}
                         </span>
-                        {product.unit.name} ({product.unit.unitsPerPack})
+                        {product.unit.abbreviation} ({product.unit.unitsPerPack}
+                        )
                       </p>
                       <div className="text-base">
                         <span className="font-semibold">

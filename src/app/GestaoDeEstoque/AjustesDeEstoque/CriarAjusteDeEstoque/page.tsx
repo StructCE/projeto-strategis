@@ -623,14 +623,14 @@ export default function CreateAdjustment() {
           </TableComponent.LineTitle>
 
           {error && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
           {isLoading && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Carregando produtos...
               </TableComponent.Value>
@@ -651,7 +651,7 @@ export default function CreateAdjustment() {
             !isLoading &&
             !error &&
             products?.length === 0 && (
-              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
                   Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
@@ -798,7 +798,7 @@ export default function CreateAdjustment() {
                   </TableComponent.Line>
                 ))
             ) : (
-              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
                   Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>

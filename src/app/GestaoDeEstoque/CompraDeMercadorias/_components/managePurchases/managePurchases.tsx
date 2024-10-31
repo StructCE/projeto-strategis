@@ -176,7 +176,8 @@ export default function ManagePurchasesTable() {
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
-      <TableComponent.Table>
+      {/* TELAS GRANDES */}
+      <TableComponent.Table className="hidden sm:block">
         <TableComponent.LineTitle className="grid-cols-[0.7fr_1.2fr_1.5fr_0.7fr_130px] gap-8">
           <TableComponent.ValueTitle>Data do Pedido</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>
@@ -190,14 +191,14 @@ export default function ManagePurchasesTable() {
         </TableComponent.LineTitle>
 
         {error && (
-          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
               Erro ao mostrar pedidos de compra: {error.message}
             </TableComponent.Value>
           </TableComponent.Line>
         )}
         {isLoading && (
-          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
               Carregando pedidos de compra...
             </TableComponent.Value>
@@ -337,7 +338,7 @@ export default function ManagePurchasesTable() {
                 </TableComponent.Line>
               ))
           ) : (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Nenhum pedido de compra encontrado com os filtros aplicados
               </TableComponent.Value>
@@ -346,7 +347,151 @@ export default function ManagePurchasesTable() {
         ) : (
           !isLoading &&
           !error && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum pedido de compra encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
+      </TableComponent.Table>
+
+      {/* TELAS PEQUENAS */}
+      <TableComponent.Table className="block sm:hidden">
+        <TableComponent.LineTitle className="min-w-[0px] grid-cols-[80px_1fr_90px] gap-4 px-[10px]">
+          <TableComponent.ValueTitle className="text-sm sm:text-base">
+            Data
+          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-center text-sm sm:text-base">
+            Produtos
+          </TableComponent.ValueTitle>
+          <TableComponent.ButtonSpace className="w-[90px]"></TableComponent.ButtonSpace>
+        </TableComponent.LineTitle>
+
+        {error && (
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Erro ao mostrar pedidos de compra: {error.message}
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {isLoading && (
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando pedidos de compra...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {orders.length > 0 && !isLoading && !error ? (
+          filteredOrders.length > 0 ? (
+            filteredOrders
+              .sort((a, b) => b.date.getTime() - a.date.getTime())
+              .map((order, index) => (
+                <TableComponent.Line
+                  className={`min-w-[0px] grid-cols-[80px_1fr_90px] gap-4 px-[10px] ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value className="text-[13px] sm:text-[16px]">
+                    {`${String(order.date.getDate()).padStart(2, "0")}/${String(order.date.getMonth()).padStart(2, "0")}/${String(order.date.getFullYear()).padStart(2, "0")}`}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center text-[13px] sm:text-[16px]">
+                    {order.orderProducts.length}
+                  </TableComponent.Value>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="max-h-[90vh] max-w-[320px] overflow-y-auto overflow-x-hidden p-3 pb-5 pt-10 sm:max-w-7xl sm:p-6"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="w-fit pb-1 text-base sm:text-lg">
+                          Informações do Pedido de Compra
+                        </DialogTitle>
+                        <DialogDescription className="w-fit text-base text-black">
+                          <p className="w-fit text-sm sm:text-base">
+                            <span className="font-semibold">
+                              Data do Pedido:
+                            </span>{" "}
+                            {`${String(order.date.getDate()).padStart(2, "0")}/${String(order.date.getMonth()).padStart(2, "0")}/${String(order.date.getFullYear()).padStart(2, "0")}`}
+                          </p>
+                          <p className="w-fit text-sm sm:text-base">
+                            <span className="font-semibold">
+                              Responsável pelo Pedido:
+                            </span>{" "}
+                            {order.responsible.name}
+                          </p>
+                          <p className="w-fit text-sm sm:text-base">
+                            <span className="font-semibold">Status:</span>{" "}
+                            {order.status ? (
+                              <span className="font-normal text-verde_botao">
+                                Confirmado
+                              </span>
+                            ) : (
+                              <span className="font-normal text-amarelo_botao">
+                                Pendente
+                              </span>
+                            )}
+                          </p>
+                          <p className="w-fit text-sm font-semibold sm:text-base">
+                            Produtos:
+                          </p>
+                        </DialogDescription>
+
+                        <PurchaseDetails order={order} />
+
+                        <TableButtonComponent className="flex w-fit flex-col justify-between pt-2 sm:flex-row sm:pt-4 lg:w-full">
+                          <div className="flex gap-3">
+                            <DeleteOrder orderId={order.id} />
+
+                            {order.status ? <></> : <EditOrder order={order} />}
+                          </div>
+
+                          <PDFDownloadLink
+                            document={
+                              <CustomReportPDF
+                                purchaseData={orderData(order)}
+                              />
+                            }
+                            fileName={`Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.pdf`}
+                          >
+                            <TableButtonComponent.Button
+                              className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
+                              icon={
+                                <Download
+                                  className="flex h-full cursor-pointer self-center"
+                                  size={20}
+                                  strokeWidth={2.2}
+                                  color="white"
+                                />
+                              }
+                            >
+                              Exportar Dados em PDF
+                            </TableButtonComponent.Button>
+                          </PDFDownloadLink>
+                        </TableButtonComponent>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum pedido de compra encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Nenhum pedido de compra encontrado
               </TableComponent.Value>
