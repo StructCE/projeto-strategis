@@ -13,7 +13,7 @@ export function RolePermissionsWrapper({
   if (!session) {
     router.push("/login");
   }
-  if (path !== "/" && !session.data?.user.allowedFrontendPaths.includes(path)) {
+  if (path !== "/" && !session.data?.user.allowedPagesPath.includes(path)) {
     router.push("/");
   }
   return <>{children}</>;
