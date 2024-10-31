@@ -354,7 +354,7 @@ export default function ImportacaoDeNFs() {
                               <br />
                               Valor Total da Nota:{" "}
                               <b>
-                                R${" "}
+                                R$
                                 {invoice.invoiceValue.toLocaleString("pt-BR", {
                                   minimumFractionDigits: 2,
                                   maximumFractionDigits: 2,

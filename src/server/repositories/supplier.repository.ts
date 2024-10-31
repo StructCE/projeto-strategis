@@ -40,6 +40,7 @@ async function getAll(props: SupplierRepositoryInterfaces["GetAll"]) {
             company: true, // Incluir dados da empresa para verificação
           },
         },
+        contacts: true,
       },
     });
 
@@ -52,6 +53,7 @@ async function getAll(props: SupplierRepositoryInterfaces["GetAll"]) {
           company: true, // Incluir dados da empresa para verificação
         },
       },
+      contacts: true,
     },
   });
   return suppliers;

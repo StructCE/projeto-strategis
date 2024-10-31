@@ -8,7 +8,7 @@ export const createCompanyFormSchema = z.object({
 
   cnpj: z
     .string({ required_error: "CNPJ não pode ser vazio." })
-    .length(14, { message: "São necessarios 14 dígitos." }),
+    .length(14, { message: "São necessarios 14 dígitos (apenas números)." }),
 
   suppliers: z.array(z.string()),
 
@@ -28,13 +28,12 @@ export const createCompanyFormSchema = z.object({
 
   phone: z
     .string({ required_error: "Por favor digite o telefone" })
-    .min(8, {
+    .min(10, {
       message:
-        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
+        "Número de telefone inválido. Insira apenas números incluindo o DDD.",
     })
-    .max(16, {
-      message:
-        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
+    .max(11, {
+      message: "Número de telefone inválido. Insira apenas números.",
     }),
 
   stateRegistration: z
@@ -69,7 +68,7 @@ export const createCompanyFormSchema = z.object({
 
   cep: z
     .string({ required_error: "CEP deve ser obrigatório." })
-    .length(8, { message: "São necessarios 8 dígitos" }),
+    .length(8, { message: "Formato inválido. Digite apenas os números." }),
 
   legalResponsibleId: z
     .string({

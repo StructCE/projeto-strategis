@@ -19,14 +19,14 @@ export const editUserFormSchema = z.object({
     }),
 
   phone: z
-    .string()
-    .min(8, {
+    .string({ required_error: "Por favor digite o telefone" })
+    .min(10, {
       message:
-        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
+        "Número de telefone inválido. Insira apenas números incluindo o DDD.",
     })
-    .max(16, {
+    .max(11, {
       message:
-        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
+        "Número de telefone inválido. Insira apenas números incluindo o DDD.",
     })
     .optional(),
 

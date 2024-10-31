@@ -410,18 +410,20 @@ async function edit(props: ProductRepositoryInterfaces["EditProps"]) {
       shelfId: data.shelfId,
       // Atualiza usersWithPermission, deletando os antigos e criando os novos
       usersWithPermission: {
-        deleteMany: {}, // Deleta todas as permissões antigas
+        deleteMany: {},
         create: data.usersWithPermission?.map((userId) => ({
           userId,
-        })), // Cria as novas permissões
-      },
-      // Atualiza ProductSupplier, deletando os antigos e criando os novos
-      ProductSupplier: {
-        deleteMany: {}, // Deleta todos os fornecedores antigos
-        create: data.ProductSupplier?.map((supplierId) => ({
-          supplierId,
         })),
       },
+      // Condicionalmente atualiza ProductSupplier apenas se data.ProductSupplier estiver presente
+      ...(data.ProductSupplier && {
+        ProductSupplier: {
+          deleteMany: {}, // Deleta todos os fornecedores antigos
+          create: data.ProductSupplier.map((supplierId) => ({
+            supplierId,
+          })),
+        },
+      }),
     },
   });
 

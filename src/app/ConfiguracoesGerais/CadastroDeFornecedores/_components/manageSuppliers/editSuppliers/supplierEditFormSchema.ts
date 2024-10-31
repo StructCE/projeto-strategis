@@ -18,14 +18,14 @@ const supplierContactSchema = z.object({
     }),
 
   phone: z
-    .string()
-    .min(8, {
+    .string({ required_error: "Por favor digite o telefone" })
+    .min(10, {
       message:
-        "Número de telefone inválido. O formato correto é (XX) XXXXX-XXXX.",
+        "Número de telefone inválido. Insira apenas números incluindo o DDD.",
     })
-    .max(16, {
+    .max(11, {
       message:
-        "Número de telefone inválido. O formato correto é (XX) XXXXX-XXXX.",
+        "Número de telefone inválido. Insira apenas números incluindo o DDD.",
     })
     .optional(),
 });
@@ -40,15 +40,8 @@ export const editSupplierFormSchema = z.object({
     }),
 
   cnpj: z
-    .string({
-      required_error: "Por favor digite o CNPJ do fornecedor.",
-    })
-    .length(18, {
-      message: "O CNPJ deve ter 18 caracteres no formato XX.XXX.XXX/0001-XX.",
-    })
-    .regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, {
-      message: "Formato de CNPJ inválido. Use o formato XX.XXX.XXX/0001-XX.",
-    }),
+    .string({ required_error: "CNPJ não pode ser vazio." })
+    .length(14, { message: "São necessarios 14 dígitos (apenas números)." }),
 
   email: z
     .string({
@@ -59,14 +52,14 @@ export const editSupplierFormSchema = z.object({
     }),
 
   phone: z
-    .string()
-    .min(8, {
+    .string({ required_error: "Por favor digite o telefone" })
+    .min(10, {
       message:
-        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
+        "Número de telefone inválido. Insira apenas números incluindo o DDD.",
     })
-    .max(16, {
+    .max(11, {
       message:
-        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
+        "Número de telefone inválido. Insira apenas números incluindo o DDD.",
     })
     .optional(),
 
@@ -111,15 +104,8 @@ export const editSupplierFormSchema = z.object({
     }),
 
   cep: z
-    .string({
-      required_error: "Por favor digite o CEP do fornecedor.",
-    })
-    .length(9, {
-      message: "O CEP deve ter 9 caracteres no formato XXXXX-XXX.",
-    })
-    .regex(/^\d{5}-\d{3}$/, {
-      message: "Formato de CEP inválido. Use o formato XXXXX-XXX.",
-    }),
+    .string({ required_error: "CEP deve ser obrigatório." })
+    .length(8, { message: "Formato inválido. Digite apenas os números." }),
 
   contacts: z.array(supplierContactSchema).optional(),
 });

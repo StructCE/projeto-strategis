@@ -148,10 +148,20 @@ model Supplier {
     city              String
     federativeUnit    String
     cep               String
+    contacts          Contact[]
     ProductSupplier   ProductSupplier[]
     // ProductOutput     ProductOutput[]
     CompanySupplier   CompanySupplier[]
     Invoice           Invoice[]
+}
+
+model Contact {
+    id         String   @id @default(cuid())
+    name       String
+    email      String
+    phone      String
+    supplierId String
+    supplier   Supplier @relation(fields: [supplierId], references: [id])
 }
 
 model CompanySupplier {

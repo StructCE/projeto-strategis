@@ -185,12 +185,15 @@ export default function ManageProductsTable() {
   const productMutation = api.product.editProduct.useMutation({
     onSuccess: (updatedProduct) => {
       // console.log("Product updated successfully:", updatedProduct);
-      toast.success("Produto atualizado com sucesso.", {
-        position: "bottom-right",
-      });
-      setTimeout(function () {
-        location.reload();
-      }, 2000);
+      toast.success(
+        "Produto atualizado com sucesso. Atualize a página para ver as alterações...",
+        {
+          position: "bottom-right",
+        },
+      );
+      // setTimeout(function () {
+      //   location.reload();
+      // }, 2000);
     },
     onError: (error) => {
       console.error("Error updating product:", error);

@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import type { CompanyRouteInterfaces } from "~/server/interfaces/company/company.route.interfaces";
+import { api } from "~/trpc/react";
 import { useCompanyForm } from "./useCompanyForm";
 
 type CompanyEditProps = {
@@ -38,6 +39,10 @@ type CompanyEditProps = {
 
 export const CompanyEdit = (props: CompanyEditProps) => {
   const editCompanyForm = useCompanyForm(props.company);
+
+  const suppliers = api.supplier.getAll.useQuery({ filters: {} });
+  const users = api.user.getAll.useQuery();
+  const companies = api.company.getAllCompanies.useQuery();
 
   return (
     <Form {...editCompanyForm.form}>
@@ -103,10 +108,12 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                   <FormItem>
                     <FormControl>
                       <MultiSelect
-                        options={props.suppliers.map((supplier) => ({
-                          label: supplier.name,
-                          value: supplier.id,
-                        }))}
+                        options={
+                          suppliers.data?.map((supplier) => ({
+                            label: supplier.name,
+                            value: supplier.id,
+                          })) ?? []
+                        }
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         placeholder="Selecione um ou mais fornecedores"
@@ -200,8 +207,12 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {props.users.map((user, index) => (
-                          <SelectItem value={user.id} key={index}>
+                        {users.data?.map((user, index) => (
+                          <SelectItem
+                            about={user.name}
+                            value={user.id}
+                            key={index}
+                          >
                             {user.name}
                           </SelectItem>
                         ))}
@@ -262,7 +273,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {props.companies.map((company, index) => (
+                        {companies.data?.map((company, index) => (
                           <SelectItem value={company.name} key={index}>
                             {company.name}
                           </SelectItem>

@@ -26,6 +26,8 @@ type SupplierEditProps = {
 export const SupplierEdit = (props: SupplierEditProps) => {
   const form = useSupplierForm(props.supplier);
 
+  console.log(props.supplier);
+
   return (
     <Form {...form.form}>
       <form onSubmit={form.form.handleSubmit(form.onSubmitEdit)}>

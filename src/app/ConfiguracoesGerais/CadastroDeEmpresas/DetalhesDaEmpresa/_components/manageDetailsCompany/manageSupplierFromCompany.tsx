@@ -16,6 +16,21 @@ export const ManageSuppliersTableFromComapany = (props: { id: string }) => {
     isLoading,
   } = api.company.getCompanySuppliers.useQuery({ id: props.id });
 
+  function formatPhoneNumber(
+    phone: string | null | undefined,
+  ): string | undefined {
+    const cleaned = phone?.replace(/\D/g, ""); // Remove caracteres não numéricos
+    const isMobile = cleaned?.length === 11; // Verifica se o número tem 11 dígitos
+
+    if (isMobile) {
+      // Formato (XX) XXXXX-XXXX
+      return cleaned?.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    } else {
+      // Formato (XX) XXXX-XXXX
+      return cleaned?.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+    }
+  }
+
   return (
     <TableComponent>
       <TableComponent.Title>Fornecedores Cadastrados</TableComponent.Title>
@@ -65,7 +80,9 @@ export const ManageSuppliersTableFromComapany = (props: { id: string }) => {
                 {supplier.address} - {supplier.neighborhood} - {supplier.city} (
                 {supplier.federativeUnit})
               </TableComponent.Value>
-              <TableComponent.Value>{supplier.phone}</TableComponent.Value>
+              <TableComponent.Value>
+                {formatPhoneNumber(supplier.phone)}
+              </TableComponent.Value>
 
               {/* <TooltipProvider delayDuration={300}>
               <Tooltip>
