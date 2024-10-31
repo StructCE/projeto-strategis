@@ -145,8 +145,8 @@ export const publicProcedure = errorHandledProcedure;
 export const protectedProcedure = errorHandledProcedure.use(
   async ({ ctx, next, path }) => {
     const router = path.split(".")[0] ?? "";
-    if (!ctx.session?.user.allowedRouters.includes(router)) {
-      // !ctx.session?.user.allowedRouters.includes(router)
+    if (!ctx.session?.user) {
+      // if (!ctx.session?.user.allowedRouters.includes(router)) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next({

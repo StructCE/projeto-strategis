@@ -1,5 +1,5 @@
 "use client";
-import { Calendar, Eraser, Search, UserCog2 } from "lucide-react";
+import { Calendar, Eraser, Info, Search, UserCog2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Filter } from "~/components/filter";
@@ -163,7 +163,8 @@ export default function RequestsStatusPage() {
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
-      <TableComponent.Table>
+      {/* ESTOQUE - TELAS GRANDES */}
+      <TableComponent.Table className="hidden sm:block">
         <TableComponent.LineTitle className="grid-cols-[0.7fr_1fr_0.5fr_1fr_130px] gap-8">
           <TableComponent.ValueTitle>
             Data da Requisição
@@ -244,6 +245,107 @@ export default function RequestsStatusPage() {
                             {request.responsibleName}
                           </p>
                           <p className="w-fit font-semibold">
+                            Produtos solicitados:
+                          </p>
+                        </DialogDescription>
+
+                        {/* Renderiza uma página diferente dependendo do status da requisição */}
+                        {handleRequestDetailsPage(request.status, request)}
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhuma requisição encontrada com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhuma requisição encontrada
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
+      </TableComponent.Table>
+
+      {/* ESTOQUE - TELAS PEQUENAS */}
+      <TableComponent.Table className="block sm:hidden">
+        <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[0.3fr_1fr_24px] gap-3 px-3">
+          <TableComponent.ValueTitle className="text-[15px]">
+            Data
+          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-[15px]">
+            Status
+          </TableComponent.ValueTitle>
+          <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
+        </TableComponent.LineTitle>
+
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Erro ao mostrar requisições: {error.message}
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando requisições...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {requests.length > 0 && !isLoading && !error ? (
+          requests.length > 0 ? (
+            requests
+              .sort((a, b) => b.requestDate.getTime() - a.requestDate.getTime())
+              .map((request, index) => (
+                <TableComponent.Line
+                  className={`w-full min-w-[0px] grid-cols-[0.3fr_1fr_24px] gap-3 px-3 ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value>
+                    {`${String(request.requestDate.getDate()).padStart(2, "0")}/${String(request.requestDate.getMonth()).padStart(2, "0")}`}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {handleRequestStatus(request.status)}
+                  </TableComponent.Value>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Info size={24} />
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="max-h-[90vh] w-full gap-2 overflow-y-auto p-3"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="mt-6 w-fit pb-1 text-left text-base leading-4">
+                          Informações da Requisição <br />
+                          de Mercadorias
+                        </DialogTitle>
+                        <DialogDescription className="w-fit text-base text-black">
+                          <p className="w-fit text-sm">
+                            <span className="font-semibold">
+                              Data da Requisição:
+                            </span>{" "}
+                            {`${String(request.requestDate.getDate()).padStart(2, "0")}/${String(request.requestDate.getMonth()).padStart(2, "0")}/${String(request.requestDate.getFullYear()).padStart(2, "0")}`}
+                          </p>
+                          <p className="w-fit text-sm">
+                            <span className="font-semibold">
+                              Responsável pela Requisição:
+                            </span>{" "}
+                            {request.responsibleName}
+                          </p>
+                          <p className="w-fit text-sm font-semibold">
                             Produtos solicitados:
                           </p>
                         </DialogDescription>

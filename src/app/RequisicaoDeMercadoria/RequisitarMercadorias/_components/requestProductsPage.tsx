@@ -1,6 +1,7 @@
 "use client";
 import {
   CalendarIcon,
+  CircleX,
   Eraser,
   FilePenLine,
   Info,
@@ -587,46 +588,53 @@ export default function RequestProductsPage() {
           </TableComponent.LineTitle>
 
           {error && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
           {isLoading && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Carregando produtos...
-              </TableComponent.Value>
-            </TableComponent.Line>
-          )}
-          {!isLoading && !error && filteredProducts?.length > 0 && (
-            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-              <TableComponent.Value>
-                Utilize os filtros acima para encontrar produtos cadastrados no
-                estoque
-              </TableComponent.Value>
-            </TableComponent.Line>
-          )}
-          {!!isLoading && !error && filteredProducts.length === 0 && (
-            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-              <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
               </TableComponent.Value>
             </TableComponent.Line>
           )}
           {areAllFiltersEmpty &&
             !isLoading &&
             !error &&
+            products?.length > 0 && (
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Utilize os filtros acima para encontrar produtos cadastrados
+                  no estoque
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
             products?.length === 0 && (
-              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {!areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
                   Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
               </TableComponent.Line>
             )}
           {products?.length > 0 &&
-            !!isLoading &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
             !error &&
             (filteredProducts?.length > 0 ? (
               filteredProducts
@@ -647,7 +655,11 @@ export default function RequestProductsPage() {
 
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Info size={24} />
+                        {hasPermission(product, user) ? (
+                          <Info size={24} />
+                        ) : (
+                          <CircleX size={24} />
+                        )}
                       </DialogTrigger>
                       <DialogContent
                         aria-describedby={undefined}
@@ -727,7 +739,7 @@ export default function RequestProductsPage() {
                   </TableComponent.Line>
                 ))
             ) : (
-              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
                   Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
