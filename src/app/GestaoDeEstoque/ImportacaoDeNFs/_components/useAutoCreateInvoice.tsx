@@ -64,12 +64,26 @@ const AutoCreateInvoice = () => {
 
       // Extrai os dados da fatura (invoice)
       const documentNumber =
-        xmlDoc.getElementsByTagName("cNF")[0]?.textContent ?? "";
+        xmlDoc.getElementsByTagName("nNF")[0]?.textContent ?? "";
+
       const dateDocumentStr =
         xmlDoc.getElementsByTagName("dhEmi")[0]?.textContent;
-      const documentDate = dateDocumentStr
-        ? new Date(dateDocumentStr)
-        : new Date();
+      let documentDate;
+      if (dateDocumentStr) {
+        const dateOnly = dateDocumentStr.split("T")[0];
+        if (dateOnly) {
+          const [year, month, day] = dateOnly.split("-").map(Number);
+          if (year !== undefined && month !== undefined && day !== undefined) {
+            documentDate = new Date(Date.UTC(year, month, day + 1));
+          } else {
+            documentDate = new Date();
+          }
+        } else {
+          documentDate = new Date();
+        }
+      } else {
+        documentDate = new Date();
+      }
 
       const supplier = {
         name: capitalizeName(
@@ -161,6 +175,12 @@ const AutoCreateInvoice = () => {
       const dateDeadline = dateDeadlineStr
         ? new Date(dateDeadlineStr)
         : new Date();
+
+      if (dateDeadlineStr) {
+        dateDeadline.setDate(dateDeadline.getDate() + 1);
+        dateDeadline.setMonth(dateDeadline.getMonth() + 1);
+      }
+
       const invoiceValue =
         xmlDoc.getElementsByTagName("vNF")[0]?.textContent ?? "";
 

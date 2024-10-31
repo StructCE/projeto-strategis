@@ -175,7 +175,7 @@ model CompanySupplier {
 
 model Product {
     id            String  @id @default(cuid())
-    code          String
+    code          String  @unique
     name          String
     ncm           Int
     cfop          Int
@@ -249,7 +249,7 @@ model Stock {
 model Unit {
     id           String @id @default(cuid())
     name         String
-    abbreviation String
+    abbreviation String @unique
     unitsPerPack Float
 
     Product Product[]
