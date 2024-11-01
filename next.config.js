@@ -5,8 +5,13 @@
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
-const config = { reactStrictMode: true,
+const config = {
+  reactStrictMode: true,
   swcMinify: true,
- output: "standalone"};
+  output: "standalone",
+  experimental: {
+    serverComponentsExternalPackages: ["@react-pdf/renderer"],
+  },
+};
 
 export default config;

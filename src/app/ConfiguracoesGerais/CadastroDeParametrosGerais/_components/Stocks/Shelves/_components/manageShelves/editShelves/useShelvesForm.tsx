@@ -1,29 +1,99 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { type Shelf } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { type Shelf } from "~/server/interfaces/cabinet/cabinet.route.interfaces";
+import { api } from "~/trpc/react";
 import {
   editShelfFormSchema,
   type EditShelfFormValues,
 } from "./shelvesEditFormSchema";
 
 export const useShelfForm = (shelf: Shelf) => {
+  const router = useRouter();
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  const shelfMutation = api.generalParameters.shelf.editShelf.useMutation({
+    onSuccess: (updatedShelf) => {
+      // console.log("Shelf updated successfully:", updatedShelf);
+      if (isDeleted === false) {
+        toast.success(
+          "Prateleira atualizada com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
+      }
+      setTimeout(() => {
+        router.refresh();
+      }, 2000);
+    },
+    onError: (error) => {
+      console.error("Error updating shelf:", error);
+      toast.error("Erro ao atualizar prateleira.", {
+        position: "bottom-right",
+      });
+    },
+  });
+
+  const deleteShelfMutation =
+    api.generalParameters.shelf.removeShelf.useMutation({
+      onSuccess: (deletedShelf) => {
+        // console.log("Shelf removed successfully:", deletedShelf);
+        toast.success(
+          "Prateleira removida com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
+        setTimeout(() => {
+          router.refresh();
+        }, 2000);
+      },
+      onError: (error) => {
+        console.error("Error removing shelf:", error);
+        toast.error("Erro ao remover prateleira.", {
+          position: "bottom-right",
+        });
+      },
+    });
+
   const form = useForm<EditShelfFormValues>({
     resolver: zodResolver(editShelfFormSchema),
     mode: "onChange",
     defaultValues: {
-      description: shelf.description,
+      name: shelf.name,
     },
   });
 
   function onSubmitEdit(data: EditShelfFormValues) {
-    console.log("Editando prateleira:");
-    console.log(JSON.stringify(data, null, 2)); // Editar prateleira
+    if (isDeleted) return;
+    // console.log(JSON.stringify(data, null, 2));
+
+    try {
+      shelfMutation.mutate({
+        id: shelf.id,
+        data: {
+          name: data.name,
+        },
+      });
+    } catch (error) {
+      console.error("Error submitting update form:", error);
+    }
   }
 
-  function onSubmitRemove(data: EditShelfFormValues) {
-    console.log("Removendo prateleira:");
-    console.log(JSON.stringify(data, null, 2)); // Remover prateleira
+  function onSubmitRemove() {
+    setIsDeleted(true);
+    try {
+      deleteShelfMutation.mutate({
+        id: shelf.id,
+      });
+    } catch (error) {
+      console.error("Error submitting delete form:", error);
+    }
   }
 
   return { form, onSubmitEdit, onSubmitRemove };

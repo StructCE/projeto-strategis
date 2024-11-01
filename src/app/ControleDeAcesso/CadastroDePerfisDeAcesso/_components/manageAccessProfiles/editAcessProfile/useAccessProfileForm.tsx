@@ -1,40 +1,98 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { type Role } from "../../accessProfileData";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { type RoleWithModules } from "~/server/interfaces/role/role.route.interfaces";
+import { api } from "~/trpc/react";
 import {
   editAccessProfileFormSchema,
   type EditAccessProfileFormValues,
 } from "./accessProfileEditFormSchema";
 
-export const useAccessProfileForm = (role: Role) => {
+export const useAccessProfileForm = (role: RoleWithModules) => {
+  const router = useRouter();
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  const roleMutation = api.role.editRole.useMutation({
+    onSuccess: (updatedRole) => {
+      // console.log("Role updated successfully:", updatedRole);
+      if (isDeleted === false) {
+        toast.success("Cargo atualizado com sucesso. Atualizando a página...", {
+          position: "bottom-right",
+        });
+      }
+      setTimeout(() => {
+        router.refresh();
+      }, 2000);
+    },
+    onError: (error) => {
+      console.error("Error updating role:", error);
+      toast.error("Erro ao atualizar cargo.", {
+        position: "bottom-right",
+      });
+    },
+  });
+
+  const deleteRoleMutation = api.role.deleteRole.useMutation({
+    onSuccess: (deletedRole) => {
+      // console.log("Role removed successfully:", deletedRole);
+      toast.success("Cargo removido com sucesso. Atualizando a página...", {
+        position: "bottom-right",
+      });
+      setTimeout(() => {
+        router.refresh();
+      }, 2000);
+    },
+    onError: (error) => {
+      console.error("Error removing role:", error);
+      toast.error("Erro ao remover cargo.", {
+        position: "bottom-right",
+      });
+    },
+  });
+
   const form = useForm<EditAccessProfileFormValues>({
     resolver: zodResolver(editAccessProfileFormSchema),
     mode: "onChange",
     defaultValues: {
       name: role.name,
-      modules: role.modules,
+      modules: role.modules.map((module) => module.code.toString()),
     },
   });
-  const [selectedModules, setSelectedModules] = useState<string[]>(
-    role.modules.map((module) => module.value),
-  );
 
   function onSubmitEdit(data: EditAccessProfileFormValues) {
-    console.log("Editando cargo:");
-    console.log(JSON.stringify(data, null, 2)); // Editar cargo
+    if (isDeleted) return;
+    else {
+      try {
+        roleMutation.mutate({
+          id: role.id,
+          data: {
+            name: data.name,
+            modules: data.modules,
+          },
+        });
+      } catch (error) {
+        console.error("Error submitting update form:", error);
+      }
+    }
   }
 
-  function onSubmitRemove(data: EditAccessProfileFormValues) {
-    console.log("Removendo cargo:");
-    console.log(JSON.stringify(data, null, 2)); // Remover cargo
+  function onSubmitRemove() {
+    setIsDeleted(true);
+    try {
+      deleteRoleMutation.mutate({
+        id: role.id,
+      });
+    } catch (error) {
+      console.error("Error submitting delete form:", error);
+    }
   }
 
   return {
     form,
     onSubmitEdit,
     onSubmitRemove,
-    selectedModules,
-    setSelectedModules,
   };
 };

@@ -3,12 +3,13 @@ import { cn } from "~/lib/utils";
 
 type TableProps = {
   className?: string;
+  id?: string;
   children: React.ReactNode;
 };
 
 export const TableComponent = (props: TableProps) => {
   const rootStyle = cn("flex flex-col gap-[4px]", props.className);
-  return <div className={rootStyle}>{props.children}</div>;
+  return <div className={rootStyle} id={props.id}>{props.children}</div>;
 };
 
 type TableComponentTitleProps = {
@@ -106,7 +107,10 @@ type TableComponentValueProps = {
 TableComponent.Value = function TableComponentValue(
   props: TableComponentValueProps,
 ) {
-  const style = cn("sm:text-[16px] font-normal text-[14px]", props.className);
+  const style = cn(
+    "sm:text-[16px] font-normal text-[14px] overflow-x-hidden",
+    props.className,
+  );
   return <div className={style}>{props.children}</div>;
 };
 

@@ -8,20 +8,10 @@ import {
   Trash2,
   UserCog2,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import {
-  ProductCategories,
-  SectorsOfUse,
-  TypesOfControl,
-} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
-import {
-  products,
-  type Product,
-} from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
-import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -33,36 +23,89 @@ import {
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { useCompany } from "~/lib/companyProvider";
+import { type InventoryProduct } from "~/server/interfaces/inventory/inventory.route.interfaces";
+import { api } from "~/trpc/react";
+import FinalizeInventory from "./useInventory";
 
 export default function CreateInventory() {
+  const session = useSession();
+
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
-  const [inputResponsible, setInputResponsible] = useState("");
+
+  const userId = session.data?.user.id;
+  const [selectResponsible, setSelectResponsible] = useState<
+    string | undefined
+  >(userId);
 
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
-  const [selectStock, setSelectStock] = useState("");
+  const [selectStockId, setSelectStockId] = useState("");
   const [selectAddress, setSelectAddress] = useState("");
   const [selectControlType, setSelectControlType] = useState("");
   const [selectCategory, setSelectCategory] = useState("");
   const [selectSector, setSelectSector] = useState("");
 
-  const [addedProducts, setAddedProducts] = useState<Product[]>([]);
+  const [addedProducts, setAddedProducts] = useState<InventoryProduct[]>([]);
   const [quantities, setQuantities] = useState<Record<string, string>>({});
 
   const areAllFiltersEmpty =
     inputCode === "" &&
     inputProduct === "" &&
-    selectStock === "" &&
+    selectStockId === "" &&
     selectAddress === "" &&
     selectControlType === "" &&
     selectCategory === "" &&
     selectSector === "";
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
+  const {
+    data: products = [],
+    error,
+    isLoading,
+  } = api.product.getAllWhere.useQuery({ filters: { company: companyFilter } });
+  const { data: sectorsOfUse = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: typesOfControl = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
+  const { data: productCategories = [] } =
+    api.generalParameters.productCategory.getAll.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: { company: companyFilter },
+  });
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getCabinetFromStock.useQuery({
+      stockId: selectStockId ? selectStockId : "",
+    });
+  const { data: users = [] } = api.user.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
 
   // Função para filtrar produtos
   const filteredProducts = areAllFiltersEmpty
@@ -74,24 +117,24 @@ export default function CreateInventory() {
           inputProduct === "" ||
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
-          selectStock === "" ||
-          `${product.address.stock}`
-            .toLowerCase()
-            .includes(selectStock.toLowerCase());
+          selectStockId === "" ||
+          product.shelf?.cabinet.StockCabinet.some(
+            (stockCabinet) =>
+              stockCabinet.stock.id.toLowerCase() ===
+              selectStockId.toLowerCase(),
+          );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.address.storage}, ${product.address.shelf}`
+          `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
           selectControlType === "" ||
-          product.type_of_control?.description === selectControlType;
+          product.controlType?.name === selectControlType;
         const matchesCategory =
-          selectCategory === "" ||
-          product.product_category?.description === selectCategory;
+          selectCategory === "" || product.category?.name === selectCategory;
         const matchesSector =
-          selectSector === "" ||
-          product.sector_of_use?.description === selectSector;
+          selectSector === "" || product.sectorOfUse?.name === selectSector;
 
         return (
           matchesCode &&
@@ -105,7 +148,7 @@ export default function CreateInventory() {
       });
 
   // Função para adicionar produtos ao inventário
-  const handleAddProduct = (product: Product) => {
+  const handleAddProduct = (product: InventoryProduct) => {
     setAddedProducts((prev) => [...prev, product]);
   };
 
@@ -139,45 +182,35 @@ export default function CreateInventory() {
     }
   }
 
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}.${month}.${day}`;
+  const handleStockChange = (stockId: string) => {
+    setSelectStockId(stockId);
+    setAddedProducts([]); // Limpar produtos ao mudar o estoque
+    setQuantities({});
   };
 
-  const formatResponsibleName = (name: string) => {
-    const withoutAccents = name
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
-    const formattedName = withoutAccents.replace(/\s+/g, "");
-    return formattedName;
-  };
+  function alphanumericSort(a: string, b: string) {
+    const regex = /(\d+)|(\D+)/g;
+    const aParts = a.match(regex) ?? [];
+    const bParts = b.match(regex) ?? [];
 
-  // Função para finalizar o inventário
-  const handleFinalizeInventory = () => {
-    const inventoryData = {
-      responsible: inputResponsible,
-      date: date?.toISOString(),
-      products: addedProducts.map((product) => ({
-        code: product.code,
-        name: product.name,
-        stock_current: product.stock_current,
-        quantity_in_inventory: quantities[product.code] ?? 0,
-      })),
-    };
+    for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+      const aPart = aParts[i] ?? "";
+      const bPart = bParts[i] ?? "";
 
-    console.log(JSON.stringify(inventoryData, null, 2));
+      // Se a parte for um número, faça comparação numérica
+      if (/\d/.test(aPart) && /\d/.test(bPart)) {
+        const diff = parseInt(aPart, 10) - parseInt(bPart, 10);
+        if (diff !== 0) return diff;
+      }
 
-    // Exemplo de exportação do inventário como JSON (feito com gpt, verificar se ta tudo certo)
-    // const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-    //   JSON.stringify(inventoryData),
-    // )}`;
-    // const link = document.createElement("a");
-    // link.href = jsonString;
-    // link.download = `Inventario_${formatDate(date ?? new Date())}_${formatResponsibleName(inputResponsible)}`;
-    // link.click();
-  };
+      // Se não for número, faça comparação lexicográfica
+      if (aPart !== bPart) {
+        return aPart.localeCompare(bPart);
+      }
+    }
+
+    return 0;
+  }
 
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
@@ -206,24 +239,56 @@ export default function CreateInventory() {
             ></Filter.DatePicker>
           </Filter>
 
-          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[250px]">
-            <Filter.Icon
-              icon={({ className }: { className: string }) => (
-                <UserCog2 className={className} />
-              )}
-            />
-            <Filter.Input
-              className="text-sm sm:text-base"
-              placeholder="Responsável"
-              state={inputResponsible}
-              setState={setInputResponsible}
-            />
-          </Filter>
+          <div className="flex w-full items-center rounded-[12px] bg-filtro bg-opacity-50 lg:w-[225px]">
+            <Select
+              onValueChange={setSelectResponsible}
+              value={selectResponsible}
+              defaultValue={selectResponsible}
+            >
+              <SelectTrigger className="font-inter m-0 h-auto border-0 border-none bg-transparent px-2 py-1.5 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-[250px]">
+                <UserCog2
+                  className="size-[20px] stroke-[1.5px]"
+                  color="black"
+                />
+                <SelectValue placeholder="Responsável" />
+              </SelectTrigger>
+              <SelectContent>
+                {users.map((user, index) => (
+                  <SelectItem value={user.id} key={index}>
+                    {user.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </TableComponent.FiltersLine>
 
-        <TableComponent.Subtitle>
-          Selecione produtos do estoque para fazer invetário.
-        </TableComponent.Subtitle>
+        <div className="my-2 flex flex-col items-center gap-1 sm:flex-row sm:gap-3">
+          <div className="font-inter text-[13px] font-normal sm:text-[15px]">
+            Selecione um estoque e produtos dele para fazer um inventário <br />
+            (só é possível fazer inventário de um estoque de cada vez):
+          </div>
+
+          <div className="flex w-full items-center rounded-[12px] bg-filtro bg-opacity-50 lg:w-fit">
+            <Select
+              onValueChange={handleStockChange}
+              value={selectStockId}
+              defaultValue={selectStockId}
+            >
+              <SelectTrigger className="font-inter m-0 h-auto gap-3 border-0 border-none bg-transparent px-2 py-1.5 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-fit">
+                <Search className="size-[16px] stroke-[1.5px]" color="black" />
+                <SelectValue placeholder="Estoque" />
+              </SelectTrigger>
+              <SelectContent>
+                {stocks.map((stock, index) => (
+                  <SelectItem key={index} value={stock.id}>
+                    {stock.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
         <TableComponent.FiltersLine>
           <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[130px]">
@@ -261,55 +326,28 @@ export default function CreateInventory() {
               )}
             />
             <Filter.Select
-              className="text-sm sm:text-base"
-              placeholder="Estoque"
-              state={selectStock}
-              setState={setSelectStock}
-            >
-              {stocks.map((stock, index) => (
-                <Filter.SelectItems
-                  key={index}
-                  value={stock.name}
-                ></Filter.SelectItems>
-              ))}
-            </Filter.Select>
-          </Filter>
-
-          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
-            <Filter.Icon
-              icon={({ className }: { className: string }) => (
-                <Search className={className} />
-              )}
-            />
-            <Filter.Select
               placeholder="Endereço"
               state={selectAddress}
               setState={setSelectAddress}
               className={
-                selectStock === ""
-                  ? "cursor-not-allowed text-sm opacity-50 sm:text-base"
-                  : "text-sm sm:text-base"
+                selectStockId === "" ? "cursor-not-allowed opacity-50" : ""
               }
             >
-              {selectStock === ""
-                ? [
+              {selectStockId === "" ? (
+                <Filter.SelectItems
+                  key="0"
+                  value="Selecione um estoque primeiro"
+                />
+              ) : (
+                cabinets.flatMap((cabinet) =>
+                  cabinet.shelf.map((shelf) => (
                     <Filter.SelectItems
-                      key="0"
-                      value="Selecione um estoque primeiro"
-                    ></Filter.SelectItems>,
-                  ]
-                : stocks
-                    .filter((stock) => stock.name === selectStock)
-                    .flatMap((stock) =>
-                      stock.address.flatMap((address) =>
-                        address.shelves.map((shelf, index) => (
-                          <Filter.SelectItems
-                            key={index}
-                            value={`${address.description}, ${shelf.description}`}
-                          ></Filter.SelectItems>
-                        )),
-                      ),
-                    )}
+                      key={shelf.id}
+                      value={`${cabinet.name} - ${shelf.name}`}
+                    />
+                  )),
+                )
+              )}
             </Filter.Select>
           </Filter>
         </TableComponent.FiltersLine>
@@ -327,10 +365,10 @@ export default function CreateInventory() {
               state={selectControlType}
               setState={setSelectControlType}
             >
-              {TypesOfControl.map((type, index) => (
+              {typesOfControl.map((type, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={type.description}
+                  value={type.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -348,10 +386,10 @@ export default function CreateInventory() {
               state={selectCategory}
               setState={setSelectCategory}
             >
-              {ProductCategories.map((category, index) => (
+              {productCategories.map((category, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={category.description}
+                  value={category.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -369,10 +407,10 @@ export default function CreateInventory() {
               state={selectSector}
               setState={setSelectSector}
             >
-              {SectorsOfUse.map((sector, index) => (
+              {sectorsOfUse.map((sector, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={sector.description}
+                  value={sector.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -386,7 +424,7 @@ export default function CreateInventory() {
                   onClick={() => {
                     setInputCode("");
                     setInputProduct("");
-                    setSelectStock("");
+                    setSelectStockId("");
                     setSelectAddress("");
                     setSelectControlType("");
                     setSelectCategory("");
@@ -399,7 +437,7 @@ export default function CreateInventory() {
           </TooltipProvider>
         </TableComponent.FiltersLine>
 
-        {/* TELAS GRANDES */}
+        {/* ESTOQUE - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16">
             <TableComponent.ValueTitle className="text-center">
@@ -415,50 +453,106 @@ export default function CreateInventory() {
             <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
 
-          {areAllFiltersEmpty && (
+          {error && (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Utilize os filtros acima para encontrar produtos cadastrados no
-                estoque
+                Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
+          {isLoading && (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
+                Carregando produtos...
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty &&
-            filteredProducts.map((product, index) => (
-              <TableComponent.Line
-                className={`grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="text-center">
-                  {product.code}
-                </TableComponent.Value>
-                <TableComponent.Value>{product.name}</TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.stock_current}
-                </TableComponent.Value>
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length > 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
-                  {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                  Utilize os filtros acima para encontrar produtos cadastrados
+                  no estoque
                 </TableComponent.Value>
-                <Button
-                  onClick={() => handleAddProduct(product)}
-                  className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
-                >
-                  Adicionar
-                </Button>
+              </TableComponent.Line>
+            )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {!areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => alphanumericSort(a.code, b.code))
+                .map((product, index) => (
+                  <TableComponent.Line
+                    className={`grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16 ${
+                      index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                    }`}
+                    key={index}
+                  >
+                    <TableComponent.Value className="text-center">
+                      {product.code}
+                    </TableComponent.Value>
+                    <TableComponent.Value>{product.name}</TableComponent.Value>
+                    <TableComponent.Value className="text-center">
+                      {product.currentStock}
+                    </TableComponent.Value>
+                    <TableComponent.Value>
+                      {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
+                    </TableComponent.Value>
+                    <Button
+                      onClick={() =>
+                        handleAddProduct({
+                          id: product.id,
+                          productId: product.id,
+                          code: product.code,
+                          name: product.name,
+                          ncm: product.ncm,
+                          cfop: product.cfop,
+                          unit: product.unit,
+                          inventoryQuantity: 0,
+                          stockQuantity: product.currentStock ?? 0,
+                          shelf: product.shelf,
+                        })
+                      }
+                      className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                    >
+                      Adicionar
+                    </Button>
+                  </TableComponent.Line>
+                ))
+            ) : (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
 
-        {/* TELAS PEQUENAS */}
+        {/* ESTOQUE - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">
@@ -470,116 +564,172 @@ export default function CreateInventory() {
             <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
 
-          {areAllFiltersEmpty && (
-            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          {error && (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Utilize os filtros acima para encontrar produtos cadastrados no
-                estoque
+                Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
-            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          {isLoading && (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
+                Carregando produtos...
               </TableComponent.Value>
             </TableComponent.Line>
           )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length > 0 && (
+              <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Utilize os filtros acima para encontrar produtos cadastrados
+                  no estoque
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
           {!areAllFiltersEmpty &&
-            filteredProducts.map((product, index) => (
-              <TableComponent.Line
-                className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="text-center text-[14px]">
-                  {product.code}
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
-                <TableComponent.Value className="text-[14px]">
-                  {product.name}
-                </TableComponent.Value>
-
-                <Dialog>
-                  <DialogTrigger asChild>
-                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
-              Detalhes
-            </Button> */}
-                    <Info size={24} />
-                  </DialogTrigger>
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="w-full gap-2 p-5"
+              </TableComponent.Line>
+            )}
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => alphanumericSort(a.code, b.code))
+                .map((product, index) => (
+                  <TableComponent.Line
+                    className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
+                      index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                    }`}
+                    key={index}
                   >
-                    <DialogHeader>
-                      <DialogTitle className="text-left text-xl">
-                        Inventário do Produto
-                      </DialogTitle>
-                    </DialogHeader>
-                    <DialogDescription className="flex flex-col gap-1 text-left text-black">
-                      <p className="text-base">
-                        <span className="font-semibold">Código: </span>{" "}
-                        {product.code}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Produto: </span>{" "}
-                        {product.name}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">
-                          Endereço de Estoque:
-                        </span>{" "}
-                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">
-                          Quantidade em Estoque:{" "}
-                        </span>
-                        {product.stock_current}
-                      </p>
-                      <div className="my-1 text-base">
-                        <span className="font-semibold">
-                          Quantidade em Inventário:{" "}
-                        </span>
-                        <Input
-                          type="number"
-                          value={quantities[product.code] ?? ""}
-                          onChange={(e) =>
-                            handleQuantityChange(product.code, e.target.value)
-                          }
-                          className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
-                        ></Input>
-                      </div>
-                      <p className="text-base">
-                        <span className="font-semibold">Diferença: </span>
-                        {Number(quantities[product.code] ?? 0) -
-                          Number(product.stock_current)}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Descrição: </span>
-                        {handleProductDescription(
-                          Number(product.stock_current),
-                          Number(quantities[product.code]),
-                        )}
-                      </p>
-                      <div className="mt-1 flex w-full justify-end">
-                        <Button
-                          onClick={() => handleAddProduct(product)}
-                          className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
-                        >
-                          Adicionar
-                        </Button>
-                      </div>
-                    </DialogDescription>
-                  </DialogContent>
-                </Dialog>
+                    <TableComponent.Value className="text-center text-[14px]">
+                      {product.code}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-[14px]">
+                      {product.name}
+                    </TableComponent.Value>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Info size={24} />
+                      </DialogTrigger>
+                      <DialogContent
+                        aria-describedby={undefined}
+                        className="max-h-[90vh] w-full gap-2 overflow-y-auto p-5"
+                      >
+                        <DialogHeader>
+                          <DialogTitle className="text-left text-xl">
+                            Inventário do Produto
+                          </DialogTitle>
+                        </DialogHeader>
+                        <DialogDescription className="flex flex-col gap-1 text-left text-black">
+                          <p className="text-base">
+                            <span className="font-semibold">Código: </span>{" "}
+                            {product.code}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">Produto: </span>{" "}
+                            {product.name}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Endereço de Estoque:
+                            </span>{" "}
+                            {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Quantidade em Estoque:{" "}
+                            </span>
+                            {product.currentStock}
+                          </p>
+                          <div className="my-1 text-base">
+                            <span className="font-semibold">
+                              Quantidade em Inventário:{" "}
+                            </span>
+                            <Input
+                              type="number"
+                              value={quantities[product.code] ?? ""}
+                              onChange={(e) =>
+                                handleQuantityChange(
+                                  product.code,
+                                  e.target.value,
+                                )
+                              }
+                              className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                            ></Input>
+                          </div>
+                          <p className="text-base">
+                            <span className="font-semibold">Diferença: </span>
+                            {Number(quantities[product.code] ?? 0) -
+                              Number(product.currentStock)}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">Descrição: </span>
+                            {handleProductDescription(
+                              Number(product.currentStock),
+                              Number(quantities[product.code]),
+                            )}
+                          </p>
+                          <div className="mt-1 flex w-full justify-end">
+                            <Button
+                              onClick={() =>
+                                handleAddProduct({
+                                  id: product.id,
+                                  productId: product.id,
+                                  code: product.code,
+                                  name: product.name,
+                                  ncm: product.ncm,
+                                  cfop: product.cfop,
+                                  unit: product.unit,
+                                  inventoryQuantity: 0,
+                                  stockQuantity: product.currentStock,
+                                  shelf: product.shelf,
+                                })
+                              }
+                              className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                            >
+                              Adicionar
+                            </Button>
+                          </div>
+                        </DialogDescription>
+                      </DialogContent>
+                    </Dialog>
+                  </TableComponent.Line>
+                ))
+            ) : (
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
 
         <TableComponent.Title className="mt-2">Inventário</TableComponent.Title>
 
-        {/* TELAS GRANDES */}
+        {/* INVENTÁRIO - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_130px_92px_1fr_86px] gap-8 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
@@ -626,7 +776,7 @@ export default function CreateInventory() {
                   {product.name}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {product.stock_current}
+                  {product.stockQuantity}
                 </TableComponent.Value>
                 <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
                   <Input
@@ -639,12 +789,14 @@ export default function CreateInventory() {
                   ></Input>
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {Number(quantities[product.code] ?? 0) -
-                    Number(product.stock_current)}
+                  {(
+                    Number(quantities[product.code] ?? 0) -
+                    Number(product.stockQuantity)
+                  ).toFixed(2)}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-[13px] sm:text-[15px]">
                   {handleProductDescription(
-                    Number(product.stock_current),
+                    Number(product.stockQuantity),
                     Number(quantities[product.code]),
                   )}
                 </TableComponent.Value>
@@ -659,7 +811,7 @@ export default function CreateInventory() {
           )}
         </TableComponent.Table>
 
-        {/* TELAS PEQUENAS */}
+        {/* INVENTÁRIO - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">
@@ -695,14 +847,11 @@ export default function CreateInventory() {
 
                 <Dialog>
                   <DialogTrigger asChild>
-                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
-              Detalhes
-            </Button> */}
                     <FilePenLine size={24} />
                   </DialogTrigger>
                   <DialogContent
                     aria-describedby={undefined}
-                    className="w-full gap-2 p-5"
+                    className="max-h-[90vh] w-full gap-2 overflow-y-auto p-5"
                   >
                     <DialogHeader>
                       <DialogTitle className="text-left text-xl">
@@ -722,13 +871,13 @@ export default function CreateInventory() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                        {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">
                           Quantidade em Estoque:{" "}
                         </span>
-                        {product.stock_current}
+                        {product.stockQuantity}
                       </p>
                       <div className="my-1 text-base">
                         <span className="font-semibold">
@@ -745,13 +894,15 @@ export default function CreateInventory() {
                       </div>
                       <p className="text-base">
                         <span className="font-semibold">Diferença: </span>
-                        {Number(quantities[product.code] ?? 0) -
-                          Number(product.stock_current)}
+                        {(
+                          Number(quantities[product.code] ?? 0) -
+                          Number(product.stockQuantity)
+                        ).toFixed(2)}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Descrição: </span>
                         {handleProductDescription(
-                          Number(product.stock_current),
+                          Number(product.stockQuantity),
                           Number(quantities[product.code]),
                         )}
                       </p>
@@ -770,14 +921,13 @@ export default function CreateInventory() {
           )}
         </TableComponent.Table>
 
-        <TableButtonComponent className="pt-2 sm:pt-4">
-          <TableButtonComponent.Button
-            className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1"
-            handlePress={handleFinalizeInventory}
-          >
-            Finalizar Inventário
-          </TableButtonComponent.Button>
-        </TableButtonComponent>
+        <FinalizeInventory
+          date={date ?? new Date()}
+          selectResponsible={selectResponsible}
+          stockId={selectStockId}
+          addedProducts={addedProducts}
+          quantities={quantities}
+        />
       </TableComponent>
     </div>
   );

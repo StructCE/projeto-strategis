@@ -1,11 +1,6 @@
 "use client";
-import { Upload } from "lucide-react";
 import { useState } from "react";
-import {
-  companies,
-  type Company,
-} from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/companiesData";
-import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
+import { states } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/states";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -23,21 +18,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import {
-  states,
-  suppliers,
-} from "../../../../../CadastroDeFornecedores/_components/supplierData";
+import type { CompanyRouteInterfaces } from "~/server/interfaces/company/company.route.interfaces";
+import { api } from "~/trpc/react";
 import { useCompanyForm } from "./useCompanyForm";
 
 type CompanyEditProps = {
-  company: Company;
+  company: CompanyRouteInterfaces["EditCompany"];
+  users: {
+    id: string;
+    name: string;
+  }[];
+  suppliers: {
+    id: string;
+    name: string;
+  }[];
+  companies: {
+    id: string;
+    name: string;
+  }[];
 };
 
 export const CompanyEdit = (props: CompanyEditProps) => {
   const editCompanyForm = useCompanyForm(props.company);
-  const [companyType, setCompanyType] = useState<string>(
-    props.company.company_type,
-  );
+
+  const suppliers = api.supplier.getAll.useQuery({ filters: {} });
+  const users = api.user.getAll.useQuery();
+  const companies = api.company.getAllCompanies.useQuery();
+
+  const [companyType, setCompanyType] = useState("");
 
   return (
     <Form {...editCompanyForm.form}>
@@ -58,7 +66,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Empresa</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="name"
+                name="data.name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -78,7 +86,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>CNPJ</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="cnpj"
+                name="data.cnpj"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -98,17 +106,19 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Fornecedores</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="suppliers"
+                name="data.suppliers"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <MultiSelect
-                        options={suppliers.flatMap((supplier) => ({
-                          label: supplier.name,
-                          value: supplier.name,
-                        }))}
+                        options={
+                          suppliers.data?.map((supplier) => ({
+                            label: supplier.name,
+                            value: supplier.id,
+                          })) ?? []
+                        }
                         onValueChange={field.onChange}
-                        defaultValue={field.value ?? []}
+                        defaultValue={field.value}
                         placeholder="Selecione um ou mais fornecedores"
                         variant="inverted"
                         maxCount={2}
@@ -126,7 +136,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Email</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="email"
+                name="data.email"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -146,7 +156,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Telefone</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="phone"
+                name="data.phone"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -166,7 +176,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="state_registration"
+                name="data.stateRegistration"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -186,12 +196,13 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Representante Legal</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="legal_representative"
+                name="data.legalResponsibleId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
+                      value={field.value ?? undefined}
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={field.value ?? undefined}
                     >
                       <FormControl>
                         <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
@@ -199,8 +210,12 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {users.map((user, index) => (
-                          <SelectItem value={user.name} key={index}>
+                        {users.data?.map((user, index) => (
+                          <SelectItem
+                            about={user.name}
+                            value={user.id}
+                            key={index}
+                          >
                             {user.name}
                           </SelectItem>
                         ))}
@@ -218,7 +233,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Tipo de Empresa</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="company_type"
+                name="data.type"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -248,12 +263,12 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Matriz da Empresa</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="company_headquarters.name"
+                name="data.headquarters"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={field.value ?? undefined}
                       disabled={companyType !== "Filial"}
                     >
                       <FormControl>
@@ -262,7 +277,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {companies.map((company, index) => (
+                        {companies.data?.map((company, index) => (
                           <SelectItem value={company.name} key={index}>
                             {company.name}
                           </SelectItem>
@@ -279,7 +294,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Regime Tributário</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="tax_regime"
+                name="data.taxRegime"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -315,7 +330,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Endereço</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="address"
+                name="data.address"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -335,7 +350,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Bairro</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="neighborhood"
+                name="data.neighborhood"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -355,7 +370,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Município</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="city"
+                name="data.city"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -374,7 +389,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="state"
+                name="data.federativeUnit"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -403,7 +418,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
               <FormComponent.Label>CEP</FormComponent.Label>
               <FormField
                 control={editCompanyForm.form.control}
-                name="cep"
+                name="data.cep"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -420,46 +435,32 @@ export const CompanyEdit = (props: CompanyEditProps) => {
             </FormComponent.Frame>
           </FormComponent.Line>
 
-          <FormComponent.Line>
-            <FormComponent.Frame>
-              <FormComponent.Label>
-                Endereço Local dos Arquivos XML
-              </FormComponent.Label>
-              <FormField
-                control={editCompanyForm.form.control}
-                name={"address_file_XML"}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <div className="relative flex max-w-full items-center">
-                        <Input
-                          type="file"
-                          className="h-fit border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                          placeholder="Endereço"
-                          {...field}
-                        />
-                        <Upload className="absolute right-5 top-1/2 h-4 w-4 -translate-y-1/2 transform" />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-          </FormComponent.Line>
-
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Empresa
-            </FormComponent.Button>
-            <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
-              handlePress={editCompanyForm.form.handleSubmit(
-                editCompanyForm.onSubmitRemove,
-              )}
-            >
-              Remover Empresa
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir esta empresa? Esta ação não pode ser desfeita!",
+                  );
+                  if (confirmed) {
+                    editCompanyForm.form.handleSubmit(
+                      editCompanyForm.onSubmitRemove,
+                    );
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={editCompanyForm.form.handleSubmit(
+                  editCompanyForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

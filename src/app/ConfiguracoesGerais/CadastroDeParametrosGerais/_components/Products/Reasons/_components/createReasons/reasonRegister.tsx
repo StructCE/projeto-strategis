@@ -25,7 +25,7 @@ export default function ReasonRegister(props: ReasonRegisterProps) {
               <FormComponent.Label>Motivo</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

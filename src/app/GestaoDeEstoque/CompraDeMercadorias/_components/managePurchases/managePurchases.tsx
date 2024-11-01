@@ -1,7 +1,8 @@
 "use client";
-import { Calendar, Download, Eraser, Search, UserCog2 } from "lucide-react";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { Calendar, Download, Eraser, Truck, UserCog2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -14,43 +15,94 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { MultiSelect } from "~/components/ui/multi-select";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { purchases } from "../purchasesData";
+import { useCompany } from "~/lib/companyProvider";
+import { type SerializedOrder } from "~/server/interfaces/order/order.route.interfaces";
+import { api } from "~/trpc/react";
+import CustomReportPDF from "./pdfReport";
 import { default as PurchaseDetails } from "./purchaseDetails/purchaseDetailsTable";
+import { DeleteOrder } from "./useDeleteOrder";
+import { EditOrder } from "./useEditOrder";
 
 export default function ManagePurchasesTable() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const [inputResponsible, setInputResponsible] = useState("");
-  const [selectSuppliers, setSelectSuppliers] = useState<string[]>([]);
+  const [selectSupplier, setSelectSupplier] = useState("");
 
-  const filteredPurchases = purchases.filter((purchase) => {
+  const session = useSession();
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
+  const { data: orders = [], error, isLoading } = api.order.getAll.useQuery();
+
+  const filteredOrders = orders.filter((order) => {
     const matchesDate =
       !date ||
-      (purchase.date.getDate() === date.getDate() &&
-        purchase.date.getMonth() === date.getMonth() + 1 &&
-        purchase.date.getFullYear() === date.getFullYear());
+      (order.date.getDate() === date.getDate() &&
+        order.date.getMonth() === date.getMonth() + 1 &&
+        order.date.getFullYear() === date.getFullYear());
 
     const matchesResponsible =
       inputResponsible === "" ||
-      purchase.responsible
+      order.responsible.name
         .toLowerCase()
         .includes(inputResponsible.toLowerCase());
-
     const matchesSupplier =
-      selectSuppliers.length === 0 ||
-      purchase.products.some((product) =>
-        selectSuppliers.includes(product.supplier.name),
+      selectSupplier === "" ||
+      order.orderProducts.some(
+        (product) => selectSupplier == product.ProductSupplier.supplier.name,
       );
+    const matchesCompany =
+      !companyFilter || order.responsible.company === companyFilter;
 
-    return matchesDate && matchesResponsible && matchesSupplier;
+    return (
+      matchesDate && matchesResponsible && matchesSupplier && matchesCompany
+    );
   });
+
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
+
+  function orderData(order: SerializedOrder) {
+    const purchaseData = {
+      date: order.date,
+      company: order.responsible.company,
+      responsible: order.responsible.name,
+      orderProducts: order.orderProducts.map((product) => ({
+        code: product.code,
+        name: product.name,
+        unit: product.unit.abbreviation,
+        currentStock: product.currentStock,
+        minimunStock: product.minimunStock,
+        purchaseQuantity: product.purchaseQuantity,
+        ProductSupplier: product.ProductSupplier.supplier.name,
+        stock: product.shelf?.cabinet.StockCabinet.map(
+          (stockCabinet) => stockCabinet.stock.name,
+        ).join(", "),
+        cabinet: product.shelf?.cabinet.name,
+        shelf: product.shelf?.name,
+      })),
+    };
+
+    return purchaseData;
+  }
 
   return (
     <TableComponent className="gap-3">
@@ -87,21 +139,25 @@ export default function ManagePurchasesTable() {
           />
         </Filter>
 
-        <div className="font-inter m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] font-normal text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
-          <MultiSelect
-            FilterIcon={Search}
-            options={suppliers.flatMap((supplier) => ({
-              label: supplier.name,
-              value: supplier.name,
-            }))}
-            onValueChange={setSelectSuppliers}
-            defaultValue={selectSuppliers}
-            placeholder="Fornecedores"
-            variant="inverted"
-            maxCount={2}
-            className="font-inter min-h-8 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] font-normal text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Truck className={className} />
+            )}
           />
-        </div>
+          <Filter.Select
+            placeholder="Fornecedor"
+            state={selectSupplier}
+            setState={setSelectSupplier}
+          >
+            {suppliers.map((supplier, index) => (
+              <Filter.SelectItems
+                value={supplier.name}
+                key={index}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
 
         <TooltipProvider delayDuration={300}>
           <Tooltip>
@@ -111,103 +167,337 @@ export default function ManagePurchasesTable() {
                 onClick={() => {
                   setDate(undefined);
                   setInputResponsible("");
-                  setSelectSuppliers([]);
+                  setSelectSupplier("");
                 }}
               />
             </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Limpar filtros</p>
-            </TooltipContent>
+            <TooltipContent side="right">Limpar filtros</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </TableComponent.FiltersLine>
 
-      <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[0.7fr_1fr_2fr_130px]">
+      {/* TELAS GRANDES */}
+      <TableComponent.Table className="hidden sm:block">
+        <TableComponent.LineTitle className="grid-cols-[0.7fr_1.2fr_1.5fr_0.7fr_130px] gap-8">
           <TableComponent.ValueTitle>Data do Pedido</TableComponent.ValueTitle>
           <TableComponent.ValueTitle>
             Responsável pelo Pedido
           </TableComponent.ValueTitle>
           <TableComponent.ValueTitle>Fornecedores</TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-center">
+            Produtos
+          </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
-        {filteredPurchases.map((purchase, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[0.7fr_1fr_2fr_130px] ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
+        {error && (
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
-              {`${purchase.date.getDate()}/${purchase.date.getMonth()}/${purchase.date.getFullYear()}`}
+              Erro ao mostrar pedidos de compra: {error.message}
             </TableComponent.Value>
-            <TableComponent.Value>{purchase.responsible}</TableComponent.Value>
-            <TableComponent.Value className="flex">
-              {(() => {
-                const suppliers = Array.from(
-                  new Set(
-                    purchase.products.map((product) => product.supplier.name),
-                  ),
-                );
-                const displayedSuppliers = suppliers.slice(0, 3).join(", ");
-
-                return suppliers.length > 3
-                  ? `${displayedSuppliers}...`
-                  : displayedSuppliers;
-              })()}
-            </TableComponent.Value>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="max-w-7xl overflow-x-auto p-3 pb-5 pt-10 sm:p-6"
-              >
-                <DialogHeader>
-                  <DialogTitle className="w-fit pb-1.5">
-                    Informações do Pedido de Compra
-                  </DialogTitle>
-                  <DialogDescription className="w-fit text-base text-black">
-                    <p className="w-fit">
-                      <span className="font-semibold">Data do Pedido:</span>{" "}
-                      {`${purchase.date.getDate()}/${purchase.date.getMonth()}/${purchase.date.getFullYear()}`}
-                    </p>
-                    <p className="w-fit">
-                      <span className="font-semibold">
-                        Responsável pelo Pedido:
-                      </span>{" "}
-                      {purchase.responsible}
-                    </p>
-                    <p className="w-fit font-semibold">Produtos:</p>
-                  </DialogDescription>
-
-                  <PurchaseDetails purchase={purchase} />
-
-                  <TableButtonComponent className="w-fit pt-2 sm:pt-4 lg:w-full">
-                    <TableButtonComponent.Button
-                      className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
-                      icon={
-                        <Download
-                          className="flex h-full cursor-pointer self-center"
-                          size={20}
-                          strokeWidth={2.2}
-                          color="white"
-                        />
-                      }
-                    >
-                      Baixar Relatório
-                    </TableButtonComponent.Button>
-                  </TableButtonComponent>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
           </TableComponent.Line>
-        ))}
+        )}
+        {isLoading && (
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando pedidos de compra...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {orders.length > 0 && !isLoading && !error ? (
+          filteredOrders.length > 0 ? (
+            filteredOrders
+              .sort((a, b) => b.date.getTime() - a.date.getTime())
+              .map((order, index) => (
+                <TableComponent.Line
+                  className={`grid-cols-[0.7fr_1.2fr_1.5fr_0.7fr_130px] gap-8 ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value>
+                    {`${String(order.date.getDate()).padStart(2, "0")}/${String(order.date.getMonth()).padStart(2, "0")}/${String(order.date.getFullYear()).padStart(2, "0")}`}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    {order.responsible.name}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="flex">
+                    {(() => {
+                      const suppliers = Array.from(
+                        new Set(
+                          order.orderProducts.map(
+                            (product) => product.ProductSupplier.supplier.name,
+                          ),
+                        ),
+                      );
+                      const displayedSuppliers = suppliers
+                        .slice(0, 3)
+                        .join(", ");
+
+                      return suppliers.length > 3
+                        ? `${displayedSuppliers}...`
+                        : displayedSuppliers;
+                    })()}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center">
+                    {order.orderProducts.length}
+                  </TableComponent.Value>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="max-h-[90vh] max-w-7xl overflow-x-auto overflow-y-auto p-3 pb-5 pt-10 sm:p-6"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="w-fit pb-1.5">
+                          Informações do Pedido de Compra
+                        </DialogTitle>
+                        <DialogDescription className="w-fit text-base text-black">
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Data do Pedido:
+                            </span>{" "}
+                            {`${String(order.date.getDate()).padStart(2, "0")}/${String(order.date.getMonth()).padStart(2, "0")}/${String(order.date.getFullYear()).padStart(2, "0")}`}
+                          </p>
+                          <p className="w-fit">
+                            <span className="font-semibold">
+                              Responsável pelo Pedido:
+                            </span>{" "}
+                            {order.responsible.name}
+                          </p>
+                          <p className="w-fit">
+                            <span className="font-semibold">Status:</span>{" "}
+                            {order.status ? (
+                              <span className="font-normal text-verde_botao">
+                                Confirmado
+                              </span>
+                            ) : (
+                              <span className="font-normal text-amarelo_botao">
+                                Pendente
+                              </span>
+                            )}
+                          </p>
+                          <p className="w-fit font-semibold">Produtos:</p>
+                        </DialogDescription>
+
+                        <PurchaseDetails order={order} />
+
+                        <TableButtonComponent className="w-fit justify-between pt-2 sm:pt-4 lg:w-full">
+                          <div className="flex gap-3">
+                            <DeleteOrder orderId={order.id} />
+
+                            {order.status ? <></> : <EditOrder order={order} />}
+                          </div>
+
+                          {/* <TableButtonComponent.Button
+                            className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
+                            icon={
+                              <Download
+                                className="flex h-full cursor-pointer self-center"
+                                size={20}
+                                strokeWidth={2.2}
+                                color="white"
+                              />
+                            }
+                            handlePress={() => exportData(order)}
+                          >
+                            Baixar Relatório
+                          </TableButtonComponent.Button> */}
+
+                          <PDFDownloadLink
+                            document={
+                              <CustomReportPDF
+                                purchaseData={orderData(order)}
+                              />
+                            }
+                            fileName={`Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.pdf`}
+                          >
+                            <TableButtonComponent.Button
+                              className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
+                              icon={
+                                <Download
+                                  className="flex h-full cursor-pointer self-center"
+                                  size={20}
+                                  strokeWidth={2.2}
+                                  color="white"
+                                />
+                              }
+                            >
+                              Exportar Dados em PDF
+                            </TableButtonComponent.Button>
+                          </PDFDownloadLink>
+                        </TableButtonComponent>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum pedido de compra encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum pedido de compra encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
+      </TableComponent.Table>
+
+      {/* TELAS PEQUENAS */}
+      <TableComponent.Table className="block sm:hidden">
+        <TableComponent.LineTitle className="min-w-[0px] grid-cols-[80px_1fr_90px] gap-4 px-[10px]">
+          <TableComponent.ValueTitle className="text-sm sm:text-base">
+            Data
+          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="text-center text-sm sm:text-base">
+            Produtos
+          </TableComponent.ValueTitle>
+          <TableComponent.ButtonSpace className="w-[90px]"></TableComponent.ButtonSpace>
+        </TableComponent.LineTitle>
+
+        {error && (
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Erro ao mostrar pedidos de compra: {error.message}
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {isLoading && (
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>
+              Carregando pedidos de compra...
+            </TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {orders.length > 0 && !isLoading && !error ? (
+          filteredOrders.length > 0 ? (
+            filteredOrders
+              .sort((a, b) => b.date.getTime() - a.date.getTime())
+              .map((order, index) => (
+                <TableComponent.Line
+                  className={`min-w-[0px] grid-cols-[80px_1fr_90px] gap-4 px-[10px] ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value className="text-[13px] sm:text-[16px]">
+                    {`${String(order.date.getDate()).padStart(2, "0")}/${String(order.date.getMonth()).padStart(2, "0")}/${String(order.date.getFullYear()).padStart(2, "0")}`}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="text-center text-[13px] sm:text-[16px]">
+                    {order.orderProducts.length}
+                  </TableComponent.Value>
+
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="max-h-[90vh] max-w-[320px] overflow-y-auto overflow-x-hidden p-3 pb-5 pt-10 sm:max-w-7xl sm:p-6"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="w-fit pb-1 text-base sm:text-lg">
+                          Informações do Pedido de Compra
+                        </DialogTitle>
+                        <DialogDescription className="w-fit text-base text-black">
+                          <p className="w-fit text-sm sm:text-base">
+                            <span className="font-semibold">
+                              Data do Pedido:
+                            </span>{" "}
+                            {`${String(order.date.getDate()).padStart(2, "0")}/${String(order.date.getMonth()).padStart(2, "0")}/${String(order.date.getFullYear()).padStart(2, "0")}`}
+                          </p>
+                          <p className="w-fit text-sm sm:text-base">
+                            <span className="font-semibold">
+                              Responsável pelo Pedido:
+                            </span>{" "}
+                            {order.responsible.name}
+                          </p>
+                          <p className="w-fit text-sm sm:text-base">
+                            <span className="font-semibold">Status:</span>{" "}
+                            {order.status ? (
+                              <span className="font-normal text-verde_botao">
+                                Confirmado
+                              </span>
+                            ) : (
+                              <span className="font-normal text-amarelo_botao">
+                                Pendente
+                              </span>
+                            )}
+                          </p>
+                          <p className="w-fit text-sm font-semibold sm:text-base">
+                            Produtos:
+                          </p>
+                        </DialogDescription>
+
+                        <PurchaseDetails order={order} />
+
+                        <TableButtonComponent className="flex w-fit flex-col justify-between pt-2 sm:flex-row sm:pt-4 lg:w-full">
+                          <div className="flex gap-3">
+                            <DeleteOrder orderId={order.id} />
+
+                            {order.status ? <></> : <EditOrder order={order} />}
+                          </div>
+
+                          <PDFDownloadLink
+                            document={
+                              <CustomReportPDF
+                                purchaseData={orderData(order)}
+                              />
+                            }
+                            fileName={`Relatorio_Personalizado_${new Date().toISOString().slice(0, 10)}.pdf`}
+                          >
+                            <TableButtonComponent.Button
+                              className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1 max-[425px]:w-full"
+                              icon={
+                                <Download
+                                  className="flex h-full cursor-pointer self-center"
+                                  size={20}
+                                  strokeWidth={2.2}
+                                  color="white"
+                                />
+                              }
+                            >
+                              Exportar Dados em PDF
+                            </TableButtonComponent.Button>
+                          </PDFDownloadLink>
+                        </TableButtonComponent>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum pedido de compra encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum pedido de compra encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
     </TableComponent>
   );

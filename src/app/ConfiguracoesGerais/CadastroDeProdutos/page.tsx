@@ -1,14 +1,28 @@
 "use client";
+import { useSession } from "next-auth/react";
+import { redirect, usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { ProductRegister } from "./_components/createProducts/productRegister";
-import { useProductForm } from "./_components/createProducts/useProductForm";
 import ManageProductsTable from "./_components/manageProducts/manageProducts";
 
 export default function ProductsRegister() {
-  const { form, onSubmit } = useProductForm();
+  const { data: session, status } = useSession();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (
+      status === "authenticated" &&
+      !session?.user.allowedPagesPath.includes(pathname)
+    ) {
+      redirect("/");
+    }
+  }, [session, status, pathname]);
+
+  if (status === "loading") return null;
 
   return (
     <div className="flex w-full flex-col gap-4 bg-fundo_branco">
-      <ProductRegister form={form} onSubmit={onSubmit} />
+      <ProductRegister />
       <ManageProductsTable />
     </div>
   );

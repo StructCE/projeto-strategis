@@ -25,7 +25,7 @@ export default function StorageRegister(props: StorageRegisterProps) {
               <FormComponent.Label>Armário/Zona</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>

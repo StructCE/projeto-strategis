@@ -1,28 +1,96 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { type AdjustmentReason } from "../../../../../GeneralParametersData";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { type AdjustReason } from "~/server/interfaces/adjustReason/adjustReason.route.interfaces";
+import { api } from "~/trpc/react";
 import {
   editReasonFormSchema,
   type EditReasonFormValues,
 } from "./reasonEditFormSchema";
 
-export const useReasonForm = (reason: AdjustmentReason) => {
+export const useReasonForm = (reason: AdjustReason) => {
+  const router = useRouter();
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  const reasonMutation =
+    api.generalParameters.adjustReason.editAdjustReason.useMutation({
+      onSuccess: (updatedReason) => {
+        // console.log("Reason updated successfully:", updatedReason);
+        if (isDeleted === false) {
+          toast.success(
+            "Motivo atualizado com sucesso. Atualizando a página...",
+            {
+              position: "bottom-right",
+            },
+          );
+        }
+        setTimeout(() => {
+          router.refresh();
+        }, 2000);
+      },
+      onError: (error) => {
+        console.error("Error updating reason:", error);
+        toast.error("Erro ao atualizar motivo.", {
+          position: "bottom-right",
+        });
+      },
+    });
+
+  const deleteReasonMutation =
+    api.generalParameters.adjustReason.removeAdjustReason.useMutation({
+      onSuccess: (deletedReason) => {
+        // console.log("Reason removed successfully:", deletedReason);
+        toast.success("Motivo removido com sucesso. Atualizando a página...", {
+          position: "bottom-right",
+        });
+        setTimeout(() => {
+          router.refresh();
+        }, 2000);
+      },
+      onError: (error) => {
+        console.error("Error removing reason:", error);
+        toast.error("Erro ao remover motivo.", {
+          position: "bottom-right",
+        });
+      },
+    });
+
   const form = useForm<EditReasonFormValues>({
     resolver: zodResolver(editReasonFormSchema),
     mode: "onChange",
     defaultValues: {
-      description: reason.description,
+      name: reason.name,
     },
   });
 
   function onSubmitEdit(data: EditReasonFormValues) {
-    console.log("Editando motivo:");
-    console.log(JSON.stringify(data, null, 2)); // Editar motivo
+    if (isDeleted) return;
+    // console.log(JSON.stringify(data, null, 2));
+
+    try {
+      reasonMutation.mutate({
+        id: reason.id,
+        data: {
+          name: data.name,
+        },
+      });
+    } catch (error) {
+      console.error("Error submitting update form:", error);
+    }
   }
 
-  function onSubmitRemove(data: EditReasonFormValues) {
-    console.log("Removendo motivo:");
-    console.log(JSON.stringify(data, null, 2)); // Remover motivo
+  function onSubmitRemove() {
+    setIsDeleted(true);
+    try {
+      deleteReasonMutation.mutate({
+        id: reason.id,
+      });
+    } catch (error) {
+      console.error("Error submitting delete form:", error);
+    }
   }
 
   return { form, onSubmitEdit, onSubmitRemove };

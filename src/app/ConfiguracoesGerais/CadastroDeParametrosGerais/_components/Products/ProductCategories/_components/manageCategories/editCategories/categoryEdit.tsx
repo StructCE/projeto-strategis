@@ -1,4 +1,3 @@
-import { type ProductCategory } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -8,6 +7,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
+import { type ProductCategory } from "~/server/interfaces/productCategory/productCategory.route.interfaces";
 import { useCategoryForm } from "./useCategoryForm";
 
 type CategoryEditForm = {
@@ -30,7 +30,7 @@ export const CategoryEdit = (props: CategoryEditForm) => {
               <FormComponent.Label>Categoria do Produto</FormComponent.Label>
               <FormField
                 control={categoryEditForm.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -48,17 +48,29 @@ export const CategoryEdit = (props: CategoryEditForm) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Categoria
-            </FormComponent.Button>
-            <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
-              handlePress={categoryEditForm.form.handleSubmit(
-                categoryEditForm.onSubmitRemove,
-              )}
-            >
-              Remover Categoria
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir esta categoria? Esta ação não pode ser desfeita!",
+                  );
+                  if (confirmed) {
+                    categoryEditForm.onSubmitRemove();
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={categoryEditForm.form.handleSubmit(
+                  categoryEditForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

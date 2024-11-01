@@ -1,4 +1,5 @@
 "use client";
+import { states } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/states";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -15,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { roles, states, type Supplier } from "../../supplierData";
+import type { Supplier } from "~/server/interfaces/supplier/supplier.route.interfaces";
 import { useSupplierForm } from "./useSupplierForm";
 
 type SupplierEditProps = {
@@ -25,12 +26,12 @@ type SupplierEditProps = {
 export const SupplierEdit = (props: SupplierEditProps) => {
   const form = useSupplierForm(props.supplier);
 
+  console.log(props.supplier);
+
   return (
     <Form {...form.form}>
       <form onSubmit={form.form.handleSubmit(form.onSubmitEdit)}>
         <FormComponent>
-          <FormComponent.Title>Cadastro de Fornecedor</FormComponent.Title>
-
           <FormComponent.Line>
             <FormComponent.Frame>
               <FormComponent.Label>Nome</FormComponent.Label>
@@ -115,7 +116,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="state_registration"
+                name="stateRegistration"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -197,7 +198,7 @@ export const SupplierEdit = (props: SupplierEditProps) => {
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="state"
+                name="federativeUnit"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -268,36 +269,6 @@ export const SupplierEdit = (props: SupplierEditProps) => {
                 </FormComponent.Frame>
 
                 <FormComponent.Frame>
-                  <FormComponent.Label>Cargo</FormComponent.Label>
-                  <FormField
-                    control={form.form.control}
-                    name={`contacts.${index}.role`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                              <SelectValue placeholder="Selecione um cargo" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {roles.map((role, i) => (
-                              <SelectItem value={role.value} key={i}>
-                                {role.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
-
-                <FormComponent.Frame>
                   <FormComponent.Label>Email</FormComponent.Label>
                   <FormField
                     control={form.form.control}
@@ -344,10 +315,10 @@ export const SupplierEdit = (props: SupplierEditProps) => {
             ))}
           </FormComponent.BoxSpecify>
 
-          <FormComponent.ButtonLayout>
+          <FormComponent.ButtonLayout className="flex justify-end">
             <button
               onClick={() =>
-                form.fieldAppend({ name: "", email: "", phone: "", role: "" })
+                form.fieldAppend({ name: "", email: "", phone: "" })
               }
               className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"
               type="button"
@@ -359,14 +330,24 @@ export const SupplierEdit = (props: SupplierEditProps) => {
           </FormComponent.ButtonLayout>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Fornecedor
+            <FormComponent.Button
+              className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+              handlePress={() => {
+                const confirmed = window.confirm(
+                  "Tem certeza que deseja excluir este fornecedor? Esta ação não pode ser desfeita!",
+                );
+                if (confirmed) {
+                  form.onSubmitRemove();
+                }
+              }}
+            >
+              Excluir
             </FormComponent.Button>
             <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
-              handlePress={form.form.handleSubmit(form.onSubmitRemove)}
+              className="bg-verde_botao hover:bg-hover_verde_botao"
+              handlePress={form.form.handleSubmit(form.onSubmitEdit)}
             >
-              Remover Fornecedor
+              Salvar
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

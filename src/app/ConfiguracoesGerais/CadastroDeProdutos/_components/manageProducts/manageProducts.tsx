@@ -1,12 +1,8 @@
 import { Eraser, Search } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
-import {
-  ProductCategories,
-  SectorsOfUse,
-  TypesOfControl,
-} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
 import { TableButtonComponent } from "~/components/tableButton";
@@ -20,27 +16,21 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
-import { MultiSelect } from "~/components/ui/multi-select";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { products, units } from "../productsData";
+import { useCompany } from "~/lib/companyProvider";
+import { type ProductWithFeatures } from "~/server/interfaces/product/product.route.interfaces";
+import { api } from "~/trpc/react";
 import { ProductEdit } from "./editProducts/productEdit";
 
 export default function ManageProductsTable() {
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
-  const [selectSuppliers, setSelectSuppliers] = useState<string[]>([]);
+  const [selectSupplier, setSelectSupplier] = useState("");
   const [selectStock, setSelectStock] = useState("");
   const [selectAddress, setSelectAddress] = useState("");
   const [selectControlType, setSelectControlType] = useState("");
@@ -49,53 +39,187 @@ export default function ManageProductsTable() {
   const [selectStatus, setSelectStatus] = useState("");
   const [selectBuyDay, setSelectBuyDay] = useState("");
 
-  const filteredProducts = products.filter((product) => {
-    const matchesCode = inputCode === "" || product.code.includes(inputCode);
-    const matchesProduct =
-      inputProduct === "" ||
-      product.name.toLowerCase().includes(inputProduct.toLowerCase());
-    const matchesSupplier =
-      selectSuppliers.length === 0 ||
-      product.suppliers.some((supplier) =>
-        selectSuppliers.includes(supplier.name),
-      );
-    const matchesStock =
-      selectStock === "" ||
-      `${product.address.stock}`
-        .toLowerCase()
-        .includes(selectStock.toLowerCase());
-    const matchesAddress =
-      selectAddress === "" ||
-      `${product.address.storage}, ${product.address.shelf}`
-        .toLowerCase()
-        .includes(selectAddress.toLowerCase());
-    const matchesControlType =
-      selectControlType === "" ||
-      product.type_of_control?.description === selectControlType;
-    const matchesCategory =
-      selectCategory === "" ||
-      product.product_category?.description === selectCategory;
-    const matchesSector =
-      selectSector === "" ||
-      product.sector_of_use?.description === selectSector;
-    const matchesStatus =
-      selectStatus === "" || product.status === selectStatus;
-    const matchesBuyDay =
-      selectBuyDay === "" || product.buy_day === selectBuyDay;
+  const session = useSession();
 
-    return (
-      matchesCode &&
-      matchesProduct &&
-      matchesSupplier &&
-      matchesStock &&
-      matchesAddress &&
-      matchesControlType &&
-      matchesCategory &&
-      matchesSector &&
-      matchesStatus &&
-      matchesBuyDay
-    );
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
   });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
+  const {
+    data: products = [],
+    error,
+    isLoading,
+  } = api.product.getAllWhere.useQuery(
+    {
+      filters: {
+        company: companyFilter,
+        buyDay: selectBuyDay,
+        code: inputCode,
+        controlType: selectControlType,
+        name: inputProduct,
+        productCategory: selectCategory,
+        sectorOfUse: selectSector,
+        status: selectStatus,
+        stock: selectStock,
+        supplier: selectSupplier,
+      },
+    },
+    { refetchInterval: 10000 },
+  );
+  // console.log(products);
+
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery();
+  const { data: productCategories = [] } =
+    api.generalParameters.productCategory.getAll.useQuery();
+  const { data: useSectors = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: controlTypes = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
+
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getCabinetFromStock.useQuery({
+      stockName: selectStock ? selectStock : "",
+    });
+
+  function alphanumericSort(a: string, b: string) {
+    const regex = /(\d+)|(\D+)/g;
+    const aParts = a.match(regex) ?? [];
+    const bParts = b.match(regex) ?? [];
+
+    for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+      const aPart = aParts[i] ?? "";
+      const bPart = bParts[i] ?? "";
+
+      // Se a parte for um número, faça comparação numérica
+      if (/\d/.test(aPart) && /\d/.test(bPart)) {
+        const diff = parseInt(aPart, 10) - parseInt(bPart, 10);
+        if (diff !== 0) return diff;
+      }
+
+      // Se não for número, faça comparação lexicográfica
+      if (aPart !== bPart) {
+        return aPart.localeCompare(bPart);
+      }
+    }
+
+    return 0;
+  }
+
+  const [editedProducts, setEditedProducts] = useState<ProductWithFeatures[]>(
+    [],
+  );
+  const [updatedName, setUpdatedName] = useState<Record<string, string>>({});
+  const [updatedCurrentStock, setUpdatedCurrentStock] = useState<
+    Record<string, number>
+  >({});
+  const [updatedMinimumStock, setUpdatedMinimumStock] = useState<
+    Record<string, number>
+  >({});
+  const [updatedMaximumStock, setUpdatedMaximumStock] = useState<
+    Record<string, number>
+  >({});
+
+  const addEditedProduct = (product: ProductWithFeatures) => {
+    setEditedProducts((prev) => {
+      // Verifica se o produto já está na lista para evitar duplicatas
+      const isAlreadyEdited = prev.some((p) => p.id === product.id);
+      return isAlreadyEdited ? prev : [...prev, product];
+    });
+  };
+
+  const handleProductNameChange = (
+    product: ProductWithFeatures,
+    value: string,
+  ) => {
+    setUpdatedName((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const handleProductCurrentStockChange = (
+    product: ProductWithFeatures,
+    value: number,
+  ) => {
+    setUpdatedCurrentStock((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const handleProductMinimumStockChange = (
+    product: ProductWithFeatures,
+    value: number,
+  ) => {
+    setUpdatedMinimumStock((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const handleProductMaximumStockChange = (
+    product: ProductWithFeatures,
+    value: number,
+  ) => {
+    setUpdatedMaximumStock((prev) => ({
+      ...prev,
+      [product.id]: value,
+    }));
+    addEditedProduct(product);
+  };
+
+  const productMutation = api.product.editProduct.useMutation({
+    onSuccess: (updatedProduct) => {
+      // console.log("Product updated successfully:", updatedProduct);
+      toast.success(
+        "Produto atualizado com sucesso. Atualize a página para ver as alterações...",
+        {
+          position: "bottom-right",
+        },
+      );
+      // setTimeout(function () {
+      //   location.reload();
+      // }, 2000);
+    },
+    onError: (error) => {
+      console.error("Error updating product:", error);
+      toast.error("Erro ao atualizar produto.", {
+        position: "bottom-right",
+      });
+    },
+  });
+
+  function onSubmitEdit() {
+    for (const product of editedProducts) {
+      try {
+        productMutation.mutate({
+          id: product.id,
+          data: {
+            name: updatedName[product.id],
+            currentStock: updatedCurrentStock[product.id],
+            minimunStock: updatedMinimumStock[product.id],
+            maximumStock: updatedMaximumStock[product.id],
+          },
+        });
+      } catch (error) {
+        console.error("Error submitting update form:", error);
+      }
+    }
+  }
 
   return (
     <TableComponent>
@@ -133,21 +257,25 @@ export default function ManageProductsTable() {
           />
         </Filter>
 
-        <div className="font-inter m-0 flex h-auto w-full gap-[14px] border-0 border-none bg-transparent p-0 text-[16px] font-normal text-black opacity-100 ring-0 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[placeholder]:opacity-50 lg:w-auto">
-          <MultiSelect
-            FilterIcon={Search}
-            options={suppliers.flatMap((supplier) => ({
-              label: supplier.name,
-              value: supplier.name,
-            }))}
-            onValueChange={setSelectSuppliers}
-            defaultValue={selectSuppliers}
-            placeholder="Fornecedores"
-            variant="inverted"
-            maxCount={2}
-            className="font-inter min-h-9 rounded-[12px] border-0 border-none bg-filtro bg-opacity-50 p-0 px-1 text-left text-[16px] font-normal text-black ring-0 hover:bg-filtro hover:bg-opacity-50 focus:border-transparent focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 lg:text-center"
+        <Filter>
+          <Filter.Icon
+            icon={({ className }: { className: string }) => (
+              <Search className={className} />
+            )}
           />
-        </div>
+          <Filter.Select
+            placeholder="Fornecedor"
+            state={selectSupplier}
+            setState={setSelectSupplier}
+          >
+            {suppliers.map((supplier, index) => (
+              <Filter.SelectItems
+                key={index}
+                value={supplier.name}
+              ></Filter.SelectItems>
+            ))}
+          </Filter.Select>
+        </Filter>
 
         <Filter>
           <Filter.Icon
@@ -169,7 +297,7 @@ export default function ManageProductsTable() {
           </Filter.Select>
         </Filter>
 
-        <Filter>
+        <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
           <Filter.Icon
             icon={({ className }: { className: string }) => (
               <Search className={className} />
@@ -183,25 +311,21 @@ export default function ManageProductsTable() {
               selectStock === "" ? "cursor-not-allowed opacity-50" : ""
             }
           >
-            {selectStock === ""
-              ? [
+            {selectStock === "" ? (
+              <Filter.SelectItems
+                key="0"
+                value="Selecione um estoque primeiro"
+              />
+            ) : (
+              cabinets.flatMap((cabinet) =>
+                cabinet.shelf.map((shelf) => (
                   <Filter.SelectItems
-                    key="0"
-                    value="Selecione um estoque primeiro"
-                  ></Filter.SelectItems>,
-                ]
-              : stocks
-                  .filter((stock) => stock.name === selectStock)
-                  .flatMap((stock) =>
-                    stock.address.flatMap((address) =>
-                      address.shelves.map((shelf, index) => (
-                        <Filter.SelectItems
-                          key={index}
-                          value={`${address.description}, ${shelf.description}`}
-                        ></Filter.SelectItems>
-                      )),
-                    ),
-                  )}
+                    key={shelf.id}
+                    value={`${cabinet.name} - ${shelf.name}`}
+                  />
+                )),
+              )
+            )}
           </Filter.Select>
         </Filter>
       </TableComponent.FiltersLine>
@@ -218,10 +342,10 @@ export default function ManageProductsTable() {
             state={selectControlType}
             setState={setSelectControlType}
           >
-            {TypesOfControl.map((type, index) => (
+            {controlTypes.map((type, index) => (
               <Filter.SelectItems
                 key={index}
-                value={type.description}
+                value={type.name}
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
@@ -238,10 +362,10 @@ export default function ManageProductsTable() {
             state={selectCategory}
             setState={setSelectCategory}
           >
-            {ProductCategories.map((category, index) => (
+            {productCategories.map((category, index) => (
               <Filter.SelectItems
                 key={index}
-                value={category.description}
+                value={category.name}
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
@@ -258,10 +382,10 @@ export default function ManageProductsTable() {
             state={selectSector}
             setState={setSelectSector}
           >
-            {SectorsOfUse.map((sector, index) => (
+            {useSectors.map((sector, index) => (
               <Filter.SelectItems
                 key={index}
-                value={sector.description}
+                value={sector.name}
               ></Filter.SelectItems>
             ))}
           </Filter.Select>
@@ -313,7 +437,7 @@ export default function ManageProductsTable() {
                 onClick={() => {
                   setInputCode("");
                   setInputProduct("");
-                  setSelectSuppliers([]);
+                  setSelectSupplier("");
                   setSelectStock("");
                   setSelectAddress("");
                   setSelectControlType("");
@@ -349,81 +473,144 @@ export default function ManageProductsTable() {
           </TableComponent.ValueTitle>
           <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
-        {filteredProducts.map((product, index) => (
-          <TableComponent.Line
-            className={`grid-cols-[70px_1fr_100px_100px_100px_100px_130px] gap-8 ${
-              index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-            }`}
-            key={index}
-          >
-            <TableComponent.Value className="items-center justify-center text-center">
-              {product.code}
-            </TableComponent.Value>
+
+        {error && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
-              <Input
-                defaultValue={product.name}
-                className="h-7 bg-cinza_destaque sm:h-8"
-              />
+              Erro ao mostrar produtos: {error.message}
             </TableComponent.Value>
-            <TableComponent.Value className="items-center justify-center text-center">
-              <Select defaultValue={product.buy_unit.description}>
-                <SelectTrigger className="h-7 bg-cinza_destaque text-center sm:h-8">
-                  <SelectValue placeholder="Selecione a unidade de compra" />
-                </SelectTrigger>
-                <SelectContent>
-                  {units.map((unit, index) => (
-                    <SelectItem value={unit.description} key={index}>
-                      {`${unit.description} (${unit.abbreviation})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </TableComponent.Value>
-            <TableComponent.Value className="items-center justify-center text-center">
-              <Input
-                defaultValue={product.stock_current}
-                className="h-7 bg-cinza_destaque text-center sm:h-8"
-              />
-            </TableComponent.Value>
-            <TableComponent.Value className="items-center justify-center text-center">
-              <Input
-                defaultValue={product.stock_min}
-                className="h-7 bg-cinza_destaque text-center sm:h-8"
-              />
-            </TableComponent.Value>
-            <TableComponent.Value className="items-center justify-center text-center">
-              <Input
-                defaultValue={product.stock_max}
-                className="h-7 bg-cinza_destaque text-center sm:h-8"
-              />
-            </TableComponent.Value>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
-                  Detalhes
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                aria-describedby={undefined}
-                className="sm:max-w-7xl"
-              >
-                <DialogHeader>
-                  <DialogTitle className="pb-1.5">
-                    Utilize os campos abaixo para editar os dados do produto ou
-                    o botão para remover
-                  </DialogTitle>
-                  <ProductEdit product={product} />
-                  <DialogDescription></DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
           </TableComponent.Line>
-        ))}
+        )}
+        {isLoading && (
+          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Value>Carregando produtos...</TableComponent.Value>
+          </TableComponent.Line>
+        )}
+        {products?.length > 0 && !isLoading && !error ? (
+          products?.length > 0 ? (
+            products
+              ?.sort((a, b) => alphanumericSort(a.code, b.code))
+              .map((product, index) => (
+                <TableComponent.Line
+                  className={`grid-cols-[70px_1fr_100px_100px_100px_100px_130px] gap-8 ${
+                    index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                  }`}
+                  key={index}
+                >
+                  <TableComponent.Value className="items-center justify-center text-center">
+                    {product.code}
+                  </TableComponent.Value>
+                  <TableComponent.Value>
+                    <Input
+                      value={updatedName[product.id] ?? product.name}
+                      onChange={(e) =>
+                        handleProductNameChange(product, e.target.value)
+                      }
+                      className="h-7 bg-cinza_destaque sm:h-8"
+                    />
+                  </TableComponent.Value>
+                  <TableComponent.Value className="items-center justify-center text-center">
+                    {product.unit.abbreviation}
+                  </TableComponent.Value>
+                  <TableComponent.Value className="items-center justify-center text-center">
+                    <Input
+                      type="number"
+                      value={
+                        updatedCurrentStock[product.id] ??
+                        product.currentStock ??
+                        undefined
+                      }
+                      onChange={(e) =>
+                        handleProductCurrentStockChange(
+                          product,
+                          Number(e.target.value),
+                        )
+                      }
+                      className="h-7 bg-cinza_destaque text-center sm:h-8"
+                    />
+                  </TableComponent.Value>
+                  <TableComponent.Value className="items-center justify-center text-center">
+                    <Input
+                      type="number"
+                      value={
+                        updatedMinimumStock[product.id] ??
+                        product.minimunStock ??
+                        undefined
+                      }
+                      onChange={(e) =>
+                        handleProductMinimumStockChange(
+                          product,
+                          Number(e.target.value),
+                        )
+                      }
+                      className="h-7 bg-cinza_destaque text-center sm:h-8"
+                    />
+                  </TableComponent.Value>
+                  <TableComponent.Value className="items-center justify-center text-center">
+                    <Input
+                      type="number"
+                      value={
+                        updatedMaximumStock[product.id] ??
+                        product.maximumStock ??
+                        undefined
+                      }
+                      onChange={(e) =>
+                        handleProductMaximumStockChange(
+                          product,
+                          Number(e.target.value),
+                        )
+                      }
+                      className="h-7 bg-cinza_destaque text-center sm:h-8"
+                    />
+                  </TableComponent.Value>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button className="mb-0 h-8 bg-cinza_destaque text-[14px] font-medium text-black hover:bg-hover_cinza_destaque_escuro sm:text-[16px]">
+                        Detalhes
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent
+                      aria-describedby={undefined}
+                      className="max-h-[90vh] overflow-y-auto sm:max-w-7xl"
+                    >
+                      <DialogHeader>
+                        <DialogTitle className="pb-1.5">
+                          Utilize os campos abaixo para editar os dados do
+                          produto ou o botão para remover
+                        </DialogTitle>
+
+                        <DialogDescription className="text-black">
+                          <ProductEdit product={product} />
+                        </DialogDescription>
+                      </DialogHeader>
+                    </DialogContent>
+                  </Dialog>
+                </TableComponent.Line>
+              ))
+          ) : (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum produto encontrado com os filtros aplicados
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        ) : (
+          !isLoading &&
+          !error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Nenhum produto encontrado
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )
+        )}
       </TableComponent.Table>
 
-      {/* Ver, durante a integração, se é possível fazer essa atualizações na tabela mesmo */}
       <TableButtonComponent className="pt-0.5 sm:pt-1">
-        <TableButtonComponent.Button className="min-w-0 rounded-md bg-cinza_borda_acordeao px-5 py-1 hover:bg-[#606060]">
+        <TableButtonComponent.Button
+          className="min-w-0 rounded-md bg-cinza_borda_acordeao px-5 py-1 hover:bg-[#606060]"
+          handlePress={onSubmitEdit}
+        >
           Salvar Alterações
         </TableButtonComponent.Button>
       </TableButtonComponent>

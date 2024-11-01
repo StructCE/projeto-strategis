@@ -5,7 +5,14 @@ export const user = {
   company: "Empresa 1",
 };
 
-export type User = typeof user;
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  allowedPagesPath: string[];
+  allowedRouters: string[];
+};
 
 export const companies = [
   {

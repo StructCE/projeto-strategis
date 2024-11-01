@@ -25,7 +25,7 @@ export default function TypeRegister(props: TypeRegisterProps) {
               <FormComponent.Label>Tipo de Controle</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -44,7 +44,7 @@ export default function TypeRegister(props: TypeRegisterProps) {
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
-              Criar Tipo
+              Criar Tipo de Controle
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

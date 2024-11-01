@@ -7,11 +7,11 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import { type AdjustmentReason } from "../../../../../GeneralParametersData";
+import { type AdjustReason } from "~/server/interfaces/adjustReason/adjustReason.route.interfaces";
 import { useReasonForm } from "./useReasonForm";
 
 type ReasonEditForm = {
-  reason: AdjustmentReason;
+  reason: AdjustReason;
 };
 
 export const ReasonEdit = (props: ReasonEditForm) => {
@@ -28,7 +28,7 @@ export const ReasonEdit = (props: ReasonEditForm) => {
               <FormComponent.Label>Motivo</FormComponent.Label>
               <FormField
                 control={reasonEditForm.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -46,17 +46,29 @@ export const ReasonEdit = (props: ReasonEditForm) => {
           </FormComponent.Line>
 
           <FormComponent.ButtonLayout>
-            <FormComponent.Button className="bg-amarelo_botao hover:bg-hover_amarelo_botao">
-              Editar Motivo
-            </FormComponent.Button>
-            <FormComponent.Button
-              className="hover:bg-hover_vermelho_botao_2 bg-vermelho_botao_2"
-              handlePress={reasonEditForm.form.handleSubmit(
-                reasonEditForm.onSubmitRemove,
-              )}
-            >
-              Remover Motivo
-            </FormComponent.Button>
+            <FormComponent.ButtonLayout>
+              <FormComponent.Button
+                className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2"
+                handlePress={() => {
+                  const confirmed = window.confirm(
+                    "Tem certeza que deseja excluir esta categoria? Esta ação não pode ser desfeita!",
+                  );
+                  if (confirmed) {
+                    reasonEditForm.onSubmitRemove();
+                  }
+                }}
+              >
+                Excluir
+              </FormComponent.Button>
+              <FormComponent.Button
+                className="bg-verde_botao hover:bg-hover_verde_botao"
+                handlePress={reasonEditForm.form.handleSubmit(
+                  reasonEditForm.onSubmitEdit,
+                )}
+              >
+                Salvar
+              </FormComponent.Button>
+            </FormComponent.ButtonLayout>
           </FormComponent.ButtonLayout>
         </FormComponent>
       </form>

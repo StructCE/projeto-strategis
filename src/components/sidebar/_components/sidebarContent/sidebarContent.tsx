@@ -1,4 +1,5 @@
 "use client";
+import { useSession } from "next-auth/react";
 import {
   Accordion,
   AccordionContent,
@@ -12,6 +13,9 @@ import { useSidebarButtons } from "./button/useSidebarButtons";
 
 export function SidebarContent() {
   const buttons = useSidebarButtons();
+
+  const session = useSession();
+
   return (
     <ScrollArea className="w-fill h-[90%]">
       <Accordion type="multiple" className="mb-0 w-full">
@@ -21,20 +25,26 @@ export function SidebarContent() {
               {category}
             </AccordionTrigger>
 
-            {items.map((item, itemIndex) => (
-              <AccordionContent
-                className="flex-row p-[5px] pb-2 pt-[3px]"
-                key={itemIndex}
-              >
-                <SidebarButton
-                  {...buttons}
-                  icon={item.icon}
-                  refLink={item.refLink}
-                  name={item.name}
-                  disabled={false} //TODO: logica para habilitar o botão
-                />
-              </AccordionContent>
-            ))}
+            {items.map((item, itemIndex) => {
+              const isDisabled = !session.data?.user.allowedPagesPath.includes(
+                item.refLink,
+              );
+
+              return (
+                <AccordionContent
+                  className="flex-row p-[5px] pb-2 pt-[3px]"
+                  key={itemIndex}
+                >
+                  <SidebarButton
+                    {...buttons}
+                    icon={item.icon}
+                    refLink={item.refLink}
+                    name={item.name}
+                    disabled={isDisabled} // Desabilita o botão com base na permissão
+                  />
+                </AccordionContent>
+              );
+            })}
           </AccordionItem>
         ))}
       </Accordion>

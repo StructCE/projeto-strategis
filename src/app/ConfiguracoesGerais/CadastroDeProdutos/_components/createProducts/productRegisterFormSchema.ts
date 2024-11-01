@@ -1,25 +1,5 @@
 import { z } from "zod";
 
-export const addressSchema = z.object({
-  stock: z
-    .string({
-      required_error: "Selecione um local.",
-    })
-    .min(1, { message: "Selecione um local." }),
-
-  storage: z
-    .string({
-      required_error: "Selecione um armário/zona.",
-    })
-    .min(1, { message: "Selecione um armário/zona." }),
-
-  shelf: z
-    .string({
-      required_error: "Selecione uma prateleira.",
-    })
-    .min(1, { message: "Selecione uma prateleira." }),
-});
-
 export const createProductFormSchema = z.object({
   code: z.string({ required_error: "O código do produto é obrigatório." }),
 
@@ -29,9 +9,20 @@ export const createProductFormSchema = z.object({
     })
     .min(1, { message: "Digite o nome do produto." }),
 
-  suppliers: z
-    .array(z.string())
-    .min(1, { message: "Selecione um ou mais fornecedores." }),
+  ncm: z
+    .string({ required_error: "Digite o código NCM do produto" })
+    .length(8, {
+      message: "O código NCM deve ter oito digitos (XXXXXXXX)",
+    }),
+
+  cfop: z
+    .string({ required_error: "Digite o código CFOP do produto" })
+    .length(4, {
+      message: "O código CFOP deve ter quatro digitos (XXXX)",
+    }),
+
+  suppliersId: z.array(z.string()).optional(),
+  // .min(1, { message: "Selecione um ou mais fornecedores." }),
 
   status: z
     .string({
@@ -39,61 +30,65 @@ export const createProductFormSchema = z.object({
     })
     .min(1, { message: "Selecione o status do produto." }),
 
-  parent_product: z.string().optional(),
+  parentProductId: z.string().optional(),
 
-  users_with_permission: z.array(z.string()).optional(),
+  usersWithPermission: z.array(z.string()).optional(),
 
-  buy_unit: z
+  unitId: z
     .string({
       required_error: "Selecione a unidade de compra.",
     })
     .min(1, { message: "Selecione a unidade de compra." }),
 
-  buy_quantity: z
+  buyQuantity: z
     .string({
       required_error: "Digite a quantidade de compra.",
     })
     .min(1, { message: "Quantidade de compra deve ser maior que zero." }),
 
-  buy_day: z
+  buyDay: z
     .string({
       required_error: "Selecione o dia de compra.",
     })
     .min(1, { message: "Selecione o dia de compra." }),
 
-  stock_current: z
+  currentStock: z
     .string({
       required_error: "Digite o estoque atual.",
     })
     .min(1, { message: "Estoque atual deve ser maior que zero." }),
 
-  stock_min: z.string({
+  minimunStock: z.string({
     required_error: "Digite o estoque mínimo.",
   }),
 
-  stock_max: z.string({
+  maximumStock: z.string({
     required_error: "Digite o estoque máximo.",
   }),
 
-  type_of_control: z
+  controlTypeId: z
     .string({
       required_error: "Selecione o tipo de controle.",
     })
     .min(1, { message: "Selecione o tipo de controle." }),
 
-  product_category: z
+  categoryId: z
     .string({
       required_error: "Selecione a categoria do produto.",
     })
     .min(1, { message: "Selecione a categoria do produto." }),
 
-  sector_of_use: z
+  sectorOfUseId: z
     .string({
       required_error: "Selecione o setor de utilização do produto.",
     })
     .min(1, { message: "Selecione o setor de utilização do produto." }),
 
-  address: addressSchema,
+  stockId: z.string().optional(),
+
+  shelfId: z.string({
+    required_error: "Selecione o local de armazenamento do produto",
+  }),
 });
 
 export type CreateProductFormValues = z.infer<typeof createProductFormSchema>;

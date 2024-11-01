@@ -8,20 +8,10 @@ import {
   Trash2,
   UserCog2,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import {
-  ProductCategories,
-  SectorsOfUse,
-  TypesOfControl,
-} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
-import {
-  products,
-  type Product,
-} from "~/app/ConfiguracoesGerais/CadastroDeProdutos/_components/productsData";
 import { Filter } from "~/components/filter";
 import { TableComponent } from "~/components/table";
-import { TableButtonComponent } from "~/components/tableButton";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -45,22 +35,31 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { adjustment_reasons } from "../_components/adjustmentsData";
+import { useCompany } from "~/lib/companyProvider";
+import { type AdjustProduct } from "~/server/interfaces/adjust/adjust.route.interfaces";
+import { api } from "~/trpc/react";
+import FinalizeAdjust from "./useAdjust";
 
 export default function CreateAdjustment() {
+  const session = useSession();
+
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [open, setOpen] = useState(false);
-  const [inputResponsible, setInputResponsible] = useState("");
+
+  const userId = session.data?.user.id;
+  const [selectResponsible, setSelectResponsible] = useState<
+    string | undefined
+  >(userId);
 
   const [inputCode, setInputCode] = useState("");
   const [inputProduct, setInputProduct] = useState("");
-  const [selectStock, setSelectStock] = useState("");
+  const [selectStockId, setSelectStockId] = useState("");
   const [selectAddress, setSelectAddress] = useState("");
   const [selectControlType, setSelectControlType] = useState("");
   const [selectCategory, setSelectCategory] = useState("");
   const [selectSector, setSelectSector] = useState("");
 
-  const [addedProducts, setAddedProducts] = useState<Product[]>([]);
+  const [addedProducts, setAddedProducts] = useState<AdjustProduct[]>([]);
   const [adjustedStock, setAdjustedStock] = useState<Record<string, string>>(
     {},
   );
@@ -71,11 +70,49 @@ export default function CreateAdjustment() {
   const areAllFiltersEmpty =
     inputCode === "" &&
     inputProduct === "" &&
-    selectStock === "" &&
+    selectStockId === "" &&
     selectAddress === "" &&
     selectControlType === "" &&
     selectCategory === "" &&
     selectSector === "";
+
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
+  const {
+    data: products = [],
+    error,
+    isLoading,
+  } = api.product.getAllWhere.useQuery({ filters: { company: companyFilter } });
+  const { data: sectorsOfUse = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: typesOfControl = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
+  const { data: productCategories = [] } =
+    api.generalParameters.productCategory.getAll.useQuery();
+  const { data: adjustReasons = [] } =
+    api.generalParameters.adjustReason.getAll.useQuery();
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: { company: companyFilter },
+  });
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getCabinetFromStock.useQuery({
+      stockName: selectStockId ? selectStockId : "",
+    });
+  const { data: users = [] } = api.user.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
 
   // Função para filtrar produtos
   const filteredProducts = areAllFiltersEmpty
@@ -87,24 +124,24 @@ export default function CreateAdjustment() {
           inputProduct === "" ||
           product.name.toLowerCase().includes(inputProduct.toLowerCase());
         const matchesStock =
-          selectStock === "" ||
-          `${product.address.stock}`
-            .toLowerCase()
-            .includes(selectStock.toLowerCase());
+          selectStockId === "" ||
+          product.shelf?.cabinet.StockCabinet.some(
+            (stockCabinet) =>
+              stockCabinet.stock.id.toLowerCase() ===
+              selectStockId.toLowerCase(),
+          );
         const matchesAddress =
           selectAddress === "" ||
-          `${product.address.storage}, ${product.address.shelf}`
+          `${product.shelf?.cabinet.name} - ${product.shelf?.name}`
             .toLowerCase()
             .includes(selectAddress.toLowerCase());
         const matchesControlType =
           selectControlType === "" ||
-          product.type_of_control?.description === selectControlType;
+          product.controlType?.name === selectControlType;
         const matchesCategory =
-          selectCategory === "" ||
-          product.product_category?.description === selectCategory;
+          selectCategory === "" || product.category?.name === selectCategory;
         const matchesSector =
-          selectSector === "" ||
-          product.sector_of_use?.description === selectSector;
+          selectSector === "" || product.sectorOfUse?.name === selectSector;
 
         return (
           matchesCode &&
@@ -118,7 +155,7 @@ export default function CreateAdjustment() {
       });
 
   // Função para adicionar produtos ao ajuste
-  const handleAddProduct = (product: Product) => {
+  const handleAddProduct = (product: AdjustProduct) => {
     setAddedProducts((prev) => [...prev, product]);
   };
 
@@ -149,46 +186,38 @@ export default function CreateAdjustment() {
     }));
   };
 
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}.${month}.${day}`;
+  const handleStockChange = (stockId: string) => {
+    setSelectStockId(stockId);
+    setAddedProducts([]); // Limpar produtos ao mudar o estoque
+    setAdjustedStock({});
+    setAdjustmentReasons({});
   };
 
-  const formatResponsibleName = (name: string) => {
-    const withoutAccents = name
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
-    const formattedName = withoutAccents.replace(/\s+/g, "");
-    return formattedName;
-  };
+  function alphanumericSort(a: string, b: string) {
+    const regex = /(\d+)|(\D+)/g;
+    const aParts = a.match(regex) ?? [];
+    const bParts = b.match(regex) ?? [];
 
-  // Função para finalizar o ajuste
-  const handleFinalizeAdjustment = () => {
-    const adjustmentData = {
-      responsible: inputResponsible,
-      date: date?.toISOString(),
-      products: addedProducts.map((product) => ({
-        code: product.code,
-        name: product.name,
-        stock_current: product.stock_current,
-        stock_adjusted: adjustedStock[product.code] ?? 0,
-        adjustment_reason:
-          adjustmentReasons[product.code] ?? "Sem motivo informado",
-      })),
-    };
+    for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
+      const aPart = aParts[i] ?? "";
+      const bPart = bParts[i] ?? "";
 
-    console.log(JSON.stringify(adjustmentData, null, 2));
+      // Se a parte for um número, faça comparação numérica
+      if (/\d/.test(aPart) && /\d/.test(bPart)) {
+        const diff = parseInt(aPart, 10) - parseInt(bPart, 10);
+        if (diff !== 0) return diff;
+      }
 
-    // const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
-    //   JSON.stringify(adjustmentData),
-    // )}`;
-    // const link = document.createElement("a");
-    // link.href = jsonString;
-    // link.download = `Ajuste_${formatDate(date ?? new Date())}_${formatResponsibleName(inputResponsible)}`;
-    // link.click();
-  };
+      // Se não for número, faça comparação lexicográfica
+      if (aPart !== bPart) {
+        return aPart.localeCompare(bPart);
+      }
+    }
+
+    return 0;
+  }
+
+  const allowedRoles = ["operador", "administrador", "estoquista"];
 
   return (
     <div className="flex w-full flex-col bg-fundo_branco">
@@ -223,19 +252,103 @@ export default function CreateAdjustment() {
                 <UserCog2 className={className} />
               )}
             />
-            <Filter.Input
+            <Filter.Select
               className="text-sm sm:text-base"
               placeholder="Responsável"
-              state={inputResponsible}
-              setState={setInputResponsible}
-            />
+              state={selectResponsible}
+              setState={setSelectResponsible}
+            >
+              {users
+                .filter((user) =>
+                  user.UserRole.some((userRole) =>
+                    allowedRoles.includes(userRole.role.name.toLowerCase()),
+                  ),
+                )
+                .map((user, index) => (
+                  <Filter.SelectItems
+                    key={index}
+                    valueId={user.id}
+                    value={user.name}
+                  ></Filter.SelectItems>
+                ))}
+            </Filter.Select>
           </Filter>
+          {/* <div className="flex w-full items-center rounded-[12px] bg-filtro bg-opacity-50 lg:w-[225px]">
+            <Select
+              onValueChange={setSelectResponsible}
+              value={selectResponsible}
+              defaultValue={selectResponsible}
+            >
+              <SelectTrigger className="font-inter m-0 h-auto border-0 border-none bg-transparent px-2 py-1.5 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-[250px]">
+                <UserCog2
+                  className="size-[20px] stroke-[1.5px]"
+                  color="black"
+                />
+                <SelectValue placeholder="Responsável" />
+              </SelectTrigger>
+              <SelectContent>
+                {users.map((user, index) => (
+                  <SelectItem value={user.id} key={index}>
+                    {user.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div> */}
         </TableComponent.FiltersLine>
 
-        <TableComponent.Subtitle>
-          Selecione produtos do estoque para fazer ajuste de estoque.
-        </TableComponent.Subtitle>
+        {/* Select (Filtro) do Estoque */}
+        <div className="my-2 flex flex-col items-center gap-1 sm:flex-row sm:gap-3">
+          <div className="font-inter text-[13px] font-normal sm:text-[15px]">
+            Selecione um estoque e produtos dele para fazer um ajuste de estoque{" "}
+            <br />
+            (só é possível fazer ajustes em um estoque de cada vez):
+          </div>
 
+          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
+            <Filter.Icon
+              icon={({ className }: { className: string }) => (
+                <Search className={className} />
+              )}
+            />
+            <Filter.Select
+              className="text-sm sm:text-base"
+              placeholder="Estoque"
+              state={selectStockId}
+              setState={handleStockChange}
+            >
+              {stocks.map((stock, index) => (
+                <Filter.SelectItems
+                  key={index}
+                  valueId={stock.id}
+                  value={stock.name}
+                ></Filter.SelectItems>
+              ))}
+            </Filter.Select>
+          </Filter>
+
+          {/* <div className="flex w-full items-center rounded-[12px] bg-filtro bg-opacity-50 lg:w-fit">
+            <Select
+              onValueChange={handleStockChange}
+              value={selectStockId}
+              defaultValue={selectStockId}
+            >
+              <SelectTrigger className="font-inter m-0 h-auto gap-3 border-0 border-none bg-transparent px-2 py-1.5 text-[16px] text-sm font-normal text-black opacity-100 outline-none ring-0 ring-transparent focus:border-transparent focus:outline-none focus:ring-0 focus:ring-transparent focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 active:outline-none data-[placeholder]:opacity-50 sm:px-[16px] sm:text-base lg:w-fit">
+                <Search className="size-[16px] stroke-[1.5px]" color="black" />
+                <SelectValue placeholder="Estoque" />
+              </SelectTrigger>
+              <SelectContent>
+                {stocks.map((stock, index) => (
+                  <SelectItem key={index} value={stock.id}>
+                    {stock.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div> */}
+        </div>
+
+        {/* Filtros - linha 1 */}
         <TableComponent.FiltersLine>
           <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px] lg:w-[130px]">
             <Filter.Icon
@@ -272,59 +385,33 @@ export default function CreateAdjustment() {
               )}
             />
             <Filter.Select
-              className="text-sm sm:text-base"
-              placeholder="Estoque"
-              state={selectStock}
-              setState={setSelectStock}
-            >
-              {stocks.map((stock, index) => (
-                <Filter.SelectItems
-                  key={index}
-                  value={stock.name}
-                ></Filter.SelectItems>
-              ))}
-            </Filter.Select>
-          </Filter>
-
-          <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
-            <Filter.Icon
-              icon={({ className }: { className: string }) => (
-                <Search className={className} />
-              )}
-            />
-            <Filter.Select
               placeholder="Endereço"
               state={selectAddress}
               setState={setSelectAddress}
               className={
-                selectStock === ""
-                  ? "cursor-not-allowed text-sm opacity-50 sm:text-base"
-                  : "text-sm sm:text-base"
+                selectStockId === "" ? "cursor-not-allowed opacity-50" : ""
               }
             >
-              {selectStock === ""
-                ? [
+              {selectStockId === "" ? (
+                <Filter.SelectItems
+                  key="0"
+                  value="Selecione um estoque primeiro"
+                />
+              ) : (
+                cabinets.flatMap((cabinet) =>
+                  cabinet.shelf.map((shelf) => (
                     <Filter.SelectItems
-                      key="0"
-                      value="Selecione um estoque primeiro"
-                    ></Filter.SelectItems>,
-                  ]
-                : stocks
-                    .filter((stock) => stock.name === selectStock)
-                    .flatMap((stock) =>
-                      stock.address.flatMap((address) =>
-                        address.shelves.map((shelf, index) => (
-                          <Filter.SelectItems
-                            key={index}
-                            value={`${address.description}, ${shelf.description}`}
-                          ></Filter.SelectItems>
-                        )),
-                      ),
-                    )}
+                      key={shelf.id}
+                      value={`${cabinet.name} - ${shelf.name}`}
+                    />
+                  )),
+                )
+              )}
             </Filter.Select>
           </Filter>
         </TableComponent.FiltersLine>
 
+        {/* Filtros - linha 2 */}
         <TableComponent.FiltersLine>
           <Filter className="gap-2 px-2 sm:gap-3 sm:px-[16px]">
             <Filter.Icon
@@ -338,10 +425,10 @@ export default function CreateAdjustment() {
               state={selectControlType}
               setState={setSelectControlType}
             >
-              {TypesOfControl.map((type, index) => (
+              {typesOfControl.map((type, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={type.description}
+                  value={type.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -359,10 +446,10 @@ export default function CreateAdjustment() {
               state={selectCategory}
               setState={setSelectCategory}
             >
-              {ProductCategories.map((category, index) => (
+              {productCategories.map((category, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={category.description}
+                  value={category.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -380,10 +467,10 @@ export default function CreateAdjustment() {
               state={selectSector}
               setState={setSelectSector}
             >
-              {SectorsOfUse.map((sector, index) => (
+              {sectorsOfUse.map((sector, index) => (
                 <Filter.SelectItems
                   key={index}
-                  value={sector.description}
+                  value={sector.name}
                 ></Filter.SelectItems>
               ))}
             </Filter.Select>
@@ -397,7 +484,7 @@ export default function CreateAdjustment() {
                   onClick={() => {
                     setInputCode("");
                     setInputProduct("");
-                    setSelectStock("");
+                    setSelectStockId("");
                     setSelectAddress("");
                     setSelectControlType("");
                     setSelectCategory("");
@@ -410,7 +497,7 @@ export default function CreateAdjustment() {
           </TooltipProvider>
         </TableComponent.FiltersLine>
 
-        {/* TELAS GRANDES */}
+        {/* ESTOQUE - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16">
             <TableComponent.ValueTitle className="text-center">
@@ -426,7 +513,21 @@ export default function CreateAdjustment() {
             <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
 
-          {areAllFiltersEmpty && (
+          {error && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Erro ao mostrar produtos: {error.message}
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
+          {isLoading && (
+            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Value>
+                Carregando produtos...
+              </TableComponent.Value>
+            </TableComponent.Line>
+          )}
+          {areAllFiltersEmpty && !isLoading && !error && (
             <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Utilize os filtros acima para encontrar produtos cadastrados no
@@ -434,42 +535,82 @@ export default function CreateAdjustment() {
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
-              <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
-              </TableComponent.Value>
-            </TableComponent.Line>
-          )}
           {!areAllFiltersEmpty &&
-            filteredProducts.map((product, index) => (
-              <TableComponent.Line
-                className={`grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="text-center">
-                  {product.code}
-                </TableComponent.Value>
-                <TableComponent.Value>{product.name}</TableComponent.Value>
-                <TableComponent.Value className="text-center">
-                  {product.stock_current}
-                </TableComponent.Value>
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
-                  {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
-                <Button
-                  onClick={() => handleAddProduct(product)}
-                  className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
-                >
-                  Adicionar
-                </Button>
+              </TableComponent.Line>
+            )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => alphanumericSort(a.code, b.code))
+                .map((product, index) => (
+                  <TableComponent.Line
+                    className={`grid-cols-[70px_1.5fr_130px_1fr_130px] gap-16 ${
+                      index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                    }`}
+                    key={index}
+                  >
+                    <TableComponent.Value className="text-center">
+                      {product.code}
+                    </TableComponent.Value>
+                    <TableComponent.Value>{product.name}</TableComponent.Value>
+                    <TableComponent.Value className="text-center">
+                      {product.currentStock}
+                    </TableComponent.Value>
+                    <TableComponent.Value>
+                      {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
+                    </TableComponent.Value>
+                    <Button
+                      onClick={() =>
+                        handleAddProduct({
+                          id: product.id,
+                          code: product.code,
+                          name: product.name,
+                          ncm: product.ncm,
+                          cfop: product.cfop,
+                          currentStock: product.currentStock,
+                          oldStock: product.currentStock ?? 0,
+                          adjustedStock: 0,
+                          reason: { id: "", name: "" },
+                          unit: product.unit,
+                          shelf: product.shelf,
+                        })
+                      }
+                      className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                    >
+                      Adicionar
+                    </Button>
+                  </TableComponent.Line>
+                ))
+            ) : (
+              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
 
-        {/*  TELAS PEQUENAS */}
+        {/* ESTOQUE - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">
@@ -481,126 +622,186 @@ export default function CreateAdjustment() {
             <TableComponent.ButtonSpace className="w-[24px]"></TableComponent.ButtonSpace>
           </TableComponent.LineTitle>
 
-          {areAllFiltersEmpty && (
-            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          {error && (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Utilize os filtros acima para encontrar produtos cadastrados no
-                estoque
+                Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
-          {!areAllFiltersEmpty && filteredProducts.length === 0 && (
-            <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          {isLoading && (
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
-                Nenhum produto encontrado com os filtros aplicados
+                Carregando produtos...
               </TableComponent.Value>
             </TableComponent.Line>
           )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length > 0 && (
+              <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Utilize os filtros acima para encontrar produtos cadastrados
+                  no estoque
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
+          {areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            products?.length === 0 && (
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
+              </TableComponent.Line>
+            )}
           {!areAllFiltersEmpty &&
-            filteredProducts.map((product, index) => (
-              <TableComponent.Line
-                className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
-                  index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
-                }`}
-                key={index}
-              >
-                <TableComponent.Value className="text-center text-[14px]">
-                  {product.code}
+            !isLoading &&
+            !error &&
+            filteredProducts.length === 0 && (
+              <TableComponent.Line className="w-full min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
-                <TableComponent.Value className="text-[14px]">
-                  {product.name}
-                </TableComponent.Value>
-
-                <Dialog>
-                  <DialogTrigger asChild>
-                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
-              Detalhes
-            </Button> */}
-                    <Info size={24} />
-                  </DialogTrigger>
-                  <DialogContent
-                    aria-describedby={undefined}
-                    className="w-full gap-2 p-5"
+              </TableComponent.Line>
+            )}
+          {products?.length > 0 &&
+            !areAllFiltersEmpty &&
+            !isLoading &&
+            !error &&
+            (filteredProducts?.length > 0 ? (
+              filteredProducts
+                ?.sort((a, b) => alphanumericSort(a.code, b.code))
+                .map((product, index) => (
+                  <TableComponent.Line
+                    className={`w-full min-w-[0px] grid-cols-[40px_1fr_24px] gap-3 px-3 ${
+                      index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
+                    }`}
+                    key={index}
                   >
-                    <DialogHeader>
-                      <DialogTitle className="text-left text-xl">
-                        Ajuste do Produto
-                      </DialogTitle>
-                    </DialogHeader>
-                    <DialogDescription className="flex flex-col gap-1 text-left text-black">
-                      <p className="text-base">
-                        <span className="font-semibold">Código: </span>{" "}
-                        {product.code}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Produto: </span>{" "}
-                        {product.name}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">
-                          Endereço de Estoque:
-                        </span>{" "}
-                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
-                      </p>
-                      <p className="text-base">
-                        <span className="font-semibold">Estoque Atual: </span>
-                        {product.stock_current}
-                      </p>
-                      <div className="my-1 text-base">
-                        <span className="font-semibold">
-                          Estoque Ajustado:{" "}
-                        </span>
-                        <Input
-                          type="number"
-                          value={adjustedStock[product.code] ?? ""}
-                          onChange={(e) =>
-                            handleAdjustedStockChange(
-                              product.code,
-                              e.target.value,
-                            )
-                          }
-                          className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
-                        ></Input>
-                      </div>
-                      <p className="text-base">
-                        <span className="font-semibold">Diferença: </span>
-                        {Number(adjustedStock[product.code] ?? 0) -
-                          Number(product.stock_current)}
-                      </p>
-                      <div className="my-1 text-base">
-                        <span className="font-semibold">Descrição: </span>
-                        <Select
-                          onValueChange={(value) =>
-                            handleAdjustmentReasonChange(product.code, value)
-                          }
-                          defaultValue={adjustmentReasons[product.code] ?? ""}
-                        >
-                          <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
-                            <SelectValue placeholder="Motivo do ajuste" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {adjustment_reasons.map((reason, index) => (
-                              <SelectItem
-                                key={index}
-                                value={reason.description}
-                              >
-                                {reason.description}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="mt-3 flex w-full justify-end">
-                        <Button
-                          onClick={() => handleAddProduct(product)}
-                          className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
-                        >
-                          Adicionar
-                        </Button>
-                      </div>
-                    </DialogDescription>
-                  </DialogContent>
-                </Dialog>
+                    <TableComponent.Value className="text-center text-[14px]">
+                      {product.code}
+                    </TableComponent.Value>
+                    <TableComponent.Value className="text-[14px]">
+                      {product.name}
+                    </TableComponent.Value>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Info size={24} />
+                      </DialogTrigger>
+                      <DialogContent
+                        aria-describedby={undefined}
+                        className="max-h-[90vh] w-full gap-2 overflow-y-auto p-5"
+                      >
+                        <DialogHeader>
+                          <DialogTitle className="text-left text-xl">
+                            Ajuste do Produto
+                          </DialogTitle>
+                        </DialogHeader>
+                        <DialogDescription className="flex flex-col gap-1 text-left text-black">
+                          <p className="text-base">
+                            <span className="font-semibold">Código: </span>{" "}
+                            {product.code}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">Produto: </span>{" "}
+                            {product.name}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Endereço de Estoque:
+                            </span>{" "}
+                            {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
+                          </p>
+                          <p className="text-base">
+                            <span className="font-semibold">
+                              Estoque Atual:{" "}
+                            </span>
+                            {product.currentStock}
+                          </p>
+                          <div className="my-1 text-base">
+                            <span className="font-semibold">
+                              Estoque Ajustado:{" "}
+                            </span>
+                            <Input
+                              type="number"
+                              value={adjustedStock[product.code] ?? ""}
+                              onChange={(e) =>
+                                handleAdjustedStockChange(
+                                  product.code,
+                                  e.target.value,
+                                )
+                              }
+                              className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8"
+                            ></Input>
+                          </div>
+                          <p className="text-base">
+                            <span className="font-semibold">Diferença: </span>
+                            {(
+                              Number(adjustedStock[product.code] ?? 0) -
+                              Number(product.currentStock)
+                            ).toFixed(2)}
+                          </p>
+                          <div className="my-1 text-base">
+                            <span className="font-semibold">Descrição: </span>
+                            <Select
+                              onValueChange={(value) =>
+                                handleAdjustmentReasonChange(
+                                  product.code,
+                                  value,
+                                )
+                              }
+                              defaultValue={
+                                adjustmentReasons[product.code] ?? ""
+                              }
+                            >
+                              <SelectTrigger className="h-8 bg-cinza_destaque text-center focus-visible:bg-cinza_destaque sm:h-8">
+                                <SelectValue placeholder="Motivo do ajuste" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {adjustReasons.map((reason, index) => (
+                                  <SelectItem key={index} value={reason.id}>
+                                    {reason.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="mt-3 flex w-full justify-end">
+                            <Button
+                              onClick={() =>
+                                handleAddProduct({
+                                  id: product.id,
+                                  code: product.code,
+                                  name: product.name,
+                                  ncm: product.ncm,
+                                  cfop: product.cfop,
+                                  currentStock: product.currentStock ?? 0,
+                                  oldStock: product.currentStock ?? 0,
+                                  adjustedStock: 0,
+                                  reason: { id: "", name: "" },
+                                  unit: product.unit,
+                                  shelf: product.shelf,
+                                })
+                              }
+                              className="mb-0 h-8 bg-black text-[14px] font-medium text-white hover:bg-hover_preto sm:text-[16px]"
+                            >
+                              Adicionar
+                            </Button>
+                          </div>
+                        </DialogDescription>
+                      </DialogContent>
+                    </Dialog>
+                  </TableComponent.Line>
+                ))
+            ) : (
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+                <TableComponent.Value>
+                  Nenhum produto encontrado com os filtros aplicados
+                </TableComponent.Value>
               </TableComponent.Line>
             ))}
         </TableComponent.Table>
@@ -609,7 +810,7 @@ export default function CreateAdjustment() {
           Ajuste de Estoque
         </TableComponent.Title>
 
-        {/* TELAS GRANDES */}
+        {/* AJUSTE - TELAS GRANDES */}
         <TableComponent.Table className="hidden sm:block">
           <TableComponent.LineTitle className="grid-cols-[70px_1.5fr_100px_100px_92px_1fr_86px] gap-6 sm:px-[16px]">
             <TableComponent.ValueTitle className="text-center text-base sm:text-[18px]">
@@ -656,7 +857,7 @@ export default function CreateAdjustment() {
                   {product.name}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {product.stock_current}
+                  {product.oldStock}
                 </TableComponent.Value>
                 <TableComponent.Value className="px-2 text-center text-[13px] sm:text-[15px]">
                   <Input
@@ -669,8 +870,10 @@ export default function CreateAdjustment() {
                   ></Input>
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {Number(adjustedStock[product.code] ?? 0) -
-                    Number(product.stock_current)}
+                  {(
+                    Number(adjustedStock[product.code] ?? 0) -
+                    Number(product.oldStock)
+                  ).toFixed(2)}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-[13px] sm:text-[15px]">
                   <Select
@@ -682,9 +885,9 @@ export default function CreateAdjustment() {
                       <SelectValue placeholder="Motivo do ajuste" />
                     </SelectTrigger>
                     <SelectContent>
-                      {adjustment_reasons.map((reason, index) => (
-                        <SelectItem key={index} value={reason.description}>
-                          {reason.description}
+                      {adjustReasons.map((reason, index) => (
+                        <SelectItem key={index} value={reason.id}>
+                          {reason.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -701,7 +904,7 @@ export default function CreateAdjustment() {
           )}
         </TableComponent.Table>
 
-        {/* TELAS PEQUENAS */}
+        {/* AJUSTE - TELAS PEQUENAS */}
         <TableComponent.Table className="block sm:hidden">
           <TableComponent.LineTitle className="w-full min-w-[0px] grid-cols-[40px_1fr_24px_24px] gap-3 px-3">
             <TableComponent.ValueTitle className="text-center text-[15px]">
@@ -737,14 +940,11 @@ export default function CreateAdjustment() {
 
                 <Dialog>
                   <DialogTrigger asChild>
-                    {/* <Button className="mb-0 h-8 w-fit bg-cinza_destaque text-[13px] font-medium text-black hover:bg-hover_cinza_destaque_escuro">
-              Detalhes
-            </Button> */}
                     <FilePenLine size={24} />
                   </DialogTrigger>
                   <DialogContent
                     aria-describedby={undefined}
-                    className="w-full gap-2 p-5"
+                    className="max-h-[90vh] w-full gap-2 overflow-y-auto p-5"
                   >
                     <DialogHeader>
                       <DialogTitle className="text-left text-xl">
@@ -764,11 +964,11 @@ export default function CreateAdjustment() {
                         <span className="font-semibold">
                           Endereço de Estoque:
                         </span>{" "}
-                        {`${product.address.stock}, ${product.address.storage}, ${product.address.shelf}`}
+                        {`${product.shelf?.cabinet.StockCabinet.map((stockCabinet) => stockCabinet.stock.name).join()}, ${product.shelf?.cabinet.name}, ${product.shelf?.name}`}
                       </p>
                       <p className="text-base">
                         <span className="font-semibold">Estoque Atual: </span>
-                        {product.stock_current}
+                        {product.oldStock}
                       </p>
                       <div className="my-1 text-base">
                         <span className="font-semibold">
@@ -789,7 +989,7 @@ export default function CreateAdjustment() {
                       <p className="text-base">
                         <span className="font-semibold">Diferença: </span>
                         {Number(adjustedStock[product.code] ?? 0) -
-                          Number(product.stock_current)}
+                          Number(product.oldStock)}
                       </p>
                       <div className="my-1 text-base">
                         <span className="font-semibold">Descrição: </span>
@@ -803,12 +1003,9 @@ export default function CreateAdjustment() {
                             <SelectValue placeholder="Motivo do ajuste" />
                           </SelectTrigger>
                           <SelectContent>
-                            {adjustment_reasons.map((reason, index) => (
-                              <SelectItem
-                                key={index}
-                                value={reason.description}
-                              >
-                                {reason.description}
+                            {adjustReasons.map((reason, index) => (
+                              <SelectItem key={index} value={reason.id}>
+                                {reason.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -829,14 +1026,14 @@ export default function CreateAdjustment() {
           )}
         </TableComponent.Table>
 
-        <TableButtonComponent className="pt-2 sm:pt-4">
-          <TableButtonComponent.Button
-            className="bg-vermelho_botao_1 hover:bg-hover_vermelho_botao_1"
-            handlePress={handleFinalizeAdjustment}
-          >
-            Finalizar Ajuste de Estoque
-          </TableButtonComponent.Button>
-        </TableButtonComponent>
+        <FinalizeAdjust
+          date={date ?? new Date()}
+          selectResponsible={selectResponsible}
+          stockId={selectStockId}
+          addedProducts={addedProducts}
+          adjustedStock={adjustedStock}
+          adjustmentReasons={adjustmentReasons}
+        />
       </TableComponent>
     </div>
   );

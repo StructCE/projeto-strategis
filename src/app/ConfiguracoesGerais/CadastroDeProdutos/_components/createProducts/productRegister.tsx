@@ -1,7 +1,5 @@
+import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { type UseFormReturn } from "react-hook-form";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import { users } from "~/app/ControleDeAcesso/CadastroDeUsuarios/_components/usersData";
 import { FormComponent } from "~/components/forms";
 import {
   Form,
@@ -19,40 +17,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import {
-  ProductCategories,
-  products,
-  SectorsOfUse,
-  suppliers,
-  TypesOfControl,
-  units,
-} from "../productsData";
-import { type CreateProductFormValues } from "./productRegisterFormSchema";
+import { useCompany } from "~/lib/companyProvider";
+import { api } from "~/trpc/react";
+import { useProductForm } from "./useProductForm";
 
-type ProductRegisterProps = {
-  form: UseFormReturn<CreateProductFormValues>;
-  onSubmit: (data: CreateProductFormValues) => void;
-};
+export const ProductRegister = () => {
+  const productForm = useProductForm();
 
-export const ProductRegister = (props: ProductRegisterProps) => {
-  const [selectedStock, setSelectedStock] = useState("");
-  const [selectedStorage, setSelectedStorage] = useState("");
+  const [selectedStockId, setSelectedStockId] = useState<string>();
 
-  // Filtra os armários/zona com base no estoque selecionado
-  const filteredStorages = selectedStock
-    ? (stocks.find((stock) => stock.name === selectedStock)?.address ?? [])
-    : [];
+  const session = useSession();
 
-  // Filtra as prateleiras com base no armário/zona selecionado
-  const filteredShelves = selectedStorage
-    ? (filteredStorages.find(
-        (storage) => storage.description === selectedStorage,
-      )?.shelves ?? [])
-    : [];
+  const { data: user } = api.user.getUserById.useQuery({
+    id: session?.data?.user.id,
+  });
+
+  const { selectedCompany } = useCompany();
+
+  const companyFilter = user?.UserRole.some(
+    (userRole) => userRole.role.name === "Administrador",
+  )
+    ? selectedCompany === "all_companies" || !selectedCompany
+      ? undefined
+      : selectedCompany
+    : user?.UserRole[0]?.company.name;
+
+  const { data: users = [] } = api.user.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
+
+  const { data: products = [] } = api.product.getAllWhere.useQuery({
+    filters: { company: companyFilter },
+  });
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: { company: companyFilter },
+  });
+  const { data: productCategories = [] } =
+    api.generalParameters.productCategory.getAll.useQuery();
+  const { data: useSectors = [] } =
+    api.generalParameters.useSector.getAll.useQuery();
+  const { data: controlTypes = [] } =
+    api.generalParameters.controlType.getAll.useQuery();
+  const { data: units = [] } = api.generalParameters.unit.getAll.useQuery();
+
+  const { data: stocks = [] } = api.stock.getAllStocks.useQuery({
+    filters: { company: companyFilter },
+  });
+  const { data: cabinets = [] } =
+    api.generalParameters.cabinet.getCabinetFromStock.useQuery({
+      stockId: selectedStockId ? selectedStockId : "",
+    });
 
   return (
-    <Form {...props.form}>
-      <form onSubmit={props.form.handleSubmit(props.onSubmit)}>
+    <Form {...productForm.form}>
+      <form onSubmit={productForm.form.handleSubmit(productForm.onSubmit)}>
         <FormComponent>
           <FormComponent.Title>Cadastro de Produto</FormComponent.Title>
 
@@ -60,7 +78,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Código</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productForm.form.control}
                 name="code"
                 render={({ field }) => (
                   <FormItem>
@@ -78,9 +96,51 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
+              <FormComponent.Label>NCM</FormComponent.Label>
+              <FormField
+                control={productForm.form.control}
+                name="ncm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Código NCM do produto (XXXXXXXX)"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+
+            <FormComponent.Frame>
+              <FormComponent.Label>CFOP</FormComponent.Label>
+              <FormField
+                control={productForm.form.control}
+                name="cfop"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                        placeholder="Código CFOP do produto (XXXX)"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormComponent.Frame>
+          </FormComponent.Line>
+
+          <FormComponent.Line>
+            <FormComponent.Frame>
               <FormComponent.Label>Produto</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productForm.form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
@@ -100,14 +160,14 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Fornecedor(es)</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="suppliers"
+                control={productForm.form.control}
+                name="suppliersId"
                 render={({ field }) => (
                   <FormItem>
                     <MultiSelect
                       options={suppliers.map((supplier) => ({
                         label: supplier.name,
-                        value: supplier.name,
+                        value: supplier.id,
                       }))}
                       onValueChange={field.onChange}
                       defaultValue={field.value ?? []}
@@ -126,7 +186,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Status</FormComponent.Label>
               <FormField
-                control={props.form.control}
+                control={productForm.form.control}
                 name="status"
                 render={({ field }) => (
                   <FormItem>
@@ -153,8 +213,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Produto Pai</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="parent_product"
+                control={productForm.form.control}
+                name="parentProductId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -168,7 +228,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       </FormControl>
                       <SelectContent>
                         {products.map((product, index) => (
-                          <SelectItem value={product.name} key={index}>
+                          <SelectItem value={product.id} key={index}>
                             {product.name}
                           </SelectItem>
                         ))}
@@ -185,14 +245,14 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                 Requisitantes com permissão
               </FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="users_with_permission"
+                control={productForm.form.control}
+                name="usersWithPermission"
                 render={({ field }) => (
                   <FormItem>
                     <MultiSelect
                       options={users.map((user) => ({
                         label: user.name,
-                        value: user.name,
+                        value: user.id,
                       }))}
                       onValueChange={field.onChange}
                       defaultValue={field.value ?? []}
@@ -211,8 +271,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Unidade de Compra</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="buy_unit"
+                control={productForm.form.control}
+                name="unitId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -226,8 +286,9 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       </FormControl>
                       <SelectContent>
                         {units.map((unit, index) => (
-                          <SelectItem value={unit.description} key={index}>
-                            {unit.description} ({unit.abbreviation})
+                          <SelectItem value={unit.id} key={index}>
+                            {unit.name} ({unit.abbreviation}) -{" "}
+                            {unit.unitsPerPack}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -243,8 +304,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                 Quantidade de Compra (und)
               </FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="buy_quantity"
+                control={productForm.form.control}
+                name="buyQuantity"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -263,8 +324,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Dia de Compra</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="buy_day"
+                control={productForm.form.control}
+                name="buyDay"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -300,8 +361,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Estoque Atual (und)</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="stock_current"
+                control={productForm.form.control}
+                name="currentStock"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -320,8 +381,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Estoque Mínimo (und)</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="stock_min"
+                control={productForm.form.control}
+                name="minimunStock"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -340,8 +401,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Estoque Máximo (und)</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="stock_max"
+                control={productForm.form.control}
+                name="maximumStock"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -362,8 +423,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Tipo de Controle</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="type_of_control"
+                control={productForm.form.control}
+                name="controlTypeId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -376,9 +437,9 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {TypesOfControl.map((type, index) => (
-                          <SelectItem value={type.description} key={index}>
-                            {type.description}
+                        {controlTypes.map((type, index) => (
+                          <SelectItem value={type.id} key={index}>
+                            {type.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -392,8 +453,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Categoria do Produto</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="product_category"
+                control={productForm.form.control}
+                name="categoryId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -406,9 +467,9 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {ProductCategories.map((category, index) => (
-                          <SelectItem value={category.description} key={index}>
-                            {category.description}
+                        {productCategories.map((category, index) => (
+                          <SelectItem value={category.id} key={index}>
+                            {category.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -422,8 +483,8 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Setor de Utilização</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="sector_of_use"
+                control={productForm.form.control}
+                name="sectorOfUseId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -436,9 +497,9 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {SectorsOfUse.map((sector, index) => (
-                          <SelectItem value={sector.description} key={index}>
-                            {sector.description}
+                        {useSectors.map((sector, index) => (
+                          <SelectItem value={sector.id} key={index}>
+                            {sector.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -454,14 +515,13 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             <FormComponent.Frame>
               <FormComponent.Label>Estoque</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="address.stock"
+                control={productForm.form.control}
+                name="stockId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={(value) => {
-                        setSelectedStock(value);
-                        setSelectedStorage("");
+                        setSelectedStockId(value);
                         field.onChange(value);
                       }}
                       defaultValue={field.value}
@@ -473,7 +533,7 @@ export const ProductRegister = (props: ProductRegisterProps) => {
                       </FormControl>
                       <SelectContent>
                         {stocks.map((stock, index) => (
-                          <SelectItem value={stock.name} key={index}>
+                          <SelectItem value={stock.id} key={index}>
                             {stock.name}
                           </SelectItem>
                         ))}
@@ -486,62 +546,30 @@ export const ProductRegister = (props: ProductRegisterProps) => {
             </FormComponent.Frame>
 
             <FormComponent.Frame>
-              <FormComponent.Label>Armário/Zona</FormComponent.Label>
+              <FormComponent.Label>Endereço no Estoque</FormComponent.Label>
               <FormField
-                control={props.form.control}
-                name="address.storage"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select
-                      onValueChange={(value) => {
-                        setSelectedStorage(value);
-                        field.onChange(value);
-                      }}
-                      defaultValue={field.value}
-                      disabled={!selectedStock}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione um armário/zona associado ao local selecionado" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {filteredStorages.map((storage, index) => (
-                          <SelectItem value={storage.description} key={index}>
-                            {storage.description}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </FormComponent.Frame>
-
-            <FormComponent.Frame>
-              <FormComponent.Label>Prateleira</FormComponent.Label>
-              <FormField
-                control={props.form.control}
-                name="address.shelf"
+                control={productForm.form.control}
+                name="shelfId"
                 render={({ field }) => (
                   <FormItem>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      disabled={!selectedStorage}
+                      disabled={!selectedStockId}
                     >
                       <FormControl>
                         <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                          <SelectValue placeholder="Selecione uma prateleira associada ao armário/zona selecionado" />
+                          <SelectValue placeholder="Selecione um endereço do estoque selecionado" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {filteredShelves.map((shelf, index) => (
-                          <SelectItem value={shelf.description} key={index}>
-                            {shelf.description}
-                          </SelectItem>
-                        ))}
+                        {cabinets.map((cabinet) =>
+                          cabinet.shelf.map((shelf, index) => (
+                            <SelectItem value={shelf.id} key={index}>
+                              {cabinet.name} - {shelf.name}
+                            </SelectItem>
+                          )),
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />

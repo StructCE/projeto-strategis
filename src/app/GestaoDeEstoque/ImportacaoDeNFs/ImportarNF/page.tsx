@@ -1,16 +1,8 @@
 "use client";
 import { format } from "date-fns";
-import { CalendarIcon, Trash2 } from "lucide-react";
+import { CalendarIcon, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { companies } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/companiesData";
-import { stocks } from "~/app/ConfiguracoesGerais/CadastroDeEstoques/_components/stockData";
-import { suppliers } from "~/app/ConfiguracoesGerais/CadastroDeFornecedores/_components/supplierData";
-import {
-  ProductCategories,
-  SectorsOfUse,
-  TypesOfControl,
-  units,
-} from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
+import { Filter } from "~/components/filter";
 import { FormComponent } from "~/components/forms";
 import {
   Accordion,
@@ -46,23 +38,50 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import {
-  account_plans,
-  document_types,
-  groups,
-  projects,
-  type AccountPlan,
-} from "../_components/invoicesData";
-import { useCreateInvoiceForm } from "./useInvoiceForm";
-
-// TODO: useStates para armazenar info de cada product (e seus dados)
-// TODO: lógica botões de reporte e confirmação
-// TODO: lógica validação confirmação
+import { type AccountPlan } from "~/server/interfaces/accountPlan/accountPlan.route.interfaces";
+import { api } from "~/trpc/react";
+import { useManualCreateInvoiceForm } from "./useManualCreateInvoiceForm";
 
 export default function ManuallyImportInvoice() {
-  const invoiceCreateForm = useCreateInvoiceForm();
+  const invoiceCreateForm = useManualCreateInvoiceForm();
 
+  // const [selectedStockId, setSelectedStockId] = useState<string>();
   const [selectedAccountPlan, setSelectedAccountPlan] = useState<AccountPlan>();
+
+  const [inputCode, setInputCode] = useState("");
+  const [inputProduct, setInputProduct] = useState("");
+  const [selectSupplierId, setSelectSupplierId] = useState("");
+
+  const { data: suppliers = [] } = api.supplier.getAll.useQuery({
+    filters: {},
+  });
+  const { data: companies = [] } = api.company.getAllCompanies.useQuery({
+    filters: {},
+  });
+  const { data: documentTypes = [] } =
+    api.generalParameters.documentType.getAll.useQuery();
+  const { data: groups = [] } = api.generalParameters.group.getAll.useQuery();
+  const { data: projects = [] } =
+    api.generalParameters.project.getAll.useQuery();
+  const { data: accountPlans = [] } =
+    api.generalParameters.accountPlan.getAll.useQuery();
+  const { data: productSuppliers = [] } =
+    api.product.getAllProductSupplier.useQuery();
+
+  const filteredProducts = productSuppliers.filter((productSupplier) => {
+    const matchesSupplier =
+      selectSupplierId === "" ||
+      productSupplier.supplier.id === selectSupplierId;
+    const matchesCode =
+      inputCode === "" || productSupplier.product.code.includes(inputCode);
+    const matchesProduct =
+      inputProduct === "" ||
+      productSupplier.product.name
+        .toLowerCase()
+        .includes(inputProduct.toLowerCase());
+
+    return matchesSupplier && matchesCode && matchesProduct;
+  });
 
   return (
     <div>
@@ -79,10 +98,30 @@ export default function ManuallyImportInvoice() {
 
             <FormComponent.Line>
               <FormComponent.Frame>
+                <FormComponent.Label>Número da Nota Fiscal</FormComponent.Label>
+                <FormField
+                  control={invoiceCreateForm.form.control}
+                  name="documentNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                          placeholder="Número da nota fiscal"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+
+              <FormComponent.Frame>
                 <FormComponent.Label>Empresa</FormComponent.Label>
                 <FormField
                   control={invoiceCreateForm.form.control}
-                  name="company.name"
+                  name="companyId"
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -95,9 +134,9 @@ export default function ManuallyImportInvoice() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {companies.map((component, index) => (
-                            <SelectItem value={component.name} key={index}>
-                              {component.name}
+                          {companies.map((company, index) => (
+                            <SelectItem value={company.id} key={index}>
+                              {company.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -112,11 +151,14 @@ export default function ManuallyImportInvoice() {
                 <FormComponent.Label>Fornecedor</FormComponent.Label>
                 <FormField
                   control={invoiceCreateForm.form.control}
-                  name="supplier.name"
+                  name="supplierId"
                   render={({ field }) => (
                     <FormItem>
                       <Select
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setSelectSupplierId(value);
+                        }}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -126,7 +168,7 @@ export default function ManuallyImportInvoice() {
                         </FormControl>
                         <SelectContent>
                           {suppliers.map((supplier, index) => (
-                            <SelectItem value={supplier.name} key={index}>
+                            <SelectItem value={supplier.id} key={index}>
                               {supplier.name}
                             </SelectItem>
                           ))}
@@ -139,16 +181,16 @@ export default function ManuallyImportInvoice() {
               </FormComponent.Frame>
 
               <FormComponent.Frame>
-                <FormComponent.Label>Número da Nota Fiscal</FormComponent.Label>
+                <FormComponent.Label>Valor Total da Nota</FormComponent.Label>
                 <FormField
                   control={invoiceCreateForm.form.control}
-                  name="document_number"
+                  name={`invoiceValue`}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Input
-                          className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                          placeholder="Número da nota fiscal"
+                          className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                          placeholder="Valor total da nota fiscal"
                           {...field}
                         />
                       </FormControl>
@@ -164,7 +206,7 @@ export default function ManuallyImportInvoice() {
                 <FormComponent.Label>Data de Emissão</FormComponent.Label>
                 <FormField
                   control={invoiceCreateForm.form.control}
-                  name="date_document"
+                  name="documentDate"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -205,7 +247,7 @@ export default function ManuallyImportInvoice() {
                 <FormComponent.Label>Data de Vencimento</FormComponent.Label>
                 <FormField
                   control={invoiceCreateForm.form.control}
-                  name="date_deadline"
+                  name="deadlineDate"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -245,141 +287,10 @@ export default function ManuallyImportInvoice() {
 
             <FormComponent.Line>
               <FormComponent.Frame>
-                <FormComponent.Label>Tipo de Documento</FormComponent.Label>
-                <FormField
-                  control={invoiceCreateForm.form.control}
-                  name="document.name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                            <SelectValue placeholder="Selecione o tipo de documento" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {document_types.map((document, index) => (
-                            <SelectItem value={document.name} key={index}>
-                              {document.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Projeto</FormComponent.Label>
-                <FormField
-                  control={invoiceCreateForm.form.control}
-                  name="project.name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                            <SelectValue placeholder="Selecione o projeto" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {projects.map((project, index) => (
-                            <SelectItem value={project.name} key={index}>
-                              {project.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Plano de Contas</FormComponent.Label>
-                <FormField
-                  control={invoiceCreateForm.form.control}
-                  name="account_plan.name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={(value) => {
-                          const plan = account_plans.find(
-                            (plan) => plan.name === value,
-                          );
-                          setSelectedAccountPlan(plan); // Atualiza o estado com o plano selecionado
-                          field.onChange(value); // Atualiza o formulário com o valor selecionado
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                            <SelectValue placeholder="Selecione o plano de contas" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {account_plans.map((plan, index) => (
-                            <SelectItem value={plan.name} key={index}>
-                              {plan.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-
-              <FormComponent.Frame>
-                <FormComponent.Label>Conta</FormComponent.Label>
-                <FormField
-                  control={invoiceCreateForm.form.control}
-                  name="account_plan.account"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        disabled={!selectedAccountPlan} // Desabilita o select se nenhum plano de contas estiver selecionado
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                            <SelectValue placeholder="Selecione a conta" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {selectedAccountPlan?.accounts.map(
-                            (account, index) => (
-                              <SelectItem value={account.name} key={index}>
-                                {account.name}
-                              </SelectItem>
-                            ),
-                          )}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </FormComponent.Frame>
-            </FormComponent.Line>
-
-            <FormComponent.Line>
-              <FormComponent.Frame>
                 <FormComponent.Label>Tipo de Despesa</FormComponent.Label>
                 <FormField
                   control={invoiceCreateForm.form.control}
-                  name="expense_type"
+                  name="expenseType"
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -447,7 +358,7 @@ export default function ManuallyImportInvoice() {
                       <FormControl>
                         <Input
                           className="border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                          placeholder="Parcela da nota fiscal"
+                          placeholder="Parcela da nota fiscal ('única' ou nº da parcela)"
                           {...field}
                         />
                       </FormControl>
@@ -458,10 +369,126 @@ export default function ManuallyImportInvoice() {
               </FormComponent.Frame>
 
               <FormComponent.Frame>
+                <FormComponent.Label>Tipo de Documento</FormComponent.Label>
+                <FormField
+                  control={invoiceCreateForm.form.control}
+                  name="documentTypeId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                            <SelectValue placeholder="Selecione o tipo de documento" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {documentTypes.map((document, index) => (
+                            <SelectItem value={document.id} key={index}>
+                              {document.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+            </FormComponent.Line>
+
+            <FormComponent.Line>
+              <FormComponent.Frame>
+                <FormComponent.Label>Projeto</FormComponent.Label>
+                <FormField
+                  control={invoiceCreateForm.form.control}
+                  name="projectId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                            <SelectValue placeholder="Selecione o projeto" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {projects.map((project, index) => (
+                            <SelectItem value={project.id} key={index}>
+                              {project.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+
+              <FormComponent.Frame>
+                <FormComponent.Label>Plano de Contas</FormComponent.Label>
+                <Select
+                  onValueChange={(value) => {
+                    const plan = accountPlans.find((plan) => plan.id === value);
+                    setSelectedAccountPlan(plan);
+                  }}
+                >
+                  <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                    <SelectValue placeholder="Selecione o plano de contas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accountPlans.map((plan, index) => (
+                      <SelectItem value={plan.id} key={index}>
+                        {plan.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormComponent.Frame>
+
+              <FormComponent.Frame>
+                <FormComponent.Label>Conta</FormComponent.Label>
+                <FormField
+                  control={invoiceCreateForm.form.control}
+                  name="accountId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={!selectedAccountPlan}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                            <SelectValue placeholder="Selecione a conta" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {selectedAccountPlan?.accounts.map(
+                            (account, index) => (
+                              <SelectItem value={account.id} key={index}>
+                                {account.name}
+                              </SelectItem>
+                            ),
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormComponent.Frame>
+
+              <FormComponent.Frame>
                 <FormComponent.Label>Grupo</FormComponent.Label>
                 <FormField
                   control={invoiceCreateForm.form.control}
-                  name="group.name"
+                  name="groupId"
                   render={({ field }) => (
                     <FormItem>
                       <Select
@@ -475,7 +502,7 @@ export default function ManuallyImportInvoice() {
                         </FormControl>
                         <SelectContent>
                           {groups.map((group, index) => (
-                            <SelectItem value={group.name} key={index}>
+                            <SelectItem value={group.id} key={index}>
                               {group.name}
                             </SelectItem>
                           ))}
@@ -488,7 +515,7 @@ export default function ManuallyImportInvoice() {
               </FormComponent.Frame>
             </FormComponent.Line>
 
-            <h2 className="mb-1 text-[1.3rem] font-medium">Produtos:</h2>
+            <h2 className="text-[1.4rem] font-medium">Produtos:</h2>
 
             <Accordion
               type="single"
@@ -506,6 +533,37 @@ export default function ManuallyImportInvoice() {
                   </AccordionTrigger>
                   <AccordionContent className="w-full">
                     <div className="mx-4 flex flex-col gap-2">
+                      <FormComponent.Line className="my-1 flex items-center">
+                        <div className="flex items-center gap-2 text-base">
+                          Utilize os filtros para encontrar e selecionar um
+                          produto cadastrado no estoque:
+                          <Filter className="lg:w-[130px]">
+                            <Filter.Icon
+                              icon={({ className }: { className: string }) => (
+                                <Search className={className} />
+                              )}
+                            />
+                            <Filter.Input
+                              placeholder="Código"
+                              state={inputCode}
+                              setState={setInputCode}
+                            />
+                          </Filter>
+                          <Filter>
+                            <Filter.Icon
+                              icon={({ className }: { className: string }) => (
+                                <Search className={className} />
+                              )}
+                            />
+                            <Filter.Input
+                              placeholder="Nome do produto"
+                              state={inputProduct}
+                              setState={setInputProduct}
+                            />
+                          </Filter>
+                        </div>
+                      </FormComponent.Line>
+
                       <FormComponent.Line>
                         <FormComponent.Frame>
                           <FormComponent.Label className="text-[#444444]">
@@ -513,97 +571,7 @@ export default function ManuallyImportInvoice() {
                           </FormComponent.Label>
                           <FormField
                             control={invoiceCreateForm.form.control}
-                            name={`products.${index}.name`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <Input
-                                    className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                                    placeholder="Nome do produto"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </FormComponent.Frame>
-
-                        <FormComponent.Frame>
-                          <FormComponent.Label className="text-[#444444]">
-                            Código
-                          </FormComponent.Label>
-                          <FormField
-                            control={invoiceCreateForm.form.control}
-                            name={`products.${index}.code`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <Input
-                                    className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                                    placeholder="Código do produto"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </FormComponent.Frame>
-
-                        <FormComponent.Frame>
-                          <FormComponent.Label className="text-[#444444]">
-                            NCM
-                          </FormComponent.Label>
-                          <FormField
-                            control={invoiceCreateForm.form.control}
-                            name={`products.${index}.ncm`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <Input
-                                    className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                                    placeholder="NCM do produto"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </FormComponent.Frame>
-
-                        <FormComponent.Frame>
-                          <FormComponent.Label className="text-[#444444]">
-                            CFOP
-                          </FormComponent.Label>
-                          <FormField
-                            control={invoiceCreateForm.form.control}
-                            name={`products.${index}.cfop`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <Input
-                                    className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
-                                    placeholder="CFOP do produto"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </FormComponent.Frame>
-                      </FormComponent.Line>
-
-                      <FormComponent.Line>
-                        <FormComponent.Frame>
-                          <FormComponent.Label className="text-[#444444]">
-                            Unidade
-                          </FormComponent.Label>
-                          <FormField
-                            control={invoiceCreateForm.form.control}
-                            name={`products.${index}.buy_unit`}
+                            name={`invoiceProducts.${index}.productSupplierId`}
                             render={({ field }) => (
                               <FormItem>
                                 <Select
@@ -612,19 +580,21 @@ export default function ManuallyImportInvoice() {
                                 >
                                   <FormControl>
                                     <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                                      <SelectValue placeholder="Selecione a unidade de compra" />
+                                      <SelectValue placeholder="Selecione o produto" />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    {units.map((unit, index) => (
-                                      <SelectItem
-                                        value={unit.description}
-                                        key={index}
-                                      >
-                                        {unit.description} ({unit.abbreviation})
-                                        - {unit.unitsPerPack}
-                                      </SelectItem>
-                                    ))}
+                                    {filteredProducts.map(
+                                      (productSupplier, index) => (
+                                        <SelectItem
+                                          value={productSupplier.id}
+                                          key={index}
+                                        >
+                                          {productSupplier.product.name}
+                                          {/* - {productSupplier.supplier.name} */}
+                                        </SelectItem>
+                                      ),
+                                    )}
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -639,7 +609,7 @@ export default function ManuallyImportInvoice() {
                           </FormComponent.Label>
                           <FormField
                             control={invoiceCreateForm.form.control}
-                            name={`products.${index}.purchase_quantity`}
+                            name={`invoiceProducts.${index}.purchaseQuantity`}
                             render={({ field }) => (
                               <FormItem>
                                 <FormControl>
@@ -661,7 +631,7 @@ export default function ManuallyImportInvoice() {
                           </FormComponent.Label>
                           <FormField
                             control={invoiceCreateForm.form.control}
-                            name={`products.${index}.value_unit`}
+                            name={`invoiceProducts.${index}.unitValue`}
                             render={({ field }) => (
                               <FormItem>
                                 <FormControl>
@@ -678,14 +648,137 @@ export default function ManuallyImportInvoice() {
                         </FormComponent.Frame>
                       </FormComponent.Line>
 
-                      <FormComponent.Line>
+                      {/* <FormComponent.Frame>
+                          <FormComponent.Label className="text-[#444444]">
+                            Produto
+                          </FormComponent.Label>
+                          <FormField
+                            control={invoiceCreateForm.form.control}
+                            name={`invoiceProducts.${index}.name`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                                    placeholder="Nome do produto"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </FormComponent.Frame>
+
+                        <FormComponent.Frame>
+                          <FormComponent.Label className="text-[#444444]">
+                            Código
+                          </FormComponent.Label>
+                          <FormField
+                            control={invoiceCreateForm.form.control}
+                            name={`invoiceProducts.${index}.code`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                                    placeholder="Código do produto"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </FormComponent.Frame> */}
+
+                      {/* <FormComponent.Frame>
+                          <FormComponent.Label className="text-[#444444]">
+                            NCM
+                          </FormComponent.Label>
+                          <FormField
+                            control={invoiceCreateForm.form.control}
+                            name={`invoiceProducts.${index}.ncm`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                                    placeholder="NCM do produto"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </FormComponent.Frame>
+
+                        <FormComponent.Frame>
+                          <FormComponent.Label className="text-[#444444]">
+                            CFOP
+                          </FormComponent.Label>
+                          <FormField
+                            control={invoiceCreateForm.form.control}
+                            name={`invoiceProducts.${index}.cfop`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    className="mt-0.5 border-[1px] border-borda_input bg-white placeholder:text-placeholder_input"
+                                    placeholder="CFOP do produto"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </FormComponent.Frame> */}
+
+                      {/* <FormComponent.Line>
+                        <FormComponent.Frame>
+                          <FormComponent.Label className="text-[#444444]">
+                            Unidade
+                          </FormComponent.Label>
+                          <FormField
+                            control={invoiceCreateForm.form.control}
+                            name={`invoiceProducts.${index}.unitId`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                                      <SelectValue placeholder="Selecione a unidade de compra" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {units.map((unit, index) => (
+                                      <SelectItem value={unit.name} key={index}>
+                                        {unit.name} ({unit.abbreviation}) -{" "}
+                                        {unit.unitsPerPack}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </FormComponent.Frame>
+                      </FormComponent.Line> */}
+
+                      {/* <FormComponent.Line>
                         <FormComponent.Frame>
                           <FormComponent.Label className="text-[#444444]">
                             Tipo de Controle
                           </FormComponent.Label>
                           <FormField
                             control={invoiceCreateForm.form.control}
-                            name={`products.${index}.type_of_control`}
+                            name={`invoiceProducts.${index}.controlTypeId`}
                             render={({ field }) => (
                               <FormItem>
                                 <Select
@@ -698,12 +791,9 @@ export default function ManuallyImportInvoice() {
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    {TypesOfControl.map((type, index) => (
-                                      <SelectItem
-                                        value={type.description}
-                                        key={index}
-                                      >
-                                        {type.description}
+                                    {controlTypes.map((type, index) => (
+                                      <SelectItem value={type.id} key={index}>
+                                        {type.name}
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
@@ -720,7 +810,7 @@ export default function ManuallyImportInvoice() {
                           </FormComponent.Label>
                           <FormField
                             control={invoiceCreateForm.form.control}
-                            name={`products.${index}.product_category`}
+                            name={`invoiceProducts.${index}.categoryId`}
                             render={({ field }) => (
                               <FormItem>
                                 <Select
@@ -733,13 +823,13 @@ export default function ManuallyImportInvoice() {
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    {ProductCategories.map(
+                                    {productCategories.map(
                                       (category, index) => (
                                         <SelectItem
-                                          value={category.description}
+                                          value={category.id}
                                           key={index}
                                         >
-                                          {category.description}
+                                          {category.name}
                                         </SelectItem>
                                       ),
                                     )}
@@ -757,7 +847,7 @@ export default function ManuallyImportInvoice() {
                           </FormComponent.Label>
                           <FormField
                             control={invoiceCreateForm.form.control}
-                            name={`products.${index}.sector_of_use`}
+                            name={`invoiceProducts.${index}.sectorOfUseId`}
                             render={({ field }) => (
                               <FormItem>
                                 <Select
@@ -770,12 +860,44 @@ export default function ManuallyImportInvoice() {
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    {SectorsOfUse.map((sector, index) => (
-                                      <SelectItem
-                                        value={sector.description}
-                                        key={index}
-                                      >
-                                        {sector.description}
+                                    {sectorsOfUse.map((sector, index) => (
+                                      <SelectItem value={sector.id} key={index}>
+                                        {sector.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </FormComponent.Frame>
+                      </FormComponent.Line>
+
+                      <FormComponent.Line>
+                        <FormComponent.Frame>
+                          <FormComponent.Label>Estoque</FormComponent.Label>
+                          <FormField
+                            control={invoiceCreateForm.form.control}
+                            name={`invoiceProducts.${index}.stockId`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <Select
+                                  onValueChange={(value) => {
+                                    setSelectedStockId(value);
+                                    field.onChange(value);
+                                  }}
+                                  defaultValue={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                                      <SelectValue placeholder="Selecione o estoque do produto" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {stocks.map((stock, index) => (
+                                      <SelectItem value={stock.id} key={index}>
+                                        {stock.name}
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
@@ -787,52 +909,34 @@ export default function ManuallyImportInvoice() {
                         </FormComponent.Frame>
 
                         <FormComponent.Frame>
-                          <FormComponent.Label className="text-[#444444]">
-                            Endereço de Estoque
+                          <FormComponent.Label>
+                            Endereço no Estoque
                           </FormComponent.Label>
                           <FormField
                             control={invoiceCreateForm.form.control}
-                            name={`products.${index}.address`}
+                            name={`invoiceProducts.${index}.shelfId`}
                             render={({ field }) => (
                               <FormItem>
                                 <Select
-                                  onValueChange={(value) => {
-                                    const { stock, storage, shelf } =
-                                      JSON.parse(value) as {
-                                        stock: string;
-                                        storage: string;
-                                        shelf: string;
-                                      };
-                                    field.onChange({
-                                      stock,
-                                      storage,
-                                      shelf,
-                                    });
-                                  }}
-                                  defaultValue={JSON.stringify(field.value)}
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                  disabled={!selectedStockId}
                                 >
                                   <FormControl>
-                                    <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                                      <SelectValue placeholder="Selecione o estoque do produto" />
+                                    <SelectTrigger className="mt-0.5 border-[1px] border-borda_input bg-white placeholder-placeholder_input">
+                                      <SelectValue placeholder="Selecione um endereço do estoque selecionado" />
                                     </SelectTrigger>
                                   </FormControl>
                                   <SelectContent>
-                                    {stocks.map((stock) =>
-                                      stock.address.map((storage) =>
-                                        storage.shelves.map((shelf, index) => (
-                                          <SelectItem
-                                            // Stringificando o objeto com stock, storage, e shelf
-                                            value={JSON.stringify({
-                                              stock: stock.name,
-                                              storage: storage.description,
-                                              shelf: shelf.description,
-                                            })}
-                                            key={index}
-                                          >
-                                            {`${stock.name} - ${storage.description} - ${shelf.description}`}
-                                          </SelectItem>
-                                        )),
-                                      ),
+                                    {cabinets.map((cabinet) =>
+                                      cabinet.shelf.map((shelf, index) => (
+                                        <SelectItem
+                                          value={shelf.id}
+                                          key={index}
+                                        >
+                                          {cabinet.name} - {shelf.name}
+                                        </SelectItem>
+                                      )),
                                     )}
                                   </SelectContent>
                                 </Select>
@@ -841,7 +945,7 @@ export default function ManuallyImportInvoice() {
                             )}
                           />
                         </FormComponent.Frame>
-                      </FormComponent.Line>
+                      </FormComponent.Line> */}
 
                       <div className="flex w-full justify-end p-1">
                         <TooltipProvider delayDuration={300}>
@@ -866,25 +970,23 @@ export default function ManuallyImportInvoice() {
               ))}
             </Accordion>
 
-            <FormComponent.ButtonLayout>
+            <FormComponent.ButtonLayout className="justify-end">
               <button
                 onClick={() =>
                   invoiceCreateForm.arrayAppend({
-                    name: "",
-                    code: "",
-                    ncm: 0,
-                    cfop: 0,
-                    buy_unit: "",
-                    purchase_quantity: 0,
-                    value_unit: 0,
-                    type_of_control: "",
-                    product_category: "",
-                    sector_of_use: "",
-                    address: {
-                      stock: "",
-                      storage: "",
-                      shelf: "",
-                    },
+                    // name: "",
+                    // code: "",
+                    // ncm: 0,
+                    // cfop: 0,
+                    // unitId: "",
+                    productSupplierId: "",
+                    purchaseQuantity: 0,
+                    unitValue: 0,
+                    // controlTypeId: "",
+                    // categoryId: "",
+                    // sectorOfUseId: "",
+                    // stockId: "",
+                    // shelfId: "",
                   })
                 }
                 className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"

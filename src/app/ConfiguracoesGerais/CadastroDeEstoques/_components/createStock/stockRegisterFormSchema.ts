@@ -1,10 +1,7 @@
 import { z } from "zod";
 
 const AddressSchema = z.object({
-  storage: z.string({
-    required_error: "Por favor selecione uma zona.",
-  }),
-  shelves: z.array(z.string()),
+  cabinetId: z.string(),
 });
 
 export const createStockFormSchema = z.object({
@@ -17,17 +14,17 @@ export const createStockFormSchema = z.object({
       message: "O nome do estoque deve possuir menos de 32 caracteres",
     }),
 
-  company: z
+  companyId: z
     .string({
       required_error: "Por favor selecione a empresa do estoque",
     })
     .min(1, { message: "Por favor selecione uma empresa do estoque" }),
 
-  stock_manager: z.string({
-    required_error: "Por favor selecione responsável pelo estoque",
-  }),
+  legalResponsibleId: z.string().optional(),
 
-  address: z.array(AddressSchema).min(1),
+  StockCabinet: z
+    .array(AddressSchema)
+    .min(1, "Adicione pelo menos um armário/zona ao estoque"),
 });
 
 export type CreateStockFormValues = z.infer<typeof createStockFormSchema>;

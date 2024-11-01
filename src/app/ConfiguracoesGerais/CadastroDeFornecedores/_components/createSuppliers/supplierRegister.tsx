@@ -1,4 +1,5 @@
 "use client";
+import { states } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/states";
 import { FormComponent } from "~/components/forms/index";
 import {
   Form,
@@ -15,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { roles, states } from "../supplierData";
 import { useSupplierForm } from "./useSupplierForm";
 
 export const SupplierRegister = () => {
@@ -110,7 +110,7 @@ export const SupplierRegister = () => {
               <FormComponent.Label>Inscrição Estadual</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="state_registration"
+                name="stateRegistration"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -192,7 +192,7 @@ export const SupplierRegister = () => {
               <FormComponent.Label>Unidade Federativa</FormComponent.Label>
               <FormField
                 control={form.form.control}
-                name="state"
+                name="federativeUnit"
                 render={({ field }) => (
                   <FormItem>
                     <Select
@@ -263,36 +263,6 @@ export const SupplierRegister = () => {
                 </FormComponent.Frame>
 
                 <FormComponent.Frame>
-                  <FormComponent.Label>Cargo</FormComponent.Label>
-                  <FormField
-                    control={form.form.control}
-                    name={`contacts.${index}.role`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">
-                              <SelectValue placeholder="Selecione um cargo" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {roles.map((role, i) => (
-                              <SelectItem value={role.value} key={i}>
-                                {role.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </FormComponent.Frame>
-
-                <FormComponent.Frame>
                   <FormComponent.Label>Email</FormComponent.Label>
                   <FormField
                     control={form.form.control}
@@ -339,10 +309,10 @@ export const SupplierRegister = () => {
             ))}
           </FormComponent.BoxSpecify>
 
-          <FormComponent.ButtonLayout>
+          <FormComponent.ButtonLayout className="flex justify-end">
             <button
               onClick={() =>
-                form.arrayAppend({ name: "", email: "", phone: "", role: "" })
+                form.arrayAppend({ name: "", email: "", phone: "" })
               }
               className="min-w-28 rounded-lg bg-cinza_escuro_botao px-[20px] py-[8px] text-white hover:bg-hover_cinza_escuro_botao"
               type="button"

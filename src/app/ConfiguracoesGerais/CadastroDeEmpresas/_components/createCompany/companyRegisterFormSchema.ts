@@ -8,22 +8,15 @@ export const createCompanyFormSchema = z.object({
 
   cnpj: z
     .string({ required_error: "CNPJ não pode ser vazio." })
-    .length(14, { message: "São necessarios 14 dígitos." }),
+    .length(14, { message: "São necessarios 14 dígitos (apenas números)." }),
 
   suppliers: z.array(z.string()),
 
-  company_type: z.string({
+  type: z.string({
     required_error: "Por favor selecione o tipo da empresa.",
   }),
 
-  company_headquarters: z
-    .object({
-      name: z
-        .string()
-        .min(3, "Nome da matriz deve ter pelo menos 3 caracteres."),
-      cnpj: z.string().min(14, "CNPJ da matriz deve ter 14 dígitos."),
-    })
-    .optional(),
+  headquarters: z.string(),
 
   email: z
     .string({
@@ -35,23 +28,22 @@ export const createCompanyFormSchema = z.object({
 
   phone: z
     .string({ required_error: "Por favor digite o telefone" })
-    .min(8, {
+    .min(10, {
       message:
-        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
+        "Número de telefone inválido. Insira apenas números incluindo o DDD.",
     })
-    .max(16, {
-      message:
-        "Número de telefone inválido. O formato correto é (XX)XXXXX-XXXX.",
+    .max(11, {
+      message: "Número de telefone inválido. Insira apenas números.",
     }),
 
-  state_registration: z
+  stateRegistration: z
     .string({ required_error: "Campo obrigatório" })
     .min(9, { message: "Inscrição Estadual deve ter no minimo 9 caracteres" })
     .max(14, {
       message: "Inscrição Estadual deve ter no máximo 14 caracteres",
     }),
 
-  tax_regime: z.string({
+  taxRegime: z.string({
     required_error: "Por favor selecione um regime tributário",
   }),
 
@@ -70,21 +62,15 @@ export const createCompanyFormSchema = z.object({
     .min(3, { message: "Município deve ter pelo menos 3 caracteres." })
     .max(20, { message: "Município deve ter no máximo 20 caracteres." }),
 
-  state: z.string({
+  federativeUnit: z.string({
     required_error: "Por favor selecione uma unidade federativa",
   }),
 
   cep: z
     .string({ required_error: "CEP deve ser obrigatório." })
-    .length(8, { message: "São necessarios 8 dígitos" }),
+    .length(8, { message: "Formato inválido. Digite apenas os números." }),
 
-  address_file_XML: z
-    .string({
-      required_error: "Selecione o endereço local dos arquivos XML",
-    })
-    .optional(),
-
-  legal_representative: z
+  legalResponsibleId: z
     .string({
       required_error: "Selecione o representante legal da empresa",
     })

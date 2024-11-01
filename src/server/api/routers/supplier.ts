@@ -1,7 +1,11 @@
 import { supplierRepositorySchema } from "~/server/interfaces/supplier/supplier.repository.interfaces";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
 import type { SupplierRouteInterfaces } from "~/server/interfaces/supplier/supplier.route.interfaces";
 import { SupplierRepository } from "~/server/repositories/supplier.repository";
+import {
+  createTRPCRouter,
+  operationProcedure,
+  protectedProcedure,
+} from "../trpc";
 
 export const supplierRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -13,17 +17,30 @@ export const supplierRouter = createTRPCRouter({
       },
     ),
 
-  createSupplier: protectedProcedure
+  createSupplier: operationProcedure
     .input(supplierRepositorySchema.createProps)
-    .query(async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
-      const createdSupplier = await SupplierRepository.create(input);
-      return createdSupplier;
-    }),
+    .mutation(
+      async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
+        const createdSupplier = await SupplierRepository.create(input);
+        return createdSupplier;
+      },
+    ),
 
-  editSupplier: protectedProcedure
+  editSupplier: operationProcedure
     .input(supplierRepositorySchema.editProps)
-    .query(async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
-      const editedSupplier = await SupplierRepository.edit(input);
-      return editedSupplier;
-    }),
+    .mutation(
+      async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
+        const editedSupplier = await SupplierRepository.edit(input);
+        return editedSupplier;
+      },
+    ),
+
+  removeSupplier: operationProcedure
+    .input(supplierRepositorySchema.removeProps)
+    .mutation(
+      async ({ input }): Promise<SupplierRouteInterfaces["Supplier"]> => {
+        const removedSupplier = await SupplierRepository.remove(input);
+        return removedSupplier;
+      },
+    ),
 });

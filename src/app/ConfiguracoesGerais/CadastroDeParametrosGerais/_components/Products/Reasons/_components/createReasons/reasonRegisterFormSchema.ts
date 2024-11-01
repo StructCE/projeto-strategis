@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const createReasonFormSchema = z.object({
-  description: z
+  name: z
     .string()
     .min(3, {
       message: "Descrição deve ter pelo menos 3 caracteres.",

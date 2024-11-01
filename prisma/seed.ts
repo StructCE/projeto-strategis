@@ -1,134 +1,286 @@
-// import { db } from "~/server/db";
-// import { cargos, modulos, users } from "./seed-data";
+// CRIAR MODULES, ROLEMODULES AND ROLES
+import { db } from "~/server/db";
+import { account_plans } from "./seed-data/accountPlans";
+import { adjustementReasons } from "./seed-data/adjustmentReasons";
+import { banks } from "./seed-data/banks";
+import { categories } from "./seed-data/categories";
+import { controlTypes } from "./seed-data/controlType";
+import { documentTypes } from "./seed-data/documentTypes";
+import { groups } from "./seed-data/group";
+import { modules } from "./seed-data/modules";
+import { projects } from "./seed-data/projects";
+import { roles } from "./seed-data/roles";
+import { sectorsOfUse } from "./seed-data/sectorOfUse";
 
-// async function createCargo(nome: string, moduloIds: number[]) {
-//   try {
-//     const cargo = await db.cargo.create({
-//       data: {
-//         nome,
-//         modulos: {
-//           create: moduloIds.map((moduloId) => ({
-//             modulo: { connect: { id: moduloId } },
-//           })),
-//         },
-//       },
-//     });
-//     console.log("Cargo criado:", cargo);
-//     return cargo;
-//   } catch (error) {
-//     console.error("Erro ao criar cargo:", error);
-//     throw error;
-//   }
-// }
+async function createModule(props: {
+  name: string;
+  code: number;
+  pagePath: string;
+  allowedRouter: string;
+}) {
+  const createdModule = await db.module.create({
+    data: { ...props },
+  });
+  return createdModule;
+}
 
-// async function createModulo(operacao: string) {
-//   try {
-//     const modulo = await db.modulo.create({
-//       data: {
-//         operacao,
-//       },
-//     });
-//     console.log("Módulo criado:", modulo);
-//     return modulo;
-//   } catch (error) {
-//     console.error("Erro ao criar módulo:", error);
-//     throw error;
-//   }
-// }
+async function createRole(props: { name: string }) {
+  const createdRole = await db.role.create({
+    data: { ...props },
+  });
+  return createdRole;
+}
 
-// async function createUser(
-//   nome: string,
-//   email: string,
-//   senha: string,
-//   senhaConfirmacao: string,
-//   telefone: string,
-//   cargoId: number,
-// ) {
-//   try {
-//     const user = await db.user.create({
-//       data: {
-//         nome,
-//         email,
-//         senha,
-//         senhaConfirmacao,
-//         telefone,
-//         cargo: {
-//           connect: { id: cargoId },
-//         },
-//       },
-//     });
-//     console.log("Usuário criado:", user);
-//     return user;
-//   } catch (error) {
-//     console.error("Erro ao criar usuário:", error);
-//     throw error;
-//   }
-// }
+async function createCategory(props: { name: string }) {
+  const createdCategory = await db.productCategory.create({
+    data: { ...props },
+  });
+  return createdCategory;
+}
 
-// async function main() {
-//   const modulo1 = await createModulo("Cadastrar Empresas"); // Adm
-//   const modulo2 = await createModulo("Cadastrar Perfis"); // Adm
-//   const modulo3 = await createModulo("Cadastrar Usuários"); // Adm e Op
-//   const modulo4 = await createModulo("Dar Permissões de Acesso"); // Adm
-//   const modulo5 = await createModulo("Importar NFs"); // Adm e Op
-//   const modulo6 = await createModulo("Validar Dados Cadastrados"); // Adm e Op
-//   const modulo7 = await createModulo("Dar Entrada de Mercadorias"); // Adm e Est
-//   const modulo8 = await createModulo("Cadastrar Fornecedores"); // Adm e Est
-//   const modulo9 = await createModulo("Gerar Relatorios de Estoque"); // Adm e Est
-//   const modulo10 = await createModulo("Dar Saída de Mercadorias"); // Adm e Est
-//   const modulo11 = await createModulo("Fazer Inventário"); // Adm e Est
-//   const modulo12 = await createModulo("Fazer Ajuste de Estoque"); // Adm e Est
-//   const modulo13 = await createModulo("Requisitar Mercadorias do Estoque"); // Adm e Req
-//   const modulo14 = await createModulo("Dar Aceite de Mercadorias Recebidas"); // Adm e Req
+async function createAdjustmentReason(props: { name: string }) {
+  const createdReason = await db.adjustReason.create({
+    data: { ...props },
+  });
+  return createdReason;
+}
 
-//   const cargoAdministrador = await createCargo("Administrador", [
-//     modulo1.id,
-//     modulo2.id,
-//     modulo3.id,
-//     modulo4.id,
-//     modulo5.id,
-//     modulo6.id,
-//     modulo7.id,
-//     modulo8.id,
-//     modulo9.id,
-//     modulo10.id,
-//     modulo11.id,
-//     modulo12.id,
-//     modulo13.id,
-//     modulo14.id,
-//   ]);
-//   const cargoOperador = await createCargo("Operador", [
-//     modulo3.id,
-//     modulo5.id,
-//     modulo6.id,
-//   ]);
-//   const cargoEstoquista = await createCargo("Estoquista", [
-//     modulo7.id,
-//     modulo8.id,
-//     modulo9.id,
-//     modulo10.id,
-//     modulo11.id,
-//     modulo12.id,
-//   ]);
-//   const cargoRequisitante = await createCargo("Requisitante", [
-//     modulo13.id,
-//     modulo14.id,
-//   ]);
+async function createSectorOfUse(props: { name: string }) {
+  const createdSector = await db.useSector.create({
+    data: { ...props },
+  });
+  return createdSector;
+}
 
-//   const userAdmStruct = await createUser(
-//     "Struct EJ",
-//     "projetostrategis@gmail.com",
-//     "strategis2024*",
-//     "strategis2024*",
-//     "(61)99999-9999",
-//     cargoAdministrador.id,
-//   );
-// }
+async function createControlType(props: { name: string }) {
+  const createdControlType = await db.controlType.create({
+    data: { ...props },
+  });
+  return createdControlType;
+}
 
-// main()
-//   .catch((error) => {
-//     console.error("Erro no processo:", error);
-//   })
-//   .finally(async () => {
-//     await db.$disconnect();
-//   });
+async function createBank(props: { name: string }) {
+  const createdBank = await db.bank.create({
+    data: { ...props },
+  });
+  return createdBank;
+}
+
+async function createProject(props: { name: string }) {
+  const createdProject = await db.project.create({
+    data: { ...props },
+  });
+  return createdProject;
+}
+
+async function createDocumentType(props: { name: string }) {
+  const createdDocumentType = await db.documentType.create({
+    data: { ...props },
+  });
+  return createdDocumentType;
+}
+
+async function createGroup(props: { name: string }) {
+  const createdGroup = await db.group.create({
+    data: { ...props },
+  });
+  return createdGroup;
+}
+
+async function createRoleModules(props: { roleId: string; modules: number[] }) {
+  const createdRoleModules = props.modules.map(async (module) => {
+    const createdRoleModule = await db.roleModule.create({
+      data: {
+        moduleCode: module,
+        roleId: props.roleId,
+      },
+    });
+    return createdRoleModule;
+  });
+  await Promise.all(createdRoleModules);
+}
+
+async function createUserWithRole({
+  name,
+  email,
+  phone,
+  roleName,
+  companyId,
+}: {
+  name: string;
+  email: string;
+  phone: string;
+  roleName: string;
+  companyId: string;
+}) {
+  const user = await db.user.create({
+    data: {
+      name,
+      email,
+      phone,
+    },
+  });
+
+  const role = await db.role.findFirst({
+    where: { name: roleName },
+  });
+
+  if (!role) throw new Error(`Role ${roleName} not found`);
+
+  const company = await db.company.findUnique({
+    where: { id: companyId },
+  });
+  if (!company) throw new Error(`Company with ID ${companyId} not found`);
+
+  await db.userRole.create({
+    data: {
+      userId: user.id,
+      roleId: role.id,
+      companyId: company.id,
+    },
+  });
+
+  return user;
+}
+
+async function main() {
+  // const createdCategories = categories.map(async (category) => {
+  //   const createdCategory = await createCategory({ name: category.name });
+  //   return createdCategory;
+  // });
+  // await Promise.all(createdCategories);
+  // const createdReasons = adjustementReasons.map(async (reason) => {
+  //   const createdReason = await createAdjustmentReason({ name: reason.name });
+  //   return createdReason;
+  // });
+  // await Promise.all(createdReasons);
+  // const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
+  //   const createdSector = await createSectorOfUse({ name: sector.name });
+  //   return createdSector;
+  // });
+  // await Promise.all(createdSectorOfUse);
+  // const createdControlType = controlTypes.map(async (controlType) => {
+  //   const createdControlType = await createControlType({
+  //     name: controlType.name,
+  //   });
+  //   return createdControlType;
+  // });
+  // await Promise.all(createdControlType);
+
+  // const createdBanks = banks.map(async (bank) => {
+  //   const createdBank = await createBank({
+  //     name: bank.name,
+  //   });
+  //   return createdBank;
+  // });
+  // await Promise.all(createdBanks);
+
+  // const createdProjects = projects.map(async (project) => {
+  //   const createdProject = await createProject({
+  //     name: project.name,
+  //   });
+  //   return createdProject;
+  // });
+  // await Promise.all(createdProjects);
+
+  // const createdGroups = groups.map(async (group) => {
+  //   const createdGroup = await createGroup({
+  //     name: group.name,
+  //   });
+  //   return createdGroup;
+  // });
+  // await Promise.all(createdGroups);
+
+  // const createdDocumentTypes = documentTypes.map(async (type) => {
+  //   const createdDocumentType = await createDocumentType({
+  //     name: type.name,
+  //   });
+  //   return createdDocumentType;
+  // });
+  // await Promise.all(createdDocumentTypes);
+
+  // for (const plan of account_plans) {
+  //   // 1. Cria InvoiceAccountPlan
+  //   const createdPlan = await db.invoiceAccountPlan.create({
+  //     data: {
+  //       name: plan.name,
+  //       abbreviation: plan.abbreviation,
+  //     },
+  //   });
+
+  //   // 2. Para cada conta no plano, cria InvoiceAccount
+  //   for (const account of plan.accounts) {
+  //     await db.invoiceAccount.create({
+  //       data: {
+  //         name: account.name,
+  //         accountPlanId: createdPlan.id, // Relaciona com o plano recém-criado
+  //       },
+  //     });
+  //   }
+  // }
+
+  // const createdModules = modules.map(async (module) => {
+  //   const createdModule = await createModule(module);
+  //   return createdModule;
+  // });
+  // await Promise.all(createdModules);
+  // const createdRoles = roles.map(async (role) => {
+  //   const createdRole = await createRole({ name: role.name });
+  //   const createdRoleModules = await createRoleModules({
+  //     roleId: createdRole.id,
+  //     modules: role.modules,
+  //   });
+  //   return createdRoleModules;
+  // });
+  // await Promise.all(createdRoles);
+
+  const companyStruct = await db.company.create({
+    data: {
+      name: "Struct Empresa Junior de Engenharia de Computação da UnB",
+      email: "comercial@struct.unb.br",
+      cnpj: "21803569000165",
+      type: "Matriz",
+      phone: "6190000093",
+      stateRegistration: "0771508800122",
+      taxRegime: "Simples Nacional (SN)",
+      address:
+        "Campus Universitario Darcy Ribeiro S/n Univ de Brasilia Edif Predio SG",
+      city: "Brasília",
+      neighborhood: "Asa Norte",
+      federativeUnit: "DF",
+      cep: "70910900",
+    },
+  });
+  const companyStrategis = await db.company.create({
+    data: {
+      name: "Strategis Assessoria Em Tecnologia E Negocios Empresariais Ltda",
+      email: "atendimento@strategis.com.br",
+      cnpj: "08781089000182",
+      type: "Matriz",
+      phone: "6135622162",
+      stateRegistration: "0748660700130",
+      taxRegime: "Simples Nacional (SN)",
+      address: "SDN - Conjunto A - Sala 6080 - Conjunto Nacional",
+      city: "Brasília",
+      neighborhood: "Asa Norte",
+      federativeUnit: "DF",
+      cep: "70077900",
+    },
+  });
+  await createUserWithRole({
+    name: "Equipe Struct",
+    email: "equipestruct@gmail.com",
+    phone: "61991164633",
+    roleName: "Administrador",
+    companyId: companyStruct.id,
+  });
+  await createUserWithRole({
+    name: "Jefferson dos Santos Costa",
+    email: "jefferson@strategis.com.br",
+    phone: "61984505000",
+    roleName: "Administrador",
+    companyId: companyStrategis.id,
+  });
+}
+
+main().catch((e) => console.log(e));

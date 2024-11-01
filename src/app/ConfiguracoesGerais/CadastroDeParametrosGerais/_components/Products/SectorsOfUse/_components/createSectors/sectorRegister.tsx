@@ -25,7 +25,7 @@ export default function SectorRegister(props: SectorRegisterProps) {
               <FormComponent.Label>Setor de Utilização</FormComponent.Label>
               <FormField
                 control={props.form.control}
-                name="description"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -44,7 +44,7 @@ export default function SectorRegister(props: SectorRegisterProps) {
 
           <FormComponent.ButtonLayout>
             <FormComponent.Button className="bg-verde_botao hover:bg-hover_verde_botao">
-              Criar Setor
+              Criar Setor de Utilização
             </FormComponent.Button>
           </FormComponent.ButtonLayout>
         </FormComponent>

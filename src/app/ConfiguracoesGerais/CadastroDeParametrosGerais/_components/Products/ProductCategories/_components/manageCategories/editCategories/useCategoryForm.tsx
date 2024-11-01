@@ -1,28 +1,99 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { type ProductCategory } from "~/app/ConfiguracoesGerais/CadastroDeParametrosGerais/_components/GeneralParametersData";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { type ProductCategory } from "~/server/interfaces/productCategory/productCategory.route.interfaces";
+import { api } from "~/trpc/react";
 import {
   editCategoryFormSchema,
   type EditCategoryFormValues,
 } from "./categoryEditFormSchema";
 
 export const useCategoryForm = (category: ProductCategory) => {
+  const router = useRouter();
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  const categoryMutation =
+    api.generalParameters.productCategory.editProductCategory.useMutation({
+      onSuccess: (updatedCategory) => {
+        // console.log("Category updated successfully:", updatedCategory);
+        if (isDeleted === false) {
+          toast.success(
+            "Categoria atualizada com sucesso. Atualizando a página...",
+            {
+              position: "bottom-right",
+            },
+          );
+        }
+        setTimeout(() => {
+          router.refresh();
+        }, 2000);
+      },
+      onError: (error) => {
+        console.error("Error updating category:", error);
+        toast.error("Erro ao atualizar categoria.", {
+          position: "bottom-right",
+        });
+      },
+    });
+
+  const deleteCategoryMutation =
+    api.generalParameters.productCategory.removeProductCategory.useMutation({
+      onSuccess: (deletedCategory) => {
+        // console.log("Category removed successfully:", deletedCategory);
+        toast.success(
+          "Categoria removida com sucesso. Atualizando a página...",
+          {
+            position: "bottom-right",
+          },
+        );
+        setTimeout(() => {
+          router.refresh();
+        }, 2000);
+      },
+      onError: (error) => {
+        console.error("Error removing category:", error);
+        toast.error("Erro ao remover categoria.", {
+          position: "bottom-right",
+        });
+      },
+    });
+
   const form = useForm<EditCategoryFormValues>({
     resolver: zodResolver(editCategoryFormSchema),
     mode: "onChange",
     defaultValues: {
-      description: category.description,
+      name: category.name,
     },
   });
 
   function onSubmitEdit(data: EditCategoryFormValues) {
-    console.log("Editando categoria:");
-    console.log(JSON.stringify(data, null, 2)); // Editar categoria
+    if (isDeleted) return;
+    // console.log(JSON.stringify(data, null, 2));
+
+    try {
+      categoryMutation.mutate({
+        id: category.id,
+        data: {
+          name: data.name,
+        },
+      });
+    } catch (error) {
+      console.error("Error submitting update form:", error);
+    }
   }
 
-  function onSubmitRemove(data: EditCategoryFormValues) {
-    console.log("Removendo categoria:");
-    console.log(JSON.stringify(data, null, 2)); // Remover categoria
+  function onSubmitRemove() {
+    setIsDeleted(true);
+    try {
+      deleteCategoryMutation.mutate({
+        id: category.id,
+      });
+    } catch (error) {
+      console.error("Error submitting delete form:", error);
+    }
   }
 
   return { form, onSubmitEdit, onSubmitRemove };

@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-const ModuleSchema = z.object({
-  value: z.string(),
-  label: z.string(),
-});
-
 export const editAccessProfileFormSchema = z.object({
   name: z
     .string()
@@ -14,7 +9,14 @@ export const editAccessProfileFormSchema = z.object({
     .max(60, {
       message: "Nome deve ter no máximo 60 caracteres.",
     }),
-  modules: z.array(ModuleSchema).optional(), // Ver como fazer funcionar o multiselect com o zod
+
+  modules: z
+    .array(
+      z.string(),
+      // .transform((val) => Number(val))
+      // .refine((val) => !isNaN(val)),
+    )
+    .optional(),
 });
 
 export type EditAccessProfileFormValues = z.infer<
