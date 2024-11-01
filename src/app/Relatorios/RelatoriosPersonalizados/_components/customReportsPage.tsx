@@ -2,7 +2,6 @@
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Check, Download, Eraser, Search, X } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { customReportOptions } from "prisma/seed-data/customReportOptions";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { Filter } from "~/components/filter";
@@ -20,6 +19,25 @@ import {
 import { useCompany } from "~/lib/companyProvider";
 import { api } from "~/trpc/react";
 import { default as CustomReportPDF } from "./pdfReport";
+
+const customReportOptions: { description: string }[] = [
+  { description: "Nome" },
+  { description: "Código" },
+  { description: "Fornecedores" },
+  { description: "Status" },
+  { description: "Produto Pai" },
+  { description: "Unidade de Compra" },
+  { description: "Quantidade de Compra" },
+  { description: "Dia de Compra" },
+  { description: "Estoque Atual" },
+  { description: "Estoque Mínimo" },
+  { description: "Estoque Máximo" },
+  { description: "Tipo de Controle" },
+  { description: "Categoria do Produto" },
+  { description: "Setor de Utilização" },
+  { description: "Endereço do Estoque" },
+  { description: "Usuários com Permissão" },
+];
 
 export default function CustomReportsPage() {
   const [selectReportOptions, setSelectReportOptions] = useState<string[]>([]);
