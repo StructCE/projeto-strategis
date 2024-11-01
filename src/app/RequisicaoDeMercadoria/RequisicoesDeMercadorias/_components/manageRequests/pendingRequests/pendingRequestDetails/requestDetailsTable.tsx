@@ -57,7 +57,7 @@ export default function PendingRequestDetails(props: RequestType) {
 
   return (
     <TableComponent className="gap-3 text-left">
-      <TableComponent.Table className="max-w-[90vw] overflow-x-scroll">
+      <TableComponent.Table className="max-w-[90vw] overflow-x-scroll sm:overflow-x-auto">
         <TableComponent.LineTitle className="min-w-[600px] grid-cols-[60px_1.3fr_80px_70px_60px_60px] gap-3 px-[12px] sm:min-w-[1200px] sm:grid-cols-[70px_1.3fr_1fr_130px_90px_110px_110px] sm:gap-10">
           <TableComponent.ValueTitle className="hidden text-center text-sm sm:block sm:text-[18px]">
             Código

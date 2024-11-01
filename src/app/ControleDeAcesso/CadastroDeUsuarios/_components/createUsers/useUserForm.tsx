@@ -23,9 +23,19 @@ export const useUserForm = () => {
     },
     onError: (error) => {
       console.error("Error creating user:", error);
-      toast.error("Erro ao criar usuário.", {
-        position: "bottom-right",
-      });
+      if (
+        error.message.includes(
+          "Unique constraint failed on the fields: (`email`)",
+        )
+      ) {
+        toast.error("O e-mail já está em uso. Tente outro e-mail.", {
+          position: "bottom-right",
+        });
+      } else {
+        toast.error("Erro ao criar usuário.", {
+          position: "bottom-right",
+        });
+      }
     },
   });
 

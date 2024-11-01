@@ -276,7 +276,7 @@ async function main() {
   });
   await createUserWithRole({
     name: "Jefferson dos Santos Costa",
-    email: "jefferson@strategis.com.br",
+    email: "jeffersoncosta1974@gmail.com",
     phone: "61984505000",
     roleName: "Administrador",
     companyId: companyStrategis.id,

@@ -85,6 +85,7 @@ export default function PaymentsHistoryPage() {
   } = api.invoice.getAll.useQuery({
     filters: {
       company: companyFilter,
+      status: "Confirmada",
     },
   });
 
