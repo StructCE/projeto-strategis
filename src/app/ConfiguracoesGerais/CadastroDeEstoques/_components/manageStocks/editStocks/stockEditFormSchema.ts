@@ -20,7 +20,7 @@ export const editStockFormSchema = z.object({
     })
     .min(1, { message: "Por favor selecione uma empresa do estoque" }),
 
-  legalResponsibleId: z.string().optional(),
+  legalResponsibleId: z.string(),
 
   StockCabinet: z
     .array(AddressSchema)
