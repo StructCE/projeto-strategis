@@ -387,7 +387,9 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                             Unidade
                           </FormComponent.Label>
                           <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                            {product.unit.name}
+                            {product.unit.name
+                              ? `${product.unit.name} (${product.unit.abbreviation}) - ${product.unit.unitsPerPack}`
+                              : `${product.unit.abbreviation} - ${product.unit.unitsPerPack}`}
                           </div>
                         </FormComponent.Frame>
 
@@ -428,7 +430,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Tipo de Controle
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.controlType}
+                              {product.controlType ?? "Não definido"}
                             </div>
                           </FormComponent.Frame>
 
@@ -437,7 +439,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Categoria do Produto
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.category}
+                              {product.category ?? "Não definido"}
                             </div>
                           </FormComponent.Frame>
 
@@ -446,7 +448,7 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Setor de Utilização
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.useSector}
+                              {product.useSector ?? "Não definido"}
                             </div>
                           </FormComponent.Frame>
                         </FormComponent.Line>
@@ -457,9 +459,11 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Estoque
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.shelf?.cabinet.StockCabinet.map(
-                                (stockCabinet) => stockCabinet.stock.name,
-                              )}
+                              {product.shelf
+                                ? product.shelf.cabinet.StockCabinet.map(
+                                    (stockCabinet) => stockCabinet.stock.name,
+                                  )
+                                : "Não definido"}
                             </div>
                           </FormComponent.Frame>
 
@@ -468,7 +472,9 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Armário/Zona
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.shelf?.cabinet.name}
+                              {product.shelf
+                                ? product.shelf.cabinet.name
+                                : "Não definido"}
                             </div>
                           </FormComponent.Frame>
 
@@ -477,7 +483,9 @@ export default function InvoiceDetails(props: InvoiceEditForm) {
                               Prateleira
                             </FormComponent.Label>
                             <div className="flex h-10 w-full cursor-not-allowed items-center rounded-md border-[1px] border-borda_input border-input bg-background bg-white px-3 py-2 text-sm opacity-50 ring-offset-background">
-                              {product.shelf?.name}
+                              {product.shelf
+                                ? product.shelf.name
+                                : "Não definido"}
                             </div>
                           </FormComponent.Frame>
                         </FormComponent.Line>

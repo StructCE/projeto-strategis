@@ -128,7 +128,6 @@ const CustomReportPDF = (props: PurchaseOrderType) => (
             ]}
             key={index}
           >
-            {" "}
             <Text style={[styles.columnSmall, styles.tableCell]}>
               {product.code}
             </Text>

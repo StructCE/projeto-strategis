@@ -62,7 +62,7 @@ const RejectRequest: React.FC<RejectRequestProps> = ({
 
   return (
     <TableButtonComponent.Button
-      className="bg-vermelho_botao_2 hover:bg-hover_vermelho_botao_2 max-[425px]:w-full"
+      className="bg-vermelho_botao_2 text-center hover:bg-hover_vermelho_botao_2 max-[425px]:w-full"
       handlePress={handleRejectRequest}
     >
       Rejeitar Requisição

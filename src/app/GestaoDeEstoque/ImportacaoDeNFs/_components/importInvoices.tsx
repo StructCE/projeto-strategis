@@ -138,21 +138,21 @@ export default function ImportacaoDeNFs() {
         onValueChange={setSelectedTab}
         className="w-fill h-fill"
       >
-        <TabsList className="mb-3 flex h-fit w-full justify-start gap-1 bg-[#DBDBDB] p-2 sm:gap-4">
+        <TabsList className="mb-3 flex h-fit w-full justify-start gap-1.5 bg-[#DBDBDB] p-2 sm:gap-4">
           <TabsTrigger
-            className="px-1 py-1 text-[14px] sm:px-3 sm:text-[16px]"
+            className="px-1.5 py-1 text-[14px] sm:px-3 sm:text-[16px]"
             value="Pendente"
           >
             Pendentes
           </TabsTrigger>
           <TabsTrigger
-            className="px-1 py-1 text-[14px] sm:px-3 sm:text-[16px]"
+            className="px-1.5 py-1 text-[14px] sm:px-3 sm:text-[16px]"
             value="Confirmada"
           >
             Confirmadas
           </TabsTrigger>
           <TabsTrigger
-            className="px-1 py-1 text-[14px] sm:px-3 sm:text-[16px]"
+            className="px-1.5 py-1 text-[14px] sm:px-3 sm:text-[16px]"
             value="Rejeitada"
           >
             Rejeitadas

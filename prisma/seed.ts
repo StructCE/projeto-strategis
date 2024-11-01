@@ -144,80 +144,80 @@ async function createUserWithRole({
 }
 
 async function main() {
-  const createdCategories = categories.map(async (category) => {
-    const createdCategory = await createCategory({ name: category.name });
-    return createdCategory;
-  });
-  await Promise.all(createdCategories);
-  const createdReasons = adjustementReasons.map(async (reason) => {
-    const createdReason = await createAdjustmentReason({ name: reason.name });
-    return createdReason;
-  });
-  await Promise.all(createdReasons);
-  const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
-    const createdSector = await createSectorOfUse({ name: sector.name });
-    return createdSector;
-  });
-  await Promise.all(createdSectorOfUse);
-  const createdControlType = controlTypes.map(async (controlType) => {
-    const createdControlType = await createControlType({
-      name: controlType.name,
-    });
-    return createdControlType;
-  });
-  await Promise.all(createdControlType);
+  // const createdCategories = categories.map(async (category) => {
+  //   const createdCategory = await createCategory({ name: category.name });
+  //   return createdCategory;
+  // });
+  // await Promise.all(createdCategories);
+  // const createdReasons = adjustementReasons.map(async (reason) => {
+  //   const createdReason = await createAdjustmentReason({ name: reason.name });
+  //   return createdReason;
+  // });
+  // await Promise.all(createdReasons);
+  // const createdSectorOfUse = sectorsOfUse.map(async (sector) => {
+  //   const createdSector = await createSectorOfUse({ name: sector.name });
+  //   return createdSector;
+  // });
+  // await Promise.all(createdSectorOfUse);
+  // const createdControlType = controlTypes.map(async (controlType) => {
+  //   const createdControlType = await createControlType({
+  //     name: controlType.name,
+  //   });
+  //   return createdControlType;
+  // });
+  // await Promise.all(createdControlType);
 
-  const createdBanks = banks.map(async (bank) => {
-    const createdBank = await createBank({
-      name: bank.name,
-    });
-    return createdBank;
-  });
-  await Promise.all(createdBanks);
+  // const createdBanks = banks.map(async (bank) => {
+  //   const createdBank = await createBank({
+  //     name: bank.name,
+  //   });
+  //   return createdBank;
+  // });
+  // await Promise.all(createdBanks);
 
-  const createdProjects = projects.map(async (project) => {
-    const createdProject = await createProject({
-      name: project.name,
-    });
-    return createdProject;
-  });
-  await Promise.all(createdProjects);
+  // const createdProjects = projects.map(async (project) => {
+  //   const createdProject = await createProject({
+  //     name: project.name,
+  //   });
+  //   return createdProject;
+  // });
+  // await Promise.all(createdProjects);
 
-  const createdGroups = groups.map(async (group) => {
-    const createdGroup = await createGroup({
-      name: group.name,
-    });
-    return createdGroup;
-  });
-  await Promise.all(createdGroups);
+  // const createdGroups = groups.map(async (group) => {
+  //   const createdGroup = await createGroup({
+  //     name: group.name,
+  //   });
+  //   return createdGroup;
+  // });
+  // await Promise.all(createdGroups);
 
-  const createdDocumentTypes = documentTypes.map(async (type) => {
-    const createdDocumentType = await createDocumentType({
-      name: type.name,
-    });
-    return createdDocumentType;
-  });
-  await Promise.all(createdDocumentTypes);
+  // const createdDocumentTypes = documentTypes.map(async (type) => {
+  //   const createdDocumentType = await createDocumentType({
+  //     name: type.name,
+  //   });
+  //   return createdDocumentType;
+  // });
+  // await Promise.all(createdDocumentTypes);
 
-  for (const plan of account_plans) {
-    // 1. Cria InvoiceAccountPlan
-    const createdPlan = await db.invoiceAccountPlan.create({
-      data: {
-        name: plan.name,
-        abbreviation: plan.abbreviation,
-      },
-    });
+  // for (const plan of account_plans) {
+  //   // 1. Cria InvoiceAccountPlan
+  //   const createdPlan = await db.invoiceAccountPlan.create({
+  //     data: {
+  //       name: plan.name,
+  //       abbreviation: plan.abbreviation,
+  //     },
+  //   });
 
-    // 2. Para cada conta no plano, cria InvoiceAccount
-    for (const account of plan.accounts) {
-      await db.invoiceAccount.create({
-        data: {
-          name: account.name,
-          accountPlanId: createdPlan.id, // Relaciona com o plano recém-criado
-        },
-      });
-    }
-  }
+  //   // 2. Para cada conta no plano, cria InvoiceAccount
+  //   for (const account of plan.accounts) {
+  //     await db.invoiceAccount.create({
+  //       data: {
+  //         name: account.name,
+  //         accountPlanId: createdPlan.id, // Relaciona com o plano recém-criado
+  //       },
+  //     });
+  //   }
+  // }
 
   // const createdModules = modules.map(async (module) => {
   //   const createdModule = await createModule(module);
@@ -234,51 +234,53 @@ async function main() {
   // });
   // await Promise.all(createdRoles);
 
-  // const companyStruct = await db.company.create({
-  //   data: {
-  //     name: "Struct EJ",
-  //     email: "comercial@struct.unb.br",
-  //     cnpj: "21803569000165",
-  //     type: "Matriz",
-  //     phone: "6190000093",
-  //     stateRegistration: "0771508800122",
-  //     taxRegime: "Simples Nacional (SN)",
-  //     address:
-  //       "Campus Universitario Darcy Ribeiro S/n Univ de Brasilia Edif Predio SG",
-  //     city: "Brasília",
-  //     neighborhood: "Asa Norte",
-  //     federativeUnit: "DF",
-  //     cep: "70910-900",
-  //   },
-  // });
-  // await createUserWithRole({
-  //   name: "Leonardo Côrtes",
-  //   email: "leonardo.cortes@struct.unb.br",
-  //   phone: "(61) 99116-4633",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
-  // await createUserWithRole({
-  //   name: "Matheus das Neves Fernandes",
-  //   email: "matheusnf@struct.unb.br",
-  //   phone: "(61) 99999-9999",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
-  // await createUserWithRole({
-  //   name: "Guilherme Sampaio",
-  //   email: "guilherme.sampaio@struct.unb.br",
-  //   phone: "(61) 99999-9999",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
-  // await createUserWithRole({
-  //   name: "Willyan Marques",
-  //   email: "willyan.marques@struct.unb.br",
-  //   phone: "(61) 99999-9999",
-  //   roleName: "Administrador",
-  //   companyId: companyStruct.id,
-  // });
+  const companyStruct = await db.company.create({
+    data: {
+      name: "Struct Empresa Junior de Engenharia de Computação da UnB",
+      email: "comercial@struct.unb.br",
+      cnpj: "21803569000165",
+      type: "Matriz",
+      phone: "6190000093",
+      stateRegistration: "0771508800122",
+      taxRegime: "Simples Nacional (SN)",
+      address:
+        "Campus Universitario Darcy Ribeiro S/n Univ de Brasilia Edif Predio SG",
+      city: "Brasília",
+      neighborhood: "Asa Norte",
+      federativeUnit: "DF",
+      cep: "70910900",
+    },
+  });
+  const companyStrategis = await db.company.create({
+    data: {
+      name: "Strategis Assessoria Em Tecnologia E Negocios Empresariais Ltda",
+      email: "atendimento@strategis.com.br",
+      cnpj: "08781089000182",
+      type: "Matriz",
+      phone: "6135622162",
+      stateRegistration: "0748660700130",
+      taxRegime: "Simples Nacional (SN)",
+      address: "SDN - Conjunto A - Sala 6080 - Conjunto Nacional",
+      city: "Brasília",
+      neighborhood: "Asa Norte",
+      federativeUnit: "DF",
+      cep: "70077900",
+    },
+  });
+  await createUserWithRole({
+    name: "Equipe Struct",
+    email: "equipestruct@gmail.com",
+    phone: "61991164633",
+    roleName: "Administrador",
+    companyId: companyStruct.id,
+  });
+  await createUserWithRole({
+    name: "Jefferson dos Santos Costa",
+    email: "jefferson@strategis.com.br",
+    phone: "61984505000",
+    roleName: "Administrador",
+    companyId: companyStrategis.id,
+  });
 }
 
 main().catch((e) => console.log(e));

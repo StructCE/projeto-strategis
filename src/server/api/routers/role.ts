@@ -38,6 +38,36 @@ export const roleRouter = createTRPCRouter({
       },
     ),
 
+  // getAll: protectedProcedure
+  //   .input(roleRepositorySchema.getRoleIdProps)
+  //   .query(
+  //     async ({ input }): Promise<RoleRouteInterfaces["RoleWithModules"][]> => {
+  //       const roles = await roleRepository.getAll(input);
+  //       const serializedRoles = roles.map((role) => ({
+  //         id: role.id,
+  //         name: role.name,
+  //         modules: role.RoleModule.map((roleModule) => ({
+  //           name: roleModule.module.name,
+  //           code: roleModule.module.code,
+  //         })),
+  //       }));
+
+  //       if (input?.filters.modules?.length) {
+  //         const { modules } = input.filters;
+  //         return serializedRoles.filter((serializedRole) => {
+  //           for (const roleModule of serializedRole.modules) {
+  //             if (modules.includes(roleModule?.name ?? "")) {
+  //               return true;
+  //             }
+  //           }
+  //           return false;
+  //         });
+  //       }
+
+  //       return serializedRoles;
+  //     },
+  //   ),
+
   registerRole: operationProcedure
     .input(roleRepositorySchema.registerProps)
     .mutation(async ({ input }): Promise<RoleRouteInterfaces["Role"]> => {

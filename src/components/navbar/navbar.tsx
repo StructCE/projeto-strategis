@@ -28,15 +28,20 @@ export default function Navbar({ session }: { session: Session | null }) {
   });
   const { data: roles = [] } = api.role.getAll.useQuery();
 
-  const getCompanyNameById = (companyId: string) => {
-    const company = companies.find((company) => company.id === companyId);
-    return company ? company.name : "Empresa não encontrada";
-  };
+  function formatPhoneNumber(
+    phone: string | null | undefined,
+  ): string | undefined {
+    const cleaned = phone?.replace(/\D/g, ""); // Remove caracteres não numéricos
+    const isMobile = cleaned?.length === 11; // Verifica se o número tem 11 dígitos
 
-  const getRoleNameById = (roleId: string) => {
-    const role = roles.find((role) => role.id === roleId);
-    return role ? role.name : "Cargo não encontrado";
-  };
+    if (isMobile) {
+      // Formato (XX) XXXXX-XXXX
+      return cleaned?.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    } else {
+      // Formato (XX) XXXX-XXXX
+      return cleaned?.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+    }
+  }
 
   const { selectedCompany, setSelectedCompany } = useCompany();
 
@@ -80,23 +85,20 @@ export default function Navbar({ session }: { session: Session | null }) {
             Nome: <span className="font-normal">{session?.user.name}</span>
           </DropdownMenuLabel>
           <DropdownMenuLabel className="p-0">
-            Telefone: <span className="font-normal">{session?.user.phone}</span>
+            Telefone:{" "}
+            <span className="font-normal">
+              {formatPhoneNumber(session?.user.phone)}
+            </span>
           </DropdownMenuLabel>
           <DropdownMenuLabel className="p-0">
             Empresa:{" "}
             <span className="font-normal">
-              {user?.UserRole.map((userRole) =>
-                getCompanyNameById(userRole.companyId),
-              ).join(", ")}
+              {user?.UserRole[0]?.company.name}
             </span>
           </DropdownMenuLabel>
           <DropdownMenuLabel className="p-0">
             Cargo:{" "}
-            <span className="font-normal">
-              {user?.UserRole.map((userRole) =>
-                getRoleNameById(userRole.roleId),
-              ).join(", ")}
-            </span>
+            <span className="font-normal">{user?.UserRole[0]?.role.name}</span>
           </DropdownMenuLabel>
           <SignButtons />
         </DropdownMenuContent>

@@ -5,7 +5,7 @@ type OperationsCount = {
 type OperationsHistory = {
   id: string;
   date: Date;
-  company: string;
+  company: string | undefined;
   responsible: string;
   description: string;
 };

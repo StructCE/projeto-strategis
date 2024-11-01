@@ -60,7 +60,7 @@ export default function ManageRejectedRequestsTable() {
   return (
     <TableComponent className="gap-3">
       <TableComponent.Subtitle>
-        Requisições de mercadoria esperando confirmação
+        Requisições de mercadoria rejeitadas
       </TableComponent.Subtitle>
 
       <TableComponent.FiltersLine>
@@ -109,29 +109,34 @@ export default function ManageRejectedRequestsTable() {
       </TableComponent.FiltersLine>
 
       <TableComponent.Table>
-        <TableComponent.LineTitle className="grid-cols-[0.7fr_1fr_0.5fr_2fr_130px] gap-8">
-          <TableComponent.ValueTitle>
+        <TableComponent.LineTitle className="min-w-[0px] grid-cols-[80px_1fr_90px] gap-4 sm:min-w-[1200px] sm:grid-cols-[0.7fr_1fr_0.5fr_2fr_130px] sm:gap-8">
+          <TableComponent.ValueTitle className="hidden text-sm sm:block sm:text-[20px]">
             Data da Requisição
           </TableComponent.ValueTitle>
-          <TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="block text-sm sm:hidden sm:text-[20px]">
+            Data
+          </TableComponent.ValueTitle>
+          <TableComponent.ValueTitle className="hidden text-sm sm:block sm:text-[20px]">
             Responsável pela Requisição
           </TableComponent.ValueTitle>
-          <TableComponent.ValueTitle className="text-center">
+          <TableComponent.ValueTitle className="text-center text-sm sm:text-[20px]">
             Produtos
           </TableComponent.ValueTitle>
-          <TableComponent.ValueTitle>Descrição</TableComponent.ValueTitle>
-          <TableComponent.ButtonSpace></TableComponent.ButtonSpace>
+          <TableComponent.ValueTitle className="hidden text-sm sm:block sm:text-[20px]">
+            Descrição
+          </TableComponent.ValueTitle>
+          <TableComponent.ButtonSpace className="w-[90px] sm:w-[130px]"></TableComponent.ButtonSpace>
         </TableComponent.LineTitle>
 
         {error && (
-          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
               Erro ao mostrar requisições: {error.message}
             </TableComponent.Value>
           </TableComponent.Line>
         )}
         {isLoading && (
-          <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+          <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
             <TableComponent.Value>
               Carregando requisições...
             </TableComponent.Value>
@@ -143,7 +148,7 @@ export default function ManageRejectedRequestsTable() {
               .sort((a, b) => b.requestDate.getTime() - a.requestDate.getTime())
               .map((request, index) => (
                 <TableComponent.Line
-                  className={`grid-cols-[0.7fr_1fr_0.5fr_2fr_130px] gap-8 ${
+                  className={`min-w-[0px] grid-cols-[80px_1fr_90px] gap-4 sm:grid-cols-[0.7fr_1fr_0.5fr_2fr_130px] sm:gap-8 ${
                     index % 2 === 0 ? "bg-fundo_tabela_destaque" : ""
                   }`}
                   key={index}
@@ -151,13 +156,13 @@ export default function ManageRejectedRequestsTable() {
                   <TableComponent.Value>
                     {`${String(request.requestDate.getDate()).padStart(2, "0")}/${String(request.requestDate.getMonth()).padStart(2, "0")}/${String(request.requestDate.getFullYear()).padStart(2, "0")}`}
                   </TableComponent.Value>
-                  <TableComponent.Value>
+                  <TableComponent.Value className="hidden text-[13px] sm:block sm:text-[16px]">
                     {request.responsibleName}
                   </TableComponent.Value>
-                  <TableComponent.Value className="text-center">
+                  <TableComponent.Value className="text-center text-[13px] sm:text-[16px]">
                     {request.requestProducts.length}
                   </TableComponent.Value>
-                  <TableComponent.Value>
+                  <TableComponent.Value className="hidden sm:block">
                     {request.description === ""
                       ? "Não informada"
                       : request.description}
@@ -174,23 +179,25 @@ export default function ManageRejectedRequestsTable() {
                       aria-describedby={undefined}
                     >
                       <DialogHeader>
-                        <DialogTitle className="w-fit pb-1.5">
-                          Informações da Requisição de Mercadorias
+                        <DialogTitle className="w-fit pb-1 text-left text-base leading-4 sm:text-lg">
+                          Informações da Requisição{" "}
+                          <br className="block sm:hidden" />
+                          de Mercadorias
                         </DialogTitle>
                         <DialogDescription className="w-fit text-base text-black">
-                          <div className="w-fit">
+                          <div className="w-fit text-sm sm:text-base">
                             <span className="font-semibold">
                               Data da Requisição:
                             </span>{" "}
                             {`${String(request.requestDate.getDate()).padStart(2, "0")}/${String(request.requestDate.getMonth()).padStart(2, "0")}/${String(request.requestDate.getFullYear()).padStart(2, "0")}`}
                           </div>
-                          <div className="w-fit">
+                          <div className="w-fit text-sm sm:text-base">
                             <span className="font-semibold">
                               Responsável pela Requisição:
                             </span>{" "}
                             {request.responsibleName}
                           </div>
-                          <div className="w-fit font-semibold">
+                          <div className="w-fit text-sm font-semibold sm:text-base">
                             Produtos solicitados:
                           </div>
                         </DialogDescription>
@@ -198,20 +205,20 @@ export default function ManageRejectedRequestsTable() {
                         <RejectedRequestDetails request={request} />
 
                         <div className="mt-2 flex flex-col">
-                          <div className="w-fit">
+                          <div className="w-fit text-sm sm:text-base">
                             <span className="font-semibold">
                               Data da Rejeição:
                             </span>{" "}
                             {`${String(request.statusDate?.getDate()).padStart(2, "0")}/${String(request.statusDate?.getMonth()).padStart(2, "0")}/${String(request.statusDate?.getFullYear()).padStart(2, "0")}`}
                           </div>
-                          <div className="w-fit">
+                          <div className="w-fit text-sm sm:text-base">
                             <span className="font-semibold">
                               Responsável pela Rejeição:
                             </span>{" "}
                             {request.statusResponsible}
                           </div>
                           {request.statusDescription != "" ? (
-                            <div>
+                            <div className="text-sm sm:text-base">
                               <span className="font-semibold">Descrição:</span>{" "}
                               {request.statusDescription}
                             </div>
@@ -225,7 +232,7 @@ export default function ManageRejectedRequestsTable() {
                 </TableComponent.Line>
               ))
           ) : (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Nenhuma requisição encontrada com os filtros aplicados
               </TableComponent.Value>
@@ -234,7 +241,7 @@ export default function ManageRejectedRequestsTable() {
         ) : (
           !isLoading &&
           !error && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Nenhuma requisição encontrada
               </TableComponent.Value>

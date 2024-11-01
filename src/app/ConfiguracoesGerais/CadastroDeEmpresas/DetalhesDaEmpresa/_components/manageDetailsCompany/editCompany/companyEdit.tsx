@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { states } from "~/app/ConfiguracoesGerais/CadastroDeEmpresas/_components/states";
 import { FormComponent } from "~/components/forms/index";
 import {
@@ -43,6 +44,8 @@ export const CompanyEdit = (props: CompanyEditProps) => {
   const suppliers = api.supplier.getAll.useQuery({ filters: {} });
   const users = api.user.getAll.useQuery();
   const companies = api.company.getAllCompanies.useQuery();
+
+  const [companyType, setCompanyType] = useState("");
 
   return (
     <Form {...editCompanyForm.form}>
@@ -235,6 +238,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                   <FormItem>
                     <Select
                       onValueChange={(value) => {
+                        setCompanyType(value);
                         field.onChange(value);
                       }}
                       defaultValue={field.value}
@@ -265,7 +269,7 @@ export const CompanyEdit = (props: CompanyEditProps) => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value ?? undefined}
-                      disabled={props.company.type !== "Filial"}
+                      disabled={companyType !== "Filial"}
                     >
                       <FormControl>
                         <SelectTrigger className="border-[1px] border-borda_input bg-white placeholder-placeholder_input">

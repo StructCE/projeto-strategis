@@ -408,16 +408,20 @@ async function autoRegister(
   const registeredProducts = [];
   const registeredInvoiceProducts = [];
   for (const product of invoiceProducts) {
-    let registeredProduct = await db.product.findFirst({
-      where: {
-        ncm: product.ncm,
-        name: product.name,
-      },
-    });
+    if (!product.code) {
+      console.warn(
+        `Produto com nome "${product.name}" está sem código e foi ignorado.`,
+      );
+      continue;
+    }
+
+    let registeredProduct = product.code
+      ? await db.product.findUnique({ where: { code: product.code } })
+      : null;
 
     // Se o produto não existir, cadastra
     if (!registeredProduct) {
-      let registeredUnit = await db.unit.findFirst({
+      let registeredUnit = await db.unit.findUnique({
         where: {
           abbreviation: product.unit.unitAbbreviation,
         },
@@ -460,6 +464,22 @@ async function autoRegister(
           },
         },
       });
+
+      const productSupplier = await db.productSupplier.findFirst({
+        where: {
+          productId: registeredProduct.id,
+          supplierId: registeredSupplier.id,
+        },
+      });
+
+      if (!productSupplier) {
+        await db.productSupplier.create({
+          data: {
+            productId: registeredProduct.id,
+            supplierId: registeredSupplier.id,
+          },
+        });
+      }
     }
 
     registeredProducts.push(registeredProduct);

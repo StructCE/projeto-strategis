@@ -57,9 +57,14 @@ async function getAll(props: OperationRepositoryInterfaces["GetAllProps"]) {
 
   const operations = await db.operation.findMany({
     include: {
-      responsible: { include: { Company: true } },
+      responsible: {
+        include: {
+          Company: true, // Inclui os dados da empresa do responsável
+        },
+      },
     },
   });
+
   return operations;
 }
 

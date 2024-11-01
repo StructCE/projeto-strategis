@@ -26,7 +26,7 @@ export const operationRouter = createTRPCRouter({
         const serializedOperations = operations.map((operation) => ({
           id: operation.id,
           date: operation.date,
-          company: operation.responsible.Company[0]?.name ?? "",
+          company: operation.responsible.Company[0]?.name ?? "Struct EJ",
           responsible: operation.responsible.name,
           description: operation.description,
         }));

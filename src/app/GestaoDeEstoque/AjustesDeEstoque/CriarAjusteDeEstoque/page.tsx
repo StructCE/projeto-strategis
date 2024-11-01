@@ -623,14 +623,14 @@ export default function CreateAdjustment() {
           </TableComponent.LineTitle>
 
           {error && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Erro ao mostrar produtos: {error.message}
               </TableComponent.Value>
             </TableComponent.Line>
           )}
           {isLoading && (
-            <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+            <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
               <TableComponent.Value>
                 Carregando produtos...
               </TableComponent.Value>
@@ -651,7 +651,7 @@ export default function CreateAdjustment() {
             !isLoading &&
             !error &&
             products?.length === 0 && (
-              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
                   Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
@@ -740,8 +740,10 @@ export default function CreateAdjustment() {
                           </div>
                           <p className="text-base">
                             <span className="font-semibold">Diferença: </span>
-                            {Number(adjustedStock[product.code] ?? 0) -
-                              Number(product.currentStock)}
+                            {(
+                              Number(adjustedStock[product.code] ?? 0) -
+                              Number(product.currentStock)
+                            ).toFixed(2)}
                           </p>
                           <div className="my-1 text-base">
                             <span className="font-semibold">Descrição: </span>
@@ -796,7 +798,7 @@ export default function CreateAdjustment() {
                   </TableComponent.Line>
                 ))
             ) : (
-              <TableComponent.Line className="bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
+              <TableComponent.Line className="min-w-[0px] bg-fundo_tabela_destaque py-2.5 text-center text-gray-500">
                 <TableComponent.Value>
                   Nenhum produto encontrado com os filtros aplicados
                 </TableComponent.Value>
@@ -868,8 +870,10 @@ export default function CreateAdjustment() {
                   ></Input>
                 </TableComponent.Value>
                 <TableComponent.Value className="text-center text-[13px] sm:text-[15px]">
-                  {Number(adjustedStock[product.code] ?? 0) -
-                    Number(product.oldStock)}
+                  {(
+                    Number(adjustedStock[product.code] ?? 0) -
+                    Number(product.oldStock)
+                  ).toFixed(2)}
                 </TableComponent.Value>
                 <TableComponent.Value className="text-[13px] sm:text-[15px]">
                   <Select
