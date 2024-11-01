@@ -2,7 +2,7 @@
 import { useSession } from "next-auth/react";
 import { redirect, usePathname } from "next/navigation";
 import { useEffect } from "react";
-import ImportacaoDeNFs from "./_components/importInvoices";
+import ImportacaoDeNFs from "./_components/manageInvoices";
 
 export default function ImportInvoices() {
   const { data: session, status } = useSession();

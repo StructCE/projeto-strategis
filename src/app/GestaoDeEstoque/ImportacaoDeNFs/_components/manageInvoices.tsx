@@ -28,7 +28,7 @@ import { useCompany } from "~/lib/companyProvider";
 import { type SerializedInvoice } from "~/server/interfaces/invoice/invoice.route.interfaces";
 import { api } from "~/trpc/react";
 import { default as InvoiceDetails } from "./invoiceDetails/invoiceDetails";
-import AutoCreateInvoice from "./useAutoCreateInvoice";
+import ImportInvoice from "./useImportInvoice";
 
 export default function ImportacaoDeNFs() {
   // Filtros
@@ -55,7 +55,9 @@ export default function ImportacaoDeNFs() {
     ? selectedCompany === "all_companies" || !selectedCompany
       ? undefined
       : selectedCompany
-    : user?.UserRole[0]?.company.name;
+    : user?.UserRole.some((userRole) => userRole.role.name === "Operador")
+      ? "all_companies"
+      : user?.UserRole[0]?.company.name;
 
   const {
     data: invoices = [],
@@ -114,7 +116,7 @@ export default function ImportacaoDeNFs() {
           </Label>
 
           {/* Componente para selecionar arquivos, importá-los e criar as invoices */}
-          <AutoCreateInvoice />
+          <ImportInvoice />
         </div>
 
         <div className="flex flex-col gap-2">

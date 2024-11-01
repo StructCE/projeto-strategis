@@ -7,7 +7,7 @@ import { Input } from "~/components/ui/input";
 import { type InvoiceProduct } from "~/server/interfaces/invoice/invoice.route.interfaces";
 import { api } from "~/trpc/react";
 
-const AutoCreateInvoice = () => {
+const ImportInvoice = () => {
   // const router = useRouter();
   const invoiceMutation = api.invoice.autoRegisterInvoice.useMutation({
     onSuccess: (newInvoice) => {
@@ -288,4 +288,4 @@ const AutoCreateInvoice = () => {
   );
 };
 
-export default AutoCreateInvoice;
+export default ImportInvoice;
